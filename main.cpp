@@ -5,5 +5,4 @@ int main()
 {
 	Chessboard* chessboard = new Chessboard();
 	chessboard->invalidate();
-
 }
