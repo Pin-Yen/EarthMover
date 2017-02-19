@@ -8,7 +8,7 @@
 
 enum STATUS{EMPTY, BLACK, WHITE};
 
-ChessBoard::ChessBoard(){
+void ChessBoard::ChessBoard(){
 
   /* initialize pointStatus */
   for (int r = 0; r < CHESSBOARD_DIMEN; r++)
@@ -18,7 +18,7 @@ ChessBoard::ChessBoard(){
 }
 
 /* prints the current chesssboard */
-ChessBoard::invalidate()
+void ChessBoard::invalidate()
 {
   for (int r = 0; r < CHESSBOARD_DIMEN; r++)
     for (int c = 0; c < CHESSBOARD_DIMEN; c++)
