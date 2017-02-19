@@ -33,7 +33,6 @@ ChessBoard::invalidate(){
       }
     }
   }
-
 }
 
 /* puts a new chess */
