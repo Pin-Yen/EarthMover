@@ -6,9 +6,9 @@
 #define CHESS_BLACK "○"
 #define CHESS_WHITE "●"
 
-enum STATUS{EMPTY, BLACK, WHITE};
+// enum STATUS{EMPTY, BLACK, WHITE};
 
-void ChessBoard::ChessBoard(){
+ChessBoard::ChessBoard(){
 
   /* initialize pointStatus */
   for (int r = 0; r < CHESSBOARD_DIMEN; r++)
