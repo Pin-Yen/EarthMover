@@ -19,26 +19,55 @@ ChessBoard::ChessBoard(){
 }
 
 /* prints the current chesssboard */
-ChessBoard::invalidate(){
-  
-  for(int r=0;r<CHESSBOARD_DIMEN;r++){
-    for(int c=0;c<CHESSBOARD_DIMEN;c++){
-      switch(pointStatus[r][c]){
+ChessBoard::invalidate()
+{
+  for (int r = 0; r < CHESSBOARD_DIMEN; r++)
+    for (int c = 0; c < CHESSBOARD_DIMEN; c++)
+      switch (pointStatus[r][c])
+      {
         case STATUS_EMPTY:
-          printf(" ");break;
+          if (r == 0)
+          {
+            if (c == 0)
+              printf("┌");
+            else if (c == CHESSBOARD_DIMEN)
+              printf("┐\n");
+            else
+              printf("┬");
+          }
+          else if (r == CHESSBOARD_DIMEN)
+          {
+            if (c == 0)
+              printf("└");
+            else if (c == CHESSBOARD_DIMEN)
+              printf("┘\n");
+            else
+              printf("┴");
+          }
+          else
+          {
+            if (c == 0)
+              printf("├");
+            else if (c == CHESSBOARD_DIMEN)
+              printf("┤\n");
+            else
+              printf("┼");
+          }
+
+          break;
         case STATUS_BLACK:
-          printf(CHESS_BLACK);break;
+          printf(CHESS_BLACK);
+          break;
         case STATUS_WHITE:
-          printf(CHESS_WHITE);break;
+          printf(CHESS_WHITE);
+          break;
       }
-    }
-  }
 }
 
 /* puts a new chess */
 void ChessBoard::play(byte color,int row,int col){
   if(pointStatus[row][col] != STATUS_EMPTY)
-    assert(0);
+    assert(0); 
   else
     pointStatus[row][col] = color;
   invalidate();
