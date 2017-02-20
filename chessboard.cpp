@@ -1,13 +1,10 @@
 #include "chessboard.hpp"
 #include <stdio.h>
-#include <boo>
 #include <assert.h>
 
-#define CHESSBOARD_DIMEN 15
 #define CHESS_BLACK "○"
 #define CHESS_WHITE "●"
 
-// enum STATUS{EMPTY, BLACK, WHITE};
 
 void ChessBoard::ChessBoard()
 {
