@@ -126,7 +126,10 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
 void ChessBoard::play(STATUS color, int row, int col)
 {
   if (pointStatus[row][col] != EMPTY)
-    assert(0); 
+    assert(0);  
+  
+  records[playNo] = Point(row,col,color);
+  playNo++;
 
   pointStatus[row][col] = color;
   
@@ -141,6 +144,8 @@ void ChessBoard::wipe(bool isInvalidate)
   for (int i = 0; i < CHESSBOARD_DIMEN; i++)
     for (int k = 0; k < CHESSBOARD_DIMEN; k++)
       pointStatus[i][k] = EMPTY;
+
+  playNo = 0;
 
   if (isInvalidate)
     invalidate();

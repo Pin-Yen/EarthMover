@@ -1,9 +1,15 @@
 #define CHESSBOARD_DIMEN 15
+#include <array>
+#include "point.hpp"
 
 class ChessBoard
 {
   public:
+
+    #ifndef STATUS_ENUM
+    #define STATUS_ENUM
     enum STATUS{EMPTY, BLACK, WHITE};
+    #endif
 
     ChessBoard();
 
@@ -28,4 +34,12 @@ class ChessBoard
 
     /* print a part of the board*/
     void printBoard(int row, int col, STATUS chess);
+
+    const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
+
+    std::array<Point,CHESSBOARD_DIMEN*CHESSBOARD_DIMEN> records;
+
+    /* the total number of plays */
+    int playNo;
 };
+ 

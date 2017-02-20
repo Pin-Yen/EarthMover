@@ -70,7 +70,7 @@ int main()
       cout << "Invalid row\n";
     }
     
-    ChessBoard::STATUS status = chessBoard.isBlackTurn() ? ChessBoard::BLACK : ChessBoard::WHITE;
+    STATUS status = chessBoard.isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
 
     chessBoard.play(status, row, col);
 
