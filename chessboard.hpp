@@ -10,9 +10,6 @@ class ChessBoard
     /* print the current chesssboard */
     void invalidate();
 
-    /* print a part of the board*/
-    void printBoard(int row, int col, STATUS chess);
-
     /* puts a new chess */
     void play(STATUS color, int row, int col);
 
@@ -23,9 +20,12 @@ class ChessBoard
     bool isBlackTurn();
 
   private:
+    const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
+
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
     bool blackTurn;
 
-    const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
+    /* print a part of the board*/
+    void printBoard(int row, int col, STATUS chess);
 };
