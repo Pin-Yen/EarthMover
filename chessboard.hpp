@@ -10,6 +10,8 @@ class ChessBoard
     /* redraw the current chesssboard */
     void invalidate();
 
+    void printBoard(int r, int c, char chess);
+
     /* puts a new chess */
     void play(STATUS color, int row, int col);
 
