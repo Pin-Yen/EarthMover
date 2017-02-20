@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "chessboard.cpp"
+#include "chessboard.hpp"
 
 int main()
 {
-	Chessboard* chessboard = new Chessboard();
-	chessboard->invalidate();
+	ChessBoard chessBoard;
+	chessBoard.invalidate();
 }
