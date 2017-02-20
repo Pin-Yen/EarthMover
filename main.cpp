@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include "chessboard.hpp"
 
@@ -11,25 +12,29 @@ int main()
 
   while (true)
   {
-    int row;
-    char col;
+    int row, col;
 
     cout << (chessBoard.isBlackTurn() ? "Black turn" : "White turn");
     
     while (true)
     {
       cout << "\nenter the colume of next move (A~O) :";
-      cin >> col;
+      string input;
+      cin >> input;
 
-      if (col >= 65 && col < 80)
+      if (input.length() == 1)
       {
-        col -= 65;
-        break;
-      }
-      else if (col >= 97 && col < 112)
-      {
-        col -= 97;
-        break;
+        col = input[0];
+        if (col >= 65 && col < 80)
+        {
+          col -= 65;
+          break;
+        }
+        else if (col >= 97 && col < 112)
+        {
+          col -= 97;
+          break;
+        }
       }
 
       cout << "Invalid colume\n";
@@ -38,15 +43,31 @@ int main()
     while (true)
     {
       cout << "enter the row of next move (1~15) :";
-      cin >> row;
+      string input;
+      cin >> input;
 
-      if (row >= 1 && row <= 15)
+      bool isNumber = true;
+      for (int i = 0, n = input.length(); i < n; i++)
       {
-        row--;
-        break;
-      }
+        if (!(input[i] >= 48 && input[i] <= 57))
+        {
+          isNumber = false;
+          break;
+        }
 
-      cout << "Invalid colume\n";
+      }
+      if (isNumber)
+      {
+        row = stoi(input);
+        if (row >= 1 && row <= 15)
+        {
+          row--;
+          break;
+        }
+      }
+      
+      cin.clear();
+      cout << "Invalid row\n";
     }
     
     ChessBoard::STATUS status = chessBoard.isBlackTurn() ? ChessBoard::BLACK : ChessBoard::WHITE;
