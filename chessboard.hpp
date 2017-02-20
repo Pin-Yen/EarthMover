@@ -30,16 +30,14 @@ class ChessBoard
 
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-    bool blackTurn;
-
-    /* print a part of the board*/
-    void printBoard(int row, int col, STATUS chess);
-
-    const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
-
     std::array<Point,CHESSBOARD_DIMEN*CHESSBOARD_DIMEN> records;
+
+    bool blackTurn;
 
     /* the total number of plays */
     int playNo;
+
+    /* print a part of the board*/
+    void printBoard(int row, int col, STATUS chess);
 };
  
