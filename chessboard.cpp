@@ -8,8 +8,6 @@ using namespace std;
 
 ChessBoard::ChessBoard()
 {
-  blackTurn = true;
-
   wipe(false);
 }
 
@@ -143,6 +141,7 @@ void ChessBoard::wipe(bool isInvalidate)
       pointStatus[i][k] = EMPTY;
 
   playNo = 0;
+  blackTurn = true;
 
   if (isInvalidate)
     invalidate();
@@ -157,34 +156,30 @@ bool ChessBoard::isBlackTurn()
 STATUS ChessBoard::judge(){
 
   const int dir[4][2] = {{0,1},{1,0},{-1,1},{1,1}};
-  const int lowerBound[4][2] ={{0,0},{0,0},{4,0},{0,0}}; /* INclude lowerbound when searching */
-  const int upperBound[4][2] ={
+  const int lowerBound[4][2] = {{0,0},{0,0},{4,0},{0,0}}; /* INclude lowerbound when searching */
+  const int upperBound[4][2] = {
   {CHESSBOARD_DIMEN,CHESSBOARD_DIMEN-4},
   {CHESSBOARD_DIMEN-4,CHESSBOARD_DIMEN},
   {CHESSBOARD_DIMEN,CHESSBOARD_DIMEN-4},
   {CHESSBOARD_DIMEN-4,CHESSBOARD_DIMEN-4}}; /* EXclude upperbound when searching */
 
-  STATUS targetColor[2] ={BLACK,WHITE};
+  STATUS targetColor[2] = {BLACK,WHITE};
 
-  for(int color =0; color<2;color++){
+  for(int color = 0; color < 2; color++)
     /* for each direction d, start searching from lowerbound, and stop at upperBound */
-    for (int d=0;d<4;d++){
-      for(int r=lowerBound[d][0];r<upperBound[d][0];r++){
-        for(int c=lowerBound[d][1]; c<upperBound[d][1];c++){
-          for(int offset=0; offset<5;offset++){
+    for (int d=0;d<4;d++)
+      for (int r=lowerBound[d][0];r<upperBound[d][0];r++)
+        for (int c=lowerBound[d][1]; c<upperBound[d][1];c++)
+          for (int offset=0; offset<5;offset++)
+          {
             int checkRow = r+ offset*dir[d][0];
             int checkCol = c+ offset*dir[d][1];
 
-            if(pointStatus[checkRow][checkCol] != targetColor[color])
+            if (pointStatus[checkRow][checkCol] != targetColor[color])
               break;
-            if(offset == 4)
+            if (offset == 4)
               return targetColor[color];
           }
-        }
-      }
-    }
-  }
   
   return EMPTY;
- 
 }

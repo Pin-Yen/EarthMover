@@ -82,5 +82,14 @@ void play(ChessBoard* board)
     board->play(status, row, col);
 
     cout << endl;
+
+    status = board->judge();
+
+    if (status != STATUS::EMPTY)
+    {
+      cout << (status == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
+
+      board->wipe(true);
+    }
   }
 }
