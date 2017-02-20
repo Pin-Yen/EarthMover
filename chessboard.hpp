@@ -14,7 +14,7 @@ class ChessBoard
     void play(STATUS color, int row, int col);
 
     /* clears the whole game */
-    void wipe(bool invalidate);
+    void wipe(bool isInvalidate);
 
   private:
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
