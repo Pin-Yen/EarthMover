@@ -7,10 +7,6 @@
 
 using namespace std;
 
-//#define CHESS_BLACK "○"
-//#define CHESS_WHITE "●"
-
-
 ChessBoard::ChessBoard()
 {
   wipe(false);
@@ -22,24 +18,25 @@ void ChessBoard::invalidate()
   for (int r = 0; r < CHESSBOARD_DIMEN + 2; r++)
     for (int c = 0; c < CHESSBOARD_DIMEN + 2; c++)
     {
-      if (c > 0 && c < CHESSBOARD_DIMEN + 1)
+      if (r > 0 && r < CHESSBOARD_DIMEN + 1 && c > 0 && c < CHESSBOARD_DIMEN + 1)
       {
         switch (pointStatus[r - 1][c - 1])
         {
           case BLACK:
-            printBoard(r, c, 'X'); break;
+            printBoard(r, c, BLACK); break;
           case WHITE:
-            printBoard(r, c, 'O'); break;
+            printBoard(r, c, WHITE); break;
           default:
-            printBoard(r, c, -1);
+            printBoard(r, c, EMPTY);
         }
       }
       else
-        printBoard(r, c, -1);
+        printBoard(r, c, EMPTY);
     }
 }
 
-void ChessBoard::printBoard(int row, int col, char chess)
+/* print a part of the board*/
+void ChessBoard::printBoard(int row, int col, STATUS chess)
 {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
     if (col == 0 || col == CHESSBOARD_DIMEN + 1)
@@ -52,7 +49,7 @@ void ChessBoard::printBoard(int row, int col, char chess)
   {
     string c = "";
     c += (col == 1) ? "   " : "───";
-    if (chess == -1)
+    if (chess == EMPTY)
     {
       switch (col)
       {
@@ -65,7 +62,7 @@ void ChessBoard::printBoard(int row, int col, char chess)
       }
     }
     else
-      c += chess;
+      c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
 
     cout << c;
   }
@@ -73,7 +70,7 @@ void ChessBoard::printBoard(int row, int col, char chess)
   {
     string c = "";
     c += (col == 1) ? "   " : "───";
-    if (chess == -1)
+    if (chess == EMPTY)
     {
       switch (col)
       {
@@ -86,7 +83,7 @@ void ChessBoard::printBoard(int row, int col, char chess)
       }
     }
     else
-      c += chess;
+      c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
 
     cout << c;
   }
@@ -94,7 +91,7 @@ void ChessBoard::printBoard(int row, int col, char chess)
   {
     string c = "";
     c += (col == 1) ? "   " : "───";
-    if (chess == -1)
+    if (chess == EMPTY)
     {
       switch (col)
       {
@@ -107,7 +104,7 @@ void ChessBoard::printBoard(int row, int col, char chess)
       }
     }
     else
-      c += chess;
+      c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
 
     cout << c;
   }

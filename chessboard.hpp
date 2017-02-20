@@ -1,4 +1,6 @@
 #define CHESSBOARD_DIMEN 15
+//#define CHESS_BLACK "X"
+//#define CHESS_WHITE "O"
 
 class ChessBoard
 {
@@ -7,10 +9,11 @@ class ChessBoard
 
     ChessBoard();
 
-    /* redraw the current chesssboard */
+    /* print the current chesssboard */
     void invalidate();
 
-    void printBoard(int r, int c, char chess);
+    /* print a part of the board*/
+    void printBoard(int row, int col, STATUS chess);
 
     /* puts a new chess */
     void play(STATUS color, int row, int col);
@@ -20,4 +23,6 @@ class ChessBoard
 
   private:
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+
+    const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 };
