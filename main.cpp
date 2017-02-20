@@ -10,15 +10,20 @@ int main()
 	ChessBoard chessBoard;
 	chessBoard.invalidate();
 
+  play();
+}
+
+void play()
+{
   while (true)
   {
     int row, col;
 
-    cout << (chessBoard.isBlackTurn() ? "Black turn" : "White turn");
+    cout << (chessBoard.isBlackTurn() ? "Black turn\n" : "White turn\n");
     
     while (true)
     {
-      cout << "\nenter the colume of next move (A~O) :";
+      cout << "enter the colume of next move (A~O) : ";
       string input;
       cin >> input;
 
@@ -42,7 +47,7 @@ int main()
 
     while (true)
     {
-      cout << "enter the row of next move (1~15) :";
+      cout << "enter the row of next move (1~15) : ";
       string input;
       cin >> input;
 
