@@ -1,8 +1,7 @@
 #define CHESSBOARD_DIMEN 15
-//#define CHESS_BLACK "X"
-//#define CHESS_WHITE "O"
 #include <array>
 #include "point.hpp"
+
 class ChessBoard
 {
   public:
@@ -26,8 +25,13 @@ class ChessBoard
     /* clears the whole game */
     void wipe(bool isInvalidate);
 
+    /* get is black turn or not*/
+    bool isBlackTurn();
+
   private:
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+
+    bool blackTurn;
 
     const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 
