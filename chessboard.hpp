@@ -30,7 +30,7 @@ class ChessBoard
 
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-    std::array<Point,CHESSBOARD_DIMEN*CHESSBOARD_DIMEN> records;
+    std::array<Point, CHESSBOARD_DIMEN * CHESSBOARD_DIMEN> records;
 
     bool blackTurn;
 
@@ -40,4 +40,3 @@ class ChessBoard
     /* print a part of the board*/
     void printBoard(int row, int col, STATUS chess);
 };
- 
