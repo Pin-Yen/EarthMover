@@ -1,9 +1,14 @@
 #include "chessboard.hpp"
 #include <stdio.h>
+#include <iomanip>
 #include <assert.h>
+#include <string>
+#include <iostream>
 
-#define CHESS_BLACK "○"
-#define CHESS_WHITE "●"
+using namespace std;
+
+//#define CHESS_BLACK "○"
+//#define CHESS_WHITE "●"
 
 
 ChessBoard::ChessBoard()
@@ -14,58 +19,109 @@ ChessBoard::ChessBoard()
 /* prints the current chesssboard */
 void ChessBoard::invalidate()
 {
-  for (int r = 0; r < CHESSBOARD_DIMEN; r++)
-    for (int c = 0; c < CHESSBOARD_DIMEN; c++)
+  for (int r = 0; r < CHESSBOARD_DIMEN + 2; r++)
+    for (int c = 0; c < CHESSBOARD_DIMEN + 2; c++)
     {
-      switch (pointStatus[r][c])
+      if (c > 0 && c < CHESSBOARD_DIMEN + 1)
       {
-        case BLACK:
-          printf(CHESS_BLACK); break;
-        case WHITE:
-          printf(CHESS_WHITE); break;
-        default:
-          /*if there is no chess, print the board line*/
-          switch (r)
-          {
-            case 0:
-              switch (c)
-              {
-                case 0:
-                  printf("┌"); break;
-                case CHESSBOARD_DIMEN - 1:
-                  printf("┐"); break;
-                default:
-                  printf("┬");
-              }
-              break;
-            case CHESSBOARD_DIMEN - 1:
-              switch (c)
-              {
-                case 0:
-                  printf("└"); break;
-                case CHESSBOARD_DIMEN - 1:
-                  printf("┘"); break;
-                default:
-                  printf("┴");
-              }
-              break;
-            default:
-              switch (c)
-              {
-                case 0:
-                  printf("├"); break;
-                case CHESSBOARD_DIMEN - 1:
-                  printf("┤"); break;
-                default:
-                  printf("┼");
-              }
-              break;
-          }
+        switch (pointStatus[r - 1][c - 1])
+        {
+          case BLACK:
+            printBoard(r, c, 'X'); break;
+          case WHITE:
+            printBoard(r, c, 'O'); break;
+          default:
+            printBoard(r, c, -1);
+        }
       }
-
-      if (c == CHESSBOARD_DIMEN - 1)
-        printf("\n");
+      else
+        printBoard(r, c, -1);
     }
+}
+
+void ChessBoard::printBoard(int row, int col, char chess)
+{
+  if (row == 0 || row == CHESSBOARD_DIMEN + 1)
+    if (col == 0 || col == CHESSBOARD_DIMEN + 1)
+      cout << setw(4) << " ";
+    else
+      cout << setw(4) << col;
+  else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
+    cout << setw(4) << row;
+  else if (row == 1)
+  {
+    string c = "";
+    c += (col == 1) ? "   " : "───";
+    if (chess == -1)
+    {
+      switch (col)
+      {
+        case 1:
+          c += "┌"; break;
+        case CHESSBOARD_DIMEN:
+          c += "┐"; break;
+        default:
+          c += "┬";
+      }
+    }
+    else
+      c += chess;
+
+    cout << c;
+  }
+  else if (row == CHESSBOARD_DIMEN)
+  {
+    string c = "";
+    c += (col == 1) ? "   " : "───";
+    if (chess == -1)
+    {
+      switch (col)
+      {
+        case 1:
+          c += "└"; break;
+        case CHESSBOARD_DIMEN:
+          c += "┘"; break;
+        default:
+          c += "┴";
+      }
+    }
+    else
+      c += chess;
+
+    cout << c;
+  }
+  else
+  {
+    string c = "";
+    c += (col == 1) ? "   " : "───";
+    if (chess == -1)
+    {
+      switch (col)
+      {
+        case 1:
+          c += "├"; break;
+        case CHESSBOARD_DIMEN:
+          c += "┤"; break;
+        default:
+          c += "┼";
+      }
+    }
+    else
+      c += chess;
+
+    cout << c;
+  }
+
+  if (col == CHESSBOARD_DIMEN + 1)
+  {
+    cout << "\n    ";
+
+    if (row > 0 && row < CHESSBOARD_DIMEN)
+      for (int i = 0; i < CHESSBOARD_DIMEN; i++)
+        cout << "   │";
+
+    cout << "\n";
+  }
 }
 
 /* puts a new chess */
