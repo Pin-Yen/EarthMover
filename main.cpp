@@ -5,21 +5,23 @@
 
 using namespace std;
 
+void play(ChessBoard* board);
+
 int main()
 {
-	ChessBoard chessBoard;
-	chessBoard.invalidate();
+	ChessBoard* board = new ChessBoard();
+	board->invalidate();
 
-  play();
+  play(board);
 }
 
-void play()
+void play(ChessBoard* board)
 {
   while (true)
   {
     int row, col;
 
-    cout << (chessBoard.isBlackTurn() ? "Black turn\n" : "White turn\n");
+    cout << (board->isBlackTurn() ? "Black turn\n" : "White turn\n");
     
     while (true)
     {
@@ -75,9 +77,9 @@ void play()
       cout << "Invalid row\n";
     }
     
-    STATUS status = chessBoard.isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
+    STATUS status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
 
-    chessBoard.play(status, row, col);
+    board->play(status, row, col);
 
     cout << endl;
   }
