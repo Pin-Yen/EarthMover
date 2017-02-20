@@ -1,5 +1,4 @@
 #include "chessboard.hpp"
-#include <stdio.h>
 #include <iomanip>
 #include <assert.h>
 #include <string>
@@ -9,6 +8,8 @@ using namespace std;
 
 ChessBoard::ChessBoard()
 {
+  blackTurn = true;
+
   wipe(false);
 }
 
@@ -42,7 +43,7 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
     if (col == 0 || col == CHESSBOARD_DIMEN + 1)
       cout << setw(4) << " ";
     else
-      cout << setw(4) << col;
+      cout << setw(4) << (char)(64 + col);
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
     cout << setw(4) << row;
   else if (row == 1)
@@ -125,10 +126,12 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
 void ChessBoard::play(STATUS color, int row, int col)
 {
   if (pointStatus[row][col] != EMPTY)
-    assert(0);  
-  else
-    pointStatus[row][col] = color;
-    
+    assert(0); 
+
+  pointStatus[row][col] = color;
+  
+  blackTurn = !blackTurn;
+
   invalidate();
 }
 
@@ -141,4 +144,9 @@ void ChessBoard::wipe(bool isInvalidate)
 
   if (isInvalidate)
     invalidate();
+}
+
+bool ChessBoard::isBlackTurn()
+{
+  return blackTurn;
 }
