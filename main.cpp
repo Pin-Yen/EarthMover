@@ -1,35 +1,47 @@
 #include <iostream>
+#include <string>
 
 #include "chessboard.hpp"
 
 using namespace std;
 
+void play(ChessBoard* board);
+
 int main()
 {
-	ChessBoard chessBoard;
-	chessBoard.invalidate();
+	ChessBoard* board = new ChessBoard();
+	board->invalidate();
 
+  play(board);
+}
+
+void play(ChessBoard* board)
+{
   while (true)
   {
-    int row;
-    char col;
+    int row, col;
 
-    cout << (chessBoard.isBlackTurn() ? "Black turn" : "White turn");
+    cout << (board->isBlackTurn() ? "Black turn\n" : "White turn\n");
     
     while (true)
     {
-      cout << "\nenter the colume of next move (A~O) :";
-      cin >> col;
+      cout << "enter the colume of next move (A~O) : ";
+      string input;
+      cin >> input;
 
-      if (col >= 65 && col < 80)
+      if (input.length() == 1)
       {
-        col -= 65;
-        break;
-      }
-      else if (col >= 97 && col < 112)
-      {
-        col -= 97;
-        break;
+        col = input[0];
+        if (col >= 65 && col < 80)
+        {
+          col -= 65;
+          break;
+        }
+        else if (col >= 97 && col < 112)
+        {
+          col -= 97;
+          break;
+        }
       }
 
       cout << "Invalid colume\n";
@@ -37,21 +49,37 @@ int main()
 
     while (true)
     {
-      cout << "enter the row of next move (1~15) :";
-      cin >> row;
+      cout << "enter the row of next move (1~15) : ";
+      string input;
+      cin >> input;
 
-      if (row >= 1 && row <= 15)
+      bool isNumber = true;
+      for (int i = 0, n = input.length(); i < n; i++)
       {
-        row--;
-        break;
-      }
+        if (!(input[i] >= 48 && input[i] <= 57))
+        {
+          isNumber = false;
+          break;
+        }
 
-      cout << "Invalid colume\n";
+      }
+      if (isNumber)
+      {
+        row = stoi(input);
+        if (row >= 1 && row <= 15)
+        {
+          row--;
+          break;
+        }
+      }
+      
+      cin.clear();
+      cout << "Invalid row\n";
     }
     
-    STATUS status = chessBoard.isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
+    STATUS status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
 
-    chessBoard.play(status, row, col);
+    board->play(status, row, col);
 
     cout << endl;
   }

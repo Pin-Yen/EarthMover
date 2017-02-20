@@ -40,10 +40,7 @@ void ChessBoard::invalidate()
 void ChessBoard::printBoard(int row, int col, STATUS chess)
 {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
-    if (col == 0 || col == CHESSBOARD_DIMEN + 1)
-      cout << setw(4) << " ";
-    else
-      cout << setw(4) << (char)(64 + col);
+    cout << setw(4) << ((col == 0 || col == CHESSBOARD_DIMEN + 1) ? ' ' : (char)(64 + col));
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
     cout << setw(4) << row;
   else if (row == 1)
