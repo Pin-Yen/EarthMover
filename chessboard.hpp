@@ -1,4 +1,5 @@
 #define CHESSBOARD_DIMEN 15
+
 #include <array>
 #include "point.hpp"
 
@@ -27,6 +28,9 @@ class ChessBoard
 
     /* get is black turn or not*/
     bool isBlackTurn();
+
+    /* search the whole board for winning conditions */
+    STATUS judge();
 
   private:
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
