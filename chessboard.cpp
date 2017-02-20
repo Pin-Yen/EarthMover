@@ -6,7 +6,7 @@
 #define CHESS_WHITE "●"
 
 
-void ChessBoard::ChessBoard()
+ChessBoard::ChessBoard()
 {
   wipe(false);
 }
@@ -80,12 +80,12 @@ void ChessBoard::play(STATUS color, int row, int col)
 }
 
 /* clears the whole game */
-void ChessBoard::wipe(bool invalidate)
+void ChessBoard::wipe(bool isInvalidate)
 {
   for (int i = 0; i < CHESSBOARD_DIMEN; i++)
     for (int k = 0; k < CHESSBOARD_DIMEN; k++)
       pointStatus[i][k] = EMPTY;
 
-  if (invalidate)
+  if (isInvalidate)
     invalidate();
 }
