@@ -1,11 +1,16 @@
 #define CHESSBOARD_DIMEN 15
 //#define CHESS_BLACK "X"
 //#define CHESS_WHITE "O"
-
+#include <array>
+#include "point.hpp"
 class ChessBoard
 {
   public:
+
+    #ifndef STATUS_ENUM
+    #define STATUS_ENUM
     enum STATUS{EMPTY, BLACK, WHITE};
+    #endif
 
     ChessBoard();
 
@@ -25,4 +30,10 @@ class ChessBoard
     STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
     const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
+
+    std::array<Point,CHESSBOARD_DIMEN*CHESSBOARD_DIMEN> records;
+
+    /* the total number of plays */
+    int playNo;
 };
+ 

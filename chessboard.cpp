@@ -128,7 +128,10 @@ void ChessBoard::play(STATUS color, int row, int col)
     assert(0);  
   else
     pointStatus[row][col] = color;
-    
+  
+  records[playNo] = Point(row,col,color);
+  playNo++;
+
   invalidate();
 }
 
@@ -138,6 +141,8 @@ void ChessBoard::wipe(bool isInvalidate)
   for (int i = 0; i < CHESSBOARD_DIMEN; i++)
     for (int k = 0; k < CHESSBOARD_DIMEN; k++)
       pointStatus[i][k] = EMPTY;
+
+  playNo = 0;
 
   if (isInvalidate)
     invalidate();

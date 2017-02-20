@@ -6,5 +6,5 @@ int main()
 	ChessBoard chessBoard;
 	chessBoard.invalidate();
 
-  chessBoard.play(ChessBoard::BLACK, 3, 6);
+  chessBoard.play(STATUS::BLACK, 3, 6);
 }
