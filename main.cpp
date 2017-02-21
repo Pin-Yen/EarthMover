@@ -25,18 +25,18 @@ void play(ChessBoard* board)
   {
     int row, col;
     
-    STATUS status;
+    STATUS status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
 
+    /* get user's input*/
     while (true)
     {
-      cout << (board->isBlackTurn() ? "Black turn\n" : "White turn\n");
+      cout << (status == STATUS::BLACK ? "Black turn\n" : "White turn\n");
 
       col = getColumn(board->CHESSBOARD_DIMEN);
 
       row = getRow(board->CHESSBOARD_DIMEN);
 
-      status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
-
+      /* break while user input a valid coordinate*/
       if (board->play(status, row, col)) break;
 
       cout << "Invalid move\n";
@@ -44,11 +44,12 @@ void play(ChessBoard* board)
     
     cout << endl;
 
-    status = board->judge();
+    //status = board->judge();
+    STATUS status_isWin = board->judge(status, row, col);
 
-    if (status != STATUS::EMPTY)
+    if (status_isWin != STATUS::EMPTY)
     {
-      cout << (status == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
+      cout << (status_isWin == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
 
       board->wipe(true);
     }
