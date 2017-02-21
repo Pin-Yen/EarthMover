@@ -1,5 +1,3 @@
-#define CHESSBOARD_DIMEN 15
-
 #include <array>
 #include "point.hpp"
 
@@ -11,6 +9,8 @@ public:
   #define STATUS_ENUM
   enum STATUS{EMPTY, BLACK, WHITE};
   #endif
+
+  static const int CHESSBOARD_DIMEN = 15;
 
   ChessBoard();
 
