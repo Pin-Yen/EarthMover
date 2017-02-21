@@ -17,8 +17,8 @@ class ChessBoard
     /* print the current chesssboard */
     void invalidate();
 
-    /* puts a new chess */
-    void play(STATUS color, int row, int col);
+    /* puts a new chess, if the ponit is not empty then return false*/
+    bool play(STATUS color, int row, int col);
 
     /* clears the whole game */
     void wipe(bool isInvalidate);

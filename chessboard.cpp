@@ -92,20 +92,19 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
   }
 }
 
-/* puts a new chess */
-void ChessBoard::play(STATUS color, int row, int col)
+/* puts a new chess, if the ponit is not empty then return false*/
+bool ChessBoard::play(STATUS color, int row, int col)
 {
-  if (pointStatus[row][col] != EMPTY)
-    assert(0);  
+  if (pointStatus[row][col] != EMPTY) return false;  
   
-  records[playNo] = Point(row,col,color);
+  records[playNo] = Point(row, col, color);
   playNo++;
-
   pointStatus[row][col] = color;
-  
   blackTurn = !blackTurn;
 
   invalidate();
+
+  return true;
 }
 
 /* clears the whole game */

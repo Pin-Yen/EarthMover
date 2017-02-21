@@ -20,67 +20,68 @@ void play(ChessBoard* board)
   while (true)
   {
     int row, col;
-
-    cout << (board->isBlackTurn() ? "Black turn\n" : "White turn\n");
     
-    while (true)
-    {
-      cout << "enter the colume of next move (A~O) : ";
-      string input;
-      cin >> input;
-
-      if (input.length() == 1)
-      {
-        col = input[0];
-        if (col >= 65 && col < 80)
-        {
-          col -= 65;
-          break;
-        }
-        else if (col >= 97 && col < 112)
-        {
-          col -= 97;
-          break;
-        }
-      }
-
-      cout << "Invalid colume\n";
-    }
+    STATUS status;
 
     while (true)
     {
-      cout << "enter the row of next move (1~15) : ";
-      string input;
-      cin >> input;
+      cout << (board->isBlackTurn() ? "Black turn\n" : "White turn\n");
 
-      bool isNumber = true;
-      for (int i = 0, n = input.length(); i < n; i++)
+      while (true)
       {
-        if (!(input[i] >= 48 && input[i] <= 57))
+        cout << "enter the colume of next move (A~O) : ";
+        string input;
+        cin >> input;
+
+        if (input.length() == 1)
         {
-          isNumber = false;
-          break;
+          col = input[0];
+          if (col >= 65 && col < 80)
+          {
+            col -= 65; break;
+          }
+          else if (col >= 97 && col < 112)
+          {
+            col -= 97; break;
+          }
         }
 
+        cout << "Invalid colume\n";
       }
-      if (isNumber)
+
+      while (true)
       {
-        row = stoi(input);
-        if (row >= 1 && row <= 15)
+        cout << "enter the row of next move (1~15) : ";
+        string input;
+        cin >> input;
+
+        bool isNumber = true;
+        for (int i = 0, n = input.length(); i < n; i++)
+          if (!(input[i] >= 48 && input[i] <= 57))
+          {
+            isNumber = false; break;
+          }
+
+        if (isNumber)
         {
-          row--;
-          break;
+          row = stoi(input);
+          if (row >= 1 && row <= 15)
+          {
+            row--; break;
+          }
         }
-      }
       
-      cin.clear();
-      cout << "Invalid row\n";
+        cin.clear();
+        cout << "Invalid row\n";
+      }
+
+      status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
+
+      if (board->play(status, row, col)) break;
+
+      cout << "Invalid move\n";
     }
     
-    STATUS status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
-
-    board->play(status, row, col);
-
     cout << endl;
 
     status = board->judge();
