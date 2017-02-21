@@ -30,6 +30,7 @@ void play(ChessBoard* board)
     {
       cout << (status == STATUS::BLACK ? "Black turn\n" : "White turn\n");
 
+      /* get user input*/
       getInput(&row, &col, board->CHESSBOARD_DIMEN);
 
       /* break while user input a valid coordinate*/
@@ -42,14 +43,14 @@ void play(ChessBoard* board)
 
     if (board->judge(status, row, col))
     {
-      /* winner is the opponent of the current player*/
-      cout << (status == STATUS::WHITE ? "Black" : "White") << "win !\n\n";
+      cout << (status == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
 
       board->wipe(true);
     }
   }
 }
 
+/* get user input, it will keep ask another input until user coorperation*/
 void getInput(int* row, int* col, int boardDimen)
 {
   int r, c;
@@ -66,6 +67,7 @@ void getInput(int* row, int* col, int boardDimen)
     {
       bool validColumn = false, validRow = false;
 
+      /* get column*/
       c = input[0];
       if (c >= 'A' && c <= 'A' + boardDimen)
       {
@@ -78,6 +80,7 @@ void getInput(int* row, int* col, int boardDimen)
         validColumn = true;
       }
 
+      /* get row*/
       bool isNumber = true;
       for (int i = 1; i < n; i++)
         if (!isdigit(input[i]))
