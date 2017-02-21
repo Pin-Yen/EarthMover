@@ -168,26 +168,40 @@ STATUS ChessBoard::judge(){
 
 bool ChessBoard::judge(STATUS color, int row, int col)
 {
-  /* index: 0↑ 1↗ 2→ ... (clockwise) */
-  const int dir[8][2] = {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
+  /* index: 0→ 1↓ 2↗ 3↘ */
+  const int dir[4][2] = {{0,1},{1,0},{-1,1},{1,1}};
 
-  for (int d = 0; d < 8; d++)
+  for (int d = 0; d < 4; d++)
   {
-    /* check if we will "hit the wall" in this direction */
-    if ((dir[d][0] == -1 && row < 4) || (dir[d][1] == 1 && row > CHESSBOARD_DIMEN - 5)
-      || (dir[d][1] == -1 && col < 4)|| (dir[d][1] == 1 && col > CHESSBOARD_DIMEN - 5))
-      continue;
+    for(int startPoint = -4; startPoint <= 0; startPoint++)
+    {  
+      int checkRow = row + startPoint*dir[d][0];
+      int checkCol = col + startPoint*dir[d][1];
 
-    for (int offset = 0; offset < 5; offset++)
-    {
-      int checkRow = row + offset * dir[d][0], 
-        checkCol = col + offset * dir[d][1];
+      /* check if this startPoint is out of bound*/
+      if(checkRow<0 || checkRow >= ChessBoard::CHESSBOARD_DIMEN
+        || checkCol<0 || checkCol >= ChessBoard::CHESSBOARD_DIMEN)
+        continue;
 
-      if (pointStatus[checkRow][checkCol] != color)
-        break;
+      /* check if we will "hit the wall" in this segment */
+      if ( (dir[d][0] == 1 && row + 4 >= CHESSBOARD_DIMEN )
+        || (dir[d][1] == 1 && col + 4 >= CHESSBOARD_DIMEN )
+        || (dir[d][0] == -1 && row - 4 < 0)
+        || (dir[d][1] == -1 && col - 4 < 0))
+        continue;
 
-      if (offset == 4)
-        return true;
+      for (int offset = 0; offset < 5; offset++)
+      {
+
+        if (pointStatus[checkRow][checkCol] != color)
+          break;
+
+        if (offset == 4)
+          return true;
+
+        checkRow += dir[d][0];
+        checkCol += dir[d][1];
+      }
     }
   }
 
