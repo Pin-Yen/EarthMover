@@ -18,17 +18,7 @@ void ChessBoard::invalidate()
     for (int c = 0; c < CHESSBOARD_DIMEN + 2; c++)
     {
       if (r > 0 && r < CHESSBOARD_DIMEN + 1 && c > 0 && c < CHESSBOARD_DIMEN + 1)
-      {
-        switch (pointStatus[r - 1][c - 1])
-        {
-          case BLACK:
-            printBoard(r, c, BLACK); break;
-          case WHITE:
-            printBoard(r, c, WHITE); break;
-          default:
-            printBoard(r, c, EMPTY);
-        }
-      }
+        printBoard(r, c, pointStatus[r - 1][c - 1]);
       else
         printBoard(r, c, EMPTY);
     }
@@ -38,65 +28,50 @@ void ChessBoard::invalidate()
 void ChessBoard::printBoard(int row, int col, STATUS chess)
 {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
+    /* if at the first or the last row, print the coordinate with letter*/
     cout << setw(4) << ((col == 0 || col == CHESSBOARD_DIMEN + 1) ? ' ' : (char)(64 + col));
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
+    /* if at the first or the last column, print the coordinate with number*/
     cout << setw(4) << row;
-  else if (row == 1)
-  {
-    string c = "";
-    c += (col == 1) ? "   " : "───";
-    if (chess == EMPTY)
-    {
-      switch (col)
-      {
-        case 1:
-          c += "┌"; break;
-        case CHESSBOARD_DIMEN:
-          c += "┐"; break;
-        default:
-          c += "┬";
-      }
-    }
-    else
-      c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
-
-    cout << c;
-  }
-  else if (row == CHESSBOARD_DIMEN)
-  {
-    string c = "";
-    c += (col == 1) ? "   " : "───";
-    if (chess == EMPTY)
-    {
-      switch (col)
-      {
-        case 1:
-          c += "└"; break;
-        case CHESSBOARD_DIMEN:
-          c += "┘"; break;
-        default:
-          c += "┴";
-      }
-    }
-    else
-      c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
-
-    cout << c;
-  }
   else
   {
-    string c = "";
-    c += (col == 1) ? "   " : "───";
+    string c = (col == 1 ? "   " : "───");
     if (chess == EMPTY)
     {
-      switch (col)
+      switch (row)
       {
         case 1:
-          c += "├"; break;
+          switch (col)
+          {
+            case 1:
+              c += "┌"; break;
+            case CHESSBOARD_DIMEN:
+              c += "┐"; break;
+            default:
+              c += "┬";
+          }
+          break;
         case CHESSBOARD_DIMEN:
-          c += "┤"; break;
+          switch (col)
+          {
+            case 1:
+              c += "└"; break;
+            case CHESSBOARD_DIMEN:
+              c += "┘"; break;
+            default:
+              c += "┴";
+          }
+          break;
         default:
-          c += "┼";
+          switch (col)
+          {
+            case 1:
+              c += "├"; break;
+            case CHESSBOARD_DIMEN:
+              c += "┤"; break;
+            default:
+              c += "┼";
+          }
       }
     }
     else
@@ -136,9 +111,9 @@ void ChessBoard::play(STATUS color, int row, int col)
 /* clears the whole game */
 void ChessBoard::wipe(bool isInvalidate)
 {
-  for (int i = 0; i < CHESSBOARD_DIMEN; i++)
-    for (int k = 0; k < CHESSBOARD_DIMEN; k++)
-      pointStatus[i][k] = EMPTY;
+  for (int r = 0; r < CHESSBOARD_DIMEN; r++)
+    for (int c = 0; c < CHESSBOARD_DIMEN; c++)
+      pointStatus[r][c] = EMPTY;
 
   playNo = 0;
   blackTurn = true;
@@ -163,17 +138,17 @@ STATUS ChessBoard::judge(){
   {CHESSBOARD_DIMEN,CHESSBOARD_DIMEN-4},
   {CHESSBOARD_DIMEN-4,CHESSBOARD_DIMEN-4}}; /* EXclude upperbound when searching */
 
-  STATUS targetColor[2] = {BLACK,WHITE};
+  STATUS targetColor[2] = {BLACK, WHITE};
 
-  for(int color = 0; color < 2; color++)
+  for (int color = 0; color < 2; color++)
     /* for each direction d, start searching from lowerbound, and stop at upperBound */
     for (int d=0;d<4;d++)
       for (int r=lowerBound[d][0];r<upperBound[d][0];r++)
         for (int c=lowerBound[d][1]; c<upperBound[d][1];c++)
-          for (int offset=0; offset<5;offset++)
+          for (int offset = 0; offset < 5; offset++)
           {
-            int checkRow = r+ offset*dir[d][0];
-            int checkCol = c+ offset*dir[d][1];
+            int checkRow = r + offset * dir[d][0];
+            int checkCol = c + offset * dir[d][1];
 
             if (pointStatus[checkRow][checkCol] != targetColor[color])
               break;
