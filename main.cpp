@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include <ctype.h>
 #include "chessboard.hpp"
 
 using namespace std;
@@ -36,13 +36,13 @@ void play(ChessBoard* board)
         if (input.length() == 1)
         {
           col = input[0];
-          if (col >= 65 && col < 80)
+          if (col >= 'A' && col <= 'O')
           {
-            col -= 65; break;
+            col -= 'A'; break;
           }
-          else if (col >= 97 && col < 112)
+          else if (col >= 'a' && col < 'o')
           {
-            col -= 97; break;
+            col -= 'a'; break;
           }
         }
 
@@ -57,8 +57,7 @@ void play(ChessBoard* board)
 
         bool isNumber = true;
         for (int i = 0, n = input.length(); i < n; i++)
-          if (!(input[i] >= 48 && input[i] <= 57))
-          {
+          if (!isdigit(input[i])){
             isNumber = false; break;
           }
 
