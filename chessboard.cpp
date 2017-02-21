@@ -31,8 +31,23 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
     /* if at the first or the last row, print the coordinate with letter*/
     cout << setw(4) << ((col == 0 || col == CHESSBOARD_DIMEN + 1) ? ' ' : (char)(64 + col));
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
+  {
     /* if at the first or the last column, print the coordinate with number*/
     cout << setw(4) << row;
+
+    /* if at the last column, print \n*/
+    if (col == CHESSBOARD_DIMEN + 1)
+    {
+      cout << "\n    ";
+
+      /* if not at the first or last row, print │ between two row*/
+      if (row > 0 && row < CHESSBOARD_DIMEN)
+        for (int i = 0; i < CHESSBOARD_DIMEN; i++)
+          cout << "   │";
+
+      cout << "\n";
+    }
+  }
   else
   {
     string c = (col == 1 ? "   " : "───");
@@ -78,17 +93,6 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
       c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
 
     cout << c;
-  }
-
-  if (col == CHESSBOARD_DIMEN + 1)
-  {
-    cout << "\n    ";
-
-    if (row > 0 && row < CHESSBOARD_DIMEN)
-      for (int i = 0; i < CHESSBOARD_DIMEN; i++)
-        cout << "   │";
-
-    cout << "\n";
   }
 }
 
