@@ -100,17 +100,16 @@ int getRow(int boardDimen)
         isNumber = false; break;
       }
 
-      if (isNumber)
+    if (isNumber)
+    {
+      row = stoi(input);
+      if (row >= 1 && row <= boardDimen)
       {
-        row = stoi(input);
-        if (row >= 1 && row <= boardDimen)
-        {
-          row--; break;
-        }
+         row--; break;
       }
-      
-      cin.clear();
-      cout << "Invalid row\n";
+    }
+    
+    cout << "Invalid row\n";
   }
 
   return row;
