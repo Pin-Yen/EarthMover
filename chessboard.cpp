@@ -184,10 +184,10 @@ bool ChessBoard::judge(STATUS color, int row, int col)
         continue;
 
       /* check if we will "hit the wall" in this segment */
-      if ( (dir[d][0] == 1 && row + 4 >= CHESSBOARD_DIMEN )
-        || (dir[d][1] == 1 && col + 4 >= CHESSBOARD_DIMEN )
-        || (dir[d][0] == -1 && row - 4 < 0)
-        || (dir[d][1] == -1 && col - 4 < 0))
+      if ( (dir[d][0] == 1 && checkRow + 4 >= CHESSBOARD_DIMEN )
+        || (dir[d][1] == 1 && checkCol + 4 >= CHESSBOARD_DIMEN )
+        || (dir[d][0] == -1 && checkRow - 4 < 0)
+        || (dir[d][1] == -1 && checkCol - 4 < 0))
         continue;
 
       for (int offset = 0; offset < 5; offset++)
