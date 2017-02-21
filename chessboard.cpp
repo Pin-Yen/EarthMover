@@ -129,6 +129,7 @@ bool ChessBoard::isBlackTurn()
 /* search the whole board for winning conditions */
 STATUS ChessBoard::judge(){
 
+  /* index: 0→ 1↓ 2↗ 3↘*/
   const int dir[4][2] = {{0,1},{1,0},{-1,1},{1,1}};
   const int lowerBound[4][2] = {{0,0},{0,0},{4,0},{0,0}}; /* INclude lowerbound when searching */
   const int upperBound[4][2] = {
@@ -155,5 +156,31 @@ STATUS ChessBoard::judge(){
               return targetColor[color];
           }
   
+  return EMPTY;
+}
+
+STATUS ChessBoard::judge(STATUS color,int row, int col){
+
+  /* index: 0↑ 1↗ 2→ ... (clockwise) */
+  int dir[8][2] = {{-1,0},{-1,1},{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1}};
+
+  for (int d=0;d<8;d++){
+
+    /* check if we will "hit the wall" in this direction */
+    if((dir[d][0] == -1 && row < 4) || (dir[d][1] == 1 && row > CHESSBOARD_DIMEN-5)
+      || (dir[d][1] == -1 && col < 4)|| (dir[d][1] == 1 && col > CHESSBOARD_DIMEN-5))
+      continue;
+
+    for (int offset=0;offset<5;offset++){
+      int checkRow = row + offset * dir[d][0];
+      int checkCol = col + offset * dir[d][1];
+
+      if(pointStatus[checkRow][checkCol] != color)
+        break;
+
+      if(offset == 4)
+        return color;
+    }
+  }
   return EMPTY;
 }
