@@ -166,8 +166,8 @@ STATUS ChessBoard::judge(){
   return EMPTY;
 }
 
-STATUS ChessBoard::judge(STATUS color, int row, int col){
-
+bool ChessBoard::judge(STATUS color, int row, int col)
+{
   /* index: 0↑ 1↗ 2→ ... (clockwise) */
   const int dir[8][2] = {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
 
@@ -187,9 +187,9 @@ STATUS ChessBoard::judge(STATUS color, int row, int col){
         break;
 
       if (offset == 4)
-        return color;
+        return true;
     }
   }
 
-  return EMPTY;
+  return false;
 }

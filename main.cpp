@@ -13,8 +13,8 @@ int getRow(int boardDimen);
 
 int main()
 {
-	ChessBoard* board = new ChessBoard();
-	board->invalidate();
+  ChessBoard* board = new ChessBoard();
+  board->invalidate();
 
   play(board);
 }
@@ -44,12 +44,10 @@ void play(ChessBoard* board)
     
     cout << endl;
 
-    //status = board->judge();
-    STATUS status_isWin = board->judge(status, row, col);
-
-    if (status_isWin != STATUS::EMPTY)
+    if (board->judge(status, row, col))
     {
-      cout << (status_isWin == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
+      /* winner is the opponent of the current player*/
+      cout << (status == STATUS::WHITE ? "Black" : "White") << "win !\n\n";
 
       board->wipe(true);
     }

@@ -30,7 +30,7 @@ public:
   STATUS judge();
 
   /* search the area surrounding (row, col) for winning conditions */
-  STATUS judge(STATUS color, int row, int col);
+  bool judge(STATUS color, int row, int col);
 
 private:
   const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
