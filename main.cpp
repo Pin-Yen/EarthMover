@@ -71,7 +71,7 @@ int getColumn(int boardDimen)
       {
         col -= 'A'; break;
       }
-      else if (col >= 'a' && col < 'a' + boardDimen)
+      else if (col >= 'a' && col <= 'a' + boardDimen)
       {
         col -= 'a'; break;
       }
