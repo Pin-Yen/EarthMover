@@ -7,9 +7,7 @@ using namespace std;
 
 void play(ChessBoard* board);
 
-int getColumn(int boardDimen);
-
-int getRow(int boardDimen);
+void getInput(int* row, int* col, int boardDimen);
 
 int main()
 {
@@ -32,9 +30,7 @@ void play(ChessBoard* board)
     {
       cout << (status == STATUS::BLACK ? "Black turn\n" : "White turn\n");
 
-      col = getColumn(board->CHESSBOARD_DIMEN);
-
-      row = getRow(board->CHESSBOARD_DIMEN);
+      getInput(&row, &col, board->CHESSBOARD_DIMEN);
 
       /* break while user input a valid coordinate*/
       if (board->play(status, row, col)) break;
@@ -54,63 +50,56 @@ void play(ChessBoard* board)
   }
 }
 
-int getColumn(int boardDimen)
+void getInput(int* row, int* col, int boardDimen)
 {
-  int col;
-
+  int r, c;
   while (true)
   {
-    cout << "enter the colume of next move (A~" << (char)('A' + boardDimen - 1) << ") : ";
+    cout << "enter the coordinate of next move (A1 ~ " 
+      << (char)('A' + boardDimen - 1) << boardDimen << ") : ";
     string input;
     cin >> input;
 
-    if (input.length() == 1)
+    int n = input.length();
+
+    if (n == 2 || n == 3)
     {
-      col = input[0];
-      if (col >= 'A' && col <= 'A' + boardDimen)
+      bool validColumn = false, validRow = false;
+
+      c = input[0];
+      if (c >= 'A' && c <= 'A' + boardDimen)
       {
-        col -= 'A'; break;
+        c -= 'A';
+        validColumn = true;
       }
-      else if (col >= 'a' && col <= 'a' + boardDimen)
+      else if (c >= 'a' && c <= 'a' + boardDimen)
       {
-        col -= 'a'; break;
+        c -= 'a';
+        validColumn = true;
       }
+
+      bool isNumber = true;
+      for (int i = 1; i < n; i++)
+        if (!isdigit(input[i]))
+        {
+          isNumber = false; break;
+        }
+
+      if (isNumber)
+      {
+        r = stoi(input.substr(1, n - 1));
+        if (r >= 1 && r <= boardDimen)
+        {
+          r--;
+          validRow = true;
+        }
+      }   
+
+      if (validRow && validColumn) break;  
     }
 
-    cout << "Invalid colume\n";
+    cout << "Invalid input\n";
   }
 
-  return col;
-}
-
-int getRow(int boardDimen)
-{
-  int row;
-
-  while (true)
-  {
-    cout << "enter the row of next move (1~" << boardDimen << ") : ";
-    string input;
-    cin >> input;
-
-    bool isNumber = true;
-    for (int i = 0, n = input.length(); i < n; i++)
-      if (!isdigit(input[i]))
-      {
-        isNumber = false; break;
-      }
-
-    if (isNumber)
-    {
-      row = stoi(input);
-      if (row >= 1 && row <= boardDimen)
-      {
-         row--; break;
-      }
-    }
-    
-    cout << "Invalid row\n";
-  }
-
-  return row;
+  *row = r; *col = c;
 }
