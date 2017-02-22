@@ -174,12 +174,16 @@ bool ChessBoard::judge(STATUS color, int row, int col)
   for (int d = 0; d < 4; d++)
   {
     int length = 1;
+
+    /* from (row, col), move backward and then forward along the chosen direction*/
+    /* check if the same color appears consecutively*/
     for (int move = -1; move <= 1; move += 2)
       for (int offset = 1; offset < 5; offset++)
       {
         int checkRow = row + dir[d][0] * move * offset,
           checkCol = col + dir[d][1] * move * offset;
 
+        /* check if out the bound*/
         if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
           checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
@@ -188,7 +192,6 @@ bool ChessBoard::judge(STATUS color, int row, int col)
           break;
 
         length++;
-
         if (length == 5) return true;
       }
   }
