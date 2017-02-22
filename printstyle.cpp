@@ -17,7 +17,7 @@ struct Style
 enum STATUS 
 {
   EMPTY = (int)' ', SAME = (int)'O', DIFFERENT = (int)'X', 
-  NO_MATTER = (int)'-', ANALIZE_POINT = (int)'*'
+  NO_MATTER = (int)'-', ANALYZE_POINT = (int)'*'
 };
 
 void print(int length, STATUS *status, Style *style);
@@ -28,7 +28,7 @@ void styleMaker(int length, int index, STATUS *status)
   {
     if (i == length / 2) 
     {
-      status[i] = ANALIZE_POINT;
+      status[i] = ANALYZE_POINT;
       continue;
     }
 
@@ -106,7 +106,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
           for (int i = 0; i < length; ++i)
           {
             if (i == length / 2)
-              newStatus[i] = ANALIZE_POINT;
+              newStatus[i] = ANALYZE_POINT;
             else if ((i - (length / 2 - n)) < 0 || (i - (length / 2 - n)) >= length)
               newStatus[i] = EMPTY;
             else
@@ -131,7 +131,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
         
       }
 
-    status[length / 2] = ANALIZE_POINT;
+    status[length / 2] = ANALYZE_POINT;
 
     if (lStyle->length < rStyle->length || 
       (lStyle->length == rStyle->length && (lStyle->life < rStyle->life)))
@@ -167,7 +167,7 @@ void print(int length, STATUS *status, Style *style)
 int main()
 {
 
-  cout << "not concider long connect : \n";
+  cout << "not considering long connect : \n";
   int length = 9;
   int styleAmount = pow(3, length - 1);
 
@@ -187,7 +187,7 @@ int main()
     }
   }
 
-  cout << "\nconcider long connect : \n";
+  cout << "\nconsidering long connect : \n";
   length = 11;
   styleAmount = pow(3, length - 1);
 
