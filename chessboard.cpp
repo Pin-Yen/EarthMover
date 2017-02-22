@@ -1,6 +1,5 @@
 #include "chessboard.hpp"
 #include <iomanip>
-#include <assert.h>
 #include <string>
 #include <iostream>
 
@@ -178,7 +177,7 @@ bool ChessBoard::judge(STATUS color, int row, int col)
     /* from (row, col), move backward and then forward along the chosen direction*/
     /* check if the same color appears consecutively*/
     for (int move = -1; move <= 1; move += 2)
-      for (int offset = 1; offset < 5; offset++)
+      for (int offset = 1; offset <= 4; offset++)
       {
         int checkRow = row + dir[d][0] * move * offset,
           checkCol = col + dir[d][1] * move * offset;
