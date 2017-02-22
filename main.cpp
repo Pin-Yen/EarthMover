@@ -43,7 +43,7 @@ void play(ChessBoard* board)
 
     if (board->judge(status, row, col))
     {
-      cout << (status == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
+      cout << (status == STATUS::BLACK ? "Black" : "White") << " win !\n\n";
 
       board->wipe(true);
     }
