@@ -25,7 +25,8 @@ void play(ChessBoard* board)
     
     STATUS status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
 
-    /* get user's input*/
+    /* get user's input and try to play, if the input is not valid,*/
+    /* it will keep ask another input*/
     while (true)
     {
       cout << (status == STATUS::BLACK ? "Black turn\n" : "White turn\n");
@@ -43,7 +44,7 @@ void play(ChessBoard* board)
 
     if (board->judge(status, row, col))
     {
-      cout << (status == STATUS::BLACK ? "Black" : "White") << "win !\n\n";
+      cout << (status == STATUS::BLACK ? "Black" : "White") << " win !\n\n";
 
       board->wipe(true);
     }

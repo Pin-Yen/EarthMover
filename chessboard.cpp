@@ -1,6 +1,5 @@
 #include "chessboard.hpp"
 #include <iomanip>
-#include <assert.h>
 #include <string>
 #include <iostream>
 
@@ -132,10 +131,10 @@ bool ChessBoard::isBlackTurn()
 STATUS ChessBoard::judge(){
 
   /* index: 0→ 1↓ 2↗ 3↘*/
-  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1},{1, 1}};
+  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
   /* INclude lowerbound when searching */
-  const int lowerBound[4][2] = {{0,0}, {0, 0}, {4, 0}, {0, 0}}; 
+  const int lowerBound[4][2] = {{0, 0}, {0, 0}, {4, 0}, {0, 0}}; 
 
   /* EXclude upperbound when searching */
   const int upperBound[4][2] = {
@@ -169,40 +168,32 @@ STATUS ChessBoard::judge(){
 bool ChessBoard::judge(STATUS color, int row, int col)
 {
   /* index: 0→ 1↓ 2↗ 3↘ */
-  const int dir[4][2] = {{0,1},{1,0},{-1,1},{1,1}};
+  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
   for (int d = 0; d < 4; d++)
   {
-    for(int startPoint = -4; startPoint <= 0; startPoint++)
-    {  
-      int checkRow = row + startPoint*dir[d][0];
-      int checkCol = col + startPoint*dir[d][1];
 
-      /* check if this startPoint is out of bound*/
-      if(checkRow<0 || checkRow >= ChessBoard::CHESSBOARD_DIMEN
-        || checkCol<0 || checkCol >= ChessBoard::CHESSBOARD_DIMEN)
-        continue;
+    int length = 1;
 
-      /* check if we will "hit the wall" in this segment */
-      if ( (dir[d][0] == 1 && checkRow + 4 >= CHESSBOARD_DIMEN )
-        || (dir[d][1] == 1 && checkCol + 4 >= CHESSBOARD_DIMEN )
-        || (dir[d][0] == -1 && checkRow - 4 < 0)
-        || (dir[d][1] == -1 && checkCol - 4 < 0))
-        continue;
-
-      for (int offset = 0; offset < 5; offset++)
+    /* from (row, col), move backward and then forward along the chosen direction*/
+    /* check if the same color appears consecutively*/
+    for (int move = -1; move <= 1; move += 2)
+      for (int offset = 1; offset <= 4; offset++)
       {
+        int checkRow = row + dir[d][0] * move * offset,
+          checkCol = col + dir[d][1] * move * offset;
+
+        /* check if out the bound*/
+        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+          checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
+          break;
 
         if (pointStatus[checkRow][checkCol] != color)
           break;
 
-        if (offset == 4)
-          return true;
-
-        checkRow += dir[d][0];
-        checkCol += dir[d][1];
+        length++;
+        if (length == 5) return true;
       }
-    }
   }
 
   return false;
