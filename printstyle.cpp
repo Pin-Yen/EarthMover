@@ -114,6 +114,23 @@ bool checkNecessary(int length, STATUS *status)
     }
     meetDiff = false;
   }
+
+  if (length == 11)
+  {
+    for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
+    {  
+      int length = 0;
+      for (int i = 0, n = start; i < 5; ++i, n += move)
+      {
+        if (status[n] != SAME)
+          break;
+
+        length++;
+
+        if (length == 5) return false;
+      }
+    }
+  }
    
   return true; 
 }
