@@ -148,27 +148,35 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     /* play at the analize point*/
     status[length / 2] = SAME;
 
-    /* try to find the left and right bound of CG, if it's empty, */
+    /* try to find the left and right bound of CG*/
+    /* if it's empty, see this point as new analize point*/
+    /* make a new status array and use recursion analize the status*/
     Style *lStyle, *rStyle;
 
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, n = start; count < 4; ++count, n += move)
       {
-        /**/
+        /* if the bound is an empty point*/
         if (status[n] == EMPTY)
         {
+          /* make a new status array*/
           STATUS newStatus[length];
 
+          /* translate from origin status*/
           for (int i = 0; i < length; ++i)
           {
             if (i == length / 2)
+              /* if i = center of length, it's analize point*/
               newStatus[i] = ANALYZE_POINT;
             else if ((i - (length / 2 - n)) < 0 || (i - (length / 2 - n)) >= length)
+              /* length / 2 - n means translation magnitude*/
+              /* if out of bound, see it as empty point*/
               newStatus[i] = EMPTY;
             else
               newStatus[i] = status[i - (length / 2 - n)];
           }
 
+          /* recursion analize*/
           if (move == -1)
             lStyle = styleAnalyze(length, newStatus, checkLongConnect);
           else
@@ -176,6 +184,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
           
           break;
         }
+        /* if the board of CG is opponent chess, it means blocked*/
         else if (status[n] == DIFFERENT)
         {
           if (move == -1)
@@ -205,7 +214,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
       return new Style(4, 1);
     else if (lStyle->length == 5)
       /* if left and right only one side produce 5 after play at analize point,*
-      /* it is a life four style*/
+      /* it is a dead four style*/
       return new Style(4, 0);
     else
       return new Style(lStyle->length - 1, lStyle->life);
