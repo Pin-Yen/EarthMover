@@ -7,10 +7,10 @@ struct Style
 {
   int length, life;
 
-  Style(int _length, bool _life)
+  Style(int le, bool li)
   {
-    length = _length;
-    life = _life;
+    length = le;
+    life = li;
   }
 };
 
@@ -20,7 +20,57 @@ enum STATUS
   NO_MATTER = (int)'-', ANALYZE_POINT = (int)'*'
 };
 
+void styleMaker(int length, int index, STATUS *status);
+
+bool checkNecessary(int length, STATUS *status);
+
+Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect);
+
 void print(int length, STATUS *status, Style *style);
+
+int main()
+{
+
+  cout << "not considering long connect : \n";
+  int length = 9;
+  int styleAmount = pow(3, length - 1);
+
+  for (int i = 0, n = 0; i < styleAmount; ++i)
+  {
+    STATUS status[length];
+    styleMaker(length, i, status);
+    if (checkNecessary(length, status))
+    {
+      n++;
+      cout << n << " : "; 
+
+      Style* style = styleAnalyze(length, status, false);
+
+      print(length, status, style);
+
+    }
+  }
+
+  cout << "\nconsidering long connect : \n";
+  length = 11;
+  styleAmount = pow(3, length - 1);
+
+  for (int i = 0, n = 0; i < styleAmount; ++i)
+  {
+    STATUS status[length];
+    styleMaker(length, i, status);
+    if (checkNecessary(length, status))
+    {
+      n++;
+      cout << n << " : "; 
+
+      Style* style = styleAnalyze(length, status, true);
+
+      print(length, status, style);
+
+    }
+  }
+}
 
 void styleMaker(int length, int index, STATUS *status)
 {
@@ -74,6 +124,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
 {
   int connect = 1;
 
+  /* check the length of the connection around the analize point*/
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, n = start; i < 4; ++i, n += move)
     {
@@ -84,18 +135,21 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     }
 
   if (connect > 5)
-  {
+    /* connection's length > 5, if check long connect, return -2, else return 5*/
     return (checkLongConnect ? (new Style(-2, 0)) : (new Style(5, 0)));
-  }
   else if (connect == 5)
-  {
+    /* connection's length == 5, return 5*/
     return new Style(5, 0);
-  }
   else
   {
+    /* connection's length < 5*/
+
+    /* play at the analize point*/
     status[length / 2] = SAME;
 
+
     Style *lStyle, *rStyle;
+
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, n = start; count < 4; ++count, n += move)
       {
@@ -131,8 +185,10 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
         
       }
 
+    /* restore the analize point */
     status[length / 2] = ANALYZE_POINT;
 
+    /* keep lStyle > rStyle*/
     if (lStyle->length < rStyle->length || 
       (lStyle->length == rStyle->length && (lStyle->life < rStyle->life)))
     {
@@ -142,8 +198,12 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     }
 
     if (lStyle->length == 5 && rStyle->length == 5)
+      /* if left and right will both produce 5 after play at analize point,*
+      /* it is a life four style*/
       return new Style(4, 1);
     else if (lStyle->length == 5)
+      /* if left and right only one side produce 5 after play at analize point,*
+      /* it is a life four style*/
       return new Style(4, 0);
     else
       return new Style(lStyle->length - 1, lStyle->life);
@@ -158,52 +218,9 @@ void print(int length, STATUS *status, Style *style)
     cout << (char)status[i];
 
   cout << " style : " << style->length;
+
   if (style->length > 0 && style->length < 5)
     cout << " " << (style->life == 1 ? "life" : "dead");
 
-  cout << endl;
-}
-
-int main()
-{
-
-  cout << "not considering long connect : \n";
-  int length = 9;
-  int styleAmount = pow(3, length - 1);
-
-  for (int i = 0, n = 0; i < styleAmount; ++i)
-  {
-    STATUS status[length];
-    styleMaker(length, i, status);
-    if (checkNecessary(length, status))
-    {
-      n++;
-      cout << n << " : "; 
-
-      Style* style = styleAnalyze(length, status, false);
-
-      print(length, status, style);
-
-    }
-  }
-
-  cout << "\nconsidering long connect : \n";
-  length = 11;
-  styleAmount = pow(3, length - 1);
-
-  for (int i = 0, n = 0; i < styleAmount; ++i)
-  {
-    STATUS status[length];
-    styleMaker(length, i, status);
-    if (checkNecessary(length, status))
-    {
-      n++;
-      cout << n << " : "; 
-
-      Style* style = styleAnalyze(length, status, true);
-
-      print(length, status, style);
-
-    }
-  }
+  cout << "\n";
 }
