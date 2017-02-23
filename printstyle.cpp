@@ -47,7 +47,6 @@ int main()
       Style* style = styleAnalyze(length, status, false);
 
       print(length, status, style);
-
     }
   }
 
@@ -67,7 +66,6 @@ int main()
       Style* style = styleAnalyze(length, status, true);
 
       print(length, status, style);
-
     }
   }
 }
@@ -125,6 +123,9 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
   int connect = 1;
 
   /* check the length of the connection around the analize point*/
+  /* under the following, we call this chess group "center group" (CG)*/
+  /* for example : --X O*OOX-- ; OOOO* O X */
+  /*                    ^^^^      ^^^^^     */
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, n = start; i < 4; ++i, n += move)
     {
@@ -135,24 +136,25 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     }
 
   if (connect > 5)
-    /* connection's length > 5, if check long connect, return -2, else return 5*/
+    /* CG's length > 5, if check long connect, return -2, else return 5*/
     return (checkLongConnect ? (new Style(-2, 0)) : (new Style(5, 0)));
   else if (connect == 5)
-    /* connection's length == 5, return 5*/
+    /* CG's length == 5, return 5*/
     return new Style(5, 0);
   else
   {
-    /* connection's length < 5*/
+    /* CG's length < 5*/
 
     /* play at the analize point*/
     status[length / 2] = SAME;
 
-
+    /* try to find the left and right bound of CG, if it's empty, */
     Style *lStyle, *rStyle;
 
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, n = start; count < 4; ++count, n += move)
       {
+        /**/
         if (status[n] == EMPTY)
         {
           STATUS newStatus[length];
