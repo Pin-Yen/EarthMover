@@ -13,8 +13,8 @@ ChessBoard::ChessBoard()
 /* prints the current chesssboard */
 void ChessBoard::invalidate()
 {
-  for (int r = 0; r < CHESSBOARD_DIMEN + 2; r++)
-    for (int c = 0; c < CHESSBOARD_DIMEN + 2; c++)
+  for (int r = 0; r < CHESSBOARD_DIMEN + 2; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN + 2; ++c)
     {
       if (r > 0 && r < CHESSBOARD_DIMEN + 1 && c > 0 && c < CHESSBOARD_DIMEN + 1)
         printBoard(r, c, pointStatus[r - 1][c - 1]);
@@ -86,7 +86,7 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
 
     /* if not at the first or last row, print │ between two row*/
     if (row > 0 && row < CHESSBOARD_DIMEN)
-      for (int i = 0; i < CHESSBOARD_DIMEN; i++)
+      for (int i = 0; i < CHESSBOARD_DIMEN; ++i)
         cout << "   │";
 
     cout << "\n";
@@ -99,7 +99,7 @@ bool ChessBoard::play(STATUS color, int row, int col)
   if (pointStatus[row][col] != EMPTY) return false;  
   
   records[playNo] = Point(row, col, color);
-  playNo++;
+  ++playNo;
   pointStatus[row][col] = color;
   blackTurn = !blackTurn;
 
@@ -111,8 +111,8 @@ bool ChessBoard::play(STATUS color, int row, int col)
 /* clears the whole game */
 void ChessBoard::wipe(bool isInvalidate)
 {
-  for (int r = 0; r < CHESSBOARD_DIMEN; r++)
-    for (int c = 0; c < CHESSBOARD_DIMEN; c++)
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       pointStatus[r][c] = EMPTY;
 
   playNo = 0;
@@ -145,12 +145,12 @@ STATUS ChessBoard::judge(){
 
   STATUS targetColor[2] = {BLACK, WHITE};
 
-  for (int color = 0; color < 2; color++)
+  for (int color = 0; color < 2; ++color)
     /* for each direction d, start searching from lowerbound, and stop at upperBound */
-    for (int d = 0; d < 4; d++)
-      for (int r = lowerBound[d][0]; r < upperBound[d][0]; r++)
-        for (int c = lowerBound[d][1]; c < upperBound[d][1]; c++)
-          for (int offset = 0; offset < 5; offset++)
+    for (int d = 0; d < 4; ++d)
+      for (int r = lowerBound[d][0]; r < upperBound[d][0]; ++r)
+        for (int c = lowerBound[d][1]; c < upperBound[d][1]; ++c)
+          for (int offset = 0; offset < 5; ++offset)
           {
             int checkRow = r + offset * dir[d][0],
               checkCol = c + offset * dir[d][1];
@@ -170,7 +170,7 @@ bool ChessBoard::judge(STATUS color, int row, int col)
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
-  for (int d = 0; d < 4; d++)
+  for (int d = 0; d < 4; ++d)
   {
     int length = 1;
 

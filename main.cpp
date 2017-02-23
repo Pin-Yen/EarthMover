@@ -83,7 +83,7 @@ void getInput(int* row, int* col, int boardDimen)
 
       /* get row*/
       bool isNumber = true;
-      for (int i = 1; i < n; i++)
+      for (int i = 1; i < n; ++i)
         if (!isdigit(input[i]))
         {
           isNumber = false; break;

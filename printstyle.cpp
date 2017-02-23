@@ -7,10 +7,10 @@ struct Style
 {
   int length, life;
 
-  Style(int le, bool li)
+  Style(int length, bool life)
   {
-    length = le;
-    life = li;
+    this->length = length;
+    this->life = life;
   }
 };
 
@@ -30,42 +30,25 @@ void print(int length, STATUS *status, Style *style);
 
 int main()
 {
-
-  cout << "not considering long connect : \n";
-  int length = 9;
-  int styleAmount = pow(3, length - 1);
-
-  for (int i = 0, n = 0; i < styleAmount; ++i)
+  for (int length = 9; length <= 11; length += 2)
   {
-    STATUS status[length];
-    styleMaker(length, i, status);
-    if (checkNecessary(length, status))
+    cout << 
+      (length == 9 ? "not considering long connect : \n" : "considering long connect : \n");
+
+    int styleAmount = pow(3, length - 1);
+
+    for (int i = 0, n = 1; i < styleAmount; ++i, ++n)
     {
-      n++;
-      cout << n << " : "; 
+      STATUS status[length];
+      styleMaker(length, i, status);
+      if (checkNecessary(length, status))
+      {
+        cout << n << " : "; 
 
-      Style* style = styleAnalyze(length, status, false);
+        Style* style = styleAnalyze(length, status, false);
 
-      print(length, status, style);
-    }
-  }
-
-  cout << "\nconsidering long connect : \n";
-  length = 11;
-  styleAmount = pow(3, length - 1);
-
-  for (int i = 0, n = 0; i < styleAmount; ++i)
-  {
-    STATUS status[length];
-    styleMaker(length, i, status);
-    if (checkNecessary(length, status))
-    {
-      n++;
-      cout << n << " : "; 
-
-      Style* style = styleAnalyze(length, status, true);
-
-      print(length, status, style);
+        print(length, status, style);
+      }
     }
   }
 }
@@ -116,7 +99,6 @@ bool checkNecessary(int length, STATUS *status)
   }
 
   if (length == 11)
-  {
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     {  
       int length = 0;
@@ -125,12 +107,11 @@ bool checkNecessary(int length, STATUS *status)
         if (status[n] != SAME)
           break;
 
-        length++;
+        ++length;
 
         if (length == 5) return false;
       }
     }
-  }
    
   return true; 
 }
@@ -149,7 +130,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
       if (status[n] != SAME)
         break;
 
-      connect++;
+      ++connect;
     }
 
   if (connect > 5)
