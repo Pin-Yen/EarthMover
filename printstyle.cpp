@@ -217,9 +217,9 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
       /* it is a dead four style*/
       return new Style(4, 0);
     else
+      /* if left length < 4, return left length - 1*/
+      /* (current recursion's result = lower recursion's result - 1) */
       return new Style(lStyle->length - 1, lStyle->life);
-
-    return new Style(0, 0);
   }
 }
 
