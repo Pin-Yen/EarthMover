@@ -37,15 +37,17 @@ int main()
 
     int styleAmount = pow(3, length - 1);
 
-    for (int i = 0, n = 1; i < styleAmount; ++i, ++n)
+    for (int i = 0, n = 0; i < styleAmount; ++i)
     {
       STATUS status[length];
       styleMaker(length, i, status);
       if (checkNecessary(length, status))
       {
-        cout << n << " : "; 
+        cout << ++n << " : "; 
 
-        Style* style = styleAnalyze(length, status, false);
+        bool checkLongConnect = !(length == 9);
+
+        Style* style = styleAnalyze(length, status, checkLongConnect);
 
         print(length, status, style);
       }
