@@ -39,6 +39,5 @@ private:
 	void print(int length, STATUS *status, ChessType *style);
 
 	/* copied from chesstypemaker.cpp */
-	ChessType * typeAnalyze(int length, STATUS *status, bool checkLongConnect);
-
+	ChessType * typeAnalyze(STATUS *status, bool checkForbidden);
 };
