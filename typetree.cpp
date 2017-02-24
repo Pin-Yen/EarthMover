@@ -10,18 +10,21 @@ TypeTree::TypeTree(){
  * parameters of the initial call should be:
  * currentLocation: length/2, move = -1 */
 void TypeTree::dfs(Node *root, STATUS *status, int currentLocation, int move){
-	if(status[currentLocation] == DIFFERENT || currentLocation < 0 || currentLocation > length){
+	int nextLocation = currentLocation += move;
+
+	if(status[currentLocation] == DIFFERENT || currentLocation < 0 || currentLocation >= length){
 		if(move == 1){
 			// reached leaf.
 			root->type = typeAnalyze(length, status, checkLongConnect);
 			print(length,status,root->type);
 			return;
 		}
-		else
+		else{
 			move += 2;
+			nextLocation = length/2 + 1;
+		}
 	}
 
-	int nextLocation = currentLocation += move;
 
 	/* let next location be the same color */
 	root->childNode[0] = (Node*)malloc(sizeof(Node));
