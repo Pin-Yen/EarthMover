@@ -32,8 +32,8 @@ int main()
 {
   for (int length = 9; length <= 11; length += 2)
   {
-    cout << 
-      (length == 9 ? "not considering long connect : \n" : "considering long connect : \n");
+    cout << (length == 9 ? 
+      "not considering long connect : \n" : "considering long connect : \n");
 
     int styleAmount = pow(3, length - 1);
 
@@ -41,6 +41,7 @@ int main()
     {
       STATUS status[length];
       styleMaker(length, i, status);
+
       if (checkNecessary(length, status))
       {
         cout << ++n << ": "; 
@@ -106,8 +107,7 @@ bool checkNecessary(int length, STATUS *status)
       int length = 0;
       for (int i = 0, n = start; i < 5; ++i, n += move)
       {
-        if (status[n] != SAME)
-          break;
+        if (status[n] != SAME) break;
 
         ++length;
 
@@ -125,7 +125,7 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
   /* check the length of the connection around the analize point*/
   /* under the following, we call this chess group "center group" (CG)*/
   /* for example : --X O*OOX-- ; OOOO* O X */
-  /*                    ^^^^      ^^^^^     */
+  /*                   ^^^^      ^^^^^     */
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, n = start; i < 4; ++i, n += move)
     {
@@ -217,7 +217,8 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
       /* it is a dead four style*/
       return new Style(4, 0);
     else if (lStyle->length == 6 || lStyle-> length == 0)
-      /* if the longer size produce 5 after play at analize point, it is a useless point*/
+      /* if the longer size produce 6 or 0 after play at analize point,*/
+      /* it is a useless point*/
       return new Style(0, 0);
     else
       /* if left length < 4, return left length - 1*/
