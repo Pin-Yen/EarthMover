@@ -3,11 +3,11 @@
 
 using namespace std;
 
-struct Style
+struct ChessType
 {
   int length, life;
 
-  Style(int length, bool life)
+  ChessType(int length, bool life)
   {
     this->length = length;
     this->life = life;
@@ -20,13 +20,13 @@ enum STATUS
   NO_MATTER = (int)'-', ANALYZE_POINT = (int)'*'
 };
 
-void styleMaker(int length, int index, STATUS *status);
+void typeMaker(int length, int index, STATUS *status);
 
 bool checkNecessary(int length, STATUS *status);
 
-Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect);
+ChessType * typeAnalyze(STATUS *status, bool checkForbidden);
 
-void print(int length, STATUS *status, Style *style);
+void print(int length, STATUS *status, ChessType *type);
 
 int main()
 {
@@ -40,23 +40,23 @@ int main()
     for (int i = 0, n = 0; i < styleAmount; ++i)
     {
       STATUS status[length];
-      styleMaker(length, i, status);
+      typeMaker(length, i, status);
 
       if (checkNecessary(length, status))
       {
         cout << ++n << ": "; 
 
-        bool checkLongConnect = !(length == 9);
+        bool checkForbidden = !(length == 9);
 
-        Style* style = styleAnalyze(length, status, checkLongConnect);
+        ChessType* type = typeAnalyze(status, checkForbidden);
 
-        print(length, status, style);
+        print(length, status, type);
       }
     }
   }
 }
 
-void styleMaker(int length, int index, STATUS *status)
+void typeMaker(int length, int index, STATUS *status)
 {
   for (int i = 0; i < length; ++i)
   {
@@ -118,8 +118,10 @@ bool checkNecessary(int length, STATUS *status)
   return true; 
 }
 
-Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
+ChessType * typeAnalyze(STATUS *status, bool checkForbidden)
 {
+  int length = checkForbidden ? 11 : 9;
+
   int connect = 1;
 
   /* check the length of the connection around the analize point*/
@@ -129,18 +131,17 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, n = start; i < 4; ++i, n += move)
     {
-      if (status[n] != SAME)
-        break;
+      if (status[n] != SAME) break;
 
       ++connect;
     }
 
   if (connect > 5)
-    /* CG's length > 5, if check long connect, return 6, else return 5*/
-    return (checkLongConnect ? (new Style(6, 0)) : (new Style(5, 0)));
+    /* CG's length > 5, if check forbidden, return -1, else return 5*/
+    return (checkForbidden ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
   else if (connect == 5)
     /* CG's length == 5, return 5*/
-    return new Style(5, 0);
+    return new ChessType(5, 0);
   else
   {
     /* CG's length < 5*/
@@ -151,93 +152,109 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     /* try to find the left and right bound of CG*/
     /* if it's empty, see this point as new analize point*/
     /* make a new status array and use recursion analize the status*/
-    Style *lStyle, *rStyle;
+    ChessType *lType, *rType;
 
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
-      for (int count = 0, n = start; count < 4; ++count, n += move)
-      {
-        /* if the bound is an empty point*/
-        if (status[n] == EMPTY)
+      for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
+        /* if reach CG's bound*/
+        if (status[checkPoint] != SAME)
         {
-          /* make a new status array*/
-          STATUS newStatus[length];
+          ChessType* type;
 
-          /* translate from origin status*/
-          for (int i = 0; i < length; ++i)
+          /* if the bound is an empty point*/
+          if (status[checkPoint] == EMPTY)
           {
-            if (i == length / 2)
-              /* if i = center of length, it's analize point*/
-              newStatus[i] = ANALYZE_POINT;
-            else if ((i - (length / 2 - n)) < 0 || (i - (length / 2 - n)) >= length)
-              /* length / 2 - n means translation magnitude*/
-              /* if out of bound, see it as empty point*/
-              newStatus[i] = EMPTY;
-            else
-              newStatus[i] = status[i - (length / 2 - n)];
-          }
+            /* make a new status array*/
+            STATUS newStatus[length];
 
-          /* recursion analize*/
-          if (move == -1)
-            lStyle = styleAnalyze(length, newStatus, checkLongConnect);
-          else
-            rStyle = styleAnalyze(length, newStatus, checkLongConnect);
+            /* transform from origin status*/
+            for (int i = 0; i < length; ++i)
+            {
+              if (i == length / 2)
+                /* if i = center of length, it's analize point*/
+                newStatus[i] = ANALYZE_POINT;
+              else
+              { 
+                /* length / 2 - n means transformation magnitude*/
+                int transformation_index = i - (length / 2 - checkPoint);
+
+                if (transformation_index < 0 || transformation_index >= length)
+                  /* if out of bound, see it as empty point*/
+                  newStatus[i] = EMPTY;
+                else
+                  newStatus[i] = status[transformation_index];
+              }
+            }
+
+            /* recursion analize*/
+            type = typeAnalyze(newStatus, checkForbidden);
+          }
+          /* if the board of CG is opponent chess, it means blocked*/
+          else if (status[checkPoint] == DIFFERENT)
+            type = new ChessType(0, 0);
           
-          break;
-        }
-        /* if the board of CG is opponent chess, it means blocked*/
-        else if (status[n] == DIFFERENT)
-        {
+          /* set analize result l/rType*/
           if (move == -1)
-            lStyle = new Style(0, 0);
+            lType = type;
           else
-            rStyle = new Style(0, 0);
+            rType = type;
+
           break;
         }
-        
-      }
+
 
     /* restore the analize point */
     status[length / 2] = ANALYZE_POINT;
 
-    /* keep lStyle > rStyle*/
-    if (lStyle->length < rStyle->length || 
-      (lStyle->length == rStyle->length && (lStyle->life < rStyle->life)))
+    /* keep lType > rType*/
+    if (lType->length < rType->length || 
+      (lType->length == rType->length && (lType->life < rType->life)))
     {
-      Style* temp = lStyle;
-      lStyle = rStyle;
-      rStyle = temp;
+      ChessType* temp = lType;
+      lType = rType;
+      rType = temp;
     }
 
-    if (lStyle->length == 5 && rStyle->length == 5)
+    if (lType->length == 5 && rType->length == 5)
       /* if left and right will both produce 5 after play at analize point,*/
-      /* it is a life four style*/
-      return new Style(4, 1);
-    else if (lStyle->length == 5)
+    {
+      if (checkForbidden && connect < 4)
+        return new ChessType(-1, 0);
+      else
+        return new ChessType(4, 1);
+    }
+      
+    else if (lType->length == 5)
       /* if there is only one side produce 5 after play at analize point,*/
       /* it is a dead four style*/
-      return new Style(4, 0);
-    else if (lStyle->length == 6 || lStyle-> length == 0)
+      return new ChessType(4, 0);
+    else if (lType->length == 0 || lType-> length == -1)
       /* if the longer size produce 6 or 0 after play at analize point,*/
       /* it is a useless point*/
-      return new Style(0, 0);
+      return new ChessType(0, 0);
     else
       /* if left length < 4, return left length - 1*/
       /* (current recursion's result = lower recursion's result - 1) */
-      return new Style(lStyle->length - 1, lStyle->life);
+      return new ChessType(lType->length - 1, lType->life);
   }
 }
 
-void print(int length, STATUS *status, Style *style)
+void print(int length, STATUS *status, ChessType *type)
 {
   /* print status array*/
   for (int i = 0; i < length; ++i)
     cout << (char)status[i];
 
-  cout << " style: ";
+  cout << " type: ";
 
-  if (style->length > 0 && style->length < 5)
+  if (type->length > 0 && type->length < 5)
     /* print life or dead only if length == 1, 2, 3, 4*/
-    cout << (style->life == 1 ? "life" : "dead") << " ";
+    cout << (type->life == 1 ? "life" : "dead") << " ";
 
-  cout << style->length << "\n";
+  if (type->length == -1)
+    cout << "forbidden point";
+  else
+    cout << type->length;
+
+  cout << endl;
 }
