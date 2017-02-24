@@ -1,3 +1,6 @@
+#ifndef STYLE_H
+#define STYLE_H
+
 struct Style
 {
   int length, life;
@@ -8,3 +11,5 @@ struct Style
     this->life = life;
   }
 };
+
+#endif
