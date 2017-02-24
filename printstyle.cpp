@@ -229,14 +229,15 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
 
 void print(int length, STATUS *status, Style *style)
 {
-
+  /* print status array*/
   for (int i = 0; i < length; ++i)
     cout << (char)status[i];
 
   cout << " style: ";
 
   if (style->length > 0 && style->length < 5)
-    cout << " " << (style->life == 1 ? "life" : "dead");
+    /* print life or dead only if length == 1, 2, 3, 4*/
+    cout << (style->life == 1 ? "life" : "dead") << " ";
 
   cout << style->length << "\n";
 }
