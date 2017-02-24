@@ -1,4 +1,4 @@
-#include "style.hpp"
+#include "chesstype.hpp"
 
 class TypeTree
 {
@@ -12,7 +12,7 @@ public:
 		NO_MATTER = (int)'-', ANALYZE_POINT = (int)'*'
 	};
 
-	Style* classify(STATUS *status);
+	ChessType* classify(STATUS *status);
 
 private:
 
@@ -25,7 +25,7 @@ private:
 		 * 0:same color, 1:different color, 2:empty */
 		Node *childNode[3];
 
-		struct Style *style;
+		struct ChessType *type;
 	};
 
 	Node root;
@@ -35,11 +35,10 @@ private:
 	 * currentLocation: length/2, move = -1 */
 	void dfs(Node *root, STATUS *status, int currentLocation, int move);
 
-	/* copied from printstyle.cpp, just for debugging purposes */
-	void print(int length, STATUS *status, Style *style);
+	/* copied from chesstypemaker.cpp, just for debugging purposes */
+	void print(int length, STATUS *status, ChessType *style);
 
-	/* copied from printstyle.cpp */
-	Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect);
-
+	/* copied from chesstypemaker.cpp */
+	ChessType * typeAnalyze(int length, STATUS *status, bool checkLongConnect);
 
 };

@@ -13,8 +13,8 @@ void TypeTree::dfs(Node *root, STATUS *status, int currentLocation, int move){
 	if(status[currentLocation] == DIFFERENT || currentLocation < 0 || currentLocation > length){
 		if(move == 1){
 			// reached leaf.
-			root->style = styleAnalyze(length, status, checkLongConnect);
-			print(length,status,root->style);
+			root->type = typeAnalyze(length, status, checkLongConnect);
+			print(length,status,root->type);
 			return;
 		}
 		else
@@ -45,7 +45,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int currentLocation, int move){
 
 }
 
-Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect)
+ChessType * TypeTree::typeAnalyze(int length, STATUS *status, bool checkLongConnect)
 {
   int connect = 1;
 
@@ -64,10 +64,10 @@ Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect
 
   if (connect > 5)
     /* CG's length > 5, if check long connect, return 6, else return 5*/
-    return (checkLongConnect ? (new Style(6, 0)) : (new Style(5, 0)));
+    return (checkLongConnect ? (new ChessType(6, 0)) : (new ChessType(5, 0)));
   else if (connect == 5)
     /* CG's length == 5, return 5*/
-    return new Style(5, 0);
+    return new ChessType(5, 0);
   else
   {
     /* CG's length < 5*/
@@ -78,7 +78,7 @@ Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect
     /* try to find the left and right bound of CG*/
     /* if it's empty, see this point as new analize point*/
     /* make a new status array and use recursion analize the status*/
-    Style *lStyle, *rStyle;
+    ChessType *lStyle, *rStyle;
 
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, n = start; count < 4; ++count, n += move)
@@ -105,9 +105,9 @@ Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect
 
           /* recursion analize*/
           if (move == -1)
-            lStyle = styleAnalyze(length, newStatus, checkLongConnect);
+            lStyle = typeAnalyze(length, newStatus, checkLongConnect);
           else
-            rStyle = styleAnalyze(length, newStatus, checkLongConnect);
+            rStyle = typeAnalyze(length, newStatus, checkLongConnect);
           
           break;
         }
@@ -115,9 +115,9 @@ Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect
         else if (status[n] == DIFFERENT)
         {
           if (move == -1)
-            lStyle = new Style(0, 0);
+            lStyle = new ChessType(0, 0);
           else
-            rStyle = new Style(0, 0);
+            rStyle = new ChessType(0, 0);
           break;
         }
         
@@ -130,7 +130,7 @@ Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect
     if (lStyle->length < rStyle->length || 
       (lStyle->length == rStyle->length && (lStyle->life < rStyle->life)))
     {
-      Style* temp = lStyle;
+      ChessType* temp = lStyle;
       lStyle = rStyle;
       rStyle = temp;
     }
@@ -138,35 +138,35 @@ Style * TypeTree::styleAnalyze(int length, STATUS *status, bool checkLongConnect
     if (lStyle->length == 5 && rStyle->length == 5)
       /* if left and right will both produce 5 after play at analize point,*/
       /* it is a life four style*/
-      return new Style(4, 1);
+      return new ChessType(4, 1);
     else if (lStyle->length == 5)
       /* if there is only one side produce 5 after play at analize point,*/
       /* it is a dead four style*/
-      return new Style(4, 0);
+      return new ChessType(4, 0);
     else if (lStyle->length == 6 || lStyle-> length == 0)
       /* if the longer size produce 6 or 0 after play at analize point,*/
       /* it is a useless point*/
-      return new Style(0, 0);
+      return new ChessType(0, 0);
     else
       /* if left length < 4, return left length - 1*/
       /* (current recursion's result = lower recursion's result - 1) */
-      return new Style(lStyle->length - 1, lStyle->life);
+      return new ChessType(lStyle->length - 1, lStyle->life);
   }
 }
 
-void TypeTree::print(int length, STATUS *status, Style *style)
+void TypeTree::print(int length, STATUS *status, ChessType *type)
 {
   /* print status array*/
   for (int i = 0; i < length; ++i)
     std::cout << (char)status[i];
 
-  std::cout << " style: ";
+  std::cout << " type: ";
 
-  if (style->length > 0 && style->length < 5)
+  if (type->length > 0 && type->length < 5)
     /* print life or dead only if length == 1, 2, 3, 4*/
-    std::cout << (style->life == 1 ? "life" : "dead") << " ";
+    std::cout << (type->life == 1 ? "life" : "dead") << " ";
 
-  std::cout << style->length << "\n";
+  std::cout << type->length << "\n";
 }
 
 
