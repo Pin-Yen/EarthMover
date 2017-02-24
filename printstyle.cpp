@@ -1,18 +1,8 @@
 #include <math.h>
 #include <iostream>
+#include "style.hpp"
 
 using namespace std;
-
-struct Style
-{
-  int length, life;
-
-  Style(int length, bool life)
-  {
-    this->length = length;
-    this->life = life;
-  }
-};
 
 enum STATUS 
 {
@@ -55,6 +45,7 @@ int main()
     }
   }
 }
+
 
 void styleMaker(int length, int index, STATUS *status)
 {
