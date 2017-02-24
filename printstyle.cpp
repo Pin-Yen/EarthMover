@@ -43,7 +43,7 @@ int main()
       styleMaker(length, i, status);
       if (checkNecessary(length, status))
       {
-        cout << ++n << " : "; 
+        cout << ++n << ": "; 
 
         bool checkLongConnect = !(length == 9);
 
@@ -136,8 +136,8 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     }
 
   if (connect > 5)
-    /* CG's length > 5, if check long connect, return -2, else return 5*/
-    return (checkLongConnect ? (new Style(-2, 0)) : (new Style(5, 0)));
+    /* CG's length > 5, if check long connect, return 6, else return 5*/
+    return (checkLongConnect ? (new Style(6, 0)) : (new Style(5, 0)));
   else if (connect == 5)
     /* CG's length == 5, return 5*/
     return new Style(5, 0);
@@ -209,13 +209,16 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
     }
 
     if (lStyle->length == 5 && rStyle->length == 5)
-      /* if left and right will both produce 5 after play at analize point,*
+      /* if left and right will both produce 5 after play at analize point,*/
       /* it is a life four style*/
       return new Style(4, 1);
     else if (lStyle->length == 5)
-      /* if left and right only one side produce 5 after play at analize point,*
+      /* if there is only one side produce 5 after play at analize point,*/
       /* it is a dead four style*/
       return new Style(4, 0);
+    else if (lStyle->length == 6 || lStyle-> length == 0)
+      /* if the longer size produce 5 after play at analize point, it is a useless point*/
+      return new Style(0, 0);
     else
       /* if left length < 4, return left length - 1*/
       /* (current recursion's result = lower recursion's result - 1) */
@@ -225,13 +228,14 @@ Style * styleAnalyze(int length, STATUS *status, bool checkLongConnect)
 
 void print(int length, STATUS *status, Style *style)
 {
+
   for (int i = 0; i < length; ++i)
     cout << (char)status[i];
 
-  cout << " style : " << style->length;
+  cout << " style: ";
 
   if (style->length > 0 && style->length < 5)
     cout << " " << (style->life == 1 ? "life" : "dead");
 
-  cout << "\n";
+  cout << style->length << "\n";
 }
