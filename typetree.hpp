@@ -15,12 +15,7 @@ public:
   ChessType* classify(STATUS *status);
 
 private:
-
-  //const int length = 9;
-  //const bool checkLongConnect = false;
-
   struct Node{
-
     /* Next point occupied by:
      * 0:same color, 1:different color, 2:empty */
     Node *childNode[3];

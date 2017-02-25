@@ -20,7 +20,7 @@ TypeTree::TypeTree()
         status[i] = NO_MATTER;
     }
 
-    /* initialize tree*/
+    /* build tree*/
     if (length == 9)
       dfs(commonTree_root, status, length / 2, -1, 0, false);
     else
@@ -31,6 +31,10 @@ TypeTree::TypeTree()
 /* Depth First Search
  * parameters of the initial call should be:
  * location: length / 2, move = -1, connect = 0 */
+
+/* connect is used to prevent already exist five will length == 11 
+ * for example : OOOOO*OOX-- ; --X  *OOOOO 
+ *               ^^^^^               ^^^^^ */
 void TypeTree::dfs(Node *root, STATUS *status, int location, 
   int move, int connect, bool checkForbidden)
 {
@@ -47,18 +51,23 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
     }
     else
     {
+      /* jump to middle of the status*/
       move += 2;
       location = length / 2;
 
+      /* reset connect*/
       if (checkForbidden) connect = 0;
     }
   }
   else if (status[location] == SAME)
+    /* if check forbidden and color == same, increase connect*/
     if (checkForbidden)
       ++connect;
 
+  /* move location*/
   location += move;
 
+  /* if connect == 4, stop playing same color at this point to prevent appearing five*/
   if (connect < 4)
   {
     /* let next location be the same color */
