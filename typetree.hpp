@@ -3,8 +3,8 @@
 class TypeTree
 {
 public:
-  TypeTree();
-  ~TypeTree();
+  //TypeTree();
+  //~TypeTree();
 
   enum STATUS 
   {
@@ -12,7 +12,9 @@ public:
     NO_MATTER = (int)'-', ANALYZE_POINT = (int)'*'
   };
 
-  ChessType* classify(STATUS *status, bool checkForbidden);
+  static ChessType* classify(STATUS *status, bool checkForbidden);
+
+  static void initialize();
 
 private:
   struct Node
@@ -24,17 +26,17 @@ private:
     struct ChessType *type;
   };
 
-  Node *commonTree_root, *forbiddenTree_root;
+  static Node *commonTree_root, *forbiddenTree_root;
 
   /* Depth First Search
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
-  void dfs(Node *root, STATUS *status, int currentLocation, 
+  static void dfs(Node *root, STATUS *status, int currentLocation, 
     int move, int connect, bool checkForbidden);
 
   /* copied from chesstypemaker.cpp, just for debugging purposes */
-  void print(int length, STATUS *status, ChessType *style);
+  static void print(int length, STATUS *status, ChessType *style);
 
   /* copied from chesstypemaker.cpp */
-  ChessType* typeAnalyze(STATUS *status, bool checkForbidden);
+  static ChessType* typeAnalyze(STATUS *status, bool checkForbidden);
 };

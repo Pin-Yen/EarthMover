@@ -1,7 +1,8 @@
 #include "typetree.hpp"
 #include <iostream>
 
-TypeTree::TypeTree()
+//TypeTree::TypeTree()
+void TypeTree::initialize()
 {
   /* initialize root*/
   commonTree_root = (Node*)malloc(sizeof(Node));
@@ -271,5 +272,6 @@ void TypeTree::print(int length, STATUS *status, ChessType *type)
 
 int main()
 {
-  TypeTree *tree = new TypeTree();
+  //TypeTree *tree = new TypeTree();
+  TypeTree::initialize();
 }
