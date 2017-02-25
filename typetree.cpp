@@ -2,11 +2,13 @@
 #include <iostream>
 
 //TypeTree::TypeTree()
+
+/* initialize root*/
+TypeTree::Node* TypeTree::commonTree_root = (Node*)malloc(sizeof(Node));
+TypeTree::Node* TypeTree::forbiddenTree_root = (Node*)malloc(sizeof(Node));
+
 void TypeTree::initialize()
 {
-  /* initialize root*/
-  commonTree_root = (Node*)malloc(sizeof(Node));
-  forbiddenTree_root = (Node*)malloc(sizeof(Node));
 
   /* build common tree and forbidden tree*/
   for (int length = 9; length <= 11; length += 2)
