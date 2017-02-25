@@ -32,7 +32,7 @@ TypeTree::TypeTree()
  * parameters of the initial call should be:
  * location: length / 2, move = -1, connect = 0 */
 
-/* connect is used to prevent already exist five will length == 11 
+/* connect is used to prevent already exist five while length == 11 
  * for example : OOOOO*OOX-- ; --X  *OOOOO 
  *               ^^^^^               ^^^^^ */
 void TypeTree::dfs(Node *root, STATUS *status, int location, 
@@ -92,7 +92,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
   status[location] = NO_MATTER;
 }
 
-ChessType* classify(STATUS *status, bool checkForbidden)
+ChessType* TypeTree::classify(STATUS *status, bool checkForbidden)
 {
   int length = checkForbidden ? 11 : 9;
 
@@ -119,7 +119,7 @@ ChessType* classify(STATUS *status, bool checkForbidden)
       }
       
       /* if reach leaf, return type*/
-      if (node->type != null)
+      if (node->type != NULL)
         return node->type;
 
       /* if reach different color, change direction*/
