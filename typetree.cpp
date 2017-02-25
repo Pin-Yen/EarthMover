@@ -56,6 +56,8 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
       // reached leaf.
       root->type = typeAnalyze(status, checkForbidden);
       print(length, status, root->type);
+      for (int i = 0; i < 3; ++i)
+        root->childNode[i] = NULL;
       return;
     }
     else
@@ -70,28 +72,31 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
   }
   else if (status[location] == SAME)
     /* if check forbidden and color == same, increase connect*/
-    if (checkForbidden)
-      ++connect;
+    if (checkForbidden) ++connect;
 
   /* move location*/
   location += move;
+
+  root->type = NULL;
 
   /* if connect == 4, stop playing same color at this point to prevent appearing five*/
   if (connect < 4)
   {
     /* let next location be the same color */
-    root->childNode[0] = (Node*)malloc(sizeof(Node));
+    if (root->childNode[0] == NULL) root->childNode[0] = (Node*)malloc(sizeof(Node));
     status[location] = SAME;
     dfs(root->childNode[0], status, location, move, connect, checkForbidden);
   }
+  else
+    root->childNode[0] = NULL;
 
   /* let next location be different color */
-  root->childNode[1] = (Node*)malloc(sizeof(Node));
+  if (root->childNode[1] == NULL) root->childNode[1] = (Node*)malloc(sizeof(Node));
   status[location] = DIFFERENT;
   dfs(root->childNode[1], status, location, move, connect, checkForbidden);    
 
   /* let next location be empty */
-  root->childNode[2] = (Node*)malloc(sizeof(Node));
+  if (root->childNode[2] == NULL) root->childNode[2] = (Node*)malloc(sizeof(Node));
   status[location] = EMPTY;
   dfs(root->childNode[2], status, location, move, connect, checkForbidden);
 
@@ -104,14 +109,19 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
 ChessType* TypeTree::cutSameResultChild(Node *root)
 {
 
-  ChessType* currentType;
+  ChessType* currentType = NULL;
 
   if (root->type != NULL) 
   {
     currentType = root->type;
+    std::cout << "1, " << currentType << std::endl;
+    std::cout << "1, " << currentType->length << std::endl;
   }
+  //std::cout << "2, " << currentType << std::endl;
+  //std::cout << "2, " << currentType->length << std::endl;
 
   for (int i = 0; i < 3; ++i)
+  {
     if (root->childNode[i] != NULL)
     {
       /* if this child node is not NULL, recursion and get return*/
@@ -120,24 +130,34 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
       /* if children cannot be cut, then this node also cannot be cut*/
       if (returnType == NULL) return NULL;
 
+      //std::cout << "3, " << currentType << std::endl;
+      //std::cout << "3, " << currentType->length << std::endl;
       if (currentType == NULL)
       {
         currentType = returnType;
       }
       else
       {
+
+        std::cout << "5, " << currentType << std::endl;
+        std::cout << "5, " << currentType->length << std::endl;
         /* if different child has different result, cannot cut this node*/
         if (currentType->length != returnType->length ||
           currentType->life != returnType->life) return NULL;
       }
     }
+  }
 
   /* cut this node, free all children and set this node's type*/
   root->type = currentType;
 
   for (int i = 0; i < 3; ++i)
     if (root->childNode[i] != NULL)
+    {
+      std::cout << "6, " << root->childNode[i] << std::endl;
+      //if (root->childNode[i]->type != NULL) delete (root->childNode[i]->type);
       free(root->childNode[i]);
+    }
 
   return currentType;
 }
