@@ -3,10 +3,14 @@
 
 TypeTree::TypeTree()
 {
+  /* initialize root*/
   commonTree_root = (Node*)malloc(sizeof(Node));
   forbiddenTree_root = (Node*)malloc(sizeof(Node));
-  for (int length = 9; length <= 11; ++length)
+
+  /* build common tree and forbidden tree*/
+  for (int length = 9; length <= 11; length += 2)
   {
+    /* initialize status*/
     STATUS status[length];
     for (int i = 0; i < length; i++)
     {
@@ -15,6 +19,8 @@ TypeTree::TypeTree()
       else
         status[i] = NO_MATTER;
     }
+
+    /* initialize tree*/
     if (length == 9)
       dfs(commonTree_root, status, length / 2, -1, 0, false);
     else
@@ -24,12 +30,11 @@ TypeTree::TypeTree()
 
 /* Depth First Search
  * parameters of the initial call should be:
- * currentLocation: length/2, move = -1 */
+ * location: length / 2, move = -1, connect = 0 */
 void TypeTree::dfs(Node *root, STATUS *status, int location, 
   int move, int connect, bool checkForbidden)
 {
   int length = (checkForbidden ? 11 : 9);
-  
 
   if (status[location] == DIFFERENT || location <= 0 || location >= length - 1)
   {
@@ -84,10 +89,10 @@ ChessType * TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
 
   int connect = 1;
 
-  /* check the length of the connection around the analize point*/
-  /* under the following, we call this chess group "center group" (CG)*/
-  /* for example : --X O*OOX-- ; OOOO* O X */
-  /*                   ^^^^      ^^^^^     */
+  /* check the length of the connection around the analize point
+   * under the following, we call this chess group "center group" (CG)
+   * for example : --X O*OOX-- ; OOOO* O X 
+   *                   ^^^^      ^^^^^     */
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, n = start; i < 4; ++i, n += move)
     {
@@ -109,9 +114,9 @@ ChessType * TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
     /* play at the analize point*/
     status[length / 2] = SAME;
 
-    /* try to find the left and right bound of CG*/
-    /* if it's empty, see this point as new analize point*/
-    /* make a new status array and use recursion analize the status*/
+    /* try to find the left and right bound of CG
+     * if it's empty, see this point as new analize point
+     * make a new status array and use recursion analize the status*/
     ChessType *lType, *rType;
 
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
@@ -185,16 +190,16 @@ ChessType * TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
     }
       
     else if (lType->length == 5)
-      /* if there is only one side produce 5 after play at analize point,*/
-      /* it is a dead four style*/
+      /* if there is only one side produce 5 after play at analize point,
+       * it is a dead four style*/
       return new ChessType(4, 0);
     else if (lType->length == 0 || lType-> length == -1)
-      /* if the longer size produce 6 or 0 after play at analize point,*/
-      /* it is a useless point*/
+      /* if the longer size produce 6 or 0 after play at analize point,
+       * it is a useless point*/
       return new ChessType(0, 0);
     else
-      /* if left length < 4, return left length - 1*/
-      /* (current recursion's result = lower recursion's result - 1) */
+      /* if left length < 4, return left length - 1
+       * (current recursion's result = lower recursion's result - 1) */
       return new ChessType(lType->length - 1, lType->life);
   }
 }
