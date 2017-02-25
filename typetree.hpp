@@ -12,7 +12,7 @@ public:
     NO_MATTER = (int)'-', ANALYZE_POINT = (int)'*'
   };
 
-  ChessType* classify(STATUS *status);
+  ChessType* classify(STATUS *status, bool checkForbidden);
 
 private:
   struct Node{
@@ -35,5 +35,5 @@ private:
   void print(int length, STATUS *status, ChessType *style);
 
   /* copied from chesstypemaker.cpp */
-  ChessType * typeAnalyze(STATUS *status, bool checkForbidden);
+  ChessType* typeAnalyze(STATUS *status, bool checkForbidden);
 };

@@ -92,7 +92,43 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
   status[location] = NO_MATTER;
 }
 
-ChessType * TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
+ChessType* classify(STATUS *status, bool checkForbidden)
+{
+  int length = checkForbidden ? 11 : 9;
+
+  Node* node;
+
+  /* switch root*/
+  if (checkForbidden)
+    node = forbiddenTree_root;
+  else
+    node = commonTree_root;
+
+  for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
+    for (int i = 0, checkPoint = start; i < length / 2; ++i, checkPoint += move)
+    {
+      /* according to the status to enter the child node*/
+      switch(status[checkPoint])
+      {
+        case SAME:
+          node = node->childNode[0]; break;
+        case DIFFERENT:
+          node = node->childNode[1]; break;
+        default:
+          node = node->childNode[2];
+      }
+      
+      /* if reach leaf, return type*/
+      if (node->type != null)
+        return node->type;
+
+      /* if reach different color, change direction*/
+      if (status[checkPoint] == DIFFERENT)
+        break;
+    }
+} 
+
+ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
 {
   int length = checkForbidden ? 11 : 9;
 
@@ -103,9 +139,9 @@ ChessType * TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
    * for example : --X O*OOX-- ; OOOO* O X 
    *                   ^^^^      ^^^^^     */
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
-    for (int i = 0, n = start; i < 4; ++i, n += move)
+    for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move)
     {
-      if (status[n] != SAME) break;
+      if (status[checkPoint] != SAME) break;
 
       ++connect;
     }
