@@ -13,7 +13,7 @@ Evaluator::~Evaluator(){
 }
 
 /* notifies the neighbors of (r,c) ot update their neighbors*/
-void notifyNewMove(int r, int c,  color){
+void notifyNewMove(int r, int c, int color){
 	STATUS status = (color==selfColor) ? STATUS::SAME : STATUS::DIFFERENT;
 
 	const int direction[4][2] = {{1,0}, {0,1}, {-1,1}, {1,1}};
@@ -21,6 +21,6 @@ void notifyNewMove(int r, int c,  color){
 		for(int offset = -4;offset <= 4; offset++){
 			pointstatus[r + offset*direction[dir][0] ][c + offset*direction[dir][1] ]
 			->updatePoint(dir, r, c, status);
-		}			
+		}
 	}
 }

@@ -3,6 +3,9 @@
 PointStatus::PointStatus(int r,int c){
 	this->r = r;
 	this->c = c;
+	for(dir=0; dir<4; dir++)
+		for(int i=0; i<9; i++)
+			dirStatus[dir][i] = STATUS::EMPTY;
 }
 
 /* direction index 0↔ 1↕ 2⤢ 3⤡
@@ -10,13 +13,13 @@ PointStatus::PointStatus(int r,int c){
 void PointStatus::updatePoint(int dir, int changedR, int changedC, STATUS status){
 	switch (dir){
 			case 0: /* ↔ */
-		Status[0][changedC-c+ LENGTH/2] = status; break;
+		dirStatus[0][changedC-c+ LENGTH/2] = status; break;
 			case 1: /* ↕ */				
-		Status[1][changedR-r+ LENGTH/2] = status; break;
+		dirStatus[1][changedR-r+ LENGTH/2] = status; break;
 			case 2: /* ⤢ */
-		Status[2][changedC-c+ LENGTH/2] = status; break;
+		dirStatus[2][changedC-c+ LENGTH/2] = status; break;
 			case 3:/* ⤡ */
-		Status[3][changedC-c+ LENGTH/2] = status; break;
+		dirStatus[3][changedC-c+ LENGTH/2] = status; break;
 	}
 
 	TypeTree::typeAnalyze(dirStatus[dir],checkForbidden);
