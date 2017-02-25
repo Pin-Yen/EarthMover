@@ -25,9 +25,15 @@ void TypeTree::initialize()
 
     /* build tree*/
     if (length == 9)
+    {
       dfs(commonTree_root, status, length / 2, -1, 0, false);
+      cutSameResultChild(commonTree_root);
+    }
     else
+    {
       dfs(forbiddenTree_root, status, length / 2, -1, 0, true);
+      cutSameResultChild(forbiddenTree_root);
+    }
   }
 }
 
@@ -93,6 +99,47 @@ void TypeTree::dfs(Node *root, STATUS *status, int location,
    * note: without this line, the classification process should  still work fine ,
    * but will result in printing out garbage values on NO_MATTER points */
   status[location] = NO_MATTER;
+}
+
+ChessType* TypeTree::cutSameResultChild(Node *root)
+{
+
+  ChessType* currentType;
+
+  if (root->type != NULL) 
+  {
+    currentType = root->type;
+  }
+
+  for (int i = 0; i < 3; ++i)
+    if (root->childNode[i] != NULL)
+    {
+      /* if this child node is not NULL, recursion and get return*/
+      ChessType* returnType = cutSameResultChild(root->childNode[i]);
+
+      /* if children cannot be cut, then this node also cannot be cut*/
+      if (returnType == NULL) return NULL;
+
+      if (currentType == NULL)
+      {
+        currentType = returnType;
+      }
+      else
+      {
+        /* if different child has different result, cannot cut this node*/
+        if (currentType->length != returnType->length ||
+          currentType->life != returnType->life) return NULL;
+      }
+    }
+
+  /* cut this node, free all children and set this node's type*/
+  root->type = currentType;
+
+  for (int i = 0; i < 3; ++i)
+    if (root->childNode[i] != NULL)
+      free(root->childNode[i]);
+
+  return currentType;
 }
 
 ChessType* TypeTree::classify(STATUS *status, bool checkForbidden)

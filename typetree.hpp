@@ -34,6 +34,8 @@ private:
   static void dfs(Node *root, STATUS *status, int currentLocation, 
     int move, int connect, bool checkForbidden);
 
+  static ChessType* cutSameResultChild(Node *root);
+
   /* copied from chesstypemaker.cpp, just for debugging purposes */
   static void print(int length, STATUS *status, ChessType *style);
 
