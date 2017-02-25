@@ -15,7 +15,8 @@ public:
   ChessType* classify(STATUS *status, bool checkForbidden);
 
 private:
-  struct Node{
+  struct Node
+  {
     /* Next point occupied by:
      * 0:same color, 1:different color, 2:empty */
     Node *childNode[3];
