@@ -1,53 +1,84 @@
 #include "typetree.hpp"
 #include <iostream>
 
-TypeTree::TypeTree(){
-  STATUS status[length];
-  dfs(&root, status, length/2, -1);
+TypeTree::TypeTree()
+{
+  commonTree_root = (Node*)malloc(sizeof(Node));
+  forbiddenTree_root = (Node*)malloc(sizeof(Node));
+  for (int length = 9; length <= 11; ++length)
+  {
+    STATUS status[length];
+    for (int i = 0; i < length; i++)
+    {
+      if (i == length / 2)
+        status[i] = ANALYZE_POINT;
+      else
+        status[i] = NO_MATTER;
+    }
+    if (length == 9)
+      dfs(commonTree_root, status, length / 2, -1, 0, false);
+    else
+      dfs(forbiddenTree_root, status, length / 2, -1, 0, true);
+  }
 }
 
 /* Depth First Search
  * parameters of the initial call should be:
  * currentLocation: length/2, move = -1 */
-void TypeTree::dfs(Node *root, STATUS *status, int currentLocation, int move){
-	int nextLocation = currentLocation += move;
+void TypeTree::dfs(Node *root, STATUS *status, int location, 
+  int move, int connect, bool checkForbidden)
+{
+  int length = (checkForbidden ? 11 : 9);
+  
 
-	if(status[currentLocation] == DIFFERENT || currentLocation < 0 || currentLocation >= length){
-		if(move == 1){
-			// reached leaf.
-			root->type = typeAnalyze(length, status, checkLongConnect);
-			print(length,status,root->type);
-			return;
-		}
-		else{
-			move += 2;
-			nextLocation = length/2 + 1;
-		}
-	}
+  if (status[location] == DIFFERENT || location <= 0 || location >= length - 1)
+  {
+    if (move == 1)
+    {
+      // reached leaf.
+      root->type = typeAnalyze(status, checkForbidden);
+      print(length, status, root->type);
+      return;
+    }
+    else
+    {
+      move += 2;
+      location = length / 2;
 
+      if (checkForbidden) connect = 0;
+    }
+  }
+  else if (status[location] == SAME)
+    if (checkForbidden)
+      ++connect;
 
-	/* let next location be the same color */
-	root->childNode[0] = (Node*)malloc(sizeof(Node));
-	status[currentLocation] = SAME;
-	dfs(root->childNode[0], status, nextLocation, move);
+  location += move;
 
-	/* let next location be different color */
-	root->childNode[1] = (Node*)malloc(sizeof(Node));
-	status[currentLocation] = DIFFERENT;
-	dfs(root->childNode[1], status, nextLocation, move);		
+  if (connect < 4)
+  {
+    /* let next location be the same color */
+    root->childNode[0] = (Node*)malloc(sizeof(Node));
+    status[location] = SAME;
+    dfs(root->childNode[0], status, location, move, connect, checkForbidden);
+  }
 
-	/* let next location be empty */
-	root->childNode[2] = (Node*)malloc(sizeof(Node));
-	status[currentLocation] = EMPTY;
-	dfs(root->childNode[2], status, nextLocation, move);
+  /* let next location be different color */
+  root->childNode[1] = (Node*)malloc(sizeof(Node));
+  status[location] = DIFFERENT;
+  dfs(root->childNode[1], status, location, move, connect, checkForbidden);    
 
-	/* restore current location to NO_MATTER
-	 * note: without this line, the classification process should  still work fine ,
-	 * but will result in printing out garbage values on NO_MATTER points */
-	status[currentLocation] = NO_MATTER;
+  /* let next location be empty */
+  root->childNode[2] = (Node*)malloc(sizeof(Node));
+  status[location] = EMPTY;
+  dfs(root->childNode[2], status, location, move, connect, checkForbidden);
+
+  /* restore current location to NO_MATTER
+   * note: without this line, the classification process should  still work fine ,
+   * but will result in printing out garbage values on NO_MATTER points */
+  status[location] = NO_MATTER;
 }
 
-ChessType * typeAnalyze(STATUS *status, bool checkForbidden)
+ChessType * TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
 {
   int length = checkForbidden ? 11 : 9;
 
@@ -168,27 +199,27 @@ ChessType * typeAnalyze(STATUS *status, bool checkForbidden)
   }
 }
 
-void print(int length, STATUS *status, ChessType *type)
+void TypeTree::print(int length, STATUS *status, ChessType *type)
 {
   /* print status array*/
   for (int i = 0; i < length; ++i)
-    cout << (char)status[i];
+    std::cout << (char)status[i];
 
-  cout << " type: ";
+  std::cout << " type: ";
 
   if (type->length > 0 && type->length < 5)
     /* print life or dead only if length == 1, 2, 3, 4*/
-    cout << (type->life == 1 ? "life" : "dead") << " ";
+    std::cout << (type->life == 1 ? "life" : "dead") << " ";
 
   if (type->length == -1)
-    cout << "forbidden point";
+    std::cout << "forbidden point";
   else
-    cout << type->length;
+    std::cout << type->length;
 
-  cout << endl;
+  std::cout << std::endl;
 }
 
-int main(){
-  TypeTree *tree = new TypeTree;
-  return 0;
+int main()
+{
+  TypeTree *tree = new TypeTree();
 }

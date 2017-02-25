@@ -16,8 +16,8 @@ public:
 
 private:
 
-  const int length = 9;
-  const bool checkLongConnect = false;
+  //const int length = 9;
+  //const bool checkLongConnect = false;
 
   struct Node{
 
@@ -28,12 +28,13 @@ private:
     struct ChessType *type;
   };
 
-  Node root;
+  Node *commonTree_root, *forbiddenTree_root;
 
   /* Depth First Search
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
-  void dfs(Node *root, STATUS *status, int currentLocation, int move);
+  void dfs(Node *root, STATUS *status, int currentLocation, 
+    int move, int connect, bool checkForbidden);
 
   /* copied from chesstypemaker.cpp, just for debugging purposes */
   void print(int length, STATUS *status, ChessType *style);
