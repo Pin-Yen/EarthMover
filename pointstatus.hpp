@@ -12,7 +12,7 @@ public:
 
 	/* direction index 0↔ 1↕ 2⤢ 3⤡
 	 * update neighbors (called by Evaluator::notifyNewMove */
-	void updatePoint(int dir, int changedR, int changedC, int color);
+	void updatePoint(int dir, int changedR, int changedC, STATUS status);
 
 private:
 	int r,c;

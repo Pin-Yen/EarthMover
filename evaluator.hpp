@@ -1,11 +1,15 @@
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
 #include "pointstatus.hpp"
+#include "typetree.hpp"
+
 class Evaluator
 {
 public:
 
-	Evaluator();
+	Evaluator(){
+
+	}
 	~Evaluator();
 
 	/* notifies the neighbors of (r,c) ot update their neighbors*/
