@@ -40,8 +40,10 @@ private:
   /* copied from chesstypemaker.cpp */
   static ChessType* typeAnalyze(STATUS *status, bool checkForbidden);
 
-static int cc;
+  
   /* debugging purposes*/
+
+  static int count;
 
   /* copied from chesstypemaker.cpp, print the status and type */
   static void print(int length, STATUS *status, ChessType *type);

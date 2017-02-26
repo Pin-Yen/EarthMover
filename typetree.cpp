@@ -23,15 +23,15 @@ void TypeTree::initialize()
     /* build tree*/
     Node* root = (length == 9 ? commonTree_root : forbiddenTree_root);
 
-    cc = 0;
+    count = 0;
     dfs(root, status, length / 2, -1, 0, length != 9);
     cutSameResultChild(root);
-    cc = 0;
+    count = 0;
     searchAll(root, status, length, length / 2, -1);
   }
 }
 
-int TypeTree::cc;
+int TypeTree::count;
 
 /* Depth First Search
  * parameters of the initial call should be:
@@ -302,7 +302,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
 
 void TypeTree::print(int length, STATUS *status, ChessType *type)
 {
-  std::cout << ++cc << ":  ";
+  std::cout << ++count << ":  ";
   /* print status array*/
   for (int i = 0; i < length; ++i)
     std::cout << (char)status[i];
