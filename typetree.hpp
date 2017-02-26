@@ -31,14 +31,22 @@ private:
   /* Depth First Search
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
-  static void dfs(Node *root, STATUS *status, int currentLocation, 
+  static void dfs(Node *root, STATUS *status, int location, 
     int move, int connect, bool checkForbidden);
 
+  /* cut the tree node that all child has same result*/
   static ChessType* cutSameResultChild(Node *root);
-
-  /* copied from chesstypemaker.cpp, just for debugging purposes */
-  static void print(int length, STATUS *status, ChessType *style);
 
   /* copied from chesstypemaker.cpp */
   static ChessType* typeAnalyze(STATUS *status, bool checkForbidden);
+
+static int cc;
+  /* debugging purposes*/
+
+  /* copied from chesstypemaker.cpp, print the status and type */
+  static void print(int length, STATUS *status, ChessType *type);
+
+  /* search all the tree and print the leaves*/
+  static void searchAll(Node* root, STATUS *status, int length, 
+    int location, int move);
 };

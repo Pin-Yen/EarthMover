@@ -1,15 +1,12 @@
 #include "typetree.hpp"
 #include <iostream>
 
-//TypeTree::TypeTree()
-
 /* initialize root*/
 TypeTree::Node* TypeTree::commonTree_root = (Node*)malloc(sizeof(Node));
 TypeTree::Node* TypeTree::forbiddenTree_root = (Node*)malloc(sizeof(Node));
 
 void TypeTree::initialize()
 {
-
   /* build common tree and forbidden tree*/
   for (int length = 9; length <= 11; length += 2)
   {
@@ -24,18 +21,17 @@ void TypeTree::initialize()
     }
 
     /* build tree*/
-    if (length == 9)
-    {
-      dfs(commonTree_root, status, length / 2, -1, 0, false);
-      cutSameResultChild(commonTree_root);
-    }
-    else
-    {
-      dfs(forbiddenTree_root, status, length / 2, -1, 0, true);
-      cutSameResultChild(forbiddenTree_root);
-    }
+    Node* root = (length == 9 ? commonTree_root : forbiddenTree_root);
+
+    cc = 0;
+    dfs(root, status, length / 2, -1, 0, length != 9);
+    cutSameResultChild(root);
+    cc = 0;
+    searchAll(root, status, length, length / 2, -1);
   }
 }
+
+int TypeTree::cc;
 
 /* Depth First Search
  * parameters of the initial call should be:
@@ -111,14 +107,8 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
 
   ChessType* currentType = NULL;
 
-  if (root->type != NULL) 
-  {
+  if (root->type != NULL)
     currentType = root->type;
-    std::cout << "1, " << currentType << std::endl;
-    std::cout << "1, " << currentType->length << std::endl;
-  }
-  //std::cout << "2, " << currentType << std::endl;
-  //std::cout << "2, " << currentType->length << std::endl;
 
   for (int i = 0; i < 3; ++i)
   {
@@ -130,17 +120,10 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
       /* if children cannot be cut, then this node also cannot be cut*/
       if (returnType == NULL) return NULL;
 
-      //std::cout << "3, " << currentType << std::endl;
-      //std::cout << "3, " << currentType->length << std::endl;
       if (currentType == NULL)
-      {
         currentType = returnType;
-      }
       else
       {
-
-        std::cout << "5, " << currentType << std::endl;
-        std::cout << "5, " << currentType->length << std::endl;
         /* if different child has different result, cannot cut this node*/
         if (currentType->length != returnType->length ||
           currentType->life != returnType->life) return NULL;
@@ -153,11 +136,9 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
 
   for (int i = 0; i < 3; ++i)
     if (root->childNode[i] != NULL)
-    {
-      std::cout << "6, " << root->childNode[i] << std::endl;
-      //if (root->childNode[i]->type != NULL) delete (root->childNode[i]->type);
-      free(root->childNode[i]);
-    }
+      root->childNode[i] = NULL;
+
+  std::cout << "cut" << std::endl;
 
   return currentType;
 }
@@ -321,6 +302,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden)
 
 void TypeTree::print(int length, STATUS *status, ChessType *type)
 {
+  std::cout << ++cc << ":  ";
   /* print status array*/
   for (int i = 0; i < length; ++i)
     std::cout << (char)status[i];
@@ -339,8 +321,46 @@ void TypeTree::print(int length, STATUS *status, ChessType *type)
   std::cout << std::endl;
 }
 
+void TypeTree::searchAll(Node* root, STATUS *status, int length, 
+  int location, int move)
+{
+  if (root->type != NULL) 
+  {
+    print(length, status, root->type);
+    return;
+  }
+
+  if (status[location] == DIFFERENT || location <= 0 || location >= length - 1)
+  {
+    move += 2;
+    location = length / 2;
+  }
+
+  location += move;
+  
+  if (root->childNode[0] != NULL)
+  {
+    status[location] = SAME;
+    searchAll(root->childNode[0], status, length, location, move);
+  }
+
+  if (root->childNode[1] != NULL)
+  {
+    status[location] = DIFFERENT;
+    searchAll(root->childNode[1], status, length, location, move);
+  }
+
+  if (root->childNode[2] != NULL)
+  {
+    status[location] = EMPTY;
+    searchAll(root->childNode[2], status, length, location, move);
+  }
+
+  status[location] = NO_MATTER;
+}
+
 int main()
 {
-  //TypeTree *tree = new TypeTree();
   TypeTree::initialize();
+  
 }
