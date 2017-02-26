@@ -110,6 +110,8 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
   if (root->type != NULL)
     currentType = root->type;
 
+  bool canCut = true;
+
   for (int i = 0; i < 3; ++i)
   {
     if (root->childNode[i] != NULL)
@@ -118,18 +120,18 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
       ChessType* returnType = cutSameResultChild(root->childNode[i]);
 
       /* if children cannot be cut, then this node also cannot be cut*/
-      if (returnType == NULL) return NULL;
-
-      if (currentType == NULL)
+      if (returnType == NULL) 
+        canCut = false;
+      else if (currentType == NULL)
         currentType = returnType;
-      else
-      {
+      else if (currentType->length != returnType->length ||
+        currentType->life != returnType->life)
         /* if different child has different result, cannot cut this node*/
-        if (currentType->length != returnType->length ||
-          currentType->life != returnType->life) return NULL;
-      }
+        canCut = false;
     }
   }
+
+  if (!canCut) return NULL;
 
   /* cut this node, free all children and set this node's type*/
   root->type = currentType;
@@ -137,8 +139,9 @@ ChessType* TypeTree::cutSameResultChild(Node *root)
   for (int i = 0; i < 3; ++i)
     if (root->childNode[i] != NULL)
       root->childNode[i] = NULL;
+      //free(root->childNode[i]);
 
-  std::cout << "cut" << std::endl;
+  //std::cout << "cut" << std::endl;
 
   return currentType;
 }
