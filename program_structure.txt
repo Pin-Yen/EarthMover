@@ -1,0 +1,9 @@
+
+                                        chessboard <-- (pointstatus <-- point)
+                                            /\
+                                           /  \
+                                          /    \
+                                         /      \
+                                        /        \
+                                       /          \
+(chesstype --> typetree) --> pointEvaluator     TODO::gametree
