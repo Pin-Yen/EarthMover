@@ -1,6 +1,5 @@
 #include "chessboard.hpp"
 #include <iomanip>
-#include <string>
 #include <iostream>
 
 using namespace std;
@@ -136,6 +135,8 @@ bool ChessBoard::play(STATUS color, int row, int col)
   ++playNo;
 
   point[row][col]->play(color, playNo);
+
+  //TODO notifyNewMove that in evaluator originally
 
   blackTurn = !blackTurn;
 
