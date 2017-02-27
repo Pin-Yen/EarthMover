@@ -334,7 +334,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
 
 void TypeTree::print(int length, STATUS *status, ChessType **type)
 {
-  std::cout << std::setw(5) << ++count << ": (";
+  std::cout << std::setw(5) << ++count << "(";
   /* print status array*/
   for (int i = 0; i < length; ++i)
     switch (status[i])
@@ -350,26 +350,26 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
       case 4:
         std::cout << "*"; break;
       case 5:
-        std::cout << "-"; break;
-      default:
-        std::cout << "E";
+        std::cout << "-";
     }
 
-  std::cout << ") ";
+  std::cout << ")  ";
   for (int i = 0; i < 2; i++)
   {
-    std::cout << (i == 0 ? "black" : "white") << " type: ";
+    std::cout << (i == 0 ? "B-" : "W-") << "Type: " << std::setw(1);
 
     if (type[i]->length > 0 && type[i]->length < 5)
       /* print life or dead only if length == 1, 2, 3, 4*/
-      std::cout << (type[i]->life == 1 ? "life" : "dead") << " ";
+      std::cout << (type[i]->life == 1 ? "L" : "D");
+    else
+      std::cout << " ";
 
     if (type[i]->length == -1)
-      std::cout << "forbidden point";
+      std::cout << "F";
     else
       std::cout << type[i]->length;
 
-    std::cout << " ";
+    std::cout << "  ";
   }
 
   std::cout << "\n";
