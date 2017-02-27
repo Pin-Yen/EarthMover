@@ -3,7 +3,8 @@
 
 struct ChessType
 {
-  int length, life;
+  int length;
+  bool life;
 
   ChessType(int length, bool life)
   {
