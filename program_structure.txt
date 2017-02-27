@@ -6,7 +6,7 @@
 	|   	: a call b
 	|
 	b
-                                        chessboard <-- (pointstatus <-- point)
+                                        chessboard <-- point <-- chesstype
                                             /\
                                            /  \
                                           /    \
@@ -14,4 +14,4 @@
                                         /        \
                                        /          \
                                       /            \
-(chesstype --> typetree) --> pointEvaluator     TODO::gametree
+	(chesstype --> typetree) --> evaluator     TODO::gametree
