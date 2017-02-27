@@ -7,7 +7,39 @@ using namespace std;
 
 ChessBoard::ChessBoard()
 {
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      point[r][c] = new Point(r, c);
+
+  /* index: 0→ 1↓ 2↗ 3↘*/
+  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
+
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+    {
+
+      for (int d = 0; d < 4; ++d)
+        for (int offset = -5; offset < 6; ++offset)
+        {
+          int checkRow = r + dir[d][0] * offset,
+            checkCol = c + dir[d][1] * offset;
+
+          STATUS* status;
+
+          if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+            checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
+          {
+            STATUS s = BOUND; status = &s;
+          }
+          else
+            status = &(point[r][c]->color);
+
+          point[r][c]->setDirStatus(d, offset + 5, status);
+        }
+    }
+
   wipe(false);
+
 }
 
 /* prints the current chesssboard */
@@ -17,7 +49,7 @@ void ChessBoard::invalidate()
     for (int c = 0; c < CHESSBOARD_DIMEN + 2; ++c)
     {
       if (r > 0 && r < CHESSBOARD_DIMEN + 1 && c > 0 && c < CHESSBOARD_DIMEN + 1)
-        printBoard(r, c, pointStatus[r - 1][c - 1]);
+        printBoard(r, c, point[r - 1][c - 1]->color);
       else
         printBoard(r, c, EMPTY);
     }
@@ -93,14 +125,15 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
   }
 }
 
-/* puts a new chess, if the ponit is not empty then return false*/
+/* puts a new chess, if the point is not empty then return false*/
 bool ChessBoard::play(STATUS color, int row, int col)
 {
-  if (pointStatus[row][col] != EMPTY) return false;  
+  if (point[row][col]->color != EMPTY) return false;  
   
-  records[playNo] = Point(row, col, color);
+  //records[playNo] = Point(row, col, color);
   ++playNo;
-  pointStatus[row][col] = color;
+  //pointStatus[row][col] = color;
+  point[row][col]->play(color, playNo);
   blackTurn = !blackTurn;
 
   invalidate();
@@ -113,7 +146,8 @@ void ChessBoard::wipe(bool isInvalidate)
 {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      pointStatus[r][c] = EMPTY;
+      //pointStatus[r][c] = EMPTY;
+      point[r][c]->reset();
 
   playNo = 0;
   blackTurn = true;
@@ -155,7 +189,7 @@ STATUS ChessBoard::judge(){
             int checkRow = r + offset * dir[d][0],
               checkCol = c + offset * dir[d][1];
 
-            if (pointStatus[checkRow][checkCol] != targetColor[color])
+            if (point[checkRow][checkCol]->color != targetColor[color])
               break;
 
             if (offset == 4)
@@ -187,7 +221,7 @@ bool ChessBoard::judge(STATUS color, int row, int col)
           checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 
-        if (pointStatus[checkRow][checkCol] != color)
+        if (point[checkRow][checkCol]->color != color)
           break;
 
         ++length;

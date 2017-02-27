@@ -1,4 +1,4 @@
-#include <array>
+//#include <array>
 #include "point.hpp"
 
 class ChessBoard
@@ -35,9 +35,11 @@ public:
 private:
   const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 
-  STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+  //STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-  std::array<Point, CHESSBOARD_DIMEN * CHESSBOARD_DIMEN> records;
+  //std::array<Point, CHESSBOARD_DIMEN * CHESSBOARD_DIMEN> records;
+
+  Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
   bool blackTurn;
 
