@@ -126,31 +126,11 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
     }
 
     root->childNode[i] = (Node*)malloc(sizeof(Node));
+    root->childNode[i]->jump = false;
     status[location] = s[i];
     dfs(root->childNode[i], status, location, move,
       blackConnect, whiteConnect, blackblock, whiteBlock, checkForbidden);
   }
-
-
-  //if (connect < 4)
-  //{
-    /* let next location be the same color */
-  //  root->childNode[0] = (Node*)malloc(sizeof(Node));
-  //  status[location] = SAME;
-  //  dfs(root->childNode[0], status, location, move, connect, block, checkForbidden);
-  //}
-  //else
-  //  root->childNode[0] = NULL;
-
-  /* let next location be different color */
-  //root->childNode[1] = (Node*)malloc(sizeof(Node));
-  //status[location] = DIFFERENT;
-  //dfs(root->childNode[1], status, location, move, connect, checkForbidden);    
-
-  /* let next location be empty */
-  //root->childNode[2] = (Node*)malloc(sizeof(Node));
-  //status[location] = EMPTY;
-  //dfs(root->childNode[2], status, location, move, connect, checkForbidden);
 
   /* restore current location to NO_MATTER
    * note: without this line, the classification process should still work fine,
@@ -174,7 +154,6 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
     {
       /* if this child node is not NULL, recursion and get return */
       ChessType** returnType = cutSameResultChild(root->childNode[i]);
-
       
       if (returnType == NULL) 
         /* if children cannot be cut, then this node also cannot be cut */
@@ -198,8 +177,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
 
   for (int i = 0; i < 4; ++i)
     if (root->childNode[i] != NULL)
-      //free(root->childNode[i]);################################## segF
-      root->childNode[i] = NULL;
+      free(root->childNode[i]);
 
   return currentType;
 }
@@ -373,6 +351,8 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
         std::cout << "*"; break;
       case 5:
         std::cout << "-"; break;
+      default:
+        std::cout << "E";
     }
 
   std::cout << ") ";
@@ -392,7 +372,7 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
     std::cout << " ";
   }
 
-  std::cout << std::endl;
+  std::cout << "\n";
 }
 
 void TypeTree::searchAll(Node* root, STATUS *status, int length, int location, int move)
@@ -411,7 +391,7 @@ void TypeTree::searchAll(Node* root, STATUS *status, int length, int location, i
 
   location += move;
   
-  STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
+  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; i++)
   {
@@ -421,25 +401,7 @@ void TypeTree::searchAll(Node* root, STATUS *status, int length, int location, i
       searchAll(root->childNode[i], status, length, location, move);
     }
   }
-/*
-  if (root->childNode[0] != NULL)
-  {
-    //status[location] = SAME;
-    searchAll(root->childNode[0], status, length, location, move);
-  }
 
-  if (root->childNode[1] != NULL)
-  {
-    //status[location] = DIFFERENT;
-    searchAll(root->childNode[1], status, length, location, move);
-  }
-
-  if (root->childNode[2] != NULL)
-  {
-    status[location] = EMPTY;
-    searchAll(root->childNode[2], status, length, location, move);
-  }
-*/
   status[location] = NO_MATTER;
 }
 

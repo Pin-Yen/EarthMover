@@ -24,7 +24,7 @@ private:
 
     struct ChessType *type[2];
 
-    bool jump = false;
+    bool jump;
   };
 
   static Node *commonTree_root, *forbiddenTree_root;
