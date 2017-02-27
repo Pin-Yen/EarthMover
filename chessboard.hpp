@@ -1,4 +1,3 @@
-//#include <array>
 #include "point.hpp"
 
 class ChessBoard
@@ -17,13 +16,13 @@ public:
   /* print the current chesssboard */
   void invalidate();
 
-  /* puts a new chess, if the ponit is not empty then return false*/
+  /* puts a new chess, if the ponit is not empty then return false */
   bool play(STATUS color, int row, int col);
 
   /* clears the whole game */
   void wipe(bool isInvalidate);
 
-  /* get is black turn or not*/
+  /* get is black turn or not */
   bool isBlackTurn();
 
   /* search the whole board for winning conditions */
@@ -35,10 +34,7 @@ public:
 private:
   const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 
-  //STATUS pointStatus[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-
-  //std::array<Point, CHESSBOARD_DIMEN * CHESSBOARD_DIMEN> records;
-
+  /* point array */
   Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
   bool blackTurn;
@@ -46,6 +42,6 @@ private:
   /* the total number of plays */
   int playNo;
 
-  /* print a part of the board*/
+  /* print a part of the board */
   void printBoard(int row, int col, STATUS chess);
 };

@@ -7,17 +7,19 @@ using namespace std;
 
 ChessBoard::ChessBoard()
 {
+  /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(r, c);
 
-  /* index: 0→ 1↓ 2↗ 3↘*/
+  /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
     {
 
+      /* set each poit's status array pointer*/
       for (int d = 0; d < 4; ++d)
         for (int offset = -5; offset < 6; ++offset)
         {
@@ -29,6 +31,7 @@ ChessBoard::ChessBoard()
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           {
+            /* if out of bound, point to bound */
             STATUS s = BOUND; status = &s;
           }
           else
@@ -59,10 +62,10 @@ void ChessBoard::invalidate()
 void ChessBoard::printBoard(int row, int col, STATUS chess)
 {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
-    /* if at the first or the last row, print the coordinate with letter*/
+    /* if at the first or the last row, print the coordinate with letter */
     cout << setw(4) << ((col == 0 || col == CHESSBOARD_DIMEN + 1) ? ' ' : (char)(64 + col));
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
-    /* if at the first or the last column, print the coordinate with number*/
+    /* if at the first or the last column, print the coordinate with number */
     cout << setw(4) << row;
   else
   {
@@ -111,12 +114,12 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
     cout << c;
   }
 
-  /* if at the last column, print \n*/
+  /* if at the last column, print \n */
   if (col == CHESSBOARD_DIMEN + 1)
   {
     cout << "\n    ";
 
-    /* if not at the first or last row, print │ between two row*/
+    /* if not at the first or last row, print │ between two row */
     if (row > 0 && row < CHESSBOARD_DIMEN)
       for (int i = 0; i < CHESSBOARD_DIMEN; ++i)
         cout << "   │";
@@ -125,15 +128,15 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
   }
 }
 
-/* puts a new chess, if the point is not empty then return false*/
+/* puts a new chess, if the point is not empty then return false */
 bool ChessBoard::play(STATUS color, int row, int col)
 {
   if (point[row][col]->color != EMPTY) return false;  
   
-  //records[playNo] = Point(row, col, color);
   ++playNo;
-  //pointStatus[row][col] = color;
+
   point[row][col]->play(color, playNo);
+
   blackTurn = !blackTurn;
 
   invalidate();
@@ -146,7 +149,6 @@ void ChessBoard::wipe(bool isInvalidate)
 {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      //pointStatus[r][c] = EMPTY;
       point[r][c]->reset();
 
   playNo = 0;
@@ -208,15 +210,15 @@ bool ChessBoard::judge(STATUS color, int row, int col)
   {
     int length = 1;
 
-    /* from (row, col), move backward and then forward along the chosen direction*/
-    /* check if the same color appears consecutively*/
+    /* from (row, col), move backward and then forward along the chosen direction */
+    /* check if the same color appears consecutively */
     for (int move = -1; move <= 1; move += 2)
       for (int offset = 1; offset <= 4; ++offset)
       {
         int checkRow = row + dir[d][0] * move * offset,
           checkCol = col + dir[d][1] * move * offset;
 
-        /* check if out the bound*/
+        /* check if out the bound */
         if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
           checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
