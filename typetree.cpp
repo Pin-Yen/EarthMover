@@ -186,26 +186,21 @@ ChessType** TypeTree::classify(STATUS *status, bool checkForbidden)
 {
   int length = checkForbidden ? 11 : 9;
 
-  Node* node;
-
-  /* switch root*/
-  if (checkForbidden)
-    node = forbiddenTree_root;
-  else
-    node = commonTree_root;
+  /* switch root */
+  Node* node = (checkForbidden ? forbiddenTree_root : commonTree_root);
 
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < length / 2; ++i, checkPoint += move)
     {
-      /* according to the status to enter the child node*/
+      /* according to the status to enter the child node */
       
       node = node->childNode[status[checkPoint]];
       
-      /* if reach leaf, return type*/
+      /* if reach leaf, return type */
       if (node->type[0] != NULL)
         return node->type;
 
-      /* if reach different color, change direction*/
+      /* if reach different color, change direction */
       if (node->jump)
         break;
     }
@@ -231,7 +226,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
 
   if (connect > 5)
     /* CG's length > 5, if check forbidden, return -1, else return 5*/
-    return (checkForbidden ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
+    return ((checkForbidden && color == BLACK) ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
   else if (connect == 5)
     /* CG's length == 5, return 5*/
     return new ChessType(5, 0);
@@ -311,7 +306,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
     if (lType->length == 5 && rType->length == 5)
       /* if left and right will both produce 5 after play at analize point,*/
     {
-      if (checkForbidden && connect < 4)
+      if ((checkForbidden && color == BLACK) && connect < 4)
         return new ChessType(-1, 0);
       else
         return new ChessType(4, 1);
@@ -353,10 +348,10 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
         std::cout << "-";
     }
 
-  std::cout << ")  ";
+  std::cout << ") ";
   for (int i = 0; i < 2; i++)
   {
-    std::cout << (i == 0 ? "B-" : "W-") << "Type: " << std::setw(1);
+    std::cout << (i == 0 ? "B" : "W") << ": " << std::setw(1);
 
     if (type[i]->length > 0 && type[i]->length < 5)
       /* print life or dead only if length == 1, 2, 3, 4*/
@@ -369,10 +364,10 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
     else
       std::cout << type[i]->length;
 
-    std::cout << "  ";
+    std::cout << ( i == 0 ? ", " : "   ");
   }
 
-  std::cout << "\n";
+  if (count % 4 == 0) std::cout << "\n";
 }
 
 void TypeTree::searchAll(Node* root, STATUS *status, int length, int location, int move)
