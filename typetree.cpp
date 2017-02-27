@@ -184,13 +184,13 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
 
 ChessType** TypeTree::classify(STATUS *status, bool checkForbidden)
 {
-  int length = checkForbidden ? 11 : 9;
+  const int length = 11;
 
   /* switch root */
   Node* node = (checkForbidden ? forbiddenTree_root : commonTree_root);
 
-  for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
-    for (int i = 0, checkPoint = start; i < length / 2; ++i, checkPoint += move)
+  for (int move = -1, start = length / 2 - 1; ; move = 1, start += 2)
+    for (int checkPoint = start; ;checkPoint += move)
     {
       /* according to the status to enter the child node */
       
