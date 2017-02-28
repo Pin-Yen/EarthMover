@@ -136,7 +136,39 @@ bool ChessBoard::play(STATUS color, int row, int col)
 
   point[row][col]->play(color, playNo);
 
-  //TODO notifyNewMove that in evaluator originally
+  /* index: 0→ 1↓ 2↗ 3↘ */
+  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
+
+  for (int d = 0; d < 4; ++d)
+  {
+    int length = 1;
+
+    for (int move = -1; move <= 1; move = 2)
+    {
+      bool block[2] = {false, false};
+
+      for (int offset = 1; offset <= 5; ++offset)
+      {
+        int checkRow = row + dir[d][0] * move * offset,
+          checkCol = col + dir[d][1] * move * offset;
+
+        /* check if out the bound */
+        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+          checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
+          break;
+
+        if (point[checkRow][checkCol]->color != EMPTY)
+        {
+          block[point[checkRow][checkCol]->color] = true;
+          if (block[0] & block[1]) break;
+          continue;
+        }
+
+        evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
+          d, checkForbidden);
+      }
+    }
+  }
 
   blackTurn = !blackTurn;
 
@@ -164,44 +196,7 @@ bool ChessBoard::isBlackTurn()
   return blackTurn;
 }
 
-/* search the whole board for winning conditions */
-STATUS ChessBoard::judge(){
-
-  /* index: 0→ 1↓ 2↗ 3↘*/
-  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
-
-  /* INclude lowerbound when searching */
-  const int lowerBound[4][2] = {{0, 0}, {0, 0}, {4, 0}, {0, 0}}; 
-
-  /* EXclude upperbound when searching */
-  const int upperBound[4][2] = {
-  {CHESSBOARD_DIMEN, CHESSBOARD_DIMEN - 4},
-  {CHESSBOARD_DIMEN - 4, CHESSBOARD_DIMEN},
-  {CHESSBOARD_DIMEN, CHESSBOARD_DIMEN - 4},
-  {CHESSBOARD_DIMEN - 4, CHESSBOARD_DIMEN - 4}}; 
-
-  STATUS targetColor[2] = {BLACK, WHITE};
-
-  for (int color = 0; color < 2; ++color)
-    /* for each direction d, start searching from lowerbound, and stop at upperBound */
-    for (int d = 0; d < 4; ++d)
-      for (int r = lowerBound[d][0]; r < upperBound[d][0]; ++r)
-        for (int c = lowerBound[d][1]; c < upperBound[d][1]; ++c)
-          for (int offset = 0; offset < 5; ++offset)
-          {
-            int checkRow = r + offset * dir[d][0],
-              checkCol = c + offset * dir[d][1];
-
-            if (point[checkRow][checkCol]->color != targetColor[color])
-              break;
-
-            if (offset == 4)
-              return targetColor[color];
-          }
-  
-  return EMPTY;
-}
-
+/* search the area surrounding (row, col) for winning conditions */
 bool ChessBoard::judge(STATUS color, int row, int col)
 {
   /* index: 0→ 1↓ 2↗ 3↘ */
@@ -213,7 +208,7 @@ bool ChessBoard::judge(STATUS color, int row, int col)
 
     /* from (row, col), move backward and then forward along the chosen direction */
     /* check if the same color appears consecutively */
-    for (int move = -1; move <= 1; move += 2)
+    for (int move = -1; move <= 1; move = 1)
       for (int offset = 1; offset <= 4; ++offset)
       {
         int checkRow = row + dir[d][0] * move * offset,
@@ -230,7 +225,6 @@ bool ChessBoard::judge(STATUS color, int row, int col)
         ++length;
         if (length == 5) return true;
       }
-  }
 
   return false;
 }

@@ -1,3 +1,5 @@
+#include "chesstype.hpp"
+
 #ifndef STATUS_ENUM
 #define STATUS_ENUM
    enum STATUS{BLACK = 0, WHITE = 1, EMPTY = 2, BOUND = 3, ANALYZE_POINT = 4, NO_MATTER = 5};
@@ -31,7 +33,9 @@ private:
   /* index: 0→ 1↓ 2↗ 3↘ */
   STATUS* dirStatus[4][11];
 
-  int score;
+  ChessType* type[4][2];
+
+  int score[2];
 
   bool isForbidden;
 };

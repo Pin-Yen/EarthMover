@@ -25,9 +25,6 @@ public:
   /* get is black turn or not */
   bool isBlackTurn();
 
-  /* search the whole board for winning conditions */
-  STATUS judge();
-
   /* search the area surrounding (row, col) for winning conditions */
   bool judge(STATUS color, int row, int col);
 
@@ -41,6 +38,8 @@ private:
 
   /* the total number of plays */
   int playNo;
+
+  bool checkForbidden;
 
   /* print a part of the board */
   void printBoard(int row, int col, STATUS chess);
