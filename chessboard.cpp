@@ -34,7 +34,7 @@ ChessBoard::ChessBoard()
             STATUS s = BOUND; status = &s;
           }
           else
-            status = &(point[r][c]->color);
+            status = &(point[r][c]->status);
 
           point[r][c]->setDirStatus(d, offset + 5, status);
         }
@@ -51,14 +51,14 @@ void ChessBoard::invalidate()
     for (int c = 0; c < CHESSBOARD_DIMEN + 2; ++c)
     {
       if (r > 0 && r < CHESSBOARD_DIMEN + 1 && c > 0 && c < CHESSBOARD_DIMEN + 1)
-        printBoard(r, c, point[r - 1][c - 1]->color);
+        printBoard(r, c, point[r - 1][c - 1]->status);
       else
         printBoard(r, c, EMPTY);
     }
 }
 
 /* print a part of the board*/
-void ChessBoard::printBoard(int row, int col, STATUS chess)
+void ChessBoard::printBoard(int row, int col, STATUS status)
 {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
     /* if at the first or the last row, print the coordinate with letter */
@@ -68,8 +68,15 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
     cout << setw(4) << row;
   else
   {
-    string c = (col == 1 ? "   " : "───");
-    if (chess == EMPTY)
+    string c;
+    if (col == 1)
+      c = "   ";
+    else if (row == 1 || row == CHESSBOARD_DIMEN)
+      c = "═══";
+    else
+      c = "───";
+
+    if (status == EMPTY)
     {
       switch (row)
       {
@@ -77,38 +84,38 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
           switch (col)
           {
             case 1:
-              c += "┌"; break;
+              c += "╔"; break;
             case CHESSBOARD_DIMEN:
-              c += "┐"; break;
+              c += "╗"; break;
             default:
-              c += "┬";
+              c += "╤";
           }
           break;
         case CHESSBOARD_DIMEN:
           switch (col)
           {
             case 1:
-              c += "└"; break;
+              c += "╚"; break;
             case CHESSBOARD_DIMEN:
-              c += "┘"; break;
+              c += "╝"; break;
             default:
-              c += "┴";
+              c += "╧";
           }
           break;
         default:
           switch (col)
           {
             case 1:
-              c += "├"; break;
+              c += "╟"; break;
             case CHESSBOARD_DIMEN:
-              c += "┤"; break;
+              c += "╢"; break;
             default:
               c += "┼";
           }
       }
     }
     else
-      c += (chess == BLACK) ? CHESS_BLACK : CHESS_WHITE;
+      c += (status == BLACK) ? CHESS_BLACK : CHESS_WHITE;
 
     cout << c;
   }
@@ -121,7 +128,7 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
     /* if not at the first or last row, print │ between two row */
     if (row > 0 && row < CHESSBOARD_DIMEN)
       for (int i = 0; i < CHESSBOARD_DIMEN; ++i)
-        cout << "   │";
+        cout << "   " << ((i == 0 || i == CHESSBOARD_DIMEN - 1) ? "║" : "│");
 
     cout << "\n";
   }
@@ -130,7 +137,7 @@ void ChessBoard::printBoard(int row, int col, STATUS chess)
 /* puts a new chess, if the point is not empty then return false */
 bool ChessBoard::play(STATUS color, int row, int col)
 {
-  if (point[row][col]->color != EMPTY) return false;  
+  if (point[row][col]->status != EMPTY) return false;  
   
   ++playNo;
 
@@ -157,15 +164,15 @@ bool ChessBoard::play(STATUS color, int row, int col)
           checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 
-        if (point[checkRow][checkCol]->color != EMPTY)
+        if (point[checkRow][checkCol]->status != EMPTY)
         {
-          block[point[checkRow][checkCol]->color] = true;
+          block[point[checkRow][checkCol]->status] = true;
           if (block[0] & block[1]) break;
           continue;
         }
 
-        evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
-          d, checkForbidden);
+        //evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
+        //  d, checkForbidden);
       }
     }
   }
@@ -208,7 +215,7 @@ bool ChessBoard::judge(STATUS color, int row, int col)
 
     /* from (row, col), move backward and then forward along the chosen direction */
     /* check if the same color appears consecutively */
-    for (int move = -1; move <= 1; move = 1)
+    for (int move = -1; move <= 1; move += 2)
       for (int offset = 1; offset <= 4; ++offset)
       {
         int checkRow = row + dir[d][0] * move * offset,
@@ -219,12 +226,13 @@ bool ChessBoard::judge(STATUS color, int row, int col)
           checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 
-        if (point[checkRow][checkCol]->color != color)
+        if (point[checkRow][checkCol]->status != color)
           break;
 
         ++length;
         if (length == 5) return true;
       }
+  }
 
   return false;
 }

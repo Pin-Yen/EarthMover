@@ -14,11 +14,11 @@ void Point::setDirStatus(int dir, int offset, STATUS* status)
 void Point::reset()
 {
   playNo = 0;
-  color = EMPTY;
+  status = EMPTY;
 }
 
-void Point::play(STATUS color, int playNo)
+void Point::play(STATUS status, int playNo)
 {
-  this->color = color;
+  this->status = status;
   this->playNo = playNo;
 }

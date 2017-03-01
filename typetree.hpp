@@ -1,10 +1,13 @@
 #include "chesstype.hpp"
 
+#ifndef STATUS_ENUM
+#define STATUS_ENUM
+enum STATUS{BLACK = 0, WHITE = 1, EMPTY = 2, BOUND = 3, ANALYZE_POINT = 4, NO_MATTER = 5};
+#endif
+
 class TypeTree
 {
 public:
-  enum STATUS{BLACK = 0, WHITE = 1, EMPTY = 2, BOUND = 3, ANALYZE_POINT = 4, NO_MATTER = 5};
-
   static ChessType** classify(STATUS *status, bool checkForbidden);
 
   static void initialize();
