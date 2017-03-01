@@ -39,8 +39,6 @@ void play(ChessBoard* board)
 
       cout << "Invalid move\n";
     }
-    
-    cout << endl;
 
     if (board->judge(status, row, col))
     {

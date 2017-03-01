@@ -1,14 +1,14 @@
 #include "point.hpp"
+#include "evaluator.hpp"
+
+#ifndef STATUS_ENUM
+#define STATUS_ENUM
+enum STATUS{BLACK = 0, WHITE = 1, EMPTY = 2, BOUND = 3, ANALYZE_POINT = 4, NO_MATTER = 5};
+#endif
 
 class ChessBoard
 {
 public:
-
-  #ifndef STATUS_ENUM
-  #define STATUS_ENUM
-  enum STATUS{EMPTY, BLACK, WHITE};
-  #endif
-
   static const int CHESSBOARD_DIMEN = 15;
 
   ChessBoard();
@@ -25,9 +25,6 @@ public:
   /* get is black turn or not */
   bool isBlackTurn();
 
-  /* search the whole board for winning conditions */
-  STATUS judge();
-
   /* search the area surrounding (row, col) for winning conditions */
   bool judge(STATUS color, int row, int col);
 
@@ -41,6 +38,8 @@ private:
 
   /* the total number of plays */
   int playNo;
+
+  bool checkForbidden;
 
   /* print a part of the board */
   void printBoard(int row, int col, STATUS chess);
