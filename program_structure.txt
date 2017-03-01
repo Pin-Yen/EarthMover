@@ -1,17 +1,28 @@
 
-	a <-- b : a include b
+    a <-- b : a include b but should not call the function in b
 
-	a
-	|
-	|   	: a call b
-	|
-	b
-                                        chessboard <-- point <-- chesstype
-                                            /\
-                                           /  \
-                                          /    \
-                                         /      \
-                                        /        \
-                                       /          \
-                                      /            \
-	(chesstype --> typetree) --> evaluator     TODO::gametree
+    a ( b ) : a extend b
+
+    a
+    |
+    |       : a include b and might call the function in b
+    |
+    b
+
+                                        main
+                                        /  \
+                                       /    \
+                                      /      \
+                                     /        \
+                                    /          \
+                                   /            \
+                                  /              \
+                                MCTS          mainboard ( chessboard ) <-- point <-- chesstype
+                                  \              /
+                                   \            /
+                                    \          /
+       chesstype --> point --> chessboard     /
+                                      \      /
+                                       \    /
+                                        \  /
+            chesstype --> typetree --> evaluator     
