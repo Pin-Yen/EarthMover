@@ -14,5 +14,5 @@ private:
     VirtualBoard* board;
   };
 
-  Node* root;
+  Node* currentNode;
 };
