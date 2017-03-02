@@ -1,32 +1,25 @@
-
     a <-- b : a include b but should not call the function in b
 
     a ( b ) : a extend b
 
     a
-    |
     |       : a include b and might call the function in b
-    |
     b
 
-                                            main
-                                            /  \
-                                           /    \
-                                          /      \
-                                         /        \
-                                        /          \
-                                       /            \
-                                   game tree      displayboard
-                                     /  \              
-                                    /    \            
-                                   /      \
-                                  /        \
-                                 /          \
-    chesstype --> point --> chessboard     MCTS
-                                /
-                               /
-                              /
-                             /
-                            /
-chesstype --> typetree --> evaluator     
+                                             main
+                                            /    \
+                                           /      \
+                                          /        \
+                                         /          \
+                                    game tree   displayboard
+                                      /    \              
+                                     /      \            
+                                    /        \
+                                   /          \
+    chesstype --> point --> virtualboard     MCTS
+                                  |
+                                  |
+                                  |
+                                  |
+    chesstype --> typetree --> evaluator     
 
