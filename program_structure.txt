@@ -17,12 +17,12 @@
                                     /          \
                                    /            \
                                   /              \
-                                MCTS          mainboard ( chessboard ) <-- point <-- chesstype
-                                  \              /
-                                   \            /
-                                    \          /
-       chesstype --> point --> chessboard     /
-                                      \      /
-                                       \    /
-                                        \  /
+                                MCTS          displayboard
+                                  \              
+                                   \            
+                                    \          
+       chesstype --> point --> chessboard     
+                                      \      
+                                       \   
+                                        \ 
             chesstype --> typetree --> evaluator     

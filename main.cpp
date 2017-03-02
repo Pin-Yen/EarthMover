@@ -1,50 +1,47 @@
 #include <iostream>
 #include <string>
 #include <ctype.h>
-#include "chessboard.hpp"
+#include "displayboard.hpp"
 
-using namespace std;
-
-void play(ChessBoard* board);
+void start(DisplayBoard* board);
 
 void getInput(int* row, int* col, int boardDimen);
 
 int main()
 {
-  ChessBoard* board = new ChessBoard();
-  board->invalidate();
+  DisplayBoard* board = new DisplayBoard();
 
-  play(board);
+  start(board);
 }
 
-void play(ChessBoard* board)
+void start(DisplayBoard* board)
 {
   while (true)
   {
     int row, col;
     
-    STATUS status = board->isBlackTurn() ? STATUS::BLACK : STATUS::WHITE;
+    bool blackTurn = board->isBlackTurn();
 
     /* get user's input and try to play, if the input is not valid,*/
     /* it will keep ask another input*/
     while (true)
     {
-      cout << (status == STATUS::BLACK ? "Black turn\n" : "White turn\n");
+      std::cout << (blackTurn ? "Black turn\n" : "White turn\n");
 
       /* get user input*/
       getInput(&row, &col, board->CHESSBOARD_DIMEN);
 
       /* break while user input a valid coordinate*/
-      if (board->play(status, row, col)) break;
+      if (board->play(row, col)) break;
 
-      cout << "Invalid move\n";
+      std::cout << "Invalid move\n";
     }
 
-    if (board->judge(status, row, col))
+    if (board->judge(row, col))
     {
-      cout << (status == STATUS::BLACK ? "Black" : "White") << " win !\n\n";
+      std::cout << (blackTurn ? "Black" : "White") << " win !\n\n";
 
-      board->wipe(true);
+      board->wipe();
     }
   }
 }
@@ -55,10 +52,10 @@ void getInput(int* row, int* col, int boardDimen)
   int r, c;
   while (true)
   {
-    cout << "enter the coordinate of next move (A1 ~ " 
+    std::cout << "enter the coordinate of next move (A1 ~ " 
       << (char)('A' + boardDimen - 1) << boardDimen << ") : ";
-    string input;
-    cin >> input;
+    std::string input;
+    std::cin >> input;
 
     int n = input.length();
 
@@ -89,7 +86,7 @@ void getInput(int* row, int* col, int boardDimen)
 
       if (isNumber)
       {
-        r = stoi(input.substr(1, n - 1));
+        r = std::stoi(input.substr(1, n - 1));
         if (r >= 1 && r <= boardDimen)
         {
           r--;
@@ -100,7 +97,7 @@ void getInput(int* row, int* col, int boardDimen)
       if (validRow && validColumn) break;  
     }
 
-    cout << "Invalid input\n";
+    std::cout << "Invalid input\n";
   }
 
   *row = r; *col = c;
