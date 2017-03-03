@@ -38,6 +38,18 @@ void DisplayBoard::printBoard(int row, int col, int color)
       s = "   ";
     else if (row == 1 || row == CHESSBOARD_DIMEN)
       s = "═══";
+    else if ((row == 4 && col == 4) || 
+      (row == 4 && col == CHESSBOARD_DIMEN - 3) ||
+      (row == CHESSBOARD_DIMEN - 3 && col == 4) || 
+      (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 3) ||
+      (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 1)) 
+      s = "──╼";
+    else if ((row == 4 && col == 5) || 
+      (row == 4 && col == CHESSBOARD_DIMEN - 2) ||
+      (row == CHESSBOARD_DIMEN - 3 && col == 5) || 
+      (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 2) ||
+      (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 2)) 
+      s = "╾──";
     else
       s = "───";
 
@@ -62,7 +74,7 @@ void DisplayBoard::printBoard(int row, int col, int color)
             case 1:
               s += "╚"; break;
             case CHESSBOARD_DIMEN:
-              s += "╝"; break;
+              s += "╝ "; break;
             default:
               s += "╧";
           }
@@ -75,7 +87,12 @@ void DisplayBoard::printBoard(int row, int col, int color)
             case CHESSBOARD_DIMEN:
               s += "╢"; break;
             default:
-              s += "┼";
+              s += (((row == 4 && col == 4) || 
+                (row == 4 && col == CHESSBOARD_DIMEN - 3) ||
+                (row == CHESSBOARD_DIMEN - 3 && col == 4) || 
+                (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 3) ||
+                (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 1)) 
+                ? "╋" : "┼");
           }
       }
     }
