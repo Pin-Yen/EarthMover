@@ -182,7 +182,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
   return currentType;
 }
 
-ChessType** TypeTree::classify(STATUS *status, bool checkForbidden)
+void TypeTree::classify(STATUS *status, bool checkForbidden, ChessType *(type[2]))
 {
   const int length = 11;
 
@@ -197,8 +197,10 @@ ChessType** TypeTree::classify(STATUS *status, bool checkForbidden)
       node = node->childNode[status[checkPoint]];
       
       /* if reach leaf, return type */
-      if (node->type[0] != NULL)
-        return node->type;
+      if (node->type[0] != NULL){
+        type =  node->type;
+        return;
+      }
 
       /* if reach different color, change direction */
       if (node->jump)

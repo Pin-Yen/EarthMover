@@ -4,7 +4,7 @@
 class TypeTree
 {
 public:
-  static ChessType** classify(STATUS *status, bool checkForbidden);
+  static void classify(STATUS *status, bool checkForbidden, ChessType *(type[2]));
 
   static void initialize();
 

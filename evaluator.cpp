@@ -1,13 +1,10 @@
-#include "chessboard.hpp"
-
-
-int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidden)
+#include "displayboard.hpp"
+#include "evaluator.hpp"
+/* score[0]:black's total score,[1]:white's */
+void evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidden,int *score)
 {
 
-  type[dir] = TypeTree::classify(status, checkForbidden);
-
-  /* score[0]:black's total score,[1]:white's */
-  int score[2] = {0};
+  TypeTree::classify(status, checkForbidden, (type[dir]));
 
   /* count[color][length][LorD]
    * color: 0 for BLACK, 1 for WHITE
@@ -21,7 +18,7 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
   for(int color = 0; color < 2; ++color)
   	for(int d = 0; d < 4; ++d){
   		if(type[d][color]->length == -1) /* double 4 in single direction*/
-  			(count[ color ][4][type[d]color->life]) += 2
+  			(count[ color ][4][type[d][color]->life]) += 2;
   		else
   			++(count[ color ][ type[d][color]->length ][ type[d][color]->life ]);
   	}
@@ -38,24 +35,23 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
   const int SCORE_DEAD3[2] = {80, 50};
   const int SCORE_LIVE2[2] = {80, 50};
   const int SCORE_DEAD2[2] = {25, 10};
-  const int SCORE LIVE1[2] = {25, 10};
+  const int SCORE_LIVE1[2] = {25, 10};
   const int SCORE_DEAD1[2] = {4, 1};
 
   const int SCORE_FORBIDDEN_6[2] = {-10000, 0};
   const int SCORE_FORBIDDEN_ELSE[2] = {-10000, 160};
 
 	/*these const are for indexing purposes, enhancing the readibility of the code. */
-  const int ATTACK = 0;
-  const int DEFENSE = 1;
-  const int BLACK = 0;
-  const int WHITE = 1;
-  const int LIVE = 0;
-  const int DEAD = 1;
-
+  int ATTACK = 0;
+  int DEFENSE = 1;
+  int BLACK = 0;
+  int WHITE = 1;
+  int LIVE = 0;
+  int DEAD = 1;
  
 
   /*** calculate score */
-  for(int selfColor = BLACK, opponentColor = WHITE, count = 0; count < 2; selfColor = WHITE, opponentColor = BLACK, ++count){
+  for(int selfColor = BLACK, opponentColor = WHITE, i = 0; i < 2; selfColor = WHITE, opponentColor = BLACK, ++i){
   	/* self 5 */
   	if(count[selfColor][5][DEAD] != 0 || count[selfColor][5][LIVE] != 0)
   		score[selfColor] += SCORE_5[ATTACK];
@@ -66,7 +62,7 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
   	else if(count[selfColor][4][LIVE] + count[selfColor][4][DEAD] >= 2)
   		score[selfColor] += SCORE_DOUBLE4[ATTACK];
   	/* opponent multi-4*/
-  	else if(count[opponentColor][4][LIVE] + count[opponent][4][DEAD] >= 2)
+  	else if(count[opponentColor][4][LIVE] + count[opponentColor][4][DEAD] >= 2)
   		score[selfColor] += SCORE_DOUBLE4[DEFENSE];
   	/* self d4-l3 */
   	else if (count[selfColor][4][LIVE] > 0)
@@ -130,5 +126,4 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
   		score[WHITE] = SCORE_FORBIDDEN_ELSE[DEFENSE];  		
   	}
   }
-  return score;
 }
