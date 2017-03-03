@@ -19,8 +19,12 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
 
   /* count the types in 4 directions */
   for(int color = 0; color < 2; ++color)
-  	for(int d = 0; d < 4; ++d)
-  		++(count[ color ][ type[d][color]->length ][ type[d][color]->life ]);
+  	for(int d = 0; d < 4; ++d){
+  		if(type[d][color]->length == -1) /* double 4 in single direction*/
+  			(count[ color ][4][type[d]color->life]) += 2
+  		else
+  			++(count[ color ][ type[d][color]->length ][ type[d][color]->life ]);
+  	}
 
   /* [0] attack, [1] defense*/
   const int SCORE_5[2] = {1000, 900};
@@ -37,20 +41,16 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
   const int SCORE LIVE1[2] = {25, 10};
   const int SCORE_DEAD1[2] = {4, 1};
 
-  #############################################################
-  SHOULD WE DISCOURAGE WIHTE TO PLAY BLACK`s FORBIDDEN POINTS ?
-  #############################################################
-  const int SCORE_FORBIDDEN[2] = {-10000,????};
-  
-  ############################################
-  ###### ARE THESE #DEFINE OK? ###############
-  ############################################
-  #define ATTACK 0
-  #define DEFENSE 1
-  #define BLACK 0
-  #define WHITE 1
-  #define LIVE 0
-  #define DEAD 1
+  const int SCORE_FORBIDDEN_6[2] = {-10000, 0};
+  const int SCORE_FORBIDDEN_ELSE[2] = {-10000, 160};
+
+	/*these const are for indexing purposes, enhancing the readibility of the code. */
+  const int ATTACK = 0;
+  const int DEFENSE = 1;
+  const int BLACK = 0;
+  const int WHITE = 1;
+  const int LIVE = 0;
+  const int DEAD = 1;
 
  
 
@@ -115,18 +115,19 @@ int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidde
   			score[selfColor] += SCORE_DEAD1[DEFENSE];
   	}
   }
+
  	/* check forbidden points */
   if(checkForbidden){
-  	/* six, multi-four or multi-live-three */
-  	if((count[BLACK][6][DEAD] != 0 || count[BLACK][6][LIVE] != 0)
-  		||(count[BLACK][4][DEAD] + count[BLACK][4][LIVE] >= 2)
+  	/* six */
+  	if(count[BLACK][6][DEAD] != 0 || count[BLACK][6][LIVE] != 0){
+  		score[BLACK] = SCORE_FORBIDDEN_6[ATTACK];
+  		score[WHITE] = SCORE_FORBIDDEN_6[DEFENSE];
+  	}
+  	/* multi-four or multi-live-three */
+  	else if((count[BLACK][4][DEAD] + count[BLACK][4][LIVE] >= 2)
   		||(count[BLACK][3][LIVE] >= 2 )){
-
-  		#####################################
-  		CONFUSING HERE, `SCORE_FORBIDDEN[ATTACK]` ISN`T A ATTACKIVE MOVE. 
-  		####################################
-  		score[BLACK] = SCORE_FORBIDDEN[ATTACK]; 
-  		score[WHITE] = SCORE_FORBIDDEN[DEFENSE];  		
+  		score[BLACK] = SCORE_FORBIDDEN_ELSE[ATTACK]; 
+  		score[WHITE] = SCORE_FORBIDDEN_ELSE[DEFENSE];  		
   	}
   }
   return score;

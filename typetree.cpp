@@ -226,7 +226,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
 
   if (connect > 5)
     /* CG's length > 5, if check forbidden, return -1, else return 5*/
-    return ((checkForbidden && color == BLACK) ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
+    return ((checkForbidden && color == BLACK) ? (new ChessType(6, 0)) : (new ChessType(5, 0)));
   else if (connect == 5)
     /* CG's length == 5, return 5*/
     return new ChessType(5, 0);
@@ -316,10 +316,13 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
       /* if there is only one side produce 5 after play at analize point,
        * it is a dead four style*/
       return new ChessType(4, 0);
-    else if (lType->length == 0 || lType-> length == -1)
-      /* if the longer size produce 6 or 0 after play at analize point,
+    else if (lType->length == 0)
+      /* if the longer size produce 0 after play at analize point,
        * it is a useless point*/
       return new ChessType(0, 0);
+    else if(lType-> length == 6)
+      /* if the longer size produces 6 after play at analize point */
+      return new ChessType(6, 0);
     else
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
