@@ -8,6 +8,8 @@ public:
   /* constructor */
   Point(int row, int col);
 
+  Point(Point* source);
+
   /* play at this point */
   void play(STATUS color, int playNo);
 
