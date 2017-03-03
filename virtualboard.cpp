@@ -1,6 +1,4 @@
 #include "vitualboard.hpp"
-#include <iomanip>
-#include <iostream>
 
 VirtualBoard::VirtualBoard()
 {
@@ -38,16 +36,30 @@ VirtualBoard::VirtualBoard()
         }
     }
 
-  wipe(false);
+
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      point[r][c]->reset();
+
+  playNo = 0;
 
 }
 
-/* puts a new chess, if the point is not empty then return false */
-bool VirtualBoard::play(STATUS color, int row, int col)
+VirtualBoard::VirtualBoard(VirtualBoard* source)
 {
-  if (point[row][col]->status != EMPTY) return false;  
-  
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      point[r][c] = new Point(source->point[r][c]);
+
+  //TODO: copy board
+}
+
+/* puts a new chess, if the point is not empty then return false */
+void VirtualBoard::play(int row, int col)
+{
   ++playNo;
+
+  STATUS color = ((playNo &) 1 ? BLACK : WHITE);
 
   point[row][col]->play(color, playNo);
 
@@ -84,24 +96,4 @@ bool VirtualBoard::play(STATUS color, int row, int col)
       }
     }
   }
-
-  blackTurn = !blackTurn;
-
-  return true;
-}
-
-/* clears the whole game */
-void VirtualBoard::wipe(bool isInvalidate)
-{
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point[r][c]->reset();
-
-  playNo = 0;
-  blackTurn = true;
-}
-
-bool VirtualBoard::isBlackTurn()
-{
-  return blackTurn;
 }
