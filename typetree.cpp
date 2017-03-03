@@ -226,7 +226,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
 
   if (connect > 5)
     /* CG's length > 5, if check forbidden, return -1, else return 5*/
-    return ((checkForbidden && color == BLACK) ? (new ChessType(6, 0)) : (new ChessType(5, 0)));
+    return ((checkForbidden && color == BLACK) ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
   else if (connect == 5)
     /* CG's length == 5, return 5*/
     return new ChessType(5, 0);
@@ -294,6 +294,8 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
     /* restore the analize point */
     status[length / 2] = ANALYZE_POINT;
 
+
+
     /* keep lType > rType*/
     if (lType->length < rType->length || 
       (lType->length == rType->length && (lType->life < rType->life)))
@@ -307,7 +309,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
       /* if left and right will both produce 5 after play at analize point,*/
     {
       if ((checkForbidden && color == BLACK) && connect < 4)
-        return new ChessType(-1, 0);
+        return new ChessType(-2, 0);
       else
         return new ChessType(4, 1);
     }
@@ -320,9 +322,9 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
       /* if the longer size produce 0 after play at analize point,
        * it is a useless point*/
       return new ChessType(0, 0);
-    else if(lType-> length == 6)
-      /* if the longer size produces 6 after play at analize point */
-      return new ChessType(6, 0);
+    else if(lType-> length <= 0)
+      /* if the longer size produces 0 or forbidden point after play at analize point */
+      return new ChessType(0, 0);
     else
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
@@ -354,18 +356,17 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
   std::cout << ") ";
   for (int i = 0; i < 2; i++)
   {
-    std::cout << (i == 0 ? "B" : "W") << ": " << std::setw(1);
+    std::cout << (i == 0 ? "B" : "W") << ":" << std::setw(1);
 
     if (type[i]->length > 0 && type[i]->length < 5)
       /* print life or dead only if length == 1, 2, 3, 4*/
-      std::cout << (type[i]->life == 1 ? "L" : "D");
-    else
-      std::cout << " ";
-
-    if (type[i]->length == -1)
-      std::cout << "F";
-    else
-      std::cout << type[i]->length;
+      std::cout << (type[i]->life == 1 ? " L" : " D") << type[i]->length;
+    else if (type[i]->length == 5 || type[i]->length == 0)
+      std::cout << "  " << type[i]->length;
+    else if (type[i]->length == -1)
+      std::cout << "LCP";
+    else if (type[i]->length == -2)
+      std::cout << "DB4";
 
     std::cout << ( i == 0 ? ", " : "   ");
   }
