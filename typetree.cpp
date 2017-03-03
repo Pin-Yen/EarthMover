@@ -193,7 +193,6 @@ void TypeTree::classify(STATUS *status, bool checkForbidden, ChessType *(type[2]
     for (int checkPoint = start; ;checkPoint += move)
     {
       /* according to the status to enter the child node */
-      
       node = node->childNode[status[checkPoint]];
       
       /* if reach leaf, return type */
@@ -216,7 +215,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
 
   /* check the length of the connection around the analize point
    * under the following, we call this chess group "center group" (CG)
-   * for example : --X O*OOX-- ; OOOO* O X 
+   * for example: --X O*OOX-- ; OOOO* O X 
    *                   ^^^^      ^^^^^     */
   for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move)
@@ -227,63 +226,63 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
     }
 
   if (connect > 5)
-    /* CG's length > 5, if check forbidden, return -1, else return 5*/
-    return ((checkForbidden && color == BLACK) ? (new ChessType(6, 0)) : (new ChessType(5, 0)));
+    /* CG's length > 5, if check forbidden, return -1, else return 5 */
+    return ((checkForbidden && color == BLACK) ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
   else if (connect == 5)
-    /* CG's length == 5, return 5*/
+    /* CG's length == 5, return 5 */
     return new ChessType(5, 0);
   else
   {
-    /* CG's length < 5*/
+    /* CG's length < 5 */
 
-    /* play at the analize point*/
+    /* play at the analize point */
     status[length / 2] = color;
 
     /* try to find the left and right bound of CG
      * if it's empty, see this point as new analize point
-     * make a new status array and use recursion analize the status*/
+     * make a new status array and use recursion analize the status */
     ChessType *lType, *rType;
 
     for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
-        /* if reach CG's bound*/
+        /* if reach CG's bound */
         if (status[checkPoint] != color)
         {
           ChessType* type;
 
-          /* if the bound is an empty point*/
+          /* if the bound is an empty point */
           if (status[checkPoint] == EMPTY)
           {
-            /* make a new status array*/
+            /* make a new status array */
             STATUS newStatus[length];
 
-            /* transform from origin status*/
+            /* transform from origin status */
             for (int i = 0; i < length; ++i)
             {
               if (i == length / 2)
-                /* if i = center of length, it's analize point*/
+                /* if i = center of length, it's analize point */
                 newStatus[i] = ANALYZE_POINT;
               else
               { 
-                /* length / 2 - n means transformation magnitude*/
+                /* length / 2 - n means transformation magnitude */
                 int transformation_index = i - (length / 2 - checkPoint);
 
                 if (transformation_index < 0 || transformation_index >= length)
-                  /* if out of bound, see it as empty point*/
+                  /* if out of bound, see it as empty point */
                   newStatus[i] = EMPTY;
                 else
                   newStatus[i] = status[transformation_index];
               }
             }
 
-            /* recursion analize*/
+            /* recursion analize */
             type = typeAnalyze(newStatus, checkForbidden, color);
           }
-          /* if the board of CG is not empty, it means blocked*/
+          /* if the board of CG is not empty, it means blocked */
           else
             type = new ChessType(0, 0);
           
-          /* set analize result l/rType*/
+          /* set analize result l/rType */
           if (move == -1)
             lType = type;
           else
@@ -292,11 +291,10 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
           break;
         }
 
-
     /* restore the analize point */
     status[length / 2] = ANALYZE_POINT;
 
-    /* keep lType > rType*/
+    /* keep lType > rType */
     if (lType->length < rType->length || 
       (lType->length == rType->length && (lType->life < rType->life)))
     {
@@ -306,25 +304,24 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
     }
 
     if (lType->length == 5 && rType->length == 5)
-      /* if left and right will both produce 5 after play at analize point,*/
+      /* if left and right will both produce 5 after play at analize point */
     {
       if ((checkForbidden && color == BLACK) && connect < 4)
-        return new ChessType(-1, 0);
+        /* if check forbidden and CG's length < 4, it is a double four type 
+         * for example: -OOO * OOO- ; --O O*O O-- */
+        return new ChessType(-2, 0);
       else
+        /* it is a life four type */
         return new ChessType(4, 1);
     }
-      
     else if (lType->length == 5)
-      /* if there is only one side produce 5 after play at analize point,
-       * it is a dead four style*/
+      /* if there is only one side produces 5 after play at analize point,
+       * it is a dead four type */
       return new ChessType(4, 0);
-    else if (lType->length == 0)
-      /* if the longer size produce 0 after play at analize point,
-       * it is a useless point*/
+    else if (lType->length <= 0)
+      /* if the longer size produces 0 or forbidden point after play at analize point,
+       * it is a useless point */
       return new ChessType(0, 0);
-    else if(lType-> length == 6)
-      /* if the longer size produces 6 after play at analize point */
-      return new ChessType(6, 0);
     else
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
@@ -356,18 +353,17 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
   std::cout << ") ";
   for (int i = 0; i < 2; i++)
   {
-    std::cout << (i == 0 ? "B" : "W") << ": " << std::setw(1);
+    std::cout << (i == 0 ? "B" : "W") << ":" << std::setw(1);
 
     if (type[i]->length > 0 && type[i]->length < 5)
       /* print life or dead only if length == 1, 2, 3, 4*/
-      std::cout << (type[i]->life == 1 ? "L" : "D");
-    else
-      std::cout << " ";
-
-    if (type[i]->length == -1)
-      std::cout << "F";
-    else
-      std::cout << type[i]->length;
+      std::cout << (type[i]->life == 1 ? " L" : " D") << type[i]->length;
+    else if (type[i]->length == 5 || type[i]->length == 0)
+      std::cout << "  " << type[i]->length;
+    else if (type[i]->length == -1)
+      std::cout << "LCP";
+    else if (type[i]->length == -2)
+      std::cout << "DB4";
 
     std::cout << ( i == 0 ? ", " : "   ");
   }

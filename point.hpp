@@ -20,11 +20,18 @@ public:
   /* note: to finish initialize this point, shound call this to write all status pointer */
   void setDirStatus(int dir, int offset, STATUS* status);
 
+  int getRow();
+
+  int getColumn();
+
+  int getPlayNo();
+
+  void getScore(int* destination);
+
   /* point's status, the target of the other point's STATUS array pointer*/
   STATUS status;
 
   ChessType* type[4][2];
-  
 private:
 
   int row, col, playNo;
@@ -34,6 +41,4 @@ private:
   STATUS* dirStatus[4][11];
 
   int score[2];
-
-  bool isForbidden;
 };
