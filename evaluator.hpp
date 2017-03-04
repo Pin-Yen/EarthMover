@@ -1,7 +1,11 @@
 #include "typetree.hpp"
 #include "chesstype.hpp"
 #include "status.hpp"
-class evaluator{
+
+class Evaluator
+{
 public:
-	static int* evaluate(ChessType* type[4][2], STATUS *status, int dir, bool checkForbidden);
+  static void evaluate(ChessType* type[4][2], STATUS *status, int dir, int *score);
+
+  static void evaluate_forbidden(ChessType* type[4][2], STATUS *status, int dir, int *score);
 };
