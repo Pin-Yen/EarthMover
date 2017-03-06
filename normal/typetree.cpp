@@ -3,39 +3,25 @@
 #include <iomanip>
 
 /* initialize root*/
-TypeTree::Node* TypeTree::commonTree_root = (Node*)malloc(sizeof(Node));
-TypeTree::Node* TypeTree::forbiddenTree_root = (Node*)malloc(sizeof(Node));
+TypeTree::Node* TypeTree::root = (Node*)malloc(sizeof(Node));
 
 void TypeTree::initialize()
 {
-  /* build common tree and forbidden tree*/
-  for (int length = 9; length <= 11; length += 2)
-  {
-    /* initialize status*/
-    STATUS status[length];
-    for (int i = 0; i < length; i++)
-    {
-      if (i == length / 2)
-        status[i] = ANALYZE_POINT;
-      else
-        status[i] = NO_MATTER;
-    }
+  /* initialize status*/
+  STATUS status[length];
+  for (int i = 0; i < length; ++i)
+    status[i] = ((i == length / 2) ? ANALYZE_POINT : NO_MATTER);
 
-    /* build tree*/
-    Node* root = (length == 9 ? commonTree_root : forbiddenTree_root);
+  /* ####################################### debug */
+  count = 0;
 
-    /* ####################################### debug */
-    count = 0;
+  dfs(root, status, length / 2, -1, 0, 0, false, false);
+  cutSameResultChild(root);
 
+  /* ####################################### debug */
+  count = 0;
+  searchAll(root, status, length / 2, -1);
 
-    dfs(root, status, length / 2, -1, 0, 0, false, false, length != 9);
-    cutSameResultChild(root);
-
-    /* ####################################### debug */
-    count = 0;
-    searchAll(root, status, length, length / 2, -1);
-
-  }
 }
 
 /* ####################################### debug */
@@ -49,10 +35,8 @@ int TypeTree::count;
  * for example : OOOOO*OOX-- ; --X  *OOOOO 
  *               ^^^^^               ^^^^^ */
 void TypeTree::dfs(Node *root, STATUS *status, int location, int move, 
-  int blackConnect, int whiteConnect, bool blackblock, bool whiteBlock, bool checkForbidden)
+  bool blackblock, bool whiteBlock)
 {
-  int length = (checkForbidden ? 11 : 9);
-
   /* if status == black or white, set block == true*/
   switch (status[location])
   {
@@ -70,11 +54,11 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
       /* reached leaf */
 
       /* set type */
-      root->type[0] = typeAnalyze(status, checkForbidden, BLACK);
-      root->type[1] = typeAnalyze(status, checkForbidden, WHITE);
+      root->type[0] = typeAnalyze(status, BLACK);
+      root->type[1] = typeAnalyze(status, WHITE);
 
       /* ####################################### debug */
-      print(length, status, root->type);
+      print(status, root->type);
 
       /* set child node to NULL*/
       for (int i = 0; i < 4; ++i)
@@ -93,20 +77,8 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 
       /* reset block */
       blackblock = false; whiteBlock = false;
-
-      /* reset connect */
-      if (checkForbidden) { blackConnect  = 0; whiteConnect = 0; } 
     }
   }
-  else if (checkForbidden)
-    /* if check forbidden and the status == black or white, increase connect */
-    switch (status[location])
-    {
-      case (BLACK):
-        ++blackConnect; break;
-      case (WHITE):
-        ++whiteConnect;
-    }
 
   /* move location*/
   location += move;
@@ -119,17 +91,10 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 
   for (int i = 0; i < 4; ++i)
   {
-    if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4))
-    {
-      root->childNode[i] = NULL;
-      continue;
-    }
-
     root->childNode[i] = (Node*)malloc(sizeof(Node));
     root->childNode[i]->jump = false;
     status[location] = s[i];
-    dfs(root->childNode[i], status, location, move,
-      blackConnect, whiteConnect, blackblock, whiteBlock, checkForbidden);
+    dfs(root->childNode[i], status, location, move, blackblock, whiteBlock);
   }
 
   /* restore current location to NO_MATTER
@@ -184,8 +149,6 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
 
 void TypeTree::classify(STATUS *status, bool checkForbidden, ChessType *(type[2]))
 {
-  const int length = 11;
-
   /* switch root */
   Node* node = (checkForbidden ? forbiddenTree_root : commonTree_root);
 
@@ -207,10 +170,8 @@ void TypeTree::classify(STATUS *status, bool checkForbidden, ChessType *(type[2]
     }
 } 
 
-ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS color)
+ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
 {
-  int length = checkForbidden ? 11 : 9;
-
   int connect = 1;
 
   /* check the length of the connection around the analize point
@@ -225,10 +186,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
       ++connect;
     }
 
-  if (connect > 5)
-    /* CG's length > 5, if check forbidden, return -1, else return 5 */
-    return ((checkForbidden && color == BLACK) ? (new ChessType(-1, 0)) : (new ChessType(5, 0)));
-  else if (connect == 5)
+  if (connect == 5)
     /* CG's length == 5, return 5 */
     return new ChessType(5, 0);
   else
@@ -276,7 +234,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
             }
 
             /* recursion analize */
-            type = typeAnalyze(newStatus, checkForbidden, color);
+            type = typeAnalyze(newStatus, color);
           }
           /* if the board of CG is not empty, it means blocked */
           else
@@ -304,21 +262,14 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, bool checkForbidden, STATUS col
     }
 
     if (lType->length == 5 && rType->length == 5)
-      /* if left and right will both produce 5 after play at analize point */
-    {
-      if ((checkForbidden && color == BLACK) && connect < 4)
-        /* if check forbidden and CG's length < 4, it is a double four type 
-         * for example: -OOO * OOO- ; --O O*O O-- */
-        return new ChessType(-2, 0);
-      else
-        /* it is a life four type */
-        return new ChessType(4, 1);
-    }
+      /* if left and right will both produce 5 after play at analize point
+       * it is a life four type */
+      return new ChessType(4, 1);
     else if (lType->length == 5)
       /* if there is only one side produces 5 after play at analize point,
        * it is a dead four type */
       return new ChessType(4, 0);
-    else if (lType->length <= 0)
+    else if (lType->length == 0)
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
       return new ChessType(0, 0);
@@ -355,15 +306,11 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
   {
     std::cout << (i == 0 ? "B" : "W") << ":" << std::setw(1);
 
-    if (type[i]->length > 0 && type[i]->length < 5)
+    if (type[i]->length > 0)
       /* print life or dead only if length == 1, 2, 3, 4*/
       std::cout << (type[i]->life == 1 ? " L" : " D") << type[i]->length;
-    else if (type[i]->length == 5 || type[i]->length == 0)
+    else
       std::cout << "  " << type[i]->length;
-    else if (type[i]->length == -1)
-      std::cout << "LCP";
-    else if (type[i]->length == -2)
-      std::cout << "DB4";
 
     std::cout << ( i == 0 ? ", " : "   ");
   }
@@ -371,7 +318,7 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
   if (count % 4 == 0) std::cout << "\n";
 }
 
-void TypeTree::searchAll(Node* root, STATUS *status, int length, int location, int move)
+void TypeTree::searchAll(Node* root, STATUS *status,int location, int move)
 {
   if (root->type[0] != NULL)
   {

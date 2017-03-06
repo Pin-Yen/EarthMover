@@ -4,7 +4,7 @@
 class TypeTree
 {
 public:
-  static void classify(STATUS *status, bool checkForbidden, ChessType *(type[2]));
+  static void classify(STATUS *status, ChessType *(type[2]));
 
   static void initialize();
 
@@ -20,28 +20,29 @@ private:
     bool jump;
   };
 
-  static Node *commonTree_root, *forbiddenTree_root;
+  static Node* root;
 
   /* Depth First Search
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
-  static void dfs(Node *root, STATUS *status, int location, int move, 
-    int blackConnect, int whiteConnect, bool blackblock, bool whiteBlock, bool checkForbidden);
+  static void dfs(Node *root, STATUS *status, int location, int move,
+    bool blackblock, bool whiteBlock);
 
   /* cut the tree node that all child has same result */
   static ChessType** cutSameResultChild(Node *root);
 
   /* copied from chesstypemaker.cpp */
-  static ChessType* typeAnalyze(STATUS *status, bool checkForbidden, STATUS color);
+  static ChessType* typeAnalyze(STATUS *status, STATUS color);
 
+  static const int length = 9;
   
   /* debugging purposes */
 
   static int count;
 
   /* copied from chesstypemaker.cpp, print the status and type */
-  static void print(int length, STATUS *status, ChessType **type);
+  static void print(STATUS *status, ChessType **type);
 
   /* search all the tree and print the leaves */
-  static void searchAll(Node* root, STATUS *status, int length, int location, int move);
+  static void searchAll(Node* root, STATUS *status, int location, int move);
 };
