@@ -150,7 +150,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
 void TypeTree::classify(STATUS *status, bool checkForbidden, ChessType *(type[2]))
 {
   /* switch root */
-  Node* node = (checkForbidden ? forbiddenTree_root : commonTree_root);
+  Node* node = root;
 
   for (int move = -1, start = length / 2 - 1; ; move = 1, start += 2)
     for (int checkPoint = start; ;checkPoint += move)
