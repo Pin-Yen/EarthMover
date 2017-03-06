@@ -2,6 +2,7 @@
 #include <string>
 #include <ctype.h>
 #include "displayboard.hpp"
+#include "virtualboard.hpp"
 
 void start(DisplayBoard* board);
 
@@ -9,9 +10,10 @@ void getInput(int* row, int* col, int boardDimen);
 
 int main()
 {
-  DisplayBoard* board = new DisplayBoard();
+  DisplayBoard* displayBoard = new DisplayBoard();
+  VirtualBoard* virtualBoard = new VirtualBoard();
 
-  start(board);
+  start(displayBoard);
 }
 
 void start(DisplayBoard* board)

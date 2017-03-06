@@ -93,7 +93,7 @@ void VirtualBoard::play(int row, int col)
   {
     int length = 1;
 
-    for (int move = -1; move <= 1; move = 2)
+    for (int move = -1; move <= 1; move += 2)
     {
       bool block[2] = {false, false};
 
