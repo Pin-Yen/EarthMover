@@ -38,7 +38,7 @@ private:
 
   /* STATUS array pointer, this will point at other point's Status color */
   /* index: 0→ 1↓ 2↗ 3↘ */
-  STATUS* dirStatus[4][11];
+  STATUS* dirStatus[4][8];
 
   int score[2];
 };

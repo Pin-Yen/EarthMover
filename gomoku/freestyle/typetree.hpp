@@ -34,7 +34,7 @@ private:
   /* copied from chesstypemaker.cpp */
   static ChessType* typeAnalyze(STATUS *status, STATUS color);
 
-  static const int length = 9;
+  static const int analyze_length = 9, classify_length = 8;
   
   /* debugging purposes */
 
