@@ -8,20 +8,19 @@ TypeTree::Node* TypeTree::root = (Node*)malloc(sizeof(Node));
 void TypeTree::initialize()
 {
   /* initialize status*/
-  STATUS status[length];
-  for (int i = 0; i < length; ++i)
-    status[i] = ((i == length / 2) ? ANALYZE_POINT : NO_MATTER);
+  STATUS status[analyze_length];
+  for (int i = 0; i < analyze_length; ++i)
+    status[i] = ((i == analyze_length / 2) ? ANALYZE_POINT : NO_MATTER);
 
   /* ####################################### debug */
   count = 0;
 
-  dfs(root, status, length / 2, -1, 0, 0, false, false);
+  dfs(root, status, analyze_length / 2, -1, false, false);
   cutSameResultChild(root);
 
   /* ####################################### debug */
   count = 0;
-  searchAll(root, status, length / 2, -1);
-
+  searchAll(root, status, analyze_length / 2, -1);
 }
 
 /* ####################################### debug */
@@ -47,7 +46,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
   }
 
   if ((blackblock && whiteBlock) || status[location] == BOUND || 
-    location <= 0 || location >= length - 1)
+    location <= 0 || location >= analyze_length - 1)
   {
     if (move == 1)
     {
@@ -73,7 +72,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 
       /* jump to middle of the status */
       move += 2;
-      location = length / 2;
+      location = analyze_length / 2;
 
       /* reset block */
       blackblock = false; whiteBlock = false;
@@ -105,7 +104,6 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 
 ChessType** TypeTree::cutSameResultChild(Node *root)
 {
-
   ChessType **currentType = NULL;
 
   if (root->type[0] != NULL)
@@ -147,20 +145,26 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
   return currentType;
 }
 
-void TypeTree::classify(STATUS *status, bool checkForbidden, ChessType *(type[2]))
+void TypeTree::classify(STATUS *status, ChessType *(type[2]))
 {
   /* switch root */
   Node* node = root;
 
-  for (int move = -1, start = length / 2 - 1; ; move = 1, start += 2)
-    for (int checkPoint = start; ;checkPoint += move)
+  for (int move = -1, start = classify_length / 2 - 1; ; move = 1, ++start)
+    for (int checkPoint = start; ; checkPoint += move)
     {
       /* according to the status to enter the child node */
       node = node->childNode[status[checkPoint]];
-      
+
       /* if reach leaf, return type */
-      if (node->type[0] != NULL){
-        type =  node->type;
+      if (node->type[0] != NULL)
+      {
+        //type = node->type;
+        type[0]->length = node->type[0]->length;
+        type[0]->life = node->type[0]->life;
+        type[1]->length = node->type[1]->length;
+        type[1]->life = node->type[1]->life;
+
         return;
       }
 
@@ -178,7 +182,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
    * under the following, we call this chess group "center group" (CG)
    * for example: --X O*OOX-- ; OOOO* O X 
    *                   ^^^^      ^^^^^     */
-  for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
+  for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move)
     {
       if (status[checkPoint] != color) break;
@@ -186,7 +190,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
       ++connect;
     }
 
-  if (connect == 5)
+  if (connect >= 5)
     /* CG's length == 5, return 5 */
     return new ChessType(5, 0);
   else
@@ -194,14 +198,14 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
     /* CG's length < 5 */
 
     /* play at the analize point */
-    status[length / 2] = color;
+    status[analyze_length / 2] = color;
 
     /* try to find the left and right bound of CG
      * if it's empty, see this point as new analize point
      * make a new status array and use recursion analize the status */
     ChessType *lType, *rType;
 
-    for (int move = -1, start = length / 2 - 1; move <= 1; move += 2, start += 2)
+    for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
         /* if reach CG's bound */
         if (status[checkPoint] != color)
@@ -212,20 +216,20 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
           if (status[checkPoint] == EMPTY)
           {
             /* make a new status array */
-            STATUS newStatus[length];
+            STATUS newStatus[analyze_length];
 
             /* transform from origin status */
-            for (int i = 0; i < length; ++i)
+            for (int i = 0; i < analyze_length; ++i)
             {
-              if (i == length / 2)
+              if (i == analyze_length / 2)
                 /* if i = center of length, it's analize point */
                 newStatus[i] = ANALYZE_POINT;
               else
               { 
                 /* length / 2 - n means transformation magnitude */
-                int transformation_index = i - (length / 2 - checkPoint);
+                int transformation_index = i - (analyze_length / 2 - checkPoint);
 
-                if (transformation_index < 0 || transformation_index >= length)
+                if (transformation_index < 0 || transformation_index >= analyze_length)
                   /* if out of bound, see it as empty point */
                   newStatus[i] = EMPTY;
                 else
@@ -250,7 +254,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
         }
 
     /* restore the analize point */
-    status[length / 2] = ANALYZE_POINT;
+    status[analyze_length / 2] = ANALYZE_POINT;
 
     /* keep lType > rType */
     if (lType->length < rType->length || 
@@ -280,11 +284,11 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
   }
 }
 
-void TypeTree::print(int length, STATUS *status, ChessType **type)
+void TypeTree::print(STATUS *status, ChessType **type)
 {
   std::cout << std::setw(5) << ++count << "(";
   /* print status array*/
-  for (int i = 0; i < length; ++i)
+  for (int i = 0; i < analyze_length; ++i)
     switch (status[i])
     {
       case 0:
@@ -318,18 +322,18 @@ void TypeTree::print(int length, STATUS *status, ChessType **type)
   if (count % 4 == 0) std::cout << "\n";
 }
 
-void TypeTree::searchAll(Node* root, STATUS *status,int location, int move)
+void TypeTree::searchAll(Node* root, STATUS *status, int location, int move)
 {
   if (root->type[0] != NULL)
   {
-    print(length, status, root->type);
+    print(status, root->type);
     return;
   }
 
   if (root->jump)
   {
     move += 2;
-    location = length / 2;
+    location = analyze_length / 2;
   }
 
   location += move;
@@ -341,7 +345,7 @@ void TypeTree::searchAll(Node* root, STATUS *status,int location, int move)
     if (root->childNode[i] != NULL)
     {
       status[location] = s[i];
-      searchAll(root->childNode[i], status, length, location, move);
+      searchAll(root->childNode[i], status, location, move);
     }
   }
 
@@ -351,4 +355,11 @@ void TypeTree::searchAll(Node* root, STATUS *status,int location, int move)
 int main()
 {
   TypeTree::initialize();
+  STATUS s[8] = {BLACK, BLACK, BLACK, EMPTY, EMPTY, BLACK, BLACK, BLACK};
+  ChessType* type[2];
+  type[0] = (ChessType*)malloc(sizeof(ChessType));
+  type[1] = (ChessType*)malloc(sizeof(ChessType));
+  TypeTree::classify(s, type);
+
+  std::cout << "\n####" << type[0]->length << type[0]->life;
 }
