@@ -2,18 +2,29 @@
 
 GameTree::GameTree()
 {
-  currentNode = (Node*)malloc(sizeof(Node));
-  currentNode->board = new VirtualBoard();
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      currentNode->childNode[r][c] = NULL;
+  /* create the grand root(e.g. a root representing a blank board) */
+  root = new GameNode(NULL, NULL, -1, -1);
+
 }
 
+/* plays a point in the simulation process,
+ * virtualPlay() should be managed by some function in gametree */
+void GameTree::virtualPlay(int depth, Node *currentNode){
+  
+  /* if the current node has results, backprop. */
+  if(currentNode->hasResult()){
+    currentNode->updateAndBackprop()
+    return;
+  }
+  /* if current node has no results, play at a random point */
+  else{
+    currentNode = currentNode->pickRandomPoint();
+    virtualPlay(depth + 1, currentNode);
+  }
+}
+
+/* called when a REAL point is played, updates the currentRoot */
 void GameTree::play(int row, int col)
 {
-  currentNode->childNode[row][col] = (Node*)malloc(sizeof(Node));
-  currentNode = currentNode->childNode[row][col];
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      currentNode->childNode[r][c] = NULL;
+  currentRoot = currentRoot->getChildNode(row, col);
 }

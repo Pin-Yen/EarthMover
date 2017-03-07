@@ -6,6 +6,12 @@ VirtualBoard::VirtualBoard()
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(r, c);
+  
+  /* initialize score */
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      for(int color=0; color<2; ++color)
+        score[r][c][color] = 0;
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -48,6 +54,12 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(source->point[r][c]);
 
+  /* copy score from source */
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      for(int color = 0; color < 2; ++color)
+        score[r][c][color] = source[r][c][color];
+  
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
@@ -114,8 +126,8 @@ void VirtualBoard::play(int row, int col)
           continue;
         }
 
-        //evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
-        //  d, checkForbidden);
+        evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
+         d, score[checkRow][checkCol]);
       }
     }
   }

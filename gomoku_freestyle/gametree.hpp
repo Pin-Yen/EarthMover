@@ -1,4 +1,5 @@
 #include "virtualboard.hpp"
+#include "gamenode.hpp"
 
 class GameTree
 {
@@ -8,13 +9,9 @@ public:
   GameTree();
 
   void play(int row, int col);
+
+  
 private:
-  struct Node
-  {
-    Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-    VirtualBoard* board;
-  };
-
-  Node* currentNode;
+  Node *root *currentNode;
 };
