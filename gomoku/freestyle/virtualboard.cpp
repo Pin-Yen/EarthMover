@@ -56,7 +56,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      /* set each poit's status array pointer*/
+      /* set each point's status array pointer*/
       for (int d = 0; d < 4; ++d)
         for (int offset = -4, index = 0; offset <= 4; ++offset)
         {
@@ -83,7 +83,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   playNo = source->playNo;
 }
 
-/* puts a new chess, if the point is not empty then return false */
+/* puts a new chess */
 void VirtualBoard::play(int row, int col)
 {
   ++playNo;
