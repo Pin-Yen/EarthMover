@@ -4,7 +4,7 @@ class GameNode
 {
 public:
 
-	GameNode(GameNode *parentNode ,VirtualBoard *vb, int row, int col){
+	GameNode(GameNode *parentNode , int row, int col){
 		/* initialize all childNodes to NULL, all childProp to 0 */
 		for(int i=0; i<CHESSBOARD_DIMEN; ++i){
 			for(int k=0; k<CHESSBOARD_DIMEN; ++k){
@@ -21,7 +21,7 @@ public:
 		 * if parentNode exists, create a board from parents board,
 		 * else create a blank one. */
 		if(parentNode != NULL){
-			board = new VirtualBoard(vb);
+			board = new VirtualBoard(parentNode->board);
 			board.play(row, col);
 		}
 		else{
@@ -57,7 +57,7 @@ public:
 	/* get childNode, if it's NULL, construct one */
 	Node* getChildNode(int r, int c){
 		if(childNode[r][c] == NULL)
-			childNode[r][c] = new GameNode(this, )
+			childNode[r][c] = new GameNode(this, r, c);
 		return childNode[r][c];
 	}
 
