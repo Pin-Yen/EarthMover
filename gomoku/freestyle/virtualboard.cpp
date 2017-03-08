@@ -7,6 +7,11 @@ VirtualBoard::VirtualBoard()
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(r, c);
 
+  /* initialize score*/
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      score[r][c] = 0;
+
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
@@ -50,6 +55,11 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(source->point[r][c]);
+
+  /* copy score */
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      score[r][c] = source->score[r][c];
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};

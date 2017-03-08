@@ -9,7 +9,7 @@ public:
 
   VirtualBoard();
   /* copy the source board to consturct the board*/
-  VirtualBoard(VirtualBoard* source)
+  VirtualBoard(VirtualBoard* source);
 
   /* puts a new chess, if the ponit is not empty then return false */
   bool play(STATUS color, int row, int col);
@@ -17,7 +17,7 @@ public:
 private:
   /* point array */
   Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-
+  int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
   /* the total number of plays */
   int playNo;
 };
