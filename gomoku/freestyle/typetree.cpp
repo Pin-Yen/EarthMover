@@ -10,7 +10,7 @@ void TypeTree::initialize()
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
-    status[i] = ((i == analyze_length / 2) ? ANALYZE_POINT : NO_MATTER);
+    status[i] = EMPTY;
 
   /* ####################################### debug */
   count = 0;
@@ -67,7 +67,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
     }
     else
     {
-      /* set this node to jump node*/
+      /* set this node to jump node */
       root->jump = true;
 
       /* jump to middle of the status */
@@ -79,12 +79,10 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
     }
   }
 
-  /* move location*/
+  /* move location */
   location += move;
   
   root->type[0] = NULL; root->type[1] = NULL;
-
-  /* if connect == 4, stop playing same color at this point to prevent appearing five */
 
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
@@ -96,10 +94,10 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
     dfs(root->childNode[i], status, location, move, blackblock, whiteBlock);
   }
 
-  /* restore current location to NO_MATTER
+  /* restore current location to EMPTY
    * note: without this line, the classification process should still work fine,
-   * but will result in printing out garbage values on NO_MATTER points */
-  status[location] = NO_MATTER;
+   * but will result in printing out garbage values on EMPTY points */
+  status[location] = EMPTY;
 }
 
 ChessType** TypeTree::cutSameResultChild(Node *root)
@@ -221,20 +219,13 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
             /* transform from origin status */
             for (int i = 0; i < analyze_length; ++i)
             {
-              if (i == analyze_length / 2)
-                /* if i = center of length, it's analize point */
-                newStatus[i] = ANALYZE_POINT;
-              else
-              { 
-                /* length / 2 - n means transformation magnitude */
-                int transformation_index = i - (analyze_length / 2 - checkPoint);
+              int transformation_index = i - (analyze_length / 2 - checkPoint);
 
-                if (transformation_index < 0 || transformation_index >= analyze_length)
+              if (transformation_index < 0 || transformation_index >= analyze_length)
                   /* if out of bound, see it as empty point */
-                  newStatus[i] = EMPTY;
-                else
-                  newStatus[i] = status[transformation_index];
-              }
+                newStatus[i] = EMPTY;
+              else
+                newStatus[i] = status[transformation_index];
             }
 
             /* recursion analize */
@@ -253,8 +244,8 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
           break;
         }
 
-    /* restore the analize point */
-    status[analyze_length / 2] = ANALYZE_POINT;
+    /* restore the analize point to empty */
+    status[analyze_length / 2] = EMPTY;
 
     /* keep lType > rType */
     if (lType->length < rType->length || 
@@ -289,21 +280,26 @@ void TypeTree::print(STATUS *status, ChessType **type)
   std::cout << std::setw(5) << ++count << "(";
   /* print status array*/
   for (int i = 0; i < analyze_length; ++i)
-    switch (status[i])
-    {
-      case 0:
-        std::cout << "X"; break;
-      case 1:
-        std::cout << "O"; break;
-      case 2:
-        std::cout << " "; break;
-      case 3:
-        std::cout << "|"; break;
-      case 4:
-        std::cout << "*"; break;
-      case 5:
-        std::cout << "-";
-    }
+  {
+    char c;
+    if (i == analyze_length / 2)
+      c = '*';
+    else
+      switch (status[i])
+      {
+        case 0:
+          c = 'X'; break;
+        case 1:
+          c = 'O'; break;
+        case 2:
+          c = ' '; break;
+        case 3:
+          c = '|';
+      }
+
+    std::cout << c;
+  }
+
 
   std::cout << ") ";
   for (int i = 0; i < 2; i++)
@@ -349,7 +345,7 @@ void TypeTree::searchAll(Node* root, STATUS *status, int location, int move)
     }
   }
 
-  status[location] = NO_MATTER;
+  status[location] = EMPTY; //NO_MATTER;
 }
 
 int main()
