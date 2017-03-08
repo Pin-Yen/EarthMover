@@ -19,19 +19,19 @@ void Evaluator::evaluate(ChessType* type[4][2], STATUS *status, int dir, int *sc
       ++(count[color][type[d][color]->length][type[d][color]->life]);
 
   /* [0] attack, [1] defense*/
-  const int SCORE_5[2] = {1000, 900};
-  const int SCORE_LIVE4[2] = {760, 700};
-  const int SCORE_DOUBLE4[2] = {760, 700};
-  const int SCORE_DEAD4LIVE3[2] = {720, 660};
+  const int SCORE_5[2] = {1000000, 80000};
+  const int SCORE_LIVE4[2] = {8000, 2000};
+  const int SCORE_DOUBLE4[2] = {8000, 2000};
+  const int SCORE_DEAD4LIVE3[2] = {6000, 1600};
 
-  const int SCORE_DOUBLELIVE3[2] = {400, 320};
-  const int SCORE_DEAD4[2] = {220, 160};
-  const int SCORE_LIVE3[2] = {200, 120};
-  const int SCORE_DEAD3[2] = {80, 50};
-  const int SCORE_LIVE2[2] = {80, 50};
-  const int SCORE_DEAD2[2] = {25, 10};
-  const int SCORE_LIVE1[2] = {25, 10};
-  const int SCORE_DEAD1[2] = {4, 1};
+  const int SCORE_DOUBLELIVE3[2] = {1000, 240};
+  const int SCORE_DEAD4[2] = {200, 120};
+  const int SCORE_LIVE3[2] = {200, 100};
+  const int SCORE_DEAD3[2] = {64, 36};
+  const int SCORE_LIVE2[2] = {60, 36};
+  const int SCORE_DEAD2[2] = {25, 12};
+  const int SCORE_LIVE1[2] = {20, 10};
+  const int SCORE_DEAD1[2] = {6, 2};
 
   /*these const are for indexing purposes, enhancing the readibility of the code. */
   const int ATTACK = 0;
