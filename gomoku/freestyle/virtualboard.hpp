@@ -20,6 +20,4 @@ private:
 
   /* the total number of plays */
   int playNo;
-
-  bool checkForbidden;
 };
