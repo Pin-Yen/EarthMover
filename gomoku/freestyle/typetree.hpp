@@ -18,6 +18,11 @@ private:
     struct ChessType *type[2];
 
     bool jump;
+
+    Node()
+    {
+      jump = false;
+    }
   };
 
   static Node* root;

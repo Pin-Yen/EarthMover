@@ -88,8 +88,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 
   for (int i = 0; i < 4; ++i)
   {
-    root->childNode[i] = (Node*)malloc(sizeof(Node));
-    root->childNode[i]->jump = false;
+    root->childNode[i] = new Node();
     status[location] = s[i];
     dfs(root->childNode[i], status, location, move, blackblock, whiteBlock);
   }
@@ -138,7 +137,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root)
 
   for (int i = 0; i < 4; ++i)
     if (root->childNode[i] != NULL)
-      free(root->childNode[i]);
+      delete root->childNode[i];
 
   return currentType;
 }
@@ -158,10 +157,13 @@ void TypeTree::classify(STATUS *status, ChessType *(type[2]))
       if (node->type[0] != NULL)
       {
         //type = node->type;
-        type[0]->length = node->type[0]->length;
-        type[0]->life = node->type[0]->life;
-        type[1]->length = node->type[1]->length;
-        type[1]->life = node->type[1]->life;
+        type[0] = node->type[0];
+        type[1] = node->type[1];
+
+        //type[0]->length = node->type[0]->length;
+        //type[0]->life = node->type[0]->life;
+        //type[1]->length = node->type[1]->length;
+        //type[1]->life = node->type[1]->life;
 
         return;
       }
@@ -250,11 +252,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
     /* keep lType > rType */
     if (lType->length < rType->length || 
       (lType->length == rType->length && (lType->life < rType->life)))
-    {
-      ChessType* temp = lType;
-      lType = rType;
-      rType = temp;
-    }
+      std::swap(lType, rType);
 
     if (lType->length == 5 && rType->length == 5)
       /* if left and right will both produce 5 after play at analize point
