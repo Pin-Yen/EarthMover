@@ -21,6 +21,59 @@ void DisplayBoard::invalidate()
     }
 }
 
+void DisplayBoard::getInput(int &row, int &col)
+{
+  while (true)
+  {
+    std::cout << "enter the coordinate of next move (A1 ~ " 
+      << (char)('A' + boardDimen - 1) << boardDimen << ") : ";
+    std::string input;
+    std::cin >> input;
+
+    int n = input.length();
+
+    if (n == 2 || n == 3)
+    {
+      bool validColumn = false, validRow = false;
+
+      /* get column*/
+      col = input[0];
+      if (col >= 'A' && col <= 'A' + boardDimen)
+      {
+        col -= 'A';
+        validColumn = true;
+      }
+      else if (col >= 'a' && col <= 'a' + boardDimen)
+      {
+        col -= 'a';
+        validColumn = true;
+      }
+
+      /* get row*/
+      bool isNumber = true;
+      for (int i = 1; i < n; ++i)
+        if (!isdigit(input[i]))
+        {
+          isNumber = false; break;
+        }
+
+      if (isNumber)
+      {
+        row = std::stoi(input.substr(1, n - 1));
+        if (row >= 1 && row <= boardDimen)
+        {
+          row--;
+          validRow = true;
+        }
+      }   
+
+      if (validRow && validColumn) break;  
+    }
+
+    std::cout << "Invalid input\n";
+  }
+}
+
 /* print a part of the board*/
 void DisplayBoard::printBoard(int row, int col, int color)
 {

@@ -1,9 +1,10 @@
 class DisplayBoard
 {
 public:
-  static const int CHESSBOARD_DIMEN = 15;
-
   DisplayBoard();
+
+  /* get user's input */
+  void getInput(int &row, int &col);
 
   /* print the current chesssboard */
   void invalidate();
@@ -21,6 +22,7 @@ public:
   bool judge(int row, int col);
 
 private:
+  static const int CHESSBOARD_DIMEN = 15;
   const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 
   /* point array */
