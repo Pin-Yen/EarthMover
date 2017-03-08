@@ -17,7 +17,7 @@ public:
 private:
   /* point array */
   Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-  int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+  int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
   /* the total number of plays */
   int playNo;
 };
