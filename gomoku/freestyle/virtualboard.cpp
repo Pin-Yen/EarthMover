@@ -58,8 +58,10 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       /* set each poit's status array pointer*/
       for (int d = 0; d < 4; ++d)
-        for (int offset = -5; offset < 6; ++offset)
+        for (int offset = -4, index = 0; offset <= 4; ++offset)
         {
+          if (offset == 0) continue;
+
           int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
@@ -74,7 +76,8 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
           else
             status = &(point[r][c]->status);
 
-          point[r][c]->setDirStatus(d, offset + 5, status);
+          point[r][c]->setDirStatus(d, index, status);
+          ++index
         }
 
   playNo = source->playNo;
