@@ -126,7 +126,7 @@ void VirtualBoard::play(int row, int col)
           continue;
         }
 
-        evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
+        evaluate_forbidden(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
          d, score[checkRow][checkCol]);
       }
     }
