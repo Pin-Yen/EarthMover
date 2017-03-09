@@ -1,11 +1,13 @@
 #include "evaluator.hpp"
 
-/* score[0]:black's total score,[1]:white's */
-void Evaluator::evaluate(ChessType* type[4][2], STATUS *status, int dir, int *score)
+void Evaluator::evaluate_type(ChessType* type[2], STATUS *status)
 {
+  TypeTree::classify(status, type);
+}
 
-  TypeTree::classify(status, false, type[dir]);
-
+/* score[0]:black's total score,[1]:white's */
+void Evaluator::evaluate_score(ChessType* type[4][2], int *score)
+{
   /* count[color][length][LorD]
    * color: 0 for BLACK, 1 for WHITE
    * length: means the length of the type, should be 0~5.
