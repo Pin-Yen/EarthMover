@@ -35,3 +35,9 @@ void Point::play(STATUS status, int playNo)
   this->status = status;
   this->playNo = playNo;
 }
+
+void Point::getDirStatusArray(int dir, STATUS* dest)
+{
+  for (int i = 0; i < 8; ++i)
+    dest[i] = *(dirStatus[dir][i]);
+}
