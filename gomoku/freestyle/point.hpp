@@ -18,15 +18,15 @@ public:
 
   /* set the status pointer */
   /* note: to finish initialize this point, shound call this to write all status pointer */
-  void setDirStatus(int dir, int offset, STATUS* status);
+  void setDirStatus(int dir, int offset, STATUS* status) { dirStatus[dir][offset] = status; }
 
-  int getRow();
+  int Point::getRow() { return row; }
 
-  int getColumn();
+  int Point::getColumn() { return col; }
 
-  int getPlayNo();
+  int Point::getPlayNo() { return playNo; }
 
-  void getScore(int* destination);
+  void Point::getScore(int* dest) { dest[0] = score[0]; dest[1] = score[1]; }
 
   /* point's status, the target of the other point's STATUS array pointer*/
   STATUS status;
