@@ -10,7 +10,7 @@ VirtualBoard::VirtualBoard()
   /* initialize score*/
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      for(int color = 0; color < 2; ++color)
+      for (int color = 0; color < 2; ++color)
         score[r][c][color] = 0;
 
   /* index: 0→ 1↓ 2↗ 3↘ */
@@ -49,6 +49,18 @@ VirtualBoard::VirtualBoard()
 
   playNo = 0;
 
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+    {
+      for (int d = 0; d < 4; ++d)
+      {
+        STATUS* status; point[r][c]->getDirStatus(d, status);
+
+        Evaluator::evaluate_type(Point[r][c]->type[d]);
+      }
+      
+      Evaluator::evaluate_score(Point[r][c]->type, Point[r][c]->score);
+    }
 }
 
 VirtualBoard::VirtualBoard(VirtualBoard* source)
@@ -60,7 +72,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   /* copy score */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      for(int color = 0; color < 2; ++color)
+      for (int color = 0; color < 2; ++color)
         score[r][c][color] = source->score[r][c][color];
 
   /* index: 0→ 1↓ 2↗ 3↘ */
@@ -132,8 +144,10 @@ void VirtualBoard::play(int row, int col)
           continue;
         }
 
-        evaluate(point[checkRow][checkCol]->type, point[checkRow][checkCol]->status,
-         d, score[checkRow][checkCol]);
+        Evaluator::evaluate_type(Point[checkRow][checkCol]->type[d]);
+      
+        Evaluator::evaluate_score(Point[checkRow][checkCol]->type, 
+          Point[checkRow][checkCol]->score);
       }
     }
   }
