@@ -43,8 +43,6 @@ private:
   
   /* debugging purposes */
 
-  static int count;
-
   /* copied from chesstypemaker.cpp, print the status and type */
   static void print(STATUS *status, ChessType **type);
 

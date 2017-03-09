@@ -3,7 +3,7 @@
 #include <iomanip>
 
 /* initialize root*/
-TypeTree::Node* TypeTree::root = (Node*)malloc(sizeof(Node));
+TypeTree::Node* TypeTree::root = new Node();
 
 void TypeTree::initialize()
 {
@@ -12,19 +12,9 @@ void TypeTree::initialize()
   for (int i = 0; i < analyze_length; ++i)
     status[i] = EMPTY;
 
-  /* ####################################### debug */
-  count = 0;
-
   dfs(root, status, analyze_length / 2, -1, false, false);
   cutSameResultChild(root);
-
-  /* ####################################### debug */
-  count = 0;
-  searchAll(root, status, analyze_length / 2, -1);
 }
-
-/* ####################################### debug */
-int TypeTree::count;
 
 /* Depth First Search
  * parameters of the initial call should be:
@@ -55,9 +45,6 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
       /* set type */
       root->type[0] = typeAnalyze(status, BLACK);
       root->type[1] = typeAnalyze(status, WHITE);
-
-      /* ####################################### debug */
-      print(status, root->type);
 
       /* set child node to NULL*/
       for (int i = 0; i < 4; ++i)
@@ -156,14 +143,8 @@ void TypeTree::classify(STATUS *status, ChessType *(type[2]))
       /* if reach leaf, return type */
       if (node->type[0] != NULL)
       {
-        //type = node->type;
         type[0] = node->type[0];
         type[1] = node->type[1];
-
-        //type[0]->length = node->type[0]->length;
-        //type[0]->life = node->type[0]->life;
-        //type[1]->length = node->type[1]->length;
-        //type[1]->life = node->type[1]->life;
 
         return;
       }
@@ -343,17 +324,5 @@ void TypeTree::searchAll(Node* root, STATUS *status, int location, int move)
     }
   }
 
-  status[location] = EMPTY; //NO_MATTER;
-}
-
-int main()
-{
-  TypeTree::initialize();
-  STATUS s[8] = {BLACK, BLACK, BLACK, EMPTY, EMPTY, BLACK, BLACK, BLACK};
-  ChessType* type[2];
-  type[0] = (ChessType*)malloc(sizeof(ChessType));
-  type[1] = (ChessType*)malloc(sizeof(ChessType));
-  TypeTree::classify(s, type);
-
-  std::cout << "\n####" << type[0]->length << type[0]->life;
+  status[location] = EMPTY;
 }
