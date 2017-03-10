@@ -196,12 +196,6 @@ void DisplayBoard::wipe()
   invalidate();
 }
 
-/* get is black turn or not */
-bool DisplayBoard::isBlackTurn()
-{
-  return !(playNo & 1);
-}
-
 /* search the area surrounding (row, col) for winning conditions */
 bool DisplayBoard::judge(int row, int col)
 {
