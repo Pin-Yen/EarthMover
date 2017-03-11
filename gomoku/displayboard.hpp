@@ -20,7 +20,7 @@ public:
 
 private:
   static const int CHESSBOARD_DIMEN = 15;
-  const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
+  static const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 
   /* point array */
   int point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];

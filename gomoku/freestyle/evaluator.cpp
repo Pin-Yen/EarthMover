@@ -40,8 +40,8 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score)
   const int DEFENSE = 1;
   const int BLACK = 0;
   const int WHITE = 1;
-  const int LIVE = 0;
-  const int DEAD = 1;
+  const int LIVE = 1;
+  const int DEAD = 0;
 
   score[BLACK] = 0; score[WHITE] = 0;
 

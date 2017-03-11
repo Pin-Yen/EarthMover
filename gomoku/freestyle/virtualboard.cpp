@@ -27,24 +27,21 @@ VirtualBoard::VirtualBoard()
           int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
-          STATUS* status;
+          STATUS* status = NULL;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           {
             /* if out of bound, point to bound */
-            STATUS s = BOUND; status = &s;
+            status = (STATUS*)malloc(sizeof(STATUS*));
+            *status = BOUND;
           }
           else
-            status = &(point[r][c]->status);
+            status = &(point[checkRow][checkCol]->status);
 
           point[r][c]->setDirStatus(d, index, status);
           ++index;
         }
-
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point[r][c]->reset();
 
   playNo = 0;
 
@@ -57,7 +54,6 @@ VirtualBoard::VirtualBoard()
 
         Evaluator::evaluate_type(point[r][c]->type[d], status);
       }
-      
       Evaluator::evaluate_score(point[r][c]->type, point[r][c]->score);
     }
 }
@@ -88,16 +84,17 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
           int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
-          STATUS* status;
+          STATUS* status = NULL;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           {
             /* if out of bound, point to bound */
-            STATUS s = BOUND; status = &s;
+            status = (STATUS*)malloc(sizeof(STATUS*));
+            *status = BOUND;
           }
           else
-            status = &(point[r][c]->status);
+            status = &(point[checkRow][checkCol]->status);
 
           point[r][c]->setDirStatus(d, index, status);
           ++index;
@@ -146,7 +143,7 @@ void VirtualBoard::play(int row, int col)
         STATUS status[8]; point[checkRow][checkCol]->getDirStatusArray(d, status);
 
         Evaluator::evaluate_type(point[checkRow][checkCol]->type[d], status);
-      
+
         Evaluator::evaluate_score(point[checkRow][checkCol]->type, 
           point[checkRow][checkCol]->score);
       }

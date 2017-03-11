@@ -3,7 +3,7 @@
 #include "gomoku/displayboard.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
 
-void start(DisplayBoard* board);
+void start(DisplayBoard* board, VirtualBoard* vBoard);
 
 int main()
 {
@@ -12,10 +12,10 @@ int main()
   DisplayBoard* displayBoard = new DisplayBoard();
   VirtualBoard* virtualBoard = new VirtualBoard();
 
-  start(displayBoard);
+  start(displayBoard, virtualBoard);
 }
 
-void start(DisplayBoard* board)
+void start(DisplayBoard* board, VirtualBoard* vBoard)
 {
   while (true)
   {
@@ -33,12 +33,16 @@ void start(DisplayBoard* board)
       board->getInput(row, col);
 
       /* break while user input a valid coordinate*/
-      if (board->play(row, col)) break;
+      if (board->play(row, col)) 
+      {
+        vBoard->play(row, col);
+        break;
+      }
 
       std::cout << "Invalid move\n";
     }
 
-    if (board->judge(row, col))
+    if (vBoard->getScore(row, col, !blackTurn) == 1000000)
     {
       std::cout << (blackTurn ? "Black" : "White") << " win !\n\n";
 
