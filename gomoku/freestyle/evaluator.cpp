@@ -93,10 +93,10 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score)
         score[selfColor] += SCORE_DEAD4[DEFENSE];
 
       /* self live 3 */
-      if (count[selfColor][3][LIVE])
+      if (count[selfColor][3][LIVE] == 1)
         score[selfColor] += SCORE_LIVE3[ATTACK];
       /* opponent live 3 */
-      if (count[opponentColor][3][LIVE])
+      if (count[opponentColor][3][LIVE] == 1)
         score[selfColor] += SCORE_LIVE3[DEFENSE];
       /* self dead 3 */
       if (count[selfColor][3][DEAD])
