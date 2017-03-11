@@ -256,7 +256,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color)
 
 void TypeTree::print(STATUS *status, ChessType **type)
 {
-  std::cout << std::setw(5) << ++count << "(";
+  std::cout << std::setw(5) << "(";
   /* print status array*/
   for (int i = 0; i < analyze_length; ++i)
   {
@@ -294,7 +294,7 @@ void TypeTree::print(STATUS *status, ChessType **type)
     std::cout << ( i == 0 ? ", " : "   ");
   }
 
-  if (count % 4 == 0) std::cout << "\n";
+  std::cout << "\n";
 }
 
 void TypeTree::searchAll(Node* root, STATUS *status, int location, int move)

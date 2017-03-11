@@ -11,9 +11,8 @@ public:
   /* copy the source board to consturct the board*/
   VirtualBoard(VirtualBoard* source);
 
-  /* puts a new chess, if the ponit is not empty then return false */
-  bool play(STATUS color, int row, int col);
-
+  /* puts a new chess */
+  void play(int row, int col);
 private:
   /* point array */
   Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];

@@ -26,7 +26,7 @@ void DisplayBoard::getInput(int &row, int &col)
   while (true)
   {
     std::cout << "enter the coordinate of next move (A1 ~ " 
-      << (char)('A' + boardDimen - 1) << boardDimen << ") : ";
+      << (char)('A' + CHESSBOARD_DIMEN - 1) << CHESSBOARD_DIMEN << ") : ";
     std::string input;
     std::cin >> input;
 
@@ -38,12 +38,12 @@ void DisplayBoard::getInput(int &row, int &col)
 
       /* get column*/
       col = input[0];
-      if (col >= 'A' && col <= 'A' + boardDimen)
+      if (col >= 'A' && col <= 'A' + CHESSBOARD_DIMEN)
       {
         col -= 'A';
         validColumn = true;
       }
-      else if (col >= 'a' && col <= 'a' + boardDimen)
+      else if (col >= 'a' && col <= 'a' + CHESSBOARD_DIMEN)
       {
         col -= 'a';
         validColumn = true;
@@ -60,7 +60,7 @@ void DisplayBoard::getInput(int &row, int &col)
       if (isNumber)
       {
         row = std::stoi(input.substr(1, n - 1));
-        if (row >= 1 && row <= boardDimen)
+        if (row >= 1 && row <= CHESSBOARD_DIMEN)
         {
           row--;
           validRow = true;
@@ -127,7 +127,7 @@ void DisplayBoard::printBoard(int row, int col, int color)
             case 1:
               s += "╚"; break;
             case CHESSBOARD_DIMEN:
-              s += "╝ "; break;
+              s += "╝"; break;
             default:
               s += "╧";
           }

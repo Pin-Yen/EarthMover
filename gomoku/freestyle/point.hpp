@@ -28,12 +28,12 @@ public:
 
   int getPlayNo() { return playNo; }
 
-  void getScore(int* dest) { dest[0] = score[0]; dest[1] = score[1]; }
-
   /* point's status, the target of the other point's STATUS array pointer*/
   STATUS status;
 
   ChessType* type[4][2];
+
+  int score[2];
 private:
 
   int row, col, playNo;
@@ -41,6 +41,4 @@ private:
   /* STATUS array pointer, this will point at other point's Status color */
   /* index: 0→ 1↓ 2↗ 3↘ */
   STATUS* dirStatus[4][8];
-
-  int score[2];
 };

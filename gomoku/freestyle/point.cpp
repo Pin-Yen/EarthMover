@@ -15,7 +15,8 @@ Point::Point(Point* source)
   col = source->getColumn();
   playNo = source->getPlayNo();
 
-  source->getScore(score);
+  score[0] = source->score[0];
+  score[1] = source->score[1];
 
   status = source->status;
 
