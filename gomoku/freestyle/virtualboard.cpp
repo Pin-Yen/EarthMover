@@ -27,13 +27,13 @@ VirtualBoard::VirtualBoard()
           int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
-          STATUS* status = NULL;
+          STATUS* status;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           {
             /* if out of bound, point to bound */
-            status = (STATUS*)malloc(sizeof(STATUS*));
+            status = new STATUS;
             *status = BOUND;
           }
           else
@@ -84,13 +84,13 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
           int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
-          STATUS* status = NULL;
+          STATUS* status;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           {
             /* if out of bound, point to bound */
-            status = (STATUS*)malloc(sizeof(STATUS*));
+            status = new STATUS;
             *status = BOUND;
           }
           else
