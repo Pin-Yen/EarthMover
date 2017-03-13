@@ -31,11 +31,8 @@ VirtualBoard::VirtualBoard()
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
-          {
-            /* if out of bound, point to bound */
-            status = new STATUS;
-            *status = BOUND;
-          }
+            /* if out of bound, set pointer value to bound */
+            status = new STATUS(BOUND);
           else
             status = &(point[checkRow][checkCol]->status);
 
@@ -88,11 +85,8 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
-          {
-            /* if out of bound, point to bound */
-            status = new STATUS;
-            *status = BOUND;
-          }
+            /* if out of bound, set pointer value to bound */
+            status = new STATUS(BOUND);
           else
             status = &(point[checkRow][checkCol]->status);
 
@@ -116,9 +110,6 @@ void VirtualBoard::play(int row, int col)
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
   for (int d = 0; d < 4; ++d)
-  {
-    int length = 1;
-
     for (int move = -1; move <= 1; move += 2)
     {
       bool block[2] = {false, false};
@@ -148,5 +139,4 @@ void VirtualBoard::play(int row, int col)
           point[checkRow][checkCol]->score);
       }
     }
-  }
 }
