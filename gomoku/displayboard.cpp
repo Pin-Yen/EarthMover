@@ -83,7 +83,10 @@ void DisplayBoard::printBoard(int row, int col, int color)
       ((col == 0 || col == CHESSBOARD_DIMEN + 1) ? ' ' : (char)(64 + col));
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
     /* if at the first or the last column, print the coordinate with number */
-    std::cout << std::setw(4) << row;
+    if (col == 0)
+      std::cout << std::setw(4) << row;
+    else
+      std::cout << "   " << row;
   else
   {
     std::string s;
