@@ -2,6 +2,7 @@
 #include "evaluator.hpp"
 #include "status.hpp"
 #include <random>
+#include <iostream>
 
 class VirtualBoard
 {
