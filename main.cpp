@@ -48,5 +48,10 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
 
       board->wipe();
     }
+
+    int r, c;
+    vBoard->getHSP(r, c, blackTurn);
+    std::cout << "highest position: " << (char)(64 + r) << c << " score: ";
+    std::cout << vBoard->getScore(r, c, blackTurn) << std::endl;
   }
 }

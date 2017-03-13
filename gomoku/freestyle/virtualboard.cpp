@@ -97,6 +97,30 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   playNo = source->playNo;
 }
 
+/* get the highest score position*/
+void VirtualBoard::getHSP(int &row, int &col, bool black)
+{
+  int max = -1000, same = 0;
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+    {
+      if (point[r][c]->score[black] > max)
+      {
+        max = point[r][c]->score[black];
+        row = r; col = c;
+      }
+      else if (point[r][c]->score[black] == max)
+      {
+        ++same;
+        if (((double)rand() / RAND_MAX) <= (1. / same))
+        {
+          max = point[r][c]->score[black];
+          row = r; col = c;
+        }
+      }
+    }
+}
+
 /* puts a new chess */
 void VirtualBoard::play(int row, int col)
 {

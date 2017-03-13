@@ -1,7 +1,7 @@
 #include "point.hpp"
 #include "evaluator.hpp"
 #include "status.hpp"
-#include <iostream>
+#include <random>
 
 class VirtualBoard
 {
@@ -13,6 +13,9 @@ public:
   VirtualBoard(VirtualBoard* source);
 
   int getScore(int row, int col, bool black) { return point[row][col]->score[black]; }
+
+  /* get the highest score's position*/
+  void getHSP(int &row, int &col, bool black);
 
   /* puts a new chess */
   void play(int row, int col);
