@@ -47,6 +47,8 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
       std::cout << (blackTurn ? "Black" : "White") << " win !\n\n";
 
       board->wipe();
+
+      vBoard = new VirtualBoard();
     }
 
     int r, c;
