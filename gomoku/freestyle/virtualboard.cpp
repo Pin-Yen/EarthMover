@@ -91,7 +91,6 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   playNo = source->playNo;
 }
 
-/* get the highest score position*/
 void VirtualBoard::getHSP(int &row, int &col, bool color)
 {
   int max = -1, same = 1;
@@ -118,9 +117,10 @@ void VirtualBoard::getHSP(int &row, int &col, bool color)
     }
 }
 
-/* puts a new chess */
-void VirtualBoard::play(int row, int col)
+bool VirtualBoard::play(int row, int col)
 {
+  if (score[row][col][(playNo & 1)] == 1000000) return true;
+
   ++playNo;
 
   STATUS color = ((playNo & 1) ? BLACK : WHITE);
@@ -160,4 +160,6 @@ void VirtualBoard::play(int row, int col)
           score[checkRow][checkCol]);
       }
     }
+
+  return false;
 }

@@ -33,16 +33,12 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
       board->getInput(row, col);
 
       /* break while user input a valid coordinate*/
-      if (board->play(row, col)) 
-      {
-        vBoard->play(row, col);
-        break;
-      }
+      if (board->play(row, col)) break;
 
       std::cout << "Invalid move\n";
     }
 
-    if (vBoard->getScore(row, col, !blackTurn) == 1000000)
+    if (vBoard->play(row, col))
     {
       std::cout << (blackTurn ? "Black" : "White") << " win !\n\n";
 
