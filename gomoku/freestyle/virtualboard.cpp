@@ -7,12 +7,6 @@ VirtualBoard::VirtualBoard()
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(r, c);
 
-  /* initialize score*/
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      for (int color = 0; color < 2; ++color)
-        score[r][c][color] = 0;
-
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
@@ -51,7 +45,7 @@ VirtualBoard::VirtualBoard()
 
         Evaluator::evaluate_type(point[r][c]->type[d], status);
       }
-      Evaluator::evaluate_score(point[r][c]->type, point[r][c]->score);
+      Evaluator::evaluate_score(point[r][c]->type, score[r][c]);
     }
 }
 
@@ -98,22 +92,22 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
 }
 
 /* get the highest score position*/
-void VirtualBoard::getHSP(int &row, int &col, bool black)
+void VirtualBoard::getHSP(int &row, int &col, bool color)
 {
-  int max = -1000, same = 1;
+  int max = -1, same = 1;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
     {
       if (point[r][c]->status != EMPTY) continue;
 
-      if (point[r][c]->score[black] > max)
+      if (score[r][c][color] > max)
       {
         same = 1;
 
-        max = point[r][c]->score[black];
+        max = score[r][c][color];
         row = r; col = c;
       }
-      else if (point[r][c]->score[black] == max)
+      else if (score[r][c][color] == max)
       {
         ++same;
         if (((double)rand() / RAND_MAX) <= (1. / same))
@@ -163,7 +157,7 @@ void VirtualBoard::play(int row, int col)
         Evaluator::evaluate_type(point[checkRow][checkCol]->type[d], status);
 
         Evaluator::evaluate_score(point[checkRow][checkCol]->type, 
-          point[checkRow][checkCol]->score);
+          score[checkRow][checkCol]);
       }
     }
 }

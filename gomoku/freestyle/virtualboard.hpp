@@ -13,10 +13,10 @@ public:
   /* copy the source board to consturct the board*/
   VirtualBoard(VirtualBoard* source);
 
-  int getScore(int row, int col, bool black) { return point[row][col]->score[black]; }
+  int getScore(int row, int col, bool color) { return score[row][col][color]; }
 
   /* get the highest score's position*/
-  void getHSP(int &row, int &col, bool black);
+  void getHSP(int &row, int &col, bool color);
 
   /* puts a new chess */
   void play(int row, int col);

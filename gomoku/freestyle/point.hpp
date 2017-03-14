@@ -32,8 +32,6 @@ public:
   STATUS status;
 
   ChessType* type[4][2];
-
-  int score[2];
 private:
 
   int row, col, playNo;

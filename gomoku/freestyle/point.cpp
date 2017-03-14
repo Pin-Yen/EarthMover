@@ -15,9 +15,6 @@ Point::Point(Point* source)
   col = source->getColumn();
   playNo = source->getPlayNo();
 
-  score[0] = source->score[0];
-  score[1] = source->score[1];
-
   status = source->status;
 
   for (int dir = 0; dir < 4; ++dir)
