@@ -50,7 +50,7 @@ GameNode::~GameNode()
         delete childNode[r][c];
 }
 
-GameNode::update(int result)
+void GameNode::update(int result)
 {
 	++playout[2];
 	if (result != -1) ++playout[result];
