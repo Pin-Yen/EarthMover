@@ -27,12 +27,16 @@ void GameTree::selection(GameNode* node)
 
 int GameTree::simulation(int maxDepth, VirtualBoard* board)
 {
+  VirtualBoard simulationBoard(board);
+
   for (int d = 0; d < maxDepth; ++d)
   {
-    int r, c; board->getHSP(r, c);
+    int r, c; 
+    simulationBoard->getHSP(r, c);
 
-    if (board->play(r, c))
-      return board->getWhoTurn();
+    if (simulationBoard->play(r, c)){
+      return simulationBoard->getWhoTurn();
+    }
   }
   return -1;
 }
