@@ -91,9 +91,11 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   playNo = source->playNo;
 }
 
-void VirtualBoard::getHSP(int &row, int &col, bool color)
+void VirtualBoard::getHSP(int &row, int &col)
 {
+  bool color = getWhoTurn();
   int max = -1, same = 1;
+
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
     {

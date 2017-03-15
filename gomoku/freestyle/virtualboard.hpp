@@ -15,8 +15,11 @@ public:
 
   int getScore(int row, int col, bool color) { return score[row][col][color]; }
 
+  /* get who turn, black = 0, white = 1 */
+  bool getWhoTurn() { return (playNo & 1); }
+
   /* get the highest score's position */
-  void getHSP(int &row, int &col, bool color);
+  void getHSP(int &row, int &col);
 
   /* puts a new chess if win after play then return true */
   bool play(int row, int col);
