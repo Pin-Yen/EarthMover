@@ -53,5 +53,8 @@ void backProp(GameNode* node, int result)
 /* called when a REAL point is played, updates the currentRoot */
 void GameTree::play(int row, int col)
 {
+  if(currentNode->getChildNode == NULL)
+    currentNode->getChildNode = new GameNode(currentNode, row, col);
+  
   currentNode = currentNode->getChildNode(row, col);
 }
