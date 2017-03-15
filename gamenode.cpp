@@ -9,10 +9,9 @@ GameNode::GameNode()
       childProp[r][c] = 0;
     }
 
-  /* initialize counters to 0 */
-  totalPlayout = 0;
-  winPlayout = 0;
-  losePlayout = 0;
+  /* initialize playout counters to 0 */
+  for(int i = 0 ; i < 3; ++i)
+    playout[i] = 0;
 
 	/* initialize board */
 	board = new VirtualBoard();
@@ -31,10 +30,9 @@ GameNode::GameNode(GameNode *parentNode, int row, int col)
       childProp[r][c] = 0;
     }
 
-  /* initialize counters to 0 */
-  totalPlayout = 0;
-  winPlayout = 0;
-  losePlayout = 0;
+  /* initialize playout counters to 0 */
+  for(int i = 0 ; i < 3; ++i)
+    playout[i] = 0;
 
   /* initialize board */
   board = new VirtualBoard(parentNode->board);
