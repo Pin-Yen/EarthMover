@@ -21,13 +21,19 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
   {
     int row, col;
     
-    bool blackTurn = board->isBlackTurn();
+    /* get who turn, 0 = black, 1 = white*/
+    bool whoTurn = board->getWhoTurn();
+
+    /* debugger */
+    int r, c; vBoard->getHSP(r, c);
+    std::cout << "highest position: " << (char)(c + 65) << r + 1 << 
+      " score: " << vBoard->getScore(r, c, whoTurn) << std::endl;
 
     /* get user's input and try to play, if the input is not valid,*/
     /* it will keep ask another input*/
     while (true)
     {
-      std::cout << (blackTurn ? "Black turn\n" : "White turn\n");
+      std::cout << (whoTurn ? "White turn\n" : "Black turn\n");
 
       /* get user input*/
       board->getInput(row, col);
@@ -40,15 +46,11 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
 
     if (vBoard->play(row, col))
     {
-      std::cout << (blackTurn ? "Black" : "White") << " win !\n\n";
+      std::cout << (whoTurn ? "White" : "Black") << " win !\n\n";
 
       board->wipe();
 
       vBoard = new VirtualBoard();
     }
-
-    int r, c; vBoard->getHSP(r, c);
-    std::cout << "highest position: " << (char)(c + 65) << r + 1 << 
-      " score: " << vBoard->getScore(r, c, blackTurn) << std::endl;
   }
 }

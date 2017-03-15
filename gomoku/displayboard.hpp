@@ -12,8 +12,8 @@ public:
   /* clears the whole game */
   void wipe();
 
-  /* get is black turn or not */
-  bool isBlackTurn() { return !(playNo & 1); }
+  /* get who turn, 0 = black, 1 = white */
+  bool getWhoTurn() { return (playNo & 1); }
 
   /* search the area surrounding (row, col) for winning conditions */
   bool judge(int row, int col);
