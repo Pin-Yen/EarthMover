@@ -1,5 +1,6 @@
 #include "node.hpp"
 #include "gametree.hpp"
+#include <cmath>
 
 GameTree::Node::Node()
 {
@@ -49,4 +50,10 @@ void GameTree::Node::update(int result)
 {
   ++playout[2];
   if (result != -1) ++playout[result];
+}
+
+double GameTree::Node::getUCBValue(int r, int c, bool color)
+{
+  return childNode[r][c]->getWinRate(color) + 
+    sqrt(2 * log(childNode[r][c]->getTotlaPlayout()) / playout[2]);
 }

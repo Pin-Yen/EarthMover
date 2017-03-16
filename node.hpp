@@ -12,7 +12,11 @@ public:
   void update(int result);
 
   /* get the Upper Confidence Bound value form child node */
-  double getUCBValue(int r, int c);
+  double getUCBValue(int r, int c, bool color);
+
+  double getWinRate(bool color) { return double(playout[color] / playout[2]); }
+
+  int getTotalplayout() { return playout[2]; }
 
   Node* getParent() { return parent; }
 
@@ -20,7 +24,6 @@ public:
 private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
-  int row, col;
 
   VirtualBoard* board;
   Node *parent;
