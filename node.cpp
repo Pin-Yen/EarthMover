@@ -1,34 +1,29 @@
-#include "gamenode.hpp"
+#include "node.hpp"
+#include "gametree.hpp"
 
-GameNode::GameNode()
+GameTree::Node::Node()
 {
-	for (int r = 0; r<CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c<CHESSBOARD_DIMEN; ++c)
-    {
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       childNode[r][c] = NULL;
-      childProp[r][c] = 0;
-    }
 
   /* initialize playout counters to 0 */
-  for(int i = 0 ; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
     playout[i] = 0;
 
-	/* initialize board */
-	board = new VirtualBoard();
-	
-	/* initiaize parent node */
-  parent = parentNode;
+  /* initialize board */
+  board = new VirtualBoard();
+  
+  /* initiaize parent node */
+  parent = NULL;
 }
 
-GameNode::GameNode(GameNode *parentNode, int row, int col)
+GameTree::Node::Node(Node *parentNode, int row, int col)
 {
   /* initialize all childNodes to NULL, all childProp to 0 */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-    {
       childNode[r][c] = NULL;
-      childProp[r][c] = 0;
-    }
 
   /* initialize playout counters to 0 */
   for(int i = 0 ; i < 3; ++i)
@@ -42,7 +37,7 @@ GameNode::GameNode(GameNode *parentNode, int row, int col)
   parent = parentNode;
 }
 
-GameNode::~GameNode()
+GameTree::Node::~Node()
 {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -50,8 +45,8 @@ GameNode::~GameNode()
         delete childNode[r][c];
 }
 
-void GameNode::update(int result)
+void GameTree::Node::update(int result)
 {
-	++playout[2];
-	if (result != -1) ++playout[result];
+  ++playout[2];
+  if (result != -1) ++playout[result];
 }
