@@ -1,12 +1,13 @@
 #include "gametree.hpp"
+#include "node.hpp"
 
 GameTree::GameTree()
 {
   /* create the grand root(e.g. a root representing a blank board) */
-  root = new GameNode();
+  root = new Node();
 }
 
-void GameTree::selection(GameNode* node)
+void GameTree::selection(Node* node)
 {
   while(true)
   {
@@ -14,12 +15,13 @@ void GameTree::selection(GameNode* node)
     //TODO: get highset UCB point and write into r, c;
 
     /* check if reach leaf*/
-    bool reachLeaf = (node->getChildNode(r, c) == NULL);
+
+    bool reachLeaf = (node->childNode[r][c] == NULL);
 
     if (reachLeaf)
-      node->getChildNode(r, c) = new GameNode(node, r, c);
+      node->childNode[r][c] = new Node(node, r, c);
     
-    node = node->getChildNode(r, c);
+    node = node->childNode[r][c];
 
     if (reachLeaf) return;
   }
@@ -27,25 +29,24 @@ void GameTree::selection(GameNode* node)
 
 int GameTree::simulation(int maxDepth, VirtualBoard* board)
 {
-  VirtualBoard simulationBoard(board);
+  VirtualBoard* simulationBoard = new VirtualBoard(board);
 
   for (int d = 0; d < maxDepth; ++d)
   {
     int r, c; 
     simulationBoard->getHSP(r, c);
 
-    if (simulationBoard->play(r, c)){
+    if (simulationBoard->play(r, c))
       return simulationBoard->getWhoTurn();
-    }
   }
   return -1;
 }
 
-void backProp(GameNode* node, int result)
+void GameTree::backProp(Node* node, int result)
 {
   while(node != currentNode)
   {
-    node->update(int result)
+    node->update(result);
     node = node->getParent();
   }
 }
@@ -53,8 +54,8 @@ void backProp(GameNode* node, int result)
 /* called when a REAL point is played, updates the currentRoot */
 void GameTree::play(int row, int col)
 {
-  if(currentNode->getChildNode == NULL)
-    currentNode->getChildNode = new GameNode(currentNode, row, col);
+  if (currentNode->childNode[row][col] == NULL)
+    currentNode->childNode[row][col]  = new Node(currentNode, row, col);
   
-  currentNode = currentNode->getChildNode(row, col);
+  currentNode = currentNode->childNode[row][col] ;
 }

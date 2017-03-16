@@ -1,5 +1,4 @@
-#include "virtualboard.hpp"
-#include "gamenode.hpp"
+#include "gomoku/freestyle/virtualboard.hpp"
 
 class GameTree
 {
@@ -9,11 +8,13 @@ public:
   GameTree();
 
   void play(int row, int col);
-
 private:
+  /* nested class */
+  class Node;
+
   /* MCTS function
    * keep select the child node, until reach the leaf */
-  void selection(GameNode* node);
+  void selection(Node* node);
 
   /* MCTS function
    * simulate the game at most maxDepth move, 
@@ -22,7 +23,7 @@ private:
 
   /* MCTS function
    * back propagation form node to current node */
-  void backProp(GameNode* node);
+  void backProp(Node* node, int result);
 
-  GameNode *root *currentNode;
+  Node *root, *currentNode;
 };
