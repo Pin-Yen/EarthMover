@@ -16,6 +16,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle)
     int result = simulation(node, SIMULATE_DEPTH);
     backProp(node, result);
   }
+  //TODO: return the point that select most times
 }
 
 GameTree::Node* GameTree::selection()
