@@ -91,6 +91,16 @@ VirtualBoard::VirtualBoard(VirtualBoard* source)
   playNo = source->playNo;
 }
 
+int VirtualBoard::getScoreSum()
+{
+  int sum = 0;
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      sum += score[r][c];
+
+  return sum;
+}
+
 void VirtualBoard::getHSP(int &row, int &col)
 {
   bool color = getWhoTurn();

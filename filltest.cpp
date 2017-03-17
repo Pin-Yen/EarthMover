@@ -14,6 +14,17 @@ int main()
 
 	start = std::clock();
 
+	memset(array, sizeof(array), 12);
+
+	diration = (std::clock() - start);
+	
+	std::cout << diration / CLOCKS_PER_SEC << std::endl;
+
+	std::cout << array[1848] << "\n" << array[378475] << "\n";
+
+/*
+	start = std::clock();
+
 	for (int i = 0; i < size; ++i)
 		array[i] = 1;
 
@@ -22,13 +33,7 @@ int main()
 
 	std::cout << diration / CLOCKS_PER_SEC << std::endl;
 
-	start = std::clock();
-
-	memset(array, 2, sizeof(array));
-
-	diration = (std::clock() - start);
 	
-	std::cout << diration / CLOCKS_PER_SEC << std::endl;
 
 	start = std::clock();
 
@@ -37,4 +42,6 @@ int main()
 	diration = (std::clock() - start);
 	
 	std::cout << diration / CLOCKS_PER_SEC << std::endl;
+
+*/
 }

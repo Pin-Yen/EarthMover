@@ -7,39 +7,42 @@ GameTree::GameTree()
   root = new Node();
 }
 
-void GameTree::selection(Node* node)
+void GameTree::MCTS(int &row, int &col, int maxCycle)
 {
-  while(true)
+  const int SIMULATE_DEPTH = 50;
+  for (int cycle = 0; cycle < maxCycle; ++cycle)
+  {
+    Node* node = selection();
+    int result = simulation(node, SIMULATE_DEPTH);
+    backProp(node, result);
+  }
+}
+
+GameTree::Node* GameTree::selection()
+{
+  Node* node = currentNode;
+
+  bool reachLeaf = false;
+  while(!reachLeaf)
   {
     int r, c;
-    //TODO: get highset UCB point and write into r, c;
+    node->selection(r, c);
 
     /* check if reach leaf*/
-
-    bool reachLeaf = (node->childNode[r][c] == NULL);
+    reachLeaf = (node->childNode[r][c] == NULL);
 
     if (reachLeaf)
       node->childNode[r][c] = new Node(node, r, c);
     
     node = node->childNode[r][c];
-
-    if (reachLeaf) return;
   }
+
+  return node;
 }
 
-int GameTree::simulation(int maxDepth, VirtualBoard* board)
+int GameTree::simulation(Node* node, int maxDepth)
 {
-  VirtualBoard* simulationBoard = new VirtualBoard(board);
-
-  for (int d = 0; d < maxDepth; ++d)
-  {
-    int r, c; 
-    simulationBoard->getHSP(r, c);
-
-    if (simulationBoard->play(r, c))
-      return simulationBoard->getWhoTurn();
-  }
-  return -1;
+  return node->simulation(maxDepth);
 }
 
 void GameTree::backProp(Node* node, int result)
@@ -51,7 +54,6 @@ void GameTree::backProp(Node* node, int result)
   }
 }
 
-/* called when a REAL point is played, updates the currentRoot */
 void GameTree::play(int row, int col)
 {
   if (currentNode->childNode[row][col] == NULL)

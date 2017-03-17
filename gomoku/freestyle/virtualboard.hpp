@@ -15,6 +15,9 @@ public:
 
   int getScore(int row, int col, bool color) { return score[row][col][color]; }
 
+  /* get the sume of every point's score */
+  int getScoreSum();
+
   /* get who turn, black = 0, white = 1 */
   bool getWhoTurn() { return (playNo & 1); }
 
