@@ -20,10 +20,11 @@ void GameTree::MCTS(int &row, int &col, int maxCycle)
   // return the point that select most times
   int mostTimes = -1;
 
-  for(int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for(int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if(currentNode->childNode[r][c] != NULL)
-        if(currentNode->childNode[r][c]->getTotalPlayout > mostTimes){
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->childNode[r][c] != NULL)
+        if (currentNode->childNode[r][c]->getTotalPlayout > mostTimes)
+        {
           // ?? should we pick a random point if there are multiple best points,
           // or just pick the first point ??
           row = r;
@@ -37,7 +38,7 @@ GameTree::Node* GameTree::selection()
   Node* node = currentNode;
 
   bool reachLeaf = false;
-  while(!reachLeaf)
+  while (!reachLeaf)
   {
     int r, c;
     node->selection(r, c);
@@ -63,7 +64,7 @@ int GameTree::simulation(Node* node, int maxDepth)
 
 void GameTree::backProp(Node* node, int result)
 {
-  while(node != currentNode)
+  while (node != currentNode)
   {
     node->update(result);
     node = node->getParent();
