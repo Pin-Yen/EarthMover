@@ -32,6 +32,8 @@ GameTree::Node* GameTree::selection()
     /* check if reach leaf*/
     reachLeaf = (node->childNode[r][c] == NULL);
 
+    //TODO: handle if already win when play at child
+
     if (reachLeaf)
       node->childNode[r][c] = new Node(node, r, c);
     
