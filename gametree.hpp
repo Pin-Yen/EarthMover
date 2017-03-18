@@ -1,6 +1,5 @@
-class GameTree
-{
-public:
+class GameTree {
+ public:
   static const int CHESSBOARD_DIMEN = 15;
 
   GameTree();
@@ -11,7 +10,7 @@ public:
 
   /* called when a REAL point is played, updates the currentRoot */
   void play(int row, int col);
-private:
+ private:
   /* nested class */
   class Node;
 

@@ -5,8 +5,7 @@
 
 void start(DisplayBoard* board, VirtualBoard* vBoard);
 
-int main()
-{
+int main() {
   TypeTree::initialize();
 
   DisplayBoard* displayBoard = new DisplayBoard();
@@ -15,10 +14,8 @@ int main()
   start(displayBoard, virtualBoard);
 }
 
-void start(DisplayBoard* board, VirtualBoard* vBoard)
-{
-  while (true)
-  {
+void start(DisplayBoard* board, VirtualBoard* vBoard) {
+  while (true) {
     int row, col;
     
     /* get who turn, 0 = black, 1 = white*/
@@ -26,13 +23,14 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
 
     /* debugger */
     int r, c; vBoard->getHSP(r, c);
-    std::cout << "highest position: " << (char)(c + 65) << r + 1 << 
-      " score: " << vBoard->getScore(r, c, whoTurn) << std::endl;
+    std::cout << "highest position: " 
+              << (char)(c + 65) << r + 1 
+              << " score: " 
+              << vBoard->getScore(r, c, whoTurn) << std::endl;
 
     /* get user's input and try to play, if the input is not valid,*/
     /* it will keep ask another input*/
-    while (true)
-    {
+    while (true) {
       std::cout << (whoTurn ? "White turn\n" : "Black turn\n");
 
       /* get user input*/
@@ -44,8 +42,7 @@ void start(DisplayBoard* board, VirtualBoard* vBoard)
       std::cout << "Invalid move\n";
     }
 
-    if (vBoard->play(row, col))
-    {
+    if (vBoard->play(row, col)) {
       std::cout << (whoTurn ? "White" : "Black") << " win !\n\n";
 
       board->wipe();

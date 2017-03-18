@@ -1,8 +1,7 @@
 #include "gomoku/freestyle/virtualboard.hpp"
 
-class GameTree::Node
-{
-public:
+class GameTree::Node {
+ public:
   /* consturctor for root */
   Node();
   /* constructor for node (WITHOUT root node) */
@@ -33,7 +32,7 @@ public:
   Node* getParent() { return parent; }
 
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-private:
+ private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
 

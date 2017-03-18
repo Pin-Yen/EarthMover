@@ -1,16 +1,14 @@
 #include "chesstype.hpp"
 #include "status.hpp"
 
-class TypeTree
-{
-public:
+class TypeTree {
+ public:
   static void classify(STATUS *status, ChessType *(type[2]));
 
   static void initialize();
 
-private:
-  struct Node
-  {
+ private:
+  struct Node {
     /* Next point occupied by:
      * 0: black, 1: white, 2:empty 3: bound */
     Node *childNode[4];
@@ -19,10 +17,7 @@ private:
 
     bool jump;
 
-    Node()
-    {
-      jump = false;
-    }
+    Node() { jump = false; }
   };
 
   static Node* root;
@@ -31,7 +26,7 @@ private:
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
   static void dfs(Node *root, STATUS *status, int location, int move,
-    bool blackblock, bool whiteBlock);
+                  bool blackblock, bool whiteBlock);
 
   /* cut the tree node that all child has same result */
   static ChessType** cutSameResultChild(Node *root);

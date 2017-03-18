@@ -1,10 +1,8 @@
 #include "chesstype.hpp"
 #include "status.hpp"
 
-class Point
-{
-public:
-
+class Point {
+ public:
   /* constructor */
   Point(int row, int col);
 
@@ -32,8 +30,7 @@ public:
   STATUS status;
 
   ChessType* type[4][2];
-private:
-
+ private:
   int row, col, playNo;
 
   /* STATUS array pointer, this will point at other point's Status color */

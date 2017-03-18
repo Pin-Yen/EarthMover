@@ -1,7 +1,6 @@
 #include "point.hpp"
 
-Point::Point(int row, int col)
-{
+Point::Point(int row, int col) {
   this->row = row;
   this->col = col;
 
@@ -9,8 +8,7 @@ Point::Point(int row, int col)
   status = EMPTY;
 }
 
-Point::Point(Point* source)
-{
+Point::Point(Point* source) {
   row = source->getRow();
   col = source->getColumn();
   playNo = source->getPlayNo();
@@ -22,20 +20,17 @@ Point::Point(Point* source)
       type[dir][i] = new ChessType(source->type[dir][i]->length, source->type[dir][i]->life);
 }
 
-void Point::reset()
-{
+void Point::reset() {
   playNo = 0;
   status = EMPTY;
 }
 
-void Point::play(STATUS status, int playNo)
-{
+void Point::play(STATUS status, int playNo) {
   this->status = status;
   this->playNo = playNo;
 }
 
-void Point::getDirStatusArray(int dir, STATUS* dest)
-{
+void Point::getDirStatusArray(int dir, STATUS* dest) {
   for (int i = 0; i < 8; ++i)
     dest[i] = *(dirStatus[dir][i]);
 }

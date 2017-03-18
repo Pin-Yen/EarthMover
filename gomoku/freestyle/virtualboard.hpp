@@ -4,9 +4,8 @@
 #include <random>
 #include <iostream>
 
-class VirtualBoard
-{
-public:
+class VirtualBoard {
+ public:
   static const int CHESSBOARD_DIMEN = 15;
 
   VirtualBoard();
@@ -26,7 +25,7 @@ public:
 
   /* puts a new chess if win after play then return true */
   bool play(int row, int col);
-private:
+ private:
   /* point array */
   Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
   int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];

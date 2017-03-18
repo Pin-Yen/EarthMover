@@ -1,6 +1,5 @@
-class DisplayBoard
-{
-public:
+class DisplayBoard {
+ public:
   DisplayBoard();
 
   /* get user's input */
@@ -18,7 +17,7 @@ public:
   /* search the area surrounding (row, col) for winning conditions */
   bool judge(int row, int col);
 
-private:
+ private:
   static const int CHESSBOARD_DIMEN = 15;
   static const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 

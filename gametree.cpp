@@ -1,17 +1,15 @@
 #include "gametree.hpp"
 #include "node.hpp"
 
-GameTree::GameTree()
-{
+GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */
   root = new Node();
 }
 
-void GameTree::MCTS(int &row, int &col, int maxCycle)
-{
+void GameTree::MCTS(int &row, int &col, int maxCycle) {
   const int SIMULATE_DEPTH = 50;
-  for (int cycle = 0; cycle < maxCycle; ++cycle)
-  {
+
+  for (int cycle = 0; cycle < maxCycle; ++cycle) {
     Node* node = selection();
     int result = simulation(node, SIMULATE_DEPTH);
     backProp(node, result);
@@ -23,8 +21,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle)
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL)
-        if (currentNode->childNode[r][c]->getTotalPlayout > mostTimes)
-        {
+        if (currentNode->childNode[r][c]->getTotalPlayout > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,
           // or just pick the first point ??
           row = r;
@@ -33,48 +30,39 @@ void GameTree::MCTS(int &row, int &col, int maxCycle)
         }
 }
 
-GameTree::Node* GameTree::selection()
-{
+GameTree::Node* GameTree::selection() {
   Node* node = currentNode;
 
-  bool reachLeaf = false;
-  while (!reachLeaf)
-  {
+  while (true) {
     int r, c;
     node->selection(r, c);
 
-    /* check if reach leaf*/
-    reachLeaf = (node->childNode[r][c] == NULL);
-
     //TODO: handle if already win when play at child
 
-    if (reachLeaf)
+    /* check if reach leaf */
+    if (node->childNode[r][c] == NULL) {
       node->childNode[r][c] = new Node(node, r, c);
+      return node->childNode[r][c];
+    }
     
     node = node->childNode[r][c];
   }
-
-  return node;
 }
 
-int GameTree::simulation(Node* node, int maxDepth)
-{
+int GameTree::simulation(Node* node, int maxDepth) {
   return node->simulation(maxDepth);
 }
 
-void GameTree::backProp(Node* node, int result)
-{
-  while (node != currentNode)
-  {
+void GameTree::backProp(Node* node, int result) {
+  while (node != currentNode) {
     node->update(result);
     node = node->getParent();
   }
 }
 
-void GameTree::play(int row, int col)
-{
+void GameTree::play(int row, int col) {
   if (currentNode->childNode[row][col] == NULL)
-    currentNode->childNode[row][col]  = new Node(currentNode, row, col);
+    currentNode->childNode[row][col] = new Node(currentNode, row, col);
   
   currentNode = currentNode->childNode[row][col] ;
 }

@@ -1,13 +1,11 @@
 #include "evaluator.hpp"
 
-void Evaluator::evaluate_type(ChessType* type[2], STATUS *status)
-{
+void Evaluator::evaluate_type(ChessType* type[2], STATUS *status) {
   TypeTree::classify(status, type);
 }
 
 /* score[0]:black's total score,[1]:white's */
-void Evaluator::evaluate_score(ChessType* type[4][2], int *score)
-{
+void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
   /* count[color][length][LorD]
    * color: 0 for BLACK, 1 for WHITE
    * length: means the length of the type, should be 0~5.
@@ -47,8 +45,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score)
 
   /* calculate score */
   for (int selfColor = BLACK, opponentColor = WHITE, i = 0; i < 2; 
-    selfColor = WHITE, opponentColor = BLACK, ++i)
-  {
+       selfColor = WHITE, opponentColor = BLACK, ++i) {
     /* self 5 */
     if (count[selfColor][5][0] > 0)
       score[selfColor] = SCORE_5[ATTACK];
@@ -76,8 +73,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score)
     /* opponent d4-l3 */
     else if (count[opponentColor][4][DEAD] > 0 && count[opponentColor][3][LIVE] > 0)
       score[selfColor] = SCORE_DEAD4LIVE3[DEFENSE];
-    else
-    {
+    else {
       /* self multi-3 */
       if (count[selfColor][3][LIVE] >= 2)
         score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
