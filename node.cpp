@@ -1,3 +1,4 @@
+#include "gametree.hpp"
 #include "node.hpp"
 #include <cmath>
 
@@ -68,7 +69,7 @@ bool GameTree::Node::selection(int &row, int &col) {
   if (isChildWinning) {
     row = winningChildRow;
     col = winningChildCol;
-    return;
+    return true;
   }
 
   bool whoTurn = board->getWhoTurn();
@@ -91,9 +92,9 @@ bool GameTree::Node::selection(int &row, int &col) {
       int playout = childNode[r][c]->getTotalPlayout();
 
       double value = (score / scoreSum) *
-                     max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
+                     std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
                      getUCBValue(r, c, whoTurn) *
-                     max(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
+                     std::max(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
 
       if (value > max) {
         same = 1;

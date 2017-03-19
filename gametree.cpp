@@ -1,4 +1,5 @@
 #include "gametree.hpp"
+#include "node.hpp"
 
 GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */

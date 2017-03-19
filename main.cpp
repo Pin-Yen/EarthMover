@@ -6,6 +6,7 @@
 #include "gametree.hpp"
 
 void start(DisplayBoard* board, VirtualBoard* vBoard);
+void start(DisplayBoard* board, bool computerColor);
 
 int main() {
   TypeTree::initialize();
@@ -16,7 +17,7 @@ int main() {
   #ifdef TWO_PLAYER
     start(displayBoard, virtualBoard);
   #else
-    start(displayboard, true);
+    start(displayBoard, true);
   #endif
 
   return 0;
@@ -35,6 +36,7 @@ void start(DisplayBoard *board, bool computerColor) {
 
       tree->MCTS(row, col, 1000);
 
+      std::cout << row << col << std::endl;
       //if (!board->play(row, col))
       //  assert(false);
 
@@ -55,7 +57,7 @@ void start(DisplayBoard *board, bool computerColor) {
     }
 
     /* update tree and handle result */
-    if (tree->play()) {
+    if (tree->play(row, col)) {
       /* somebody wins */
 
       bool winner = ! board->getWhoTurn();
@@ -65,7 +67,6 @@ void start(DisplayBoard *board, bool computerColor) {
   }
 }
 
-#ifdef TWO__PLAYER
 void start(DisplayBoard* board, VirtualBoard* vBoard) {
   while (true) {
     int row, col;
@@ -103,4 +104,3 @@ void start(DisplayBoard* board, VirtualBoard* vBoard) {
     }
   }
 }
-#endif

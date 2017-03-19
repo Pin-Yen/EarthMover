@@ -1,17 +1,12 @@
 #ifndef GAME_TREE_H
 #define GAME_TREE_H
 
-#include "node.hpp"
-
 class GameTree {
  public:
   static const int CHESSBOARD_DIMEN = 15;
 
   GameTree();
   ~GameTree();
-
-  /* destructe the node and all of it's child node */
-  void destructNode(Node* node);
 
   /* Monty Carlo Tree Search
    * will return the best point's position */
@@ -23,6 +18,9 @@ class GameTree {
  private:
   /* nested class */
   class Node;
+
+  /* destructe the node and all of it's child node */
+  void destructNode(Node* node);
 
   /* MCTS function
    * keep select the child node form the current node, until reach the leaf or a winning node

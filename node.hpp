@@ -2,7 +2,6 @@
 #define GAME_TREE_NODE_H
 
 #include "gomoku/freestyle/virtualboard.hpp"
-#include "gametree.hpp"
 
 class GameTree::Node {
  public:
