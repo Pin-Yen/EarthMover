@@ -1,4 +1,5 @@
 #include "gomoku/freestyle/virtualboard.hpp"
+#include "gametree.hpp"
 
 class GameTree::Node {
  public:

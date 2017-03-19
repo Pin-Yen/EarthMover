@@ -1,5 +1,4 @@
 #include "node.hpp"
-#include "gametree.hpp"
 #include <cmath>
 
 GameTree::Node::Node() {
@@ -14,7 +13,7 @@ GameTree::Node::Node() {
 
   /* initialize board */
   board = new VirtualBoard();
-  
+
   /* initiaize parent node */
   parent = NULL;
 }
@@ -54,10 +53,10 @@ void GameTree::Node::update(int result) {
 void GameTree::Node::selection(int &row, int &col) {
   bool whoTurn = board->getWhoTurn();
 
-  // current max value 
+  // current max value
   double max = -1;
 
-  int scoreSum = board->getScoreSum();
+  int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -85,7 +84,7 @@ int GameTree::Node::simulation(int maxDepth) {
 
   /* simulate until reach max depth */
   for (int d = 0; d < maxDepth; ++d) {
-    int r, c; 
+    int r, c;
     simulationBoard->getHSP(r, c);
 
     /* if win, return who win */
@@ -97,6 +96,6 @@ int GameTree::Node::simulation(int maxDepth) {
 }
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
-  return (childNode[r][c]->getWinRate(color) + 
+  return (childNode[r][c]->getWinRate(color) +
           sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / playout[2]));
 }

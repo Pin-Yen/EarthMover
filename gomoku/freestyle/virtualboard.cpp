@@ -1,4 +1,5 @@
 #include "virtualboard.hpp"
+#include "point.hpp"
 
 VirtualBoard::VirtualBoard() {
   /* initialize point array */
@@ -22,7 +23,7 @@ VirtualBoard::VirtualBoard() {
 
           STATUS* status;
 
-          if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+          if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer value to bound */
             status = new STATUS(BOUND);
@@ -75,7 +76,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
 
           STATUS* status;
 
-          if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+          if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer value to bound */
             status = new STATUS(BOUND);
@@ -89,11 +90,11 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
   playNo = source->playNo;
 }
 
-int VirtualBoard::getScoreSum() {
+int VirtualBoard::getScoreSum(bool color) {
   int sum = 0;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      sum += score[r][c];
+      sum += score[r][c][color];
 
   return sum;
 }
@@ -143,13 +144,13 @@ bool VirtualBoard::play(int row, int col) {
           checkCol = col + dir[d][1] * move * offset;
 
         /* check if out the bound */
-        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 
         if (point[checkRow][checkCol]->status != EMPTY) {
           block[point[checkRow][checkCol]->status] = true;
-          
+
           if (block[0] & block[1]) break;
 
           continue;
@@ -159,7 +160,7 @@ bool VirtualBoard::play(int row, int col) {
 
         Evaluator::evaluate_type(point[checkRow][checkCol]->type[d], status);
 
-        Evaluator::evaluate_score(point[checkRow][checkCol]->type, 
+        Evaluator::evaluate_score(point[checkRow][checkCol]->type,
                                   score[checkRow][checkCol]);
       }
     }
