@@ -19,8 +19,8 @@ class VirtualBoard {
   /* get who turn, black = 0, white = 1 */
   bool getWhoTurn() { return (playNo & 1); }
 
-  /* get the highest score's position */
-  void getHSP(int &row, int &col);
+  /* get the highest score's position, if every point is not empty, return false */
+  bool getHSP(int &row, int &col);
 
   /* puts a new chess if win after play then return true */
   bool play(int row, int col);

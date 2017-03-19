@@ -26,7 +26,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     Node* node;
     int result = selection(node);
 
-    if (result == -1) {
+    if (result == -2) {
       /* simulate only if child is not winning */
       result = simulation(node, SIMULATE_DEPTH);
     }
@@ -54,7 +54,9 @@ int GameTree::selection(Node* selectedLeaf) {
 
   while (true) {
     int r, c;
-    node->selection(r, c);
+    /* if every point is not empty point */
+    if (!node->selection(r, c))
+      return -1;
 
     /* handle if already win when playing at child */
     if (node->isSelfWinning()) {
@@ -66,7 +68,7 @@ int GameTree::selection(Node* selectedLeaf) {
     if (node->childNode[r][c] == NULL) {
       node->childNode[r][c] = new Node(node, r, c);
       selectedLeaf = node->childNode[r][c];
-      return -1;
+      return -2;
     }
 
     node = node->childNode[r][c];

@@ -41,14 +41,12 @@ GameTree::Node::Node(Node *parentNode, int row, int col) {
   board = new VirtualBoard(parentNode->board);
   isSelfWinning = board->play(row, col);
 
-
   /* if is winning, set parent's winning child */
   if (isSelfWinning) {
     parent->isChildWinning = true;
     parent->winningChildRow = row;
     parent->winningChildCol = col;
   }
-
 }
 
 GameTree::Node::~Node() {
@@ -65,8 +63,7 @@ void GameTree::Node::update(int result) {
   if (result != -1) ++playout[result];
 }
 
-void GameTree::Node::selection(int &row, int &col) {
-
+bool GameTree::Node::selection(int &row, int &col) {
   /* if there's a winning child then return it */
   if (isChildWinning) {
     row = winningChildRow;
@@ -84,8 +81,13 @@ void GameTree::Node::selection(int &row, int &col) {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
+      int score = board->getScore(r, c, whoTurn);
+      /* skip if this point is not empty */
+      if (score == -1) continue;
+
       // still need to adjust weight
-      double value = board->getScore(r, c, whoTurn) + getUCBValue(r, c, whoTurn);
+      double value = score / scoreSum +  getUCBValue(r, c, whoTurn);
+      // still need to adjust weight
 
       if (value > max) {
         same = 1;
@@ -100,6 +102,9 @@ void GameTree::Node::selection(int &row, int &col) {
         }
       }
     }
+
+  /* return false if every point is not empty */
+  return (max > -1);
 }
 
 int GameTree::Node::simulation(int maxDepth) {
@@ -108,7 +113,9 @@ int GameTree::Node::simulation(int maxDepth) {
   /* simulate until reach max depth */
   for (int d = 0; d < maxDepth; ++d) {
     int r, c;
-    simulationBoard->getHSP(r, c);
+    /* return tie(-1) if every point is not empty point */
+    if (!simulationBoard->getHSP(r, c))
+      return -1;
 
     /* if win, return who win */
     if (simulationBoard->play(r, c))

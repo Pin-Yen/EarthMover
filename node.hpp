@@ -14,8 +14,9 @@ class GameTree::Node {
   void update(int result);
 
   /* MCTS function, call by GameTree::selection
-   * select child according to UCBValue and point's score */
-  void selection(int &row, int &col);
+   * select child according to UCBValue and point's score
+   * return false if every point is not empty */
+  bool selection(int &row, int &col);
 
   /* MCTS function, call by GameTree::simulation
    * simulate the game at most maxDepth move,

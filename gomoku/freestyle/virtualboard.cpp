@@ -99,9 +99,9 @@ int VirtualBoard::getScoreSum(bool color) {
   return sum;
 }
 
-void VirtualBoard::getHSP(int &row, int &col) {
+bool VirtualBoard::getHSP(int &row, int &col) {
   bool color = getWhoTurn();
-  int max = -1, same = 1;
+  int max = 0, same = 0;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
@@ -121,6 +121,9 @@ void VirtualBoard::getHSP(int &row, int &col) {
         }
       }
     }
+
+  /* if every point has chess, then return false */
+  return (max > -1);
 }
 
 bool VirtualBoard::play(int row, int col) {
@@ -129,6 +132,9 @@ bool VirtualBoard::play(int row, int col) {
   ++playNo;
 
   STATUS color = ((playNo & 1) ? BLACK : WHITE);
+
+  /* set score to -1 */
+  score[row][col] = -1;
 
   point[row][col]->play(color, playNo);
 
