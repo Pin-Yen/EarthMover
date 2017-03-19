@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <assert.h>
 #include "gomoku/displayboard.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
 
@@ -11,21 +12,71 @@ int main() {
   DisplayBoard* displayBoard = new DisplayBoard();
   VirtualBoard* virtualBoard = new VirtualBoard();
 
-  start(displayBoard, virtualBoard);
+  #ifdef 2_PLAYER
+    start(displayBoard, virtualBoard);
+  #else
+    start(displayboard, false);
+  #endif
+
+  return 0;
 }
 
+void start(DisplayBoard *board, bool computerColor) {
+  GameTree tree();
+
+  while (true) {
+    int row, col;
+
+    bool whoTurn = board->getWhoTurn();
+
+    if (whoTurn == computerColor) {
+      /* if it's computer's turn */
+
+      MTCS(row, col, 1000);
+
+      if (!board->play(row, col))
+        assert(false);
+
+    } else{
+      bool validInput = false;
+
+      while (!validInput) {
+        /* get user input*/
+        board->getInput(row, col);
+
+        /* tries to play at (row, col) */
+        validInput = board->play(row, col);
+
+        /* handle invalid input */
+        if (!validInput)
+          std::cout << "Invalid move\n";
+      }
+    }
+
+    /* update tree and handle result */
+    if (tree.play()) {
+      /* somebody wins */
+
+      bool winner = ! board->getWhoTurn();
+      cout << winner? "black" : "white" << " wins\n";
+      break;
+    }
+  }
+}
+
+#ifdef 2_PLAYER
 void start(DisplayBoard* board, VirtualBoard* vBoard) {
   while (true) {
     int row, col;
-    
+
     /* get who turn, 0 = black, 1 = white*/
     bool whoTurn = board->getWhoTurn();
 
     /* debugger */
     int r, c; vBoard->getHSP(r, c);
-    std::cout << "highest position: " 
-              << (char)(c + 65) << r + 1 
-              << " score: " 
+    std::cout << "highest position: "
+              << (char)(c + 65) << r + 1
+              << " score: "
               << vBoard->getScore(r, c, whoTurn) << std::endl;
 
     /* get user's input and try to play, if the input is not valid,*/
@@ -51,3 +102,4 @@ void start(DisplayBoard* board, VirtualBoard* vBoard) {
     }
   }
 }
+#endif
