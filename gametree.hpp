@@ -12,8 +12,9 @@ class GameTree {
    * will return the best point's position */
   void MCTS(int &row, int &col, int maxCycle);
 
-  /* called when a REAL point is played, updates the currentRoot */
-  void play(int row, int col);
+  /* called when a REAL point is played, updates the currentRoot
+   * return true if win after play */
+  bool play(int row, int col);
  private:
   /* nested class */
   class Node;
