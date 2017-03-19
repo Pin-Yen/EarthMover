@@ -79,15 +79,21 @@ bool GameTree::Node::selection(int &row, int &col) {
   int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
+  const int WEIGHT = 1000;
+  const double BOUND_MAX = 0.9, BOUND_MIN = 1 - BOUND_MAX;
+
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       int score = board->getScore(r, c, whoTurn);
       /* skip if this point is not empty */
       if (score == -1) continue;
 
-      // still need to adjust weight
-      double value = score / scoreSum +  getUCBValue(r, c, whoTurn);
-      // still need to adjust weight
+      int playout = childNode[r][c]->getTotalPlayout();
+
+      double value = (score / scoreSum) *
+                     max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
+                     getUCBValue(r, c, whoTurn) *
+                     max(BOUND_MAX, playout / WEIGHT * BOUND_MAX + BOUND_MIN);
 
       if (value > max) {
         same = 1;
@@ -127,5 +133,5 @@ int GameTree::Node::simulation(int maxDepth) {
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
   return (childNode[r][c]->getWinRate(color) +
-          sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / playout[2]));
+          sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / 1 + playout[2]));
 }
