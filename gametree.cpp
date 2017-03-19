@@ -6,6 +6,19 @@ GameTree::GameTree() {
   root = new Node();
 }
 
+GameTree::~GameTree() {
+  destructNode(root);
+}
+
+void GameTree::destructNode(Node* node) {
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (node->childNode[r][c] != NULL)
+        destructNode(node->childNode[r][c]);
+
+  delete node;
+}
+
 void GameTree::MCTS(int &row, int &col, int maxCycle) {
   const int SIMULATE_DEPTH = 50;
 

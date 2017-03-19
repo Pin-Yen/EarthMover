@@ -3,6 +3,10 @@ class GameTree {
   static const int CHESSBOARD_DIMEN = 15;
 
   GameTree();
+  ~GameTree();
+
+  /* destructe the node and all of it's child node */
+  void GameTree::destructNode(Node* node);
 
   /* Monty Carlo Tree Search
    * will return the best point's position */
