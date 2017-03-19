@@ -47,6 +47,12 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
           col = c;
           mostTimes = currentNode->childNode[r][c]->getTotalPlayout();
         }
+
+  /* destruct all child node */
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->childNode[row][col] != NULL)
+        destructNode(currentNode->childNode[row][col]);
 }
 
 int GameTree::selection(Node* selectedLeaf) {
@@ -86,9 +92,11 @@ void GameTree::backProp(Node* node, int result) {
   }
 }
 
-void GameTree::play(int row, int col) {
+bool GameTree::play(int row, int col) {
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] = new Node(currentNode, row, col);
 
-  currentNode = currentNode->childNode[row][col] ;
+  currentNode = currentNode->childNode[row][col];
+
+  return currentNode->isSelfWinning();
 }
