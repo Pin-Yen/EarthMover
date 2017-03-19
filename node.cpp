@@ -93,7 +93,7 @@ bool GameTree::Node::selection(int &row, int &col) {
       double value = (score / scoreSum) *
                      max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
                      getUCBValue(r, c, whoTurn) *
-                     max(BOUND_MAX, playout / WEIGHT * BOUND_MAX + BOUND_MIN);
+                     max(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
 
       if (value > max) {
         same = 1;
