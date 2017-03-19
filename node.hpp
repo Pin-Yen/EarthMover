@@ -17,7 +17,7 @@ class GameTree::Node {
   void selection(int &row, int &col);
 
   /* MCTS function, call by GameTree::simulation
-   * simulate the game at most maxDepth move, 
+   * simulate the game at most maxDepth move,
    * and return who win (black = 0, white = 1, tie = -1) */
   int simulation(int maxDepth);
 
@@ -27,7 +27,7 @@ class GameTree::Node {
   /* get some color's playout / total plaout */
   double getWinRate(bool color) { return double(playout[color] / playout[2]); }
 
-  int getTotalplayout() { return playout[2]; }
+  int getTotalPlayout() { return playout[2]; }
 
   Node* getParent() { return parent; }
 
