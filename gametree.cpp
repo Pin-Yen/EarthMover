@@ -1,5 +1,4 @@
 #include "gametree.hpp"
-#include "node.hpp"
 
 GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */
@@ -66,7 +65,7 @@ int GameTree::selection(Node* selectedLeaf) {
       return -1;
 
     /* handle if already win when playing at child */
-    if (node->isSelfWinning()) {
+    if (node->getIsSelfWinning()) {
       selectedLeaf = node;
       return node->getWhoTurn();
     }
@@ -99,5 +98,5 @@ bool GameTree::play(int row, int col) {
 
   currentNode = currentNode->childNode[row][col];
 
-  return currentNode->isSelfWinning();
+  return currentNode->getIsSelfWinning();
 }

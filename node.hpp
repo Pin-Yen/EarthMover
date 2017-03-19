@@ -1,3 +1,6 @@
+#ifndef GAME_TREE_NODE_H
+#define GAME_TREE_NODE_H
+
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
 
@@ -33,9 +36,9 @@ class GameTree::Node {
 
   Node* getParent() { return parent; }
 
-  bool isChildWinning() { return isChildWinning; }
+  bool getIsChildWinning() { return isChildWinning; }
 
-  bool isSelfWinning() { return isSelfWinning; }
+  bool getIsSelfWinning() { return isSelfWinning; }
 
   bool getWhoTurn() { return board->getWhoTurn(); }
 
@@ -48,3 +51,5 @@ class GameTree::Node {
   VirtualBoard* board;
   Node *parent;
 };
+
+#endif

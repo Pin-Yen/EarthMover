@@ -41,7 +41,7 @@ VirtualBoard::VirtualBoard() {
       for (int d = 0; d < 4; ++d) {
         STATUS status[8]; point[r][c]->getDirStatusArray(d, status);
 
-        Evaluator::evaluate_type(point[r][c]->type[d], status);
+        Evaluator::evaluate_type(status, point[r][c]->type[d]);
       }
 
       Evaluator::evaluate_score(point[r][c]->type, score[r][c]);
@@ -134,7 +134,7 @@ bool VirtualBoard::play(int row, int col) {
   STATUS color = ((playNo & 1) ? BLACK : WHITE);
 
   /* set score to -1 */
-  score[row][col] = -1;
+  score[row][col][0] = -1; score[row][col][1] = -1;
 
   point[row][col]->play(color, playNo);
 
@@ -164,7 +164,7 @@ bool VirtualBoard::play(int row, int col) {
 
         STATUS status[8]; point[checkRow][checkCol]->getDirStatusArray(d, status);
 
-        Evaluator::evaluate_type(point[checkRow][checkCol]->type[d], status);
+        Evaluator::evaluate_type(status, point[checkRow][checkCol]->type[d]);
 
         Evaluator::evaluate_score(point[checkRow][checkCol]->type,
                                   score[checkRow][checkCol]);

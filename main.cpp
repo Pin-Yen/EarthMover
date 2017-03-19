@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "gomoku/displayboard.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
+#include "gametree.hpp"
 
 void start(DisplayBoard* board, VirtualBoard* vBoard);
 
@@ -12,32 +13,32 @@ int main() {
   DisplayBoard* displayBoard = new DisplayBoard();
   VirtualBoard* virtualBoard = new VirtualBoard();
 
-  #ifdef 2_PLAYER
+  #ifdef TWO_PLAYER
     start(displayBoard, virtualBoard);
   #else
-    start(displayboard, false);
+    start(displayboard, true);
   #endif
 
   return 0;
 }
 
 void start(DisplayBoard *board, bool computerColor) {
-  GameTree tree();
+  GameTree* tree = new GameTree();
 
   while (true) {
     int row, col;
 
     bool whoTurn = board->getWhoTurn();
 
-    if (whoTurn == computerColor) {
+    //if (whoTurn == computerColor) {
       /* if it's computer's turn */
 
-      MTCS(row, col, 1000);
+      tree->MCTS(row, col, 1000);
 
-      if (!board->play(row, col))
-        assert(false);
+      //if (!board->play(row, col))
+      //  assert(false);
 
-    } else{
+    //} else {
       bool validInput = false;
 
       while (!validInput) {
@@ -50,21 +51,21 @@ void start(DisplayBoard *board, bool computerColor) {
         /* handle invalid input */
         if (!validInput)
           std::cout << "Invalid move\n";
-      }
+      //}
     }
 
     /* update tree and handle result */
-    if (tree.play()) {
+    if (tree->play()) {
       /* somebody wins */
 
       bool winner = ! board->getWhoTurn();
-      cout << winner? "black" : "white" << " wins\n";
+      std::cout << (winner ? "black" : "white") << " wins\n";
       break;
     }
   }
 }
 
-#ifdef 2_PLAYER
+#ifdef TWO__PLAYER
 void start(DisplayBoard* board, VirtualBoard* vBoard) {
   while (true) {
     int row, col;

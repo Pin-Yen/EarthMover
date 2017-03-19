@@ -1,3 +1,6 @@
+#ifndef VIRTUAL_BOARD_H
+#define VIRTUAL_BOARD_H
+
 #include "evaluator.hpp"
 #include "status.hpp"
 #include <random>
@@ -35,3 +38,4 @@ class VirtualBoard {
   /* the total number of plays */
   int playNo;
 };
+#endif
