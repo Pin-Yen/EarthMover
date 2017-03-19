@@ -1,7 +1,8 @@
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "virtualboard.hpp"
 
-class Point {
+class VirtualBoard::Point {
  public:
   /* constructor */
   Point(int row, int col);

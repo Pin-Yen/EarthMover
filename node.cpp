@@ -1,5 +1,4 @@
 #include "node.hpp"
-#include "gametree.hpp"
 #include <cmath>
 
 GameTree::Node::Node() {
@@ -76,10 +75,11 @@ void GameTree::Node::selection(int &row, int &col) {
   }
 
   bool whoTurn = board->getWhoTurn();
+
   // current max value
   double max = -1;
 
-  int scoreSum = board->getScoreSum();
+  int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)

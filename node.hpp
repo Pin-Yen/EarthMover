@@ -1,4 +1,5 @@
 #include "gomoku/freestyle/virtualboard.hpp"
+#include "gametree.hpp"
 
 class GameTree::Node {
  public:
@@ -27,7 +28,7 @@ class GameTree::Node {
   /* get some color's playout / total plaout */
   double getWinRate(bool color) { return double(playout[color] / playout[2]); }
 
-  int getTotalplayout() { return playout[2]; }
+  int getTotalPlayout() { return playout[2]; }
 
   Node* getParent() { return parent; }
 

@@ -27,12 +27,12 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL)
-        if (currentNode->childNode[r][c]->getTotalPlayout > mostTimes) {
+        if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,
           // or just pick the first point ??
           row = r;
           col = c;
-          mostTimes = currentNode->childNode[r][c]->getTotalPlayout;
+          mostTimes = currentNode->childNode[r][c]->getTotalPlayout();
         }
 }
 
