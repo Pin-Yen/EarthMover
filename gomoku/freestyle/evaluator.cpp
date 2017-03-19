@@ -1,6 +1,6 @@
 #include "evaluator.hpp"
 
-void Evaluator::evaluate_type(ChessType* type[2], STATUS *status) {
+void Evaluator::evaluate_type(STATUS *status, ChessType* type[2]) {
   TypeTree::classify(status, type);
 }
 
@@ -9,7 +9,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
   /* count[color][length][LorD]
    * color: 0 for BLACK, 1 for WHITE
    * length: means the length of the type, should be 0~5.
-   * LorD: 0 for LIVE, 1 for DEAD 
+   * LorD: 0 for LIVE, 1 for DEAD
    * e.g count[1][4][0] means the number of white dead fours */
   int count[2][6][2] = {{{0}}};
 
@@ -44,7 +44,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
   score[BLACK] = 0; score[WHITE] = 0;
 
   /* calculate score */
-  for (int selfColor = BLACK, opponentColor = WHITE, i = 0; i < 2; 
+  for (int selfColor = BLACK, opponentColor = WHITE, i = 0; i < 2;
        selfColor = WHITE, opponentColor = BLACK, ++i) {
     /* self 5 */
     if (count[selfColor][5][0] > 0)
@@ -96,7 +96,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
         score[selfColor] += SCORE_LIVE3[DEFENSE];
       /* self dead 3 */
       if (count[selfColor][3][DEAD])
-        score[selfColor] += SCORE_DEAD3[ATTACK] * count[selfColor][3][DEAD];        
+        score[selfColor] += SCORE_DEAD3[ATTACK] * count[selfColor][3][DEAD];
       /* opponent dead 3 */
       if (count[opponentColor][3][DEAD])
         score[selfColor] += SCORE_DEAD3[DEFENSE] * count[opponentColor][3][DEAD];
@@ -109,7 +109,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
         score[selfColor] += SCORE_LIVE2[DEFENSE] * count[opponentColor][2][LIVE];
       /* self dead 2 */
       if (count[selfColor][2][DEAD])
-        score[selfColor] += SCORE_DEAD2[ATTACK] * count[selfColor][2][DEAD];        
+        score[selfColor] += SCORE_DEAD2[ATTACK] * count[selfColor][2][DEAD];
       /* opponent dead 2 */
       if (count[opponentColor][2][DEAD])
         score[selfColor] += SCORE_DEAD2[DEFENSE] * count[opponentColor][2][DEAD];
@@ -122,7 +122,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
         score[selfColor] += SCORE_LIVE1[DEFENSE] * count[opponentColor][1][LIVE];
       /* self dead 1 */
       if (count[selfColor][1][DEAD])
-        score[selfColor] += SCORE_DEAD1[ATTACK] * count[selfColor][1][DEAD];        
+        score[selfColor] += SCORE_DEAD1[ATTACK] * count[selfColor][1][DEAD];
       /* opponent dead 1*/
       if (count[opponentColor][1][DEAD])
         score[selfColor] += SCORE_DEAD1[DEFENSE] * count[opponentColor][1][DEAD];
