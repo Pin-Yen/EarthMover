@@ -14,9 +14,13 @@ GameTree::Node::Node() {
 
   /* initialize board */
   board = new VirtualBoard();
-  
+
   /* initiaize parent node */
   parent = NULL;
+
+  /* initialize winning flags */
+  isChildWinning = false;
+  isSelfWinning = false;
 }
 
 GameTree::Node::Node(Node *parentNode, int row, int col) {
@@ -25,16 +29,27 @@ GameTree::Node::Node(Node *parentNode, int row, int col) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       childNode[r][c] = NULL;
 
+  isChildWinning = false;
+
   /* initialize playout counters to 0 */
   for (int i = 0 ; i < 3; ++i)
     playout[i] = 0;
 
-  /* initialize board */
-  board = new VirtualBoard(parentNode->board);
-  board->play(row, col);
-
   /* initiaize parent node */
   parent = parentNode;
+
+  /* initialize board */
+  board = new VirtualBoard(parentNode->board);
+  isSelfWinning = board->play(row, col);
+
+
+  /* if is winning, set parent's winning child */
+  if (isSelfWinning) {
+    parent->isChildWinning = true;
+    parent->winningChildRow = row;
+    parent->winningChildCol = col;
+  }
+
 }
 
 GameTree::Node::~Node() {
@@ -52,9 +67,16 @@ void GameTree::Node::update(int result) {
 }
 
 void GameTree::Node::selection(int &row, int &col) {
-  bool whoTurn = board->getWhoTurn();
 
-  // current max value 
+  /* if there's a winning child then return it */
+  if (isChildWinning) {
+    row = winningChildRow;
+    col = winningChildCol;
+    return;
+  }
+
+  bool whoTurn = board->getWhoTurn();
+  // current max value
   double max = -1;
 
   int scoreSum = board->getScoreSum();
@@ -85,7 +107,7 @@ int GameTree::Node::simulation(int maxDepth) {
 
   /* simulate until reach max depth */
   for (int d = 0; d < maxDepth; ++d) {
-    int r, c; 
+    int r, c;
     simulationBoard->getHSP(r, c);
 
     /* if win, return who win */
@@ -97,6 +119,6 @@ int GameTree::Node::simulation(int maxDepth) {
 }
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
-  return (childNode[r][c]->getWinRate(color) + 
+  return (childNode[r][c]->getWinRate(color) +
           sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / playout[2]));
 }

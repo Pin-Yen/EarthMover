@@ -10,8 +10,14 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   const int SIMULATE_DEPTH = 50;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
-    Node* node = selection();
-    int result = simulation(node, SIMULATE_DEPTH);
+    Node* node;
+    int result = selection(node);
+
+    if (result == -1) {
+      /* simulate only if child is not winning */
+      result = simulation(node, SIMULATE_DEPTH);
+    }
+
     backProp(node, result);
   }
 
@@ -30,21 +36,26 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         }
 }
 
-GameTree::Node* GameTree::selection() {
+int GameTree::selection(Node* selectedLeaf) {
   Node* node = currentNode;
 
   while (true) {
     int r, c;
     node->selection(r, c);
 
-    //TODO: handle if already win when play at child
+    /* handle if already win when playing at child */
+    if (node->isSelfWinning()) {
+      selectedLeaf = node;
+      return node->getWhoTurn();
+    }
 
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
       node->childNode[r][c] = new Node(node, r, c);
-      return node->childNode[r][c];
+      selectedLeaf = node->childNode[r][c];
+      return -1;
     }
-    
+
     node = node->childNode[r][c];
   }
 }
@@ -63,6 +74,6 @@ void GameTree::backProp(Node* node, int result) {
 void GameTree::play(int row, int col) {
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] = new Node(currentNode, row, col);
-  
+
   currentNode = currentNode->childNode[row][col] ;
 }

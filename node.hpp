@@ -17,7 +17,7 @@ class GameTree::Node {
   void selection(int &row, int &col);
 
   /* MCTS function, call by GameTree::simulation
-   * simulate the game at most maxDepth move, 
+   * simulate the game at most maxDepth move,
    * and return who win (black = 0, white = 1, tie = -1) */
   int simulation(int maxDepth);
 
@@ -31,11 +31,18 @@ class GameTree::Node {
 
   Node* getParent() { return parent; }
 
+  bool isChildWinning() { return isChildWinning; }
+
+  bool isSelfWinning() { return isSelfWinning; }
+
+  bool getWhoTurn() { return board->getWhoTurn(); }
+
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
  private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
-
+  bool isChildWinning, isSelfWinning;
+  int winningChildRow, winningChildCol;
   VirtualBoard* board;
   Node *parent;
 };
