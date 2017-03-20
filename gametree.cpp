@@ -32,10 +32,9 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     std::cout << "cycle: " << cycle << std::endl;
     // end debugger
 
-    int result = selection(node);
+    int result = selection(&node);
 
     std::cout << "A" << std::endl; // debugger
-
     if (result == -2) {
       /* simulate only if child is not winning */
       result = simulation(node, SIMULATE_DEPTH);
@@ -77,7 +76,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         destructNode(currentNode->childNode[row][col]);
 }
 
-int GameTree::selection(Node* selectedLeaf) {
+int GameTree::selection(Node** selectedLeaf) {
   Node* node = currentNode;
 
   while (true) {
@@ -88,14 +87,14 @@ int GameTree::selection(Node* selectedLeaf) {
 
     /* handle if already win when playing at child */
     if (node->getIsSelfWinning()) {
-      selectedLeaf = node;
+      *selectedLeaf = node;
       return node->getWhoTurn();
     }
 
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
       node->childNode[r][c] = new Node(node, r, c);
-      selectedLeaf = node->childNode[r][c];
+      *selectedLeaf = node->childNode[r][c];
       return -2;
     }
 

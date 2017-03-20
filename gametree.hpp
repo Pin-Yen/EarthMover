@@ -26,7 +26,7 @@ class GameTree {
    * keep select the child node form the current node, until reach the leaf or a winning node
    * puts the selected node in selectedNode,
    * returns -1 for a not-winning leaf node, 0 for black-winning, 1 for white-winning */
-  int selection(Node* selectedNode);
+  int selection(Node** selectedLeaf);
 
   /* MCTS function
    * simulate the game at most maxDepth move,
