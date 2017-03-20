@@ -97,6 +97,12 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
   playNo = source->playNo;
 }
 
+VirtualBoard::~VirtualBoard() {
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      delete point[r][c];
+}
+
 int VirtualBoard::getScoreSum(bool color) {
   int sum = 0;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)

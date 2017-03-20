@@ -9,6 +9,8 @@ class VirtualBoard {
   /* copy the source board to consturct the board */
   VirtualBoard(VirtualBoard* source);
 
+  ~VirtualBoard();
+
   int getScore(int row, int col, bool color) { return score[row][col][color]; }
 
   /* get the sume of every point's score */
