@@ -54,6 +54,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         }
       }
 
+  std::cout << currentNode->getTotalPlayout() << std::endl;
+
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -97,10 +99,12 @@ int GameTree::simulation(Node* node, int maxDepth) {
 }
 
 void GameTree::backProp(Node* node, int result) {
+  // note: cannot use do-while here
   while (node != currentNode) {
     node->update(result);
     node = node->getParent();
   }
+  node->update(result);
 }
 
 bool GameTree::play(int row, int col) {
