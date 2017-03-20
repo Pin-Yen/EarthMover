@@ -58,7 +58,7 @@ void start(DisplayBoard *board, bool computerColor) {
     if (tree->play(row, col)) {
       /* somebody wins */
 
-      bool winner = ! board->getWhoTurn();
+      bool winner = board->getWhoTurn();
       std::cout << (winner ? "black" : "white") << " wins\n";
       break;
     }
