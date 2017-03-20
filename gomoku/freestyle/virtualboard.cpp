@@ -12,7 +12,7 @@ VirtualBoard::VirtualBoard() {
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point[r][c] = new Point(r, c);
+      point[r][c] = new Point();
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -143,7 +143,7 @@ bool VirtualBoard::play(int row, int col) {
   /* set score to -1 */
   score[row][col][0] = -1; score[row][col][1] = -1;
 
-  point[row][col]->play(color, playNo);
+  point[row][col]->play(color);
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
