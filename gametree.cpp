@@ -62,6 +62,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         delete currentNode->childNode[r][c];
         currentNode->childNode[r][c] = NULL;
       }
+
+  currentNode->clearPlayout();
 }
 
 int GameTree::selection(Node** selectedLeaf) {
