@@ -92,14 +92,8 @@ bool GameTree::Node::selection(int &row, int &col) {
       /* skip if this point is not empty */
       if (score == -1) continue;
 
-      int playout, ucbValue;
-      if (childNode[r][c] != NULL) {
-        playout = childNode[r][c]->getTotalPlayout();
-        ucbValue = getUCBValue(r, c, whoTurn);
-      } else {
-        playout = 0;
-        ucbValue = 0;
-      }
+      int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
+      int ucbValue = getUCBValue(r, c, whoTurn);
 
       double value = (score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
@@ -143,6 +137,11 @@ int GameTree::Node::simulation(int maxDepth) {
 }
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
-  return (childNode[r][c]->getWinRate(color) +
-          sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / 1 + playout[2]));
+  if (childNode[r][c] != NULL) {
+    return (childNode[r][c]->getWinRate(color) +
+            sqrt(2 * log(playout[2]) / (1 + childNode[r][c]->getTotalPlayout())));
+  }
+  else {
+    return (playout[2] == 0 ? 0 : sqrt(2 * log(playout[2]) / 1));
+  }
 }

@@ -36,7 +36,7 @@ void start(DisplayBoard *board, bool computerColor) {
     bool whoTurn = board->getWhoTurn();
 
     std::cout << "AI searching..." << std::endl;
-    tree->MCTS(row, col, 1000);
+    tree->MCTS(row, col, 10000);
 
     std::cout << "best point: " << (char)(col + 65) << row + 1 << std::endl;
 
