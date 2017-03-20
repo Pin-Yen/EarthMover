@@ -19,9 +19,6 @@ class GameTree {
   /* nested class */
   class Node;
 
-  /* destructe the node and all of it's child node */
-  void destructNode(Node* node);
-
   /* MCTS function
    * keep select the child node form the current node, until reach the leaf or a winning node
    * puts the selected node in selectedNode,

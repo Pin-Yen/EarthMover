@@ -11,16 +11,7 @@ GameTree::GameTree() {
 }
 
 GameTree::~GameTree() {
-  destructNode(root);
-}
-
-void GameTree::destructNode(Node* node) {
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (node->childNode[r][c] != NULL)
-        destructNode(node->childNode[r][c]);
-
-  delete node;
+  delete root;
 }
 
 void GameTree::MCTS(int &row, int &col, int maxCycle) {
@@ -69,8 +60,10 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   /* note: if want to keep the calculation, then should not call this */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[row][col] != NULL)
-        destructNode(currentNode->childNode[row][col]);
+      if (currentNode->childNode[row][col] != NULL){
+        delete currentNode->childNode[row][col];
+        currentNode->childNode[row][col] = NULL;
+      }
 
   std::cout << "MCTS end" << std::endl;
 }
