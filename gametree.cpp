@@ -42,7 +42,15 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL)
+      if (currentNode->childNode[r][c] != NULL) {
+        // debugger
+        std::cout << r + 1 << (char)(c + 65)
+                  << " simulate: " << currentNode->childNode[r][c]->getTotalPlayout()
+                  << " black win rate: " << currentNode->childNode[r][c]->getWinRate(false)
+                  << " white win rate: " << currentNode->childNode[r][c]->getWinRate(true);
+        // end debugger
+
+
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,
           // or just pick the first point ??
@@ -50,6 +58,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
           col = c;
           mostTimes = currentNode->childNode[r][c]->getTotalPlayout();
         }
+      }
 
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */
