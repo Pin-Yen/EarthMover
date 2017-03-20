@@ -44,7 +44,6 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
                   << std::endl;
         // end debugger
 
-
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,
           // or just pick the first point ??
