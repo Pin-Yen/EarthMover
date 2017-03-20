@@ -35,36 +35,30 @@ void start(DisplayBoard *board, bool computerColor) {
 
     bool whoTurn = board->getWhoTurn();
 
-    //if (whoTurn == computerColor) {
-      /* if it's computer's turn */
+    std::cout << "AI searching..." << std::endl;
+    tree->MCTS(row, col, 1000);
 
-      tree->MCTS(row, col, 1000);
+    std::cout << "best point: " << (char)(col + 65) << row + 1 << std::endl;
 
-      std::cout << row << col << std::endl;
-      //if (!board->play(row, col))
-      //  assert(false);
+    bool validInput = false;
 
-    //} else {
-      bool validInput = false;
+    while (!validInput) {
+      /* get user input*/
+      board->getInput(row, col);
 
-      while (!validInput) {
-        /* get user input*/
-        board->getInput(row, col);
+      /* tries to play at (row, col) */
+      validInput = board->play(row, col);
 
-        /* tries to play at (row, col) */
-        validInput = board->play(row, col);
-
-        /* handle invalid input */
-        if (!validInput)
-          std::cout << "Invalid move\n";
-      //}
+      /* handle invalid input */
+      if (!validInput)
+        std::cout << "Invalid move\n";
     }
 
     /* update tree and handle result */
     if (tree->play(row, col)) {
       /* somebody wins */
 
-      bool winner = ! board->getWhoTurn();
+      bool winner = board->getWhoTurn();
       std::cout << (winner ? "black" : "white") << " wins\n";
       break;
     }

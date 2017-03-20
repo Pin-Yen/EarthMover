@@ -37,7 +37,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
         // debugger
-        std::cout << r + 1 << (char)(c + 65)
+        std::cout << (char)(c + 65) << r + 1
                   << " simulate: " << currentNode->childNode[r][c]->getTotalPlayout()
                   << " black win rate: " << currentNode->childNode[r][c]->getWinRate(false)
                   << " white win rate: " << currentNode->childNode[r][c]->getWinRate(true)
