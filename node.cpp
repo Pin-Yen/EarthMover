@@ -92,11 +92,18 @@ bool GameTree::Node::selection(int &row, int &col) {
       /* skip if this point is not empty */
       if (score == -1) continue;
 
-      int playout = childNode[r][c]->getTotalPlayout();
+      int playout, ucbValue;
+      if (childNode[r][c] != NULL) {
+        playout = childNode[r][c]->getTotalPlayout();
+        ucbValue = getUCBValue(r, c, whoTurn);
+      } else {
+        playout = 0;
+        ucbValue = 0;
+      }
 
       double value = (score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
-                     getUCBValue(r, c, whoTurn) *
+                     ucbValue *
                      std::max(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
 
       if (value > max) {

@@ -34,10 +34,14 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
     int result = selection(node);
 
+    std::cout << "A" << std::endl; // debugger
+
     if (result == -2) {
       /* simulate only if child is not winning */
       result = simulation(node, SIMULATE_DEPTH);
     }
+
+    std::cout << "B" << std::endl; // debugger
 
     backProp(node, result);
   }
