@@ -1,13 +1,12 @@
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "virtualboard.hpp"
+#include "point.hpp"
 
 #include <random>
 #include <iostream>
 
 #include "evaluator.hpp"
-
-#include "virtualboard.hpp"
-#include "point.hpp"
 
 VirtualBoard::VirtualBoard() {
   /* initialize point array */

@@ -1,8 +1,8 @@
+#include "displayboard.hpp"
+
 #include <iomanip>
 #include <string>
 #include <iostream>
-
-#include "displayboard.hpp"
 
 DisplayBoard::DisplayBoard() {
   wipe();

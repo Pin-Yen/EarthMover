@@ -1,10 +1,9 @@
-#include <iostream>
-#include <cmath>
-
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
-
 #include "node.hpp"
+
+#include <iostream>
+#include <cmath>
 
 GameTree::Node::Node() {
   /* initialize all childNodes to NULL */

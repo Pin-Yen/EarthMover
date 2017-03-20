@@ -1,7 +1,6 @@
 #include "chesstype.hpp"
 #include "status.hpp"
 #include "virtualboard.hpp"
-
 #include "point.hpp"
 
 VirtualBoard::Point::Point(int row, int col) {

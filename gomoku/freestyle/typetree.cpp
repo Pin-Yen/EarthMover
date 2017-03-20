@@ -1,10 +1,9 @@
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "typetree.hpp"
 
 #include <iostream>
 #include <iomanip>
-
-#include "typetree.hpp"
 
 /* initialize root*/
 TypeTree::Node* TypeTree::root = new Node();
