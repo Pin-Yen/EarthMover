@@ -7,6 +7,7 @@
 GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */
   root = new Node();
+  currentNode = root;
 }
 
 GameTree::~GameTree() {
