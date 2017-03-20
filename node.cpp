@@ -58,6 +58,7 @@ GameTree::Node::~Node() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (childNode[r][c] != NULL)
         delete childNode[r][c];
+      delete board;
 }
 
 void GameTree::Node::update(int result) {
