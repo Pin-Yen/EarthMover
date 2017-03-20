@@ -1,13 +1,13 @@
-#include <iostream>
-#include <string>
-#include <assert.h>
-
 #include "gomoku/freestyle/status.hpp"
 #include "gomoku/freestyle/chesstype.hpp"
 #include "gomoku/freestyle/typetree.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gomoku/displayboard.hpp"
 #include "gametree.hpp"
+
+#include <iostream>
+#include <string>
+#include <assert.h>
 
 void start(DisplayBoard* board, VirtualBoard* vBoard);
 void start(DisplayBoard* board, bool computerColor);
@@ -36,7 +36,7 @@ void start(DisplayBoard *board, bool computerColor) {
     bool whoTurn = board->getWhoTurn();
 
     std::cout << "AI searching..." << std::endl;
-    tree->MCTS(row, col, 10000);
+    tree->MCTS(row, col, 1000);
 
     std::cout << "best point: " << (char)(col + 65) << row + 1 << std::endl;
 
