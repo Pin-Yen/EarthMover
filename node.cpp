@@ -84,7 +84,7 @@ bool GameTree::Node::selection(int &row, int &col) {
   int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
-  const int WEIGHT = 1000;
+  const double WEIGHT = 1000.0;
   const double BOUND_MAX = 0.9, BOUND_MIN = 1 - BOUND_MAX;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -94,9 +94,9 @@ bool GameTree::Node::selection(int &row, int &col) {
       if (score == -1) continue;
 
       int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
-      int ucbValue = getUCBValue(r, c, whoTurn);
+      double ucbValue = getUCBValue(r, c, whoTurn);
 
-      double value = (score / scoreSum) *
+      double value = ((double)score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
                      ucbValue *
                      std::max(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
