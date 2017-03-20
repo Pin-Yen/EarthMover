@@ -25,8 +25,12 @@ void GameTree::destructNode(Node* node) {
 void GameTree::MCTS(int &row, int &col, int maxCycle) {
   const int SIMULATE_DEPTH = 50;
 
+  Node* node;
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
-    Node* node;
+    // debugger
+    std::cout << "cycle: " << cycle << std::endl;
+    // end debugger
+
     int result = selection(node);
 
     if (result == -2) {
