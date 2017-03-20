@@ -39,6 +39,8 @@ class GameTree::Node {
 
   bool getWhoTurn() { return board->getWhoTurn(); }
 
+  void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0;}
+
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
  private:
   /* 0 = black, 1 = white, 2 = total */
