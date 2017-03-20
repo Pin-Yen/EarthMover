@@ -1,6 +1,10 @@
-#include "typetree.hpp"
+#include "chesstype.hpp"
+#include "status.hpp"
+
 #include <iostream>
 #include <iomanip>
+
+#include "typetree.hpp"
 
 /* initialize root*/
 TypeTree::Node* TypeTree::root = new Node();
@@ -19,10 +23,10 @@ void TypeTree::initialize() {
  * parameters of the initial call should be:
  * location: length / 2, move = -1, connect = 0 */
 
-/* connect is used to prevent already exist five while length == 11 
- * for example : OOOOO*OOX-- ; --X  *OOOOO 
+/* connect is used to prevent already exist five while length == 11
+ * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void TypeTree::dfs(Node *root, STATUS *status, int location, int move, 
+void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
                    bool blackblock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
@@ -32,7 +36,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
       whiteBlock = true;
   }
 
-  if ((blackblock && whiteBlock) || status[location] == BOUND || 
+  if ((blackblock && whiteBlock) || status[location] == BOUND ||
       location <= 0 || location >= analyze_length - 1) {
     if (move == 1) {
       /* reached leaf */
@@ -61,7 +65,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 
   /* move location */
   location += move;
-  
+
   root->type[0] = NULL; root->type[1] = NULL;
 
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
@@ -83,15 +87,15 @@ ChessType** TypeTree::cutSameResultChild(Node *root) {
 
   if (root->type[0] != NULL)
     currentType = root->type;
-  
+
   bool canCut = true;
 
   for (int i = 0; i < 4; ++i)
     if (root->childNode[i] != NULL) {
       /* if this child node is not NULL, recursion and get return */
       ChessType** returnType = cutSameResultChild(root->childNode[i]);
-      
-      if (returnType == NULL) 
+
+      if (returnType == NULL)
         /* if children cannot be cut, then this node also cannot be cut */
         canCut = false;
       else if (currentType == NULL)
@@ -137,14 +141,14 @@ void TypeTree::classify(STATUS *status, ChessType *(type[2])) {
       if (node->jump)
         break;
     }
-} 
+}
 
 ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color) {
   int connect = 1;
 
   /* check the length of the connection around the analize point
    * under the following, we call this chess group "center group" (CG)
-   * for example: --X O*OOX-- ; OOOO* O X 
+   * for example: --X O*OOX-- ; OOOO* O X
    *                   ^^^^      ^^^^^     */
   for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
@@ -196,7 +200,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color) {
             /* if the board of CG is not empty, it means blocked */
             type = new ChessType(0, 0);
           }
-          
+
           /* set analize result l/rType */
           if (move == -1)
             lType = type;
@@ -210,7 +214,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color) {
     status[analyze_length / 2] = EMPTY;
 
     /* keep lType > rType */
-    if ((lType->length < rType->length) || 
+    if ((lType->length < rType->length) ||
         ((lType->length == rType->length) && (lType->life < rType->life)))
       std::swap(lType, rType);
 
@@ -284,7 +288,7 @@ void TypeTree::searchAll(Node* root, STATUS *status, int location, int move) {
   }
 
   location += move;
-  
+
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; i++)

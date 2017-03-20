@@ -1,3 +1,8 @@
+#include "chesstype.hpp"
+#include "status.hpp"
+
+#include "typetree.hpp"
+
 #include "evaluator.hpp"
 
 void Evaluator::evaluate_type(STATUS *status, ChessType* type[2]) {

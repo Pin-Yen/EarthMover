@@ -1,7 +1,8 @@
-#include "displayboard.hpp"
 #include <iomanip>
 #include <string>
 #include <iostream>
+
+#include "displayboard.hpp"
 
 DisplayBoard::DisplayBoard() {
   wipe();
@@ -20,8 +21,8 @@ void DisplayBoard::invalidate() {
 
 void DisplayBoard::getInput(int &row, int &col) {
   while (true) {
-    std::cout << "enter the coordinate of next move (A1 ~ " 
-              << (char)('A' + CHESSBOARD_DIMEN - 1) 
+    std::cout << "enter the coordinate of next move (A1 ~ "
+              << (char)('A' + CHESSBOARD_DIMEN - 1)
               << CHESSBOARD_DIMEN << ") : ";
     std::string input;
     std::cin >> input;
@@ -55,9 +56,9 @@ void DisplayBoard::getInput(int &row, int &col) {
           row--;
           validRow = true;
         }
-      }   
+      }
 
-      if (validRow && validColumn) break;  
+      if (validRow && validColumn) break;
     }
 
     std::cout << "Invalid input\n";
@@ -68,7 +69,7 @@ void DisplayBoard::getInput(int &row, int &col) {
 void DisplayBoard::printBoard(int row, int col, int color) {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
     /* if at the first or the last row, print the coordinate with letter */
-    std::cout << std::setw(4) 
+    std::cout << std::setw(4)
               << ((col == 0 || col == CHESSBOARD_DIMEN + 1) ? ' ' : (char)(64 + col));
   else if (col == 0 || col == CHESSBOARD_DIMEN + 1)
     /* if at the first or the last column, print the coordinate with number */
@@ -82,17 +83,17 @@ void DisplayBoard::printBoard(int row, int col, int color) {
       s = "   ";
     else if (row == 1 || row == CHESSBOARD_DIMEN)
       s = "═══";
-    else if ((row == 4 && col == 4) || 
+    else if ((row == 4 && col == 4) ||
             (row == 4 && col == CHESSBOARD_DIMEN - 3) ||
-            (row == CHESSBOARD_DIMEN - 3 && col == 4) || 
+            (row == CHESSBOARD_DIMEN - 3 && col == 4) ||
             (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 3) ||
-            (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 1)) 
+            (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 1))
       s = "──╼";
-    else if ((row == 4 && col == 5) || 
+    else if ((row == 4 && col == 5) ||
             (row == 4 && col == CHESSBOARD_DIMEN - 2) ||
-            (row == CHESSBOARD_DIMEN - 3 && col == 5) || 
+            (row == CHESSBOARD_DIMEN - 3 && col == 5) ||
             (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 2) ||
-            (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 2)) 
+            (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 2))
       s = "╾──";
     else
       s = "───";
@@ -126,11 +127,11 @@ void DisplayBoard::printBoard(int row, int col, int color) {
             case CHESSBOARD_DIMEN:
               s += "╢"; break;
             default:
-              s += (((row == 4 && col == 4) || 
+              s += (((row == 4 && col == 4) ||
                    (row == 4 && col == CHESSBOARD_DIMEN - 3) ||
-                   (row == CHESSBOARD_DIMEN - 3 && col == 4) || 
+                   (row == CHESSBOARD_DIMEN - 3 && col == 4) ||
                    (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 3) ||
-                   (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 1)) 
+                   (row == CHESSBOARD_DIMEN / 2 + 1 && col == CHESSBOARD_DIMEN / 2 + 1))
                    ? "╋" : "┼");
           }
       }
@@ -157,8 +158,8 @@ void DisplayBoard::printBoard(int row, int col, int color) {
 
 /* puts a new chess, if the point is not empty then return false */
 bool DisplayBoard::play(int row, int col) {
-  if (point[row][col] != 0) return false;  
-  
+  if (point[row][col] != 0) return false;
+
   ++playNo;
 
   point[row][col] = playNo;
@@ -195,7 +196,7 @@ bool DisplayBoard::judge(int row, int col) {
           checkCol = col + dir[d][1] * move * offset;
 
         /* check if out the bound */
-        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN || 
+        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
           checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 

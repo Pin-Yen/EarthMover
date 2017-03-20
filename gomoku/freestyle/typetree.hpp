@@ -1,5 +1,5 @@
-#include "chesstype.hpp"
-#include "status.hpp"
+#ifndef TYPE_TREE_H
+#define TYPE_TREE_H
 
 class TypeTree {
  public:
@@ -35,7 +35,7 @@ class TypeTree {
   static ChessType* typeAnalyze(STATUS *status, STATUS color);
 
   static const int analyze_length = 9, classify_length = 8;
-  
+
   /* debugging purposes */
 
   /* copied from chesstypemaker.cpp, print the status and type */
@@ -44,3 +44,5 @@ class TypeTree {
   /* search all the tree and print the leaves */
   static void searchAll(Node* root, STATUS *status, int location, int move);
 };
+
+#endif

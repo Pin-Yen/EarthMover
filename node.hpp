@@ -1,8 +1,6 @@
 #ifndef GAME_TREE_NODE_H
 #define GAME_TREE_NODE_H
 
-#include "gomoku/freestyle/virtualboard.hpp"
-
 class GameTree::Node {
  public:
   /* consturctor for root */

@@ -1,11 +1,6 @@
 #ifndef VIRTUAL_BOARD_H
 #define VIRTUAL_BOARD_H
 
-#include "evaluator.hpp"
-#include "status.hpp"
-#include <random>
-#include <iostream>
-
 class VirtualBoard {
  public:
   static const int CHESSBOARD_DIMEN = 15;

@@ -1,6 +1,5 @@
-#include "typetree.hpp"
-#include "chesstype.hpp"
-#include "status.hpp"
+#ifndef EVALUATOR_H
+#define EVALUATOR_H
 
 class Evaluator {
  public:
@@ -12,3 +11,5 @@ class Evaluator {
    * returns black's score in score[0], white's in score[1] */
   static void evaluate_score(ChessType* type[4][2], int *score);
 };
+
+#endif

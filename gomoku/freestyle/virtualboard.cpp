@@ -1,3 +1,11 @@
+#include "chesstype.hpp"
+#include "status.hpp"
+
+#include <random>
+#include <iostream>
+
+#include "evaluator.hpp"
+
 #include "virtualboard.hpp"
 #include "point.hpp"
 

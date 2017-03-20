@@ -1,3 +1,7 @@
+#include "gomoku/freestyle/virtualboard.hpp"
+
+#include <iostream>
+
 #include "gametree.hpp"
 #include "node.hpp"
 

@@ -1,8 +1,12 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
-#include "gomoku/displayboard.hpp"
+
+#include "gomoku/freestyle/status.hpp"
+#include "gomoku/freestyle/chesstype.hpp"
+#include "gomoku/freestyle/typetree.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
+#include "gomoku/displayboard.hpp"
 #include "gametree.hpp"
 
 void start(DisplayBoard* board, VirtualBoard* vBoard);
