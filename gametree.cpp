@@ -41,6 +41,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
                   << " simulate: " << currentNode->childNode[r][c]->getTotalPlayout()
                   << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
                   << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
+                  << "  current UCB: " << currentNode->getUCBValue(r, c, currentNode->getWhoTurn())
                   << std::endl;
         // end debugger
 
