@@ -3,6 +3,8 @@
 #include "virtualboard.hpp"
 #include "point.hpp"
 
+#include <cstddef>
+
 VirtualBoard::Point::Point(Point* source) {
   status = source->status;
 
@@ -13,5 +15,5 @@ VirtualBoard::Point::Point(Point* source) {
 
 void VirtualBoard::Point::getDirStatusArray(int dir, STATUS* dest) {
   for (int i = 0; i < 8; ++i)
-    dest[i] = *(dirStatus[dir][i]);
+    dest[i] = (dirStatus[dir][i] == NULL ? BOUND : *(dirStatus[dir][i]));
 }

@@ -18,11 +18,9 @@ int main() {
   DisplayBoard* displayBoard = new DisplayBoard();
   VirtualBoard* virtualBoard = new VirtualBoard();
 
-  #ifdef TWO_PLAYER
-    start(displayBoard, virtualBoard);
-  #else
-    start(displayBoard, true);
-  #endif
+  //start(displayBoard, virtualBoard);
+
+  start(displayBoard, true);
 
   return 0;
 }
