@@ -76,9 +76,11 @@ int GameTree::selection(Node** selectedLeaf) {
   while (true) {
     int r, c;
     /* if every point is not empty point */
-    if (!node->selection(r, c))
+    if (!node->selection(r, c)) {
+      *selectedLeaf = node;
       return -1;
-
+    }
+    
     /* handle if already win when playing at child */
     if (node->getIsSelfWinning()) {
       *selectedLeaf = node;
