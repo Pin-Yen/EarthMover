@@ -2,6 +2,7 @@
 #include "status.hpp"
 #include "virtualboard.hpp"
 #include "point.hpp"
+#include "../../objectcounter.hpp"
 
 #include <random>
 #include <iostream>
@@ -53,6 +54,8 @@ VirtualBoard::VirtualBoard() {
 
       Evaluator::evaluate_score(point[r][c]->type, score[r][c]);
     }
+
+  ObjectCounter::registerVB();
 }
 
 VirtualBoard::VirtualBoard(VirtualBoard* source) {
@@ -95,12 +98,16 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
         }
 
   playNo = source->playNo;
+
+  ObjectCounter::registerVB();
 }
 
 VirtualBoard::~VirtualBoard() {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       delete point[r][c];
+
+  ObjectCounter::unregisterVB();
 }
 
 int VirtualBoard::getScoreSum(bool color) {

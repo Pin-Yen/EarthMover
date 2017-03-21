@@ -4,6 +4,7 @@
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gomoku/displayboard.hpp"
 #include "gametree.hpp"
+#include "objectcounter.hpp"
 
 #include <iostream>
 #include <string>
@@ -27,7 +28,6 @@ int main() {
 
 void start(DisplayBoard *board, bool computerColor) {
   GameTree* tree = new GameTree();
-
   while (true) {
     int row, col;
 
@@ -35,6 +35,7 @@ void start(DisplayBoard *board, bool computerColor) {
 
     std::cout << "AI searching..." << std::endl;
     tree->MCTS(row, col, 1000);
+    ObjectCounter::printInfo();
 
     std::cout << "best point: " << (char)(col + 65) << row + 1 << std::endl;
 

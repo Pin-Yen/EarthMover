@@ -1,6 +1,7 @@
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
+#include "objectcounter.hpp"
 
 #include <iostream>
 #include <cmath>
@@ -24,6 +25,8 @@ GameTree::Node::Node() {
   /* initialize winning flags */
   isChildWinning = false;
   isSelfWinning = false;
+
+  ObjectCounter::registerNode();
 }
 
 GameTree::Node::Node(Node *parentNode, int row, int col) {
@@ -51,6 +54,8 @@ GameTree::Node::Node(Node *parentNode, int row, int col) {
     parent->winningChildRow = row;
     parent->winningChildCol = col;
   }
+
+  ObjectCounter::registerNode();
 }
 
 GameTree::Node::~Node() {
@@ -59,6 +64,7 @@ GameTree::Node::~Node() {
       if (childNode[r][c] != NULL)
         delete childNode[r][c];
   delete board;
+  ObjectCounter::unregisterNode();
 }
 
 void GameTree::Node::update(int result) {
