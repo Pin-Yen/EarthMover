@@ -133,8 +133,9 @@ int GameTree::Node::simulation(int maxDepth) {
 
     /* if win, return who win */
     if (simulationBoard->play(r, c)) {
+      int result = simulationBoard->getWhoTurn();
       delete simulationBoard;
-      return simulationBoard->getWhoTurn();
+      return result;
     }
   }
   delete simulationBoard;
