@@ -59,6 +59,7 @@ GameTree::Node::~Node() {
       if (childNode[r][c] != NULL)
         delete childNode[r][c];
   delete board;
+  delete simulationBoard;
 }
 
 void GameTree::Node::update(int result) {
@@ -138,14 +139,12 @@ int GameTree::Node::simulation(int maxDepth) {
 }
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
-  if (playout[2] == 0)
-    return 0;
-
   if (childNode[r][c] != NULL) {
+
     return (childNode[r][c]->getWinRate(color) +
-            sqrt(2 * log(playout[2]) / (1 + childNode[r][c]->getTotalPlayout())));
+            sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / (1 + playout[2])));
   }
   else {
-    return (sqrt(2 * log(playout[2]) / 1));
+    return (playout[2] == 0 ? 0 : sqrt(2 * log(playout[2]) / 1 + playout[2]));
   }
 }
