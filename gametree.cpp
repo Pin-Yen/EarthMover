@@ -3,6 +3,7 @@
 #include "node.hpp"
 
 #include <iostream>
+#include <iomanip>
 
 GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */
@@ -37,7 +38,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
         // debugger
-        std::cout << (char)(c + 65) << r + 1
+        std::cout << std::fixed << std::setprecision(3)
+                  << (char)(c + 65) << r + 1
                   << " simulate: " << currentNode->childNode[r][c]->getTotalPlayout()
                   << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
                   << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
