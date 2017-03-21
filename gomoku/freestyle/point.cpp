@@ -5,6 +5,13 @@
 #include "../../objectcounter.hpp"
 
 #include <cstddef>
+VirtualBoard::Point::Point() {
+  status = EMPTY;
+
+  for (int dir = 0; dir < 4; ++dir)
+    for (int i = 0; i < 2; ++i)
+      type[dir][i] = NULL;
+}
 
 VirtualBoard::Point::Point(Point* source) {
   status = source->status;
@@ -18,6 +25,11 @@ VirtualBoard::Point::Point(Point* source) {
 
 VirtualBoard::Point::~Point(){
   ObjectCounter::unregisterPoint();
+
+  for (int dir = 0; dir < 4; ++dir)
+    for (int i = 0; i < 2; ++i)
+      if (type[dir][i] != NULL)
+        delete type[dir][i];
 }
 
 void VirtualBoard::Point::getDirStatusArray(int dir, STATUS* dest) {

@@ -4,7 +4,7 @@
 class VirtualBoard::Point {
  public:
   /* constructor */
-  Point() { status = EMPTY; };
+  Point();
 
   Point(Point* source);
 
