@@ -59,7 +59,6 @@ GameTree::Node::~Node() {
       if (childNode[r][c] != NULL)
         delete childNode[r][c];
   delete board;
-  delete simulationBoard;
 }
 
 void GameTree::Node::update(int result) {
@@ -134,7 +133,7 @@ int GameTree::Node::simulation(int maxDepth) {
     if (simulationBoard->play(r, c))
       return simulationBoard->getWhoTurn();
   }
-
+  delete simulationBoard;
   return -1;
 }
 
