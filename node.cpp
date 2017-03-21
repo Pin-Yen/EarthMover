@@ -126,24 +126,30 @@ int GameTree::Node::simulation(int maxDepth) {
   for (int d = 0; d < maxDepth; ++d) {
     int r, c;
     /* return tie(-1) if every point is not empty point */
-    if (!simulationBoard->getHSP(r, c))
+    if (!simulationBoard->getHSP(r, c)) {
+      delete simulationBoard;
       return -1;
+    }
 
     /* if win, return who win */
-    if (simulationBoard->play(r, c))
+    if (simulationBoard->play(r, c)) {
+      delete simulationBoard;
       return simulationBoard->getWhoTurn();
+    }
   }
   delete simulationBoard;
   return -1;
 }
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
-  if (childNode[r][c] != NULL) {
+  if (playout[2] == 0)
+    return 0;
 
+  if (childNode[r][c] != NULL) {
     return (childNode[r][c]->getWinRate(color) +
-            sqrt(2 * log(childNode[r][c]->getTotalPlayout()) / (1 + playout[2])));
+            sqrt(2 * log(playout[2]) / (1 + childNode[r][c]->getTotalPlayout())));
   }
   else {
-    return (playout[2] == 0 ? 0 : sqrt(2 * log(playout[2]) / 1 + playout[2]));
+    return (sqrt(2 * log(playout[2]) / 1));
   }
 }
