@@ -8,6 +8,7 @@ class VirtualBoard::Point {
 
   Point(Point* source);
 
+  ~Point();
   /* play at this point */
   void play(STATUS status) { this->status = status; }
 
