@@ -16,6 +16,8 @@ void start_AI();
 int main() {
   TypeTree::initialize();
 
+  ObjectCounter::printInfo();
+
   //start();
 
   start_AI();

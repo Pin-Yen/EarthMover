@@ -1,6 +1,8 @@
 #ifndef TYPE_TREE_H
 #define TYPE_TREE_H
 
+#include "../../objectcounter.hpp"
+
 class TypeTree {
  public:
   static void classify(STATUS *status, ChessType *(type[2]));
@@ -17,7 +19,9 @@ class TypeTree {
 
     bool jump;
 
-    Node() { jump = false; }
+    Node() { jump = false; ObjectCounter::registerTypeTreeNode(); }
+
+    ~Node() { ObjectCounter::unregisterTypeTreeNode(); }
   };
 
   static Node* root;

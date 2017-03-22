@@ -1,6 +1,7 @@
 #include "chesstype.hpp"
 #include "status.hpp"
 #include "typetree.hpp"
+#include "../../objectcounter.hpp"
 
 #include <iostream>
 #include <iomanip>
