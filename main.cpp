@@ -10,24 +10,23 @@
 #include <string>
 #include <assert.h>
 
-void start(DisplayBoard* board, VirtualBoard* vBoard);
-void start(DisplayBoard* board, bool computerColor);
+void start();
+void start_AI();
 
 int main() {
   TypeTree::initialize();
 
-  DisplayBoard* displayBoard = new DisplayBoard();
-  VirtualBoard* virtualBoard = new VirtualBoard();
+  //start();
 
-  //start(displayBoard, virtualBoard);
-
-  start(displayBoard, true);
+  start_AI();
 
   return 0;
 }
 
-void start(DisplayBoard *board, bool computerColor) {
+void start_AI() {
+  DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
+
   while (true) {
     int row, col;
 
@@ -64,7 +63,10 @@ void start(DisplayBoard *board, bool computerColor) {
   }
 }
 
-void start(DisplayBoard* board, VirtualBoard* vBoard) {
+void start() {
+  DisplayBoard* board = new DisplayBoard();
+  VirtualBoard* vBoard = new VirtualBoard();
+
   while (true) {
     int row, col;
 
