@@ -28,7 +28,7 @@ class GameTree::Node {
 
   /* get some color's playout / total plaout */
   double getWinRate(bool color) {
-    return ((playout[color] + (playout[2] - playout[color] - playout[(!color)]) / 2) /
+    return ((playout[color] + (playout[2] - playout[color] - playout[(!color)]) / 2.0) /
             (double)playout[2]);
   }
 
