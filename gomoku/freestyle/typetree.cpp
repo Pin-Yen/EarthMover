@@ -27,16 +27,16 @@ void TypeTree::initialize() {
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
 void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
-                   bool blackblock, bool whiteBlock) {
+                   bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
-    case (BLACK):
-      blackblock = true; break;
-    case (WHITE):
+    case BLACK:
+      blackBlock = true; break;
+    case WHITE:
       whiteBlock = true;
   }
 
-  if ((blackblock && whiteBlock) || status[location] == BOUND ||
+  if ((blackBlock && whiteBlock) || status[location] == BOUND ||
       location <= 0 || location >= analyze_length - 1) {
     if (move == 1) {
       /* reached leaf */
@@ -59,7 +59,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
       location = analyze_length / 2;
 
       /* reset block */
-      blackblock = false; whiteBlock = false;
+      blackBlock = false; whiteBlock = false;
     }
   }
 
