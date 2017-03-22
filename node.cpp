@@ -105,7 +105,7 @@ bool GameTree::Node::selection(int &row, int &col) {
       double value = ((double)score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
                      ucbValue *
-                     std::max(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
+                     std::min(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
 
       if (value > max) {
         same = 1;

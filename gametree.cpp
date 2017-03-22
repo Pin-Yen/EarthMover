@@ -34,16 +34,30 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   // return the point that select most times
   int mostTimes = -1;
 
+  int whoTurn = currentNode->getWhoTurn();
+  int scoreSum = currentNode->board->getScoreSum(whoTurn);
+
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
         // debugger
+        int playout = currentNode->childNode[r][c]->getTotalPlayout();
+        double scorePer = (double)(currentNode->board->getScore(r, c, whoTurn)) / scoreSum;
+        double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
+
         std::cout << std::fixed << std::setprecision(3)
                   << (char)(c + 65) << r + 1
-                  << " simulate: " << currentNode->childNode[r][c]->getTotalPlayout()
+                  << " simulate: " << playout
                   << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
                   << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
-                  << "  current UCB: " << currentNode->getUCBValue(r, c, currentNode->getWhoTurn())
+                  << "\n"
+                  << "  current scoreP: "  << scorePer
+                  << "  current UCB: " << ucbValue
+                  << "  score + UCB: "
+                  << (scorePer *
+                     std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
+                     ucbValue *
+                     std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
                   << std::endl;
         // end debugger
 
@@ -80,7 +94,7 @@ int GameTree::selection(Node** selectedLeaf) {
       *selectedLeaf = node;
       return -1;
     }
-    
+
     /* handle if already win when playing at child */
     if (node->getIsSelfWinning()) {
       *selectedLeaf = node;

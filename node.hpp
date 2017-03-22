@@ -45,12 +45,14 @@ class GameTree::Node {
   void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0;}
 
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+
+   VirtualBoard* board; //debugging
  private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
   bool isChildWinning, isSelfWinning;
   int winningChildRow, winningChildCol;
-  VirtualBoard* board;
+  //VirtualBoard* board;
   Node *parent;
 };
 
