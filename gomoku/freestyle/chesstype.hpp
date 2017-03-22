@@ -17,6 +17,8 @@ struct ChessType {
   ChessType(ChessType *source) {
     length = source->length;
     life = source->life;
+
+    ObjectCounter::registerCT();
   }
 
   ~ChessType() { ObjectCounter::unregisterCT(); }
