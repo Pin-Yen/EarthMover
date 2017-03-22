@@ -30,7 +30,7 @@ class TypeTree {
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
   static void dfs(Node *root, STATUS *status, int location, int move,
-                  bool blackblock, bool whiteBlock);
+                  bool blackBlock, bool whiteBlock);
 
   /* cut the tree node that all child has same result */
   static ChessType** cutSameResultChild(Node *root);
