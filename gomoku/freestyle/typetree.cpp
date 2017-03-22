@@ -222,22 +222,29 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color) {
         ((lType->length == rType->length) && (lType->life < rType->life)))
       std::swap(lType, rType);
 
+    ChessType *returnType;
+
     if (lType->length == 5 && rType->length == 5)
       /* if left and right will both produce 5 after play at analize point
        * it is a life four type */
-      return new ChessType(4, 1);
+      returnType =  new ChessType(4, 1);
     else if (lType->length == 5)
       /* if there is only one side produces 5 after play at analize point,
        * it is a dead four type */
-      return new ChessType(4, 0);
+      returnType = new ChessType(4, 0);
     else if (lType->length == 0)
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
-      return new ChessType(0, 0);
+      returnType = new ChessType(0, 0);
     else
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
-      return new ChessType(lType->length - 1, lType->life);
+      returnType = new ChessType(lType->length - 1, lType->life);
+
+    delete lType;
+    delete rType;
+
+    return returnType;
   }
 }
 
