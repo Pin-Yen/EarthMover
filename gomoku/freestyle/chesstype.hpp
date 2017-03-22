@@ -14,6 +14,11 @@ struct ChessType {
     ObjectCounter::registerCT();
   }
 
+  ChessType(ChessType *source) {
+    length = source->length;
+    life = source->life;
+  }
+
   ~ChessType() { ObjectCounter::unregisterCT(); }
 };
 

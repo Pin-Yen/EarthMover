@@ -110,8 +110,8 @@ ChessType** TypeTree::cutSameResultChild(Node *root) {
 
   if (!canCut) return NULL;
   /* cut this node, free all children and set this node's type*/
-  root->type[0] = currentType[0];
-  root->type[1] = currentType[1];
+  root->type[0] = new ChessType(currentType[0]);
+  root->type[1] = new ChessType(currentType[1]);
 
   for (int i = 0; i < 4; ++i)
     if (root->childNode[i] != NULL)
