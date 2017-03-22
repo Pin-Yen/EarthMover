@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <iomanip>
-int TEMP = 0;
 
 /* initialize root*/
 TypeTree::Node* TypeTree::root = new Node();
@@ -17,14 +16,8 @@ void TypeTree::initialize() {
     status[i] = EMPTY;
 
   dfs(root, status, analyze_length / 2, -1, false, false);
-  std::cout << "====before cut====\n";
-  searchAll(root, status, 4, -1);
-  std::cout << TEMP << "\n";
-  ObjectCounter::printInfo();
+
   cutSameResultChild(root);
-  TEMP = 0;
-  searchAll(root, status, 4, -1);
-  std::cout << TEMP << "\n";
 }
 
 /* Depth First Search
@@ -297,7 +290,6 @@ void TypeTree::print(STATUS *status, ChessType **type) {
 
 void TypeTree::searchAll(Node* root, STATUS *status, int location, int move) {
   if (root->type[0] != NULL) {
-    TEMP++;
     // print(status, root->type);
     return;
   }
