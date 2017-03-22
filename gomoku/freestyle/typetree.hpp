@@ -22,10 +22,11 @@ class TypeTree {
     Node() { jump = false; ObjectCounter::registerTypeTreeNode(); }
 
     ~Node() {
-      ObjectCounter::unregisterTypeTreeNode();
       for (int i = 0; i < 2; ++i)
         delete type[i];
-      }
+
+      ObjectCounter::unregisterTypeTreeNode();
+    }
   };
 
   static Node* root;
