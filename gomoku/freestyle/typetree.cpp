@@ -73,7 +73,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
   for (int i = 0; i < 4; ++i) {
     root->childNode[i] = new Node();
     status[location] = s[i];
-    dfs(root->childNode[i], status, location, move, blackblock, whiteBlock);
+    dfs(root->childNode[i], status, location, move, blackBlock, whiteBlock);
   }
 
   /* restore current location to EMPTY
