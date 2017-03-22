@@ -23,7 +23,7 @@ VirtualBoard::Point::Point(Point* source) {
   ObjectCounter::registerPoint();
 }
 
-VirtualBoard::Point::~Point(){
+VirtualBoard::Point::~Point() {
   ObjectCounter::unregisterPoint();
 
   for (int dir = 0; dir < 4; ++dir)

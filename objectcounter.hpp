@@ -14,15 +14,20 @@ class ObjectCounter {
   static void registerPoint(){ ++point; }
   static void unregisterPoint() { --point; }
 
+  static void registerCT(){ ++chesstype; }
+  static void unregisterCT() { --chesstype; }
+
   static void printInfo() {
     std::cout << "node: " << node << std::endl
               << "virtualboard: " << virtualboard <<std::endl
-              << "point: " << point << std::endl;
+              << "point: " << point << std::endl
+              << "chesstype: " << chesstype << std::endl;
   }
 
  // private:
   static int node;
   static int virtualboard;
   static int point;
+  static int chesstype;
 };
 #endif
