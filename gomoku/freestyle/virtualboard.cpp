@@ -89,7 +89,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer value to bound */
-            status = new STATUS(BOUND);
+            status = NULL;
           else
             status = &(point[checkRow][checkCol]->status);
 
