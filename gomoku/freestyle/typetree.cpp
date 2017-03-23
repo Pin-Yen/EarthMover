@@ -134,12 +134,10 @@ void TypeTree::classify(STATUS *status, ChessType *(type[2])) {
 
       /* if reach leaf, return type */
       if (node->type[0] != NULL) {
-        //type[0] = node->type[0];
-        //type[1] = node->type[1];
         if (type[0] != NULL) delete type[0];
         if (type[1] != NULL) delete type[1];
-        type[0] = new ChessType(node->type[0]->length, node->type[0]->life);
-        type[1] = new ChessType(node->type[1]->length, node->type[1]->life);
+        type[0] = new ChessType(node->type[0]);
+        type[1] = new ChessType(node->type[1]);
 
         return;
       }
