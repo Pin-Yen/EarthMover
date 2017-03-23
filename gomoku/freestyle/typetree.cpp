@@ -86,8 +86,10 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
 ChessType** TypeTree::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
-  if (root->type[0] != NULL)
+  if (root->type[0] != NULL) {
     currentType = root->type;
+    return currentType;
+  }
 
   bool canCut = true;
 
@@ -110,7 +112,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root) {
     }
 
   if (!canCut) return NULL;
-  /* cut this node, free all children and set this node's type*/
+  /* cut this node, free all children and set this node's type */
   root->type[0] = new ChessType(currentType[0]);
   root->type[1] = new ChessType(currentType[1]);
 
