@@ -47,13 +47,12 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
         std::cout << std::fixed << std::setprecision(3)
                   << (char)(c + 65) << r + 1
-                  << " simulate: " << playout
+                  << "  sim: " << playout
                   << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
                   << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
-                  << "\n"
-                  << "  current scoreP: "  << scorePer
-                  << "  current UCB: " << ucbValue
-                  << "  score + UCB: "
+                  << "  scoreP: "  << scorePer
+                  << "  UCB: " << ucbValue
+                  << "  scoreP + UCB: "
                   << (scorePer *
                      std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
                      ucbValue *
