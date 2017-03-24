@@ -20,7 +20,7 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
   /* count the types in 4 directions */
   for (int color = 0; color < 2; ++color)
     for (int d = 0; d < 4; ++d)
-      ++(count[color][type[d][color]->length][type[d][color]->life]);
+      ++(count[color][type[d][color]->length()][type[d][color]->life()]);
 
   /* [0] attack, [1] defense*/
   const int SCORE_5[2] = {1000000, 80000};

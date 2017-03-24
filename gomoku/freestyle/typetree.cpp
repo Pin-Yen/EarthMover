@@ -103,10 +103,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root) {
         canCut = false;
       else if (currentType == NULL)
         currentType = returnType;
-      else if (currentType[0]->length != returnType[0]->length ||
-               currentType[0]->life != returnType[0]->life ||
-               currentType[1]->length != returnType[1]->length ||
-               currentType[1]->life != returnType[1]->life)
+      else if (*currentType[0] != *returnType[0] || *currentType[1] != *returnType[1])
         /* if different child has different result, cannot cut this node*/
         canCut = false;
     }
@@ -219,28 +216,27 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color) {
     status[analyze_length / 2] = EMPTY;
 
     /* keep lType > rType */
-    if ((lType->length < rType->length) ||
-        ((lType->length == rType->length) && (lType->life < rType->life)))
+    if (*lType < *rType)
       std::swap(lType, rType);
 
     ChessType *returnType;
 
-    if (lType->length == 5 && rType->length == 5)
+    if (lType->length() == 5 && rType->length() == 5)
       /* if left and right will both produce 5 after play at analize point
        * it is a life four type */
       returnType =  new ChessType(4, 1);
-    else if (lType->length == 5)
+    else if (lType->length() == 5)
       /* if there is only one side produces 5 after play at analize point,
        * it is a dead four type */
       returnType = new ChessType(4, 0);
-    else if (lType->length == 0)
+    else if (lType->length() == 0)
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
       returnType = new ChessType(0, 0);
     else
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
-      returnType = new ChessType(lType->length - 1, lType->life);
+      returnType = new ChessType(lType->length() - 1, lType->life());
 
     delete lType;
     delete rType;
@@ -276,11 +272,11 @@ void TypeTree::print(STATUS *status, ChessType **type) {
   for (int i = 0; i < 2; i++) {
     std::cout << (i == 0 ? "B" : "W") << ":" << std::setw(1);
 
-    if (type[i]->length > 0)
+    if (type[i]->length() > 0)
       /* print life or dead only if length == 1, 2, 3, 4*/
-      std::cout << (type[i]->life == 1 ? " L" : " D") << type[i]->length;
+      std::cout << (type[i]->life() == 1 ? " L" : " D") << type[i]->length();
     else
-      std::cout << "  " << type[i]->length;
+      std::cout << "  " << type[i]->length();
 
     std::cout << ( i == 0 ? ", " : "   ");
   }
