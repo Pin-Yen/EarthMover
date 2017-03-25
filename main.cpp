@@ -35,7 +35,7 @@ void start_AI() {
     bool whoTurn = board->getWhoTurn();
 
     std::cout << "AI searching..." << std::endl;
-    tree->MCTS(row, col, 1000);
+    tree->MCTS(row, col, 5000);
     ObjectCounter::printInfo();
 
     bool validInput = false;

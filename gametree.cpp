@@ -41,8 +41,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
 
-        /*
-        // debugger
+
+        /*// debugger
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
         double scorePer = (double)(currentNode->board->getScore(r, c, whoTurn)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
@@ -60,8 +60,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
                      ucbValue *
                      std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
                   << std::endl;
-        // end debugger
-        */
+        // end debugger*/
+
 
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,
@@ -72,7 +72,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         }
       }
 
-  // debugger
+
+  //debugger
     int playout = currentNode->childNode[row][col]->getTotalPlayout();
     double scorePer = (double)(currentNode->board->getScore(row, col, whoTurn)) / scoreSum;
     double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
@@ -91,7 +92,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
                   ucbValue *
                   std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
               << std::endl;
-  // end debugger
+  //end debugger
 
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */
