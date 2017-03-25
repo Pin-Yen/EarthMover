@@ -209,12 +209,11 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
             type = new ChessType(0, 0, 0);
           }
 
-          /* set analize result l/rType */
-
           if (move == -1) {
+            /* left type result */
             if (lType == NULL) {
               lType = type;
-              if (!lType->life()) break;
+              if (!lType->life() || lType->length() > 3) break;
             } else {
               if (*lType == *type) {
                 ++level;
@@ -222,6 +221,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
               delete type;
             }
           } else {
+            /* right type result */
             if (rType == NULL) {
               rType = type;
               if (*lType == *type) {
@@ -230,7 +230,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
               else if (*lType < *type) {
                 level = 0;
               }
-              if (!rType->life()) break;
+              if (!rType->life() || rType->length() > 3) break;
             } else {
               if (*rType == *type) {
                 ++level;
