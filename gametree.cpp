@@ -3,6 +3,7 @@
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
+#include "log.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -48,26 +49,41 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
       if (currentNode->childNode[r][c] != NULL) {
 
 
-        /*// debugger
+        // debugger
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
         double scorePer = (double)(currentNode->board->getScore(r, c, whoTurn)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
 
-        std::cout << std::fixed << std::setprecision(3)
-                  << (char)(c + 65) << r + 1
-                  << "  sim: " << playout
-                  << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
-                  << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
-                  << "  scoreP: "  << scorePer
-                  << "  UCB: " << ucbValue
-                  << "  scoreP + UCB: "
-                  << (scorePer *
-                     std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
-                     ucbValue *
-                     std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
-                  << std::endl;
-        // end debugger*/
+        Log log;
+        log << (char)(c + 65) << r + 1
+            << "  sim: " << playout
+            << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
+            << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
+            << "  scoreP: "  << scorePer
+            << "  UCB: " << ucbValue
+            << "  scoreP + UCB: "
+            << (scorePer *
+               std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
+               ucbValue *
+               std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
+            << "\n";
 
+
+        // std::cout << std::fixed << std::setprecision(3)
+        //           << (char)(c + 65) << r + 1
+        //           << "  sim: " << playout
+        //           << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
+        //           << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
+        //           << "  scoreP: "  << scorePer
+        //           << "  UCB: " << ucbValue
+        //           << "  scoreP + UCB: "
+        //           << (scorePer *
+        //              std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
+        //              ucbValue *
+        //              std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
+        //           << std::endl;
+
+        // end debugger
 
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,

@@ -17,6 +17,8 @@ class DisplayBoard {
   /* search the area surrounding (row, col) for winning conditions */
   bool judge(int row, int col);
 
+  int getPlayNo() { return playNo; }
+
  private:
   static const int CHESSBOARD_DIMEN = 15;
   static const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
