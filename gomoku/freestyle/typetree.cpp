@@ -18,8 +18,6 @@ void TypeTree::initialize() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
-
-  //TypeTree::searchAll(root, status, 4, -1);
 }
 
 /* Depth First Search
@@ -220,8 +218,8 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
             } else {
               if (*lType == *type) {
                 ++level;
-                delete type;
               }
+              delete type;
             }
           } else {
             if (rType == NULL) {
@@ -236,8 +234,8 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
             } else {
               if (*rType == *type) {
                 ++level;
-                delete type;
               }
+              delete type;
             }
           }
 
@@ -346,9 +344,3 @@ void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
 
   status[location] = EMPTY;
 }
-
-/*
-int main() {
-  TypeTree::initialize();
-}
-*/
