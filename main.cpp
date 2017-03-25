@@ -6,14 +6,19 @@
 #include "objectcounter.hpp"
 #include "log.hpp"
 
+#include <time.h>
+#include <assert.h>
+
 #include <iostream>
 #include <string>
-#include <assert.h>
+#include <cstdlib>
 
 void start();
 void start_AI();
 
 int main() {
+  srand((unsigned)time(NULL));
+
   ObjectCounter::printInfo();
 
   //start();
