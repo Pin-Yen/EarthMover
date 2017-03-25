@@ -5,16 +5,18 @@
 
 class ChessType {
  public:
-  ChessType(int length, bool life) {
+  ChessType(int length, bool life, int level) {
     length_ = length;
     life_ = life;
+    level_ = level;
 
     ObjectCounter::registerCT();
   }
 
   ChessType(ChessType *source) {
-    length_ = source->length();
-    life_ = source->life();
+    length_ = source->length_;
+    life_ = source->life_;
+    level_ = source->level_;
 
     ObjectCounter::registerCT();
   }
@@ -23,10 +25,16 @@ class ChessType {
 
   int length() const { return length_; }
 
+  int level() const { return level_; }
+
   bool life() const { return life_; }
 
+  bool operator==(const ChessType &type) {
+    return (length_ == type.length_ && life_ == type.life_);
+  }
+
   bool operator!=(const ChessType &type) {
-    return (length_ != type.length_ || life_ != type.life_);
+    return (length_ != type.length_ || life_ != type.life_ || level_ != type.level_);
   }
 
   bool operator<(const ChessType &type) {
@@ -34,7 +42,7 @@ class ChessType {
   }
 
  private:
-  int length_;
+  int length_, level_;
   bool life_;
 };
 

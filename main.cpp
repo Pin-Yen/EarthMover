@@ -38,8 +38,6 @@ void start_AI() {
     tree->MCTS(row, col, 1000);
     ObjectCounter::printInfo();
 
-    std::cout << "best point: " << (char)(col + 65) << row + 1 << std::endl;
-
     bool validInput = false;
 
     while (!validInput) {
