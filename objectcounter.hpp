@@ -21,11 +21,11 @@ class ObjectCounter {
   static void unregisterTypeTreeNode() { --typetreeNode; }
 
   static void printInfo() {
-    std::cout << "node: " << node << std::endl
-              << "virtualboard: " << virtualboard <<std::endl
-              << "point: " << point << std::endl
-              << "chesstype: " << chesstype << std::endl
-              << "typetree node: " << typetreeNode << std::endl;
+    std::cout << "node: " << node
+              << "\nvirtualboard: " << virtualboard
+              << "\npoint: " << point
+              << "\nchesstype: " << chesstype
+              << "\ntypetree node: " << typetreeNode << std::endl;
   }
 
  // private:

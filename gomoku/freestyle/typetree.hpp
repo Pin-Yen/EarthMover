@@ -5,7 +5,7 @@
 
 class TypeTree {
  public:
-  static void classify(STATUS *status, ChessType *(type[2]));
+  static void classify(const STATUS *status, ChessType *(type[2]));
 
   static void initialize();
 
@@ -41,7 +41,7 @@ class TypeTree {
   static ChessType** cutSameResultChild(Node *root);
 
   /* copied from chesstypemaker.cpp */
-  static ChessType* typeAnalyze(STATUS *status, STATUS color);
+  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 
   static const int analyze_length = 9, classify_length = 8;
 

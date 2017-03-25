@@ -21,7 +21,7 @@ VirtualBoard::Point::Point(Point* source) {
 
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)
-      type[dir][i] = new ChessType(source->type[dir][i]->length, source->type[dir][i]->life);
+      type[dir][i] = new ChessType(source->type[dir][i]);
 
   ObjectCounter::registerPoint();
 }

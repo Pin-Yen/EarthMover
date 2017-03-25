@@ -39,10 +39,8 @@ void start_AI() {
     log << "==== PLAY #" << board->getPlayNo() << " ====\n";
 
     std::cout << "AI searching..." << std::endl;
-    tree->MCTS(row, col, 1000);
+    tree->MCTS(row, col, 2000);
     ObjectCounter::printInfo();
-
-    std::cout << "best point: " << (char)(col + 65) << row + 1 << std::endl;
 
     bool validInput = false;
 

@@ -147,7 +147,7 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 bool VirtualBoard::play(int row, int col) {
-  if (score[row][col][(playNo & 1)] == 1000000) return true;
+  if (score[row][col][(playNo & 1)] == 10000000) return true;
 
   ++playNo;
 
