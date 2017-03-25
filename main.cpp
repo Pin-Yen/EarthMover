@@ -5,6 +5,7 @@
 #include "gomoku/displayboard.hpp"
 #include "gametree.hpp"
 #include "objectcounter.hpp"
+#include "log.hpp"
 
 #include <iostream>
 #include <string>
@@ -19,20 +20,23 @@ int main() {
   ObjectCounter::printInfo();
 
   //start();
-
+  Log::init();
   start_AI();
-
+  Log::closeLog();
   return 0;
 }
 
 void start_AI() {
   DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
+  Log log;
 
   while (true) {
     int row, col;
 
     bool whoTurn = board->getWhoTurn();
+
+    log << "==== PLAY #" << board->getPlayNo() << " ====\n";
 
     std::cout << "AI searching..." << std::endl;
     tree->MCTS(row, col, 1000);
