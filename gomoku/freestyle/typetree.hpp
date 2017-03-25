@@ -31,6 +31,8 @@ class TypeTree {
 
   static Node* root;
 
+  static bool isInitialized;
+
   /* Depth First Search
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
