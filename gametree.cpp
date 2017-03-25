@@ -55,6 +55,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
 
         Log log;
+        Log::precision(3);
         log << (char)(c + 65) << r + 1
             << "  sim: " << playout
             << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)

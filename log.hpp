@@ -21,6 +21,13 @@ public:
   }
 
   static std::ofstream outputFileStream;
+
+  /* set floating point precision */
+  static void precision(int precision) {
+    outputFileStream << std::fixed;
+    outputFileStream.precision(precision);
+  }
+
 };
 
 template <typename T>
