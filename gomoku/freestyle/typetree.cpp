@@ -8,8 +8,13 @@
 
 /* initialize root*/
 TypeTree::Node* TypeTree::root = new Node();
+bool TypeTree::isInitialized = false;
 
 void TypeTree::initialize() {
+
+  if (isInitialized) return;
+  isInitialized = true;
+
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
