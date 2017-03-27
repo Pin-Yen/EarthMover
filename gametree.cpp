@@ -53,7 +53,6 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
 
-
         // debugger
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
         double scorePer = (double)(currentBoard->getScore(r, c, whoTurn)) / scoreSum;
@@ -68,27 +67,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
             << "  scoreP + UCB: "
-            << (scorePer *
-               std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
-               ucbValue *
-               std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
+            << (scorePer + ucbValue)
             << "\n";
-
-
-        // std::cout << std::fixed << std::setprecision(3)
-        //           << (char)(c + 65) << r + 1
-        //           << "  sim: " << playout
-        //           << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
-        //           << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
-        //           << "  scoreP: "  << scorePer
-        //           << "  UCB: " << ucbValue
-        //           << "  scoreP + UCB: "
-        //           << (scorePer *
-        //              std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
-        //              ucbValue *
-        //              std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
-        //           << std::endl;
-
         // end debugger
 
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
@@ -102,24 +82,21 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
 
   //debugger
-    int playout = currentNode->childNode[row][col]->getTotalPlayout();
-    double scorePer = (double)(currentBoard->getScore(row, col, whoTurn)) / scoreSum;
-    double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
+  int playout = currentNode->childNode[row][col]->getTotalPlayout();
+  double scorePer = (double)(currentBoard->getScore(row, col, whoTurn)) / scoreSum;
+  double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
 
-    std::cout << std::fixed << std::setprecision(3)
-              << "best point: "
-              << (char)(col + 65) << row + 1
-              << "  sim: " << playout
-              << "  BWinP: " << currentNode->childNode[row][col]->getWinRate(false)
-              << "  WWinP: " << currentNode->childNode[row][col]->getWinRate(true)
-              << "  scoreP: "  << scorePer
-              << "  UCB: " << ucbValue
-              << "  scoreP + UCB: "
-              << (scorePer *
-                  std::max(0.1, ((1000 - playout) / 1000.0) * 0.9 + 0.1) +
-                  ucbValue *
-                  std::min(0.9, (playout / 1000.0) * 0.9 + 0.1))
-              << std::endl;
+  std::cout << std::fixed << std::setprecision(3)
+            << "best point: "
+            << (char)(col + 65) << row + 1
+            << "  sim: " << playout
+            << "  BWinP: " << currentNode->childNode[row][col]->getWinRate(false)
+            << "  WWinP: " << currentNode->childNode[row][col]->getWinRate(true)
+            << "  scoreP: "  << scorePer
+            << "  UCB: " << ucbValue
+            << "  scoreP + UCB: "
+            << (scorePer + ucbValue)
+            << std::endl;
   //end debugger
 
   /* destruct all child node */

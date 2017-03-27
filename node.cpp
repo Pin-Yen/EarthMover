@@ -86,8 +86,8 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
-  const double WEIGHT = 1000.0;
-  const double BOUND_MAX = 0.9, BOUND_MIN = 1 - BOUND_MAX;
+  //const double WEIGHT = 1000.0;
+  //const double BOUND_MAX = 0.9, BOUND_MIN = 1 - BOUND_MAX;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
@@ -95,13 +95,17 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       /* skip if this point is not empty */
       if (score == -1) continue;
 
-      int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
+      //int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
       double ucbValue = getUCBValue(r, c, whoTurn);
 
+      /*
       double value = ((double)score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
                      ucbValue *
                      std::min(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
+      */
+
+      double value = ((double)score / scoreSum) + ucbValue;
 
       if (value > max) {
         same = 1;
@@ -141,11 +145,13 @@ double GameTree::Node::getUCBValue(int r, int c, bool color) {
   if (playout[2] == 0)
     return 0;
 
+  const float con = 0.5;
+
   if (childNode[r][c] != NULL) {
     return (childNode[r][c]->getWinRate(color) +
-            sqrt(2 * log(playout[2]) / (1 + childNode[r][c]->getTotalPlayout())));
+            sqrt(con * log10(playout[2]) / (1 + childNode[r][c]->getTotalPlayout())));
   }
   else {
-    return (sqrt(2 * log(playout[2]) / 1));
+    return (sqrt(con * log10(playout[2]) / 1));
   }
 }
