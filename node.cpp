@@ -16,10 +16,6 @@ GameTree::Node::Node() {
   for (int i = 0; i < 3; ++i)
     playout[i] = 0;
 
-  /* initialize board */
-  //board = new VirtualBoard();
-  whoTurn_ = false;
-
   /* initiaize parent node */
   parent = NULL;
 
@@ -30,7 +26,7 @@ GameTree::Node::Node() {
   ObjectCounter::registerNode();
 }
 
-GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning, bool whoTurn) {
+GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning) {
   /* initialize all childNodes to NULL */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -42,14 +38,10 @@ GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning, bool wh
   for (int i = 0 ; i < 3; ++i)
     playout[i] = 0;
 
-  whoTurn_ = whoTurn;
-
   /* initiaize parent node */
   parent = parentNode;
 
-  /* initialize board */
-  //board = new VirtualBoard(parentNode->board);
-  //isSelfWinning = board->play(row, col);
+  /* set isWinning*/
   isSelfWinning = isWinning;
 
   /* if is winning, set parent's winning child */
@@ -86,12 +78,12 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
     return true;
   }
 
-  //bool whoTurn = board->getWhoTurn();
+  bool whoTurn = board->getWhoTurn();
 
   // current max value
   double max = -1;
 
-  int scoreSum = board->getScoreSum(whoTurn_);
+  int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
   const double WEIGHT = 1000.0;
@@ -99,12 +91,12 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
-      int score = board->getScore(r, c, whoTurn_);
+      int score = board->getScore(r, c, whoTurn);
       /* skip if this point is not empty */
       if (score == -1) continue;
 
       int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
-      double ucbValue = getUCBValue(r, c, whoTurn_);
+      double ucbValue = getUCBValue(r, c, whoTurn);
 
       double value = ((double)score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +

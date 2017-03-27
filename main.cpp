@@ -41,7 +41,7 @@ void start_AI() {
     log << "==== PLAY #" << board->getPlayNo() << " ====\n";
 
     std::cout << "AI searching..." << std::endl;
-    tree->MCTS(row, col, 2000);
+    tree->MCTS(row, col, 5000);
     ObjectCounter::printInfo();
 
     bool validInput = false;

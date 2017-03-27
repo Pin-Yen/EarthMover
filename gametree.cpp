@@ -154,7 +154,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
       bool isWinning = board->play(r, c);
-      node->childNode[r][c] = new Node(node, r, c, isWinning, board->getWhoTurn());
+      node->childNode[r][c] = new Node(node, r, c, isWinning);
       *selectedLeaf = node->childNode[r][c];
 
       if (isWinning)
@@ -186,7 +186,7 @@ bool GameTree::play(int row, int col) {
 
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] =
-      new Node(currentNode, row, col, isWinning, currentBoard->getWhoTurn());
+      new Node(currentNode, row, col, isWinning);
 
   currentNode = currentNode->childNode[row][col];
 

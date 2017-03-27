@@ -6,7 +6,7 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (WITHOUT root node) */
-  Node(Node *parentNode, int row, int col, bool isWinning, bool whoTurn);
+  Node(Node *parentNode, int row, int col, bool isWinning);
 
   ~Node();
 
@@ -40,21 +40,17 @@ class GameTree::Node {
 
   bool getIsSelfWinning() { return isSelfWinning; }
 
-  //bool whoTurn() { return whoTurn_; }
-
   void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0;}
 
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-
-  //VirtualBoard* board; //debugging
  private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
   bool isChildWinning, isSelfWinning;
   int winningChildRow, winningChildCol;
 
-  bool whoTurn_;
-  //VirtualBoard* board;
+  //bool whoTurn_;
+
   Node *parent;
 };
 
