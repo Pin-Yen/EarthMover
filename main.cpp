@@ -3,8 +3,6 @@
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gomoku/displayboard.hpp"
 #include "gametree.hpp"
-#include "objectcounter.hpp"
-#include "log.hpp"
 
 #include <time.h>
 #include <assert.h>
@@ -13,20 +11,28 @@
 #include <string>
 #include <cstdlib>
 
+#ifdef DEBUG
+#include "objectcounter.hpp"
+#include "log.hpp"
+#endif
+
 void start();
 void start_AI();
 
 int main() {
   srand((unsigned)time(NULL));
 
+  #ifdef DEBUG
   ObjectCounter::printInfo();
-
   Log::init();
+  #endif
 
   //start();
   start_AI();
 
+  #ifdef DEBUG
   Log::closeLog();
+  #endif
 
   return 0;
 }
@@ -34,18 +40,26 @@ int main() {
 void start_AI() {
   DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
+
+  #ifdef DEBUG
   Log log;
+  #endif
 
   while (true) {
     int row, col;
 
     bool whoTurn = board->getWhoTurn();
 
+    #ifdef DEBUG
     log << "==== PLAY #" << board->getPlayNo() << " ====\n";
+    #endif
 
     std::cout << "AI searching..." << std::endl;
     tree->MCTS(row, col, 5000);
+
+    #ifdef DEBUG
     ObjectCounter::printInfo();
+    #endif
 
     bool validInput = false;
 

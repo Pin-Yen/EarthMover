@@ -1,10 +1,13 @@
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
-#include "objectcounter.hpp"
 
 #include <iostream>
 #include <cmath>
+
+#ifdef DEBUG
+#include "objectcounter.hpp"
+#endif
 
 GameTree::Node::Node() {
   /* initialize all childNodes to NULL */
@@ -23,7 +26,9 @@ GameTree::Node::Node() {
   isChildWinning = false;
   isSelfWinning = false;
 
+  #ifdef DEBUG
   ObjectCounter::registerNode();
+  #endif
 }
 
 GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning) {
@@ -51,7 +56,9 @@ GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning) {
     parent->winningChildCol = col;
   }
 
+  #ifdef DEBUG
   ObjectCounter::registerNode();
+  #endif
 }
 
 GameTree::Node::~Node() {
@@ -59,8 +66,10 @@ GameTree::Node::~Node() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (childNode[r][c] != NULL)
         delete childNode[r][c];
-  //delete board;
+
+  #ifdef DEBUG
   ObjectCounter::unregisterNode();
+  #endif
 }
 
 void GameTree::Node::update(int result) {

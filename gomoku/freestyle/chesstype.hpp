@@ -1,7 +1,9 @@
 #ifndef CHESS_TYPE_H
 #define CHESS_TYPE_H
 
+#ifdef DEBUG
 #include "../../objectcounter.hpp"
+#endif
 
 class ChessType {
  public:
@@ -10,7 +12,9 @@ class ChessType {
     life_ = life;
     level_ = level;
 
+    #ifdef DEBUG
     ObjectCounter::registerCT();
+    #endif
   }
 
   ChessType(ChessType *source) {
@@ -18,10 +22,14 @@ class ChessType {
     life_ = source->life_;
     level_ = source->level_;
 
+    #ifdef DEBUG
     ObjectCounter::registerCT();
+    #endif
   }
 
+  #ifdef DEBUG
   ~ChessType() { ObjectCounter::unregisterCT(); }
+  #endif
 
   int length() const { return length_; }
 

@@ -1,7 +1,9 @@
 #ifndef TYPE_TREE_H
 #define TYPE_TREE_H
 
+#ifdef DEBUG
 #include "../../objectcounter.hpp"
+#endif
 
 class TypeTree {
  public:
@@ -19,13 +21,21 @@ class TypeTree {
 
     bool jump;
 
-    Node() { jump = false; ObjectCounter::registerTypeTreeNode(); }
+    Node() {
+      jump = false;
+
+      #ifdef DEBUG
+      ObjectCounter::registerTypeTreeNode();
+      #endif
+    }
 
     ~Node() {
       for (int i = 0; i < 2; ++i)
         delete type[i];
 
+      #ifdef DEBUG
       ObjectCounter::unregisterTypeTreeNode();
+      #endif
     }
   };
 

@@ -3,12 +3,15 @@
 #include "gomoku/freestyle/chesstype.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
-#include "log.hpp"
 
 #include <iostream>
 #include <iomanip>
 
 #include "gomoku/freestyle/typetree.hpp"
+
+#ifdef DEBUG
+#include "log.hpp"
+#endif
 
 GameTree::GameTree() {
   TypeTree::initialize();
@@ -53,7 +56,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
 
-        // debugger
+        #ifdef DEBUG
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
         double scorePer = (double)(currentBoard->getScore(r, c, whoTurn)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
@@ -69,7 +72,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  scoreP + UCB: "
             << (scorePer + ucbValue)
             << "\n";
-        // end debugger
+        #endif
 
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
           // ?? should we pick a random point if there are multiple best points,
@@ -80,8 +83,6 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         }
       }
 
-
-  //debugger
   int playout = currentNode->childNode[row][col]->getTotalPlayout();
   double scorePer = (double)(currentBoard->getScore(row, col, whoTurn)) / scoreSum;
   double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
@@ -97,7 +98,6 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  scoreP + UCB: "
             << (scorePer + ucbValue)
             << std::endl;
-  //end debugger
 
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */

@@ -2,9 +2,12 @@
 #include "status.hpp"
 #include "virtualboard.hpp"
 #include "point.hpp"
-#include "../../objectcounter.hpp"
 
 #include <cstddef>
+
+#ifdef DEBUG
+#include "../../objectcounter.hpp"
+#endif
 
 VirtualBoard::Point::Point() {
   status = EMPTY;
@@ -13,7 +16,9 @@ VirtualBoard::Point::Point() {
     for (int i = 0; i < 2; ++i)
       type[dir][i] = NULL;
 
+  #ifdef DEBUG
   ObjectCounter::registerPoint();
+  #endif
 }
 
 VirtualBoard::Point::Point(Point* source) {
@@ -23,16 +28,20 @@ VirtualBoard::Point::Point(Point* source) {
     for (int i = 0; i < 2; ++i)
       type[dir][i] = new ChessType(source->type[dir][i]);
 
+  #ifdef DEBUG
   ObjectCounter::registerPoint();
+  #endif
 }
 
 VirtualBoard::Point::~Point() {
-  ObjectCounter::unregisterPoint();
-
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)
       if (type[dir][i] != NULL)
         delete type[dir][i];
+
+  #ifdef DEBUG
+  ObjectCounter::unregisterPoint();
+  #endif
 }
 
 void VirtualBoard::Point::getDirStatusArray(int dir, STATUS* dest) {
