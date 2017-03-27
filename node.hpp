@@ -6,7 +6,7 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (WITHOUT root node) */
-  Node(Node *parentNode, int row, int col);
+  Node(Node *parentNode, int row, int col, bool isWinning, bool whoTurn);
 
   ~Node();
 
@@ -16,12 +16,12 @@ class GameTree::Node {
   /* MCTS function, call by GameTree::selection
    * select child according to UCBValue and point's score
    * return false if every point is not empty */
-  bool selection(int &row, int &col);
+  bool selection(int &row, int &col, VirtualBoard* board);
 
   /* MCTS function, call by GameTree::simulation
    * simulate the game at most maxDepth move,
    * and return who win (black = 0, white = 1, tie = -1) */
-  int simulation(int maxDepth);
+  int simulation(int maxDepth, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */
   double getUCBValue(int r, int c, bool color);
@@ -40,18 +40,20 @@ class GameTree::Node {
 
   bool getIsSelfWinning() { return isSelfWinning; }
 
-  bool getWhoTurn() { return board->getWhoTurn(); }
+  //bool whoTurn() { return whoTurn_; }
 
   void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0;}
 
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-   VirtualBoard* board; //debugging
+  //VirtualBoard* board; //debugging
  private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
   bool isChildWinning, isSelfWinning;
   int winningChildRow, winningChildCol;
+
+  bool whoTurn_;
   //VirtualBoard* board;
   Node *parent;
 };

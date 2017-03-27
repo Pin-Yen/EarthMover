@@ -17,7 +17,8 @@ GameTree::Node::Node() {
     playout[i] = 0;
 
   /* initialize board */
-  board = new VirtualBoard();
+  //board = new VirtualBoard();
+  whoTurn_ = false;
 
   /* initiaize parent node */
   parent = NULL;
@@ -29,7 +30,7 @@ GameTree::Node::Node() {
   ObjectCounter::registerNode();
 }
 
-GameTree::Node::Node(Node *parentNode, int row, int col) {
+GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning, bool whoTurn) {
   /* initialize all childNodes to NULL */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -41,12 +42,15 @@ GameTree::Node::Node(Node *parentNode, int row, int col) {
   for (int i = 0 ; i < 3; ++i)
     playout[i] = 0;
 
+  whoTurn_ = whoTurn;
+
   /* initiaize parent node */
   parent = parentNode;
 
   /* initialize board */
-  board = new VirtualBoard(parentNode->board);
-  isSelfWinning = board->play(row, col);
+  //board = new VirtualBoard(parentNode->board);
+  //isSelfWinning = board->play(row, col);
+  isSelfWinning = isWinning;
 
   /* if is winning, set parent's winning child */
   if (isSelfWinning) {
@@ -63,7 +67,7 @@ GameTree::Node::~Node() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (childNode[r][c] != NULL)
         delete childNode[r][c];
-  delete board;
+  //delete board;
   ObjectCounter::unregisterNode();
 }
 
@@ -74,7 +78,7 @@ void GameTree::Node::update(int result) {
   if (result != -1) ++playout[result];
 }
 
-bool GameTree::Node::selection(int &row, int &col) {
+bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   /* if there's a winning child then return it */
   if (isChildWinning) {
     row = winningChildRow;
@@ -82,12 +86,12 @@ bool GameTree::Node::selection(int &row, int &col) {
     return true;
   }
 
-  bool whoTurn = board->getWhoTurn();
+  //bool whoTurn = board->getWhoTurn();
 
   // current max value
   double max = -1;
 
-  int scoreSum = board->getScoreSum(whoTurn);
+  int scoreSum = board->getScoreSum(whoTurn_);
   int same = 1;
 
   const double WEIGHT = 1000.0;
@@ -95,12 +99,12 @@ bool GameTree::Node::selection(int &row, int &col) {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
-      int score = board->getScore(r, c, whoTurn);
+      int score = board->getScore(r, c, whoTurn_);
       /* skip if this point is not empty */
       if (score == -1) continue;
 
       int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
-      double ucbValue = getUCBValue(r, c, whoTurn);
+      double ucbValue = getUCBValue(r, c, whoTurn_);
 
       double value = ((double)score / scoreSum) *
                      std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
@@ -125,26 +129,28 @@ bool GameTree::Node::selection(int &row, int &col) {
   return (max > -1);
 }
 
-int GameTree::Node::simulation(int maxDepth) {
-  VirtualBoard* simulationBoard = new VirtualBoard(board);
+int GameTree::Node::simulation(int maxDepth, VirtualBoard* board) {
+  //VirtualBoard* simulationBoard = new VirtualBoard(board);
 
   /* simulate until reach max depth */
   for (int d = 0; d < maxDepth; ++d) {
     int r, c;
     /* return tie(-1) if every point is not empty point */
-    if (!simulationBoard->getHSP(r, c)) {
-      delete simulationBoard;
+    //if (!simulationBoard->getHSP(r, c)) {
+    //  delete simulationBoard;
+    if (!board->getHSP(r, c)) {
       return -1;
     }
 
     /* if win, return who win */
-    if (simulationBoard->play(r, c)) {
-      int result = simulationBoard->getWhoTurn();
-      delete simulationBoard;
-      return result;
+    //if (simulationBoard->play(r, c)) {
+    //  int result = simulationBoard->getWhoTurn();
+    //  delete simulationBoard;
+    if (board->play(r, c)) {
+      return board->getWhoTurn();
     }
   }
-  delete simulationBoard;
+  //delete simulationBoard;
   return -1;
 }
 

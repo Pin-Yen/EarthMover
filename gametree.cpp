@@ -1,6 +1,6 @@
+#include "gomoku/freestyle/virtualboard.hpp"
 #include "gomoku/freestyle/status.hpp"
 #include "gomoku/freestyle/chesstype.hpp"
-#include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
 #include "log.hpp"
@@ -16,6 +16,7 @@ GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */
   root = new Node();
   currentNode = root;
+  currentBoard = new VirtualBoard();
 }
 
 GameTree::~GameTree() {
@@ -26,23 +27,27 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   const int SIMULATE_DEPTH = 50;
 
   Node* node;
-  for (int cycle = 0; cycle < maxCycle; ++cycle) {
 
-    int result = selection(&node);
+  for (int cycle = 0; cycle < maxCycle; ++cycle) {
+    VirtualBoard* board = new VirtualBoard(currentBoard);
+
+    int result = selection(&node, board);
 
     if (result == -2) {
       /* simulate only if child is not winning */
-      result = simulation(node, SIMULATE_DEPTH);
+      result = simulation(node, SIMULATE_DEPTH, board);
     }
 
     backProp(node, result);
+
+    delete board;
   }
 
   // return the point that select most times
   int mostTimes = -1;
 
-  int whoTurn = currentNode->getWhoTurn();
-  int scoreSum = currentNode->board->getScoreSum(whoTurn);
+  int whoTurn = currentBoard->getWhoTurn();
+  int scoreSum = currentBoard->getScoreSum(whoTurn);
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -51,7 +56,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
         // debugger
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
-        double scorePer = (double)(currentNode->board->getScore(r, c, whoTurn)) / scoreSum;
+        double scorePer = (double)(currentBoard->getScore(r, c, whoTurn)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
 
         Log log;
@@ -98,7 +103,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
   //debugger
     int playout = currentNode->childNode[row][col]->getTotalPlayout();
-    double scorePer = (double)(currentNode->board->getScore(row, col, whoTurn)) / scoreSum;
+    double scorePer = (double)(currentBoard->getScore(row, col, whoTurn)) / scoreSum;
     double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
 
     std::cout << std::fixed << std::setprecision(3)
@@ -129,13 +134,13 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   currentNode->clearPlayout();
 }
 
-int GameTree::selection(Node** selectedLeaf) {
+int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
   Node* node = currentNode;
 
   while (true) {
     int r, c;
     /* if every point is not empty point */
-    if (!node->selection(r, c)) {
+    if (!node->selection(r, c, board)) {
       *selectedLeaf = node;
       return -1;
     }
@@ -143,22 +148,28 @@ int GameTree::selection(Node** selectedLeaf) {
     /* handle if already win when playing at child */
     if (node->getIsSelfWinning()) {
       *selectedLeaf = node;
-      return node->getWhoTurn();
+      return board->getWhoTurn();
     }
 
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
-      node->childNode[r][c] = new Node(node, r, c);
+      bool isWinning = board->play(r, c);
+      node->childNode[r][c] = new Node(node, r, c, isWinning, board->getWhoTurn());
       *selectedLeaf = node->childNode[r][c];
-      return -2;
+
+      if (isWinning)
+        return board->getWhoTurn();
+      else
+        return -2;
     }
 
     node = node->childNode[r][c];
+    board->play(r, c);
   }
 }
 
-int GameTree::simulation(Node* node, int maxDepth) {
-  return node->simulation(maxDepth);
+int GameTree::simulation(Node* node, int maxDepth, VirtualBoard* board) {
+  return node->simulation(maxDepth, board);
 }
 
 void GameTree::backProp(Node* node, int result) {
@@ -171,8 +182,11 @@ void GameTree::backProp(Node* node, int result) {
 }
 
 bool GameTree::play(int row, int col) {
+  bool isWinning = currentBoard->play(row, col);
+
   if (currentNode->childNode[row][col] == NULL)
-    currentNode->childNode[row][col] = new Node(currentNode, row, col);
+    currentNode->childNode[row][col] =
+      new Node(currentNode, row, col, isWinning, currentBoard->getWhoTurn());
 
   currentNode = currentNode->childNode[row][col];
 
