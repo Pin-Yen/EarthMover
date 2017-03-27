@@ -21,10 +21,13 @@ int main() {
 
   ObjectCounter::printInfo();
 
-  //start();
   Log::init();
+
+  //start();
   start_AI();
+
   Log::closeLog();
+
   return 0;
 }
 
@@ -71,7 +74,7 @@ void start_AI() {
 
 void start() {
   DisplayBoard* board = new DisplayBoard();
-  VirtualBoard* vBoard = new VirtualBoard();
+  GameTree* tree = new GameTree();
 
   while (true) {
     int row, col;
@@ -80,32 +83,37 @@ void start() {
     bool whoTurn = board->getWhoTurn();
 
     /* debugger */
-    int r, c; vBoard->getHSP(r, c);
+    int r, c;
+    VirtualBoard* virtualBoard = tree->getCurrentBoard();
+    virtualBoard->getHSP(r, c);
     std::cout << "highest position: "
               << (char)(c + 65) << r + 1
               << " score: "
-              << vBoard->getScore(r, c, whoTurn) << std::endl;
+              << virtualBoard->getScore(r, c, whoTurn) << std::endl;
+
 
     /* get user's input and try to play, if the input is not valid,*/
     /* it will keep ask another input*/
-    while (true) {
-      std::cout << (whoTurn ? "White turn\n" : "Black turn\n");
+    bool validInput = false;
 
+    while (!validInput) {
       /* get user input*/
       board->getInput(row, col);
 
-      /* break while user input a valid coordinate*/
-      if (board->play(row, col)) break;
+      /* tries to play at (row, col) */
+      validInput = board->play(row, col);
 
-      std::cout << "Invalid move\n";
+      /* handle invalid input */
+      if (!validInput)
+        std::cout << "Invalid move\n";
     }
 
-    if (vBoard->play(row, col)) {
-      std::cout << (whoTurn ? "White" : "Black") << " win !\n\n";
-
-      board->wipe();
-
-      vBoard = new VirtualBoard();
+    /* update tree and handle result */
+    if (tree->play(row, col)) {
+      /* somebody wins */
+      bool winner = board->getWhoTurn();
+      std::cout << (winner ? "black" : "white") << " wins\n";
+      break;
     }
   }
 }

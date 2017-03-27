@@ -15,6 +15,9 @@ class GameTree {
   /* called when a REAL point is played, updates the currentRoot
    * return true if win after play */
   bool play(int row, int col);
+
+  /* debugger */
+  VirtualBoard* getCurrentBoard() { return currentBoard; }
  private:
   /* nested class */
   class Node;
