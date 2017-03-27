@@ -82,15 +82,14 @@ void start() {
     /* get who turn, 0 = black, 1 = white*/
     bool whoTurn = board->getWhoTurn();
 
-    /* debugger */
-    int r, c;
+    // debugger
     VirtualBoard* virtualBoard = tree->getCurrentBoard();
-    virtualBoard->getHSP(r, c);
+    virtualBoard->getHSP(row, col);
     std::cout << "highest position: "
-              << (char)(c + 65) << r + 1
+              << (char)(col + 65) << row + 1
               << " score: "
-              << virtualBoard->getScore(r, c, whoTurn) << std::endl;
-
+              << virtualBoard->getScore(row, col, whoTurn) << std::endl;
+    // end debugger
 
     /* get user's input and try to play, if the input is not valid,*/
     /* it will keep ask another input*/
@@ -107,6 +106,12 @@ void start() {
       if (!validInput)
         std::cout << "Invalid move\n";
     }
+
+    // debugger
+    std::cout << (char)(col + 65) << row + 1
+              << " score: "
+              << virtualBoard->getScore(row, col, whoTurn) << std::endl;
+    // end debugger
 
     /* update tree and handle result */
     if (tree->play(row, col)) {

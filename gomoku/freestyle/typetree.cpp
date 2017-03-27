@@ -23,6 +23,8 @@ void TypeTree::initialize() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
+
+  //searchAll(root, status, analyze_length / 2, -1);
 }
 
 /* Depth First Search
@@ -218,6 +220,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
             /* left type result */
             if (lType == NULL) {
               lType = type;
+              if (!checkLevel || blocked) break;
               if (!lType->life() || lType->length() > 3) break;
             } else {
               if (*lType == *type) {
@@ -229,22 +232,21 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
             /* right type result */
             if (rType == NULL) {
               rType = type;
+              if (!checkLevel || blocked) break;
+              if (!rType->life() || rType->length() > 3) break;
               if (*lType == *type) {
                 ++level;
               }
               else if (*lType < *type) {
                 level = 0;
               }
-              if (!rType->life() || rType->length() > 3) break;
             } else {
-              if (*rType == *type) {
+              if ((*rType == *type) && ((*rType > *lType) || (*rType == *lType))) {
                 ++level;
               }
               delete type;
             }
           }
-
-          if (!checkLevel || blocked) break;
         }
 
     /* restore the analize point to empty */
@@ -269,11 +271,17 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
       returnType = new ChessType(0, 0, 0);
-    else
+    else {
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
-      returnType = new ChessType(lType->length() - 1, lType->life(),
-                                 level - (3 - (lType->length() - 1)));
+
+      if (checkLevel) {
+        returnType = new ChessType(lType->length() - 1, lType->life(),
+                                   level - (3 - (lType->length() - 1)));
+      } else {
+        returnType = new ChessType(lType->length() - 1, lType->life(), 0);
+      }
+    }
 
     delete lType;
     delete rType;
@@ -349,3 +357,9 @@ void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
 
   status[location] = EMPTY;
 }
+
+/*
+int main() {
+  TypeTree::initialize();
+}
+*/
