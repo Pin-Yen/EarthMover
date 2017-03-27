@@ -45,6 +45,14 @@ class ChessType {
     return ((length_ < type.length_) || ((length_ == type.length_) && (life_ < type.life_)));
   }
 
+  bool operator>=(const ChessType &type) {
+    return ((length_ > type.length_) || ((length_ == type.length_) && (life_ >= type.life_)));
+  }
+
+  bool operator<=(const ChessType &type) {
+    return ((length_ < type.length_) || ((length_ == type.length_) && (life_ <= type.life_)));
+  }
+
  private:
   int length_, level_;
   bool life_;

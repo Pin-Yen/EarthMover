@@ -241,7 +241,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
                 level = 0;
               }
             } else {
-              if ((*rType == *type) && ((*rType > *lType) || (*rType == *lType))) {
+              if ((*rType == *type) && (*rType >= *lType)) {
                 ++level;
               }
               delete type;
@@ -259,22 +259,24 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
 
     ChessType *returnType;
 
-    if (lType->length() == 5 && rType->length() == 5)
+    if (lType->length() == 5 && rType->length() == 5) {
       /* if left and right will both produce 5 after play at analize point
        * it is a life four type */
       returnType = new ChessType(4, 1, 0);
-    else if (lType->length() == 5)
+    }
+    else if (lType->length() == 5) {
       /* if there is only one side produces 5 after play at analize point,
        * it is a dead four type */
       returnType = new ChessType(4, 0, 0);
-    else if (lType->length() == 0)
+    }
+    else if (lType->length() == 0) {
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
       returnType = new ChessType(0, 0, 0);
+    }
     else {
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
-
       if (checkLevel) {
         returnType = new ChessType(lType->length() - 1, lType->life(),
                                    level - (3 - (lType->length() - 1)));
