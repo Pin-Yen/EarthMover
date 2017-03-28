@@ -117,6 +117,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
   while (true) {
     int r, c;
     /* if every point is not empty point */
+    // TODO: handle if every point is losing point
     if (!node->selection(r, c, board)) {
       *selectedLeaf = node;
       return -1;
