@@ -115,7 +115,7 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       if (score == -1) continue;
 
       // TODO: avoid select a losing point
-      if (board->childNode[r][c]->losing_) {
+      if (childNode[r][c]->losing_) {
         childLosing = true;
         continue;
       }
