@@ -115,9 +115,11 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       if (score == -1) continue;
 
       // TODO: avoid select a losing point
-      if (childNode[r][c]->losing_) {
-        childLosing = true;
-        continue;
+      if (childNode[r][c] != NULL) {
+        if (childNode[r][c]->losing_) {
+          childLosing = true;
+          continue;
+        }
       }
 
       double ucbValue = getUCBValue(r, c, whoTurn);
