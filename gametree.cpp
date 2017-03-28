@@ -129,18 +129,18 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
 
     /* handle if already win when playing at child */
     // NOTE: without this scope should still work
-    if (node->getIsSelfWinning()) {
+    if (node->winning()) {
       *selectedLeaf = node;
       return board->getWhoTurn();
     }
 
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
-      bool isWinning = board->play(r, c);
-      node->childNode[r][c] = new Node(node, r, c, isWinning);
+      bool winning = board->play(r, c);
+      node->childNode[r][c] = new Node(node, r, c, winning);
       *selectedLeaf = node->childNode[r][c];
 
-      if (isWinning)
+      if (winning)
         return board->getWhoTurn();
       else
         return -2;
@@ -165,13 +165,13 @@ void GameTree::backProp(Node* node, int result) {
 }
 
 bool GameTree::play(int row, int col) {
-  bool isWinning = currentBoard->play(row, col);
+  bool winning = currentBoard->play(row, col);
 
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] =
-      new Node(currentNode, row, col, isWinning);
+      new Node(currentNode, row, col, winning);
 
   currentNode = currentNode->childNode[row][col];
 
-  return currentNode->getIsSelfWinning();
+  return winning;
 }

@@ -6,7 +6,7 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (WITHOUT root node) */
-  Node(Node *parentNode, int row, int col, bool isWinning);
+  Node(Node *parentNode, int row, int col, bool winning);
 
   ~Node();
 
