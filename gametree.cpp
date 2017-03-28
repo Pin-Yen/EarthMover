@@ -116,14 +116,19 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
 
   while (true) {
     int r, c;
-    /* if every point is not empty point */
-    // TODO: handle if every point is losing point
+    /* if there is no point can select */
     if (!node->selection(r, c, board)) {
       *selectedLeaf = node;
+      if (node->winning()) {
+        /* if no point can select is because of every point is losing */
+        return board->getWhoTurn();
+      }
       return -1;
     }
 
+
     /* handle if already win when playing at child */
+    // NOTE: without this scope should still work
     if (node->getIsSelfWinning()) {
       *selectedLeaf = node;
       return board->getWhoTurn();

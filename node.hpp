@@ -36,10 +36,6 @@ class GameTree::Node {
 
   Node* getParent() { return parent; }
 
-  //bool getIsChildWinning() { return isChildWinning; }
-
-  //bool getIsSelfWinning() { return isSelfWinning; }
-
   bool winning() { return winning_; }
 
   bool losing() { return losing_; }
@@ -50,12 +46,8 @@ class GameTree::Node {
  private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
-  //bool isChildWinning, isSelfWinning;
-  //int winningChildRow, winningChildCol;
 
   bool winning_, losing_;
-
-  //bool whoTurn_;
 
   Node *parent;
 };
