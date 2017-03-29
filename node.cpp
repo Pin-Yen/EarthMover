@@ -120,6 +120,12 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
           childLosing = true;
           continue;
         }
+        if (childNode[r][c]->winning_) {
+          losing_ = true;
+          row = r;
+          col = c;
+          return false;
+        }
       }
 
       double ucbValue = getUCBValue(r, c, whoTurn);

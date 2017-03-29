@@ -95,8 +95,9 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  WWinP: " << currentNode->childNode[row][col]->getWinRate(true)
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
-            << "  scoreP + UCB: "
-            << (scorePer + ucbValue)
+            << "  scoreP + UCB: " << (scorePer + ucbValue)
+            << "  winning: " << currentNode->childNode[row][col]->winning()
+            << "  losing: " << currentNode->childNode[row][col]->losing()
             << std::endl;
 
   /* destruct all child node */
@@ -122,6 +123,10 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       if (node->winning()) {
         /* if no point can select is because of every point is losing */
         return board->getWhoTurn();
+      }
+      if (node->losing()) {
+        /* if no point can select is because of already winning */
+        return !(board->getWhoTurn());
       }
       return -1;
     }
