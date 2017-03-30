@@ -156,9 +156,9 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 bool VirtualBoard::play(int row, int col) {
-  if (score[row][col][(playNo & 1)] == 10000000) return true;
-
   ++playNo;
+
+  if (score[row][col][(playNo & 1)] == 10000000) return true;
 
   STATUS color = ((playNo & 1) ? BLACK : WHITE);
 
