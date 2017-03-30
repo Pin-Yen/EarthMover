@@ -135,7 +135,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       *selectedLeaf = node->childNode[r][c];
 
       if (isWinning)
-        return board->getWhoTurn();
+        return !board->getWhoTurn();
       else
         return -2;
     }
