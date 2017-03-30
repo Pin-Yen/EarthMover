@@ -6,7 +6,7 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (WITHOUT root node) */
-  Node(Node *parentNode, int row, int col, bool isWinning);
+  Node(Node *parentNode, int row, int col, bool losing);
 
   ~Node();
 
@@ -36,9 +36,9 @@ class GameTree::Node {
 
   Node* getParent() { return parent; }
 
-  bool getIsChildWinning() { return isChildWinning; }
+  bool winning() { return winning_; }
 
-  bool getIsSelfWinning() { return isSelfWinning; }
+  bool losing() { return losing_; }
 
   void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0;}
 
@@ -46,10 +46,9 @@ class GameTree::Node {
  private:
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
-  bool isChildWinning, isSelfWinning;
-  int winningChildRow, winningChildCol;
 
-  //bool whoTurn_;
+  /* represent is current player winning or losing */
+  bool winning_, losing_;
 
   Node *parent;
 };

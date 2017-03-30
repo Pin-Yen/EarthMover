@@ -95,8 +95,9 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  WWinP: " << currentNode->childNode[row][col]->getWinRate(true)
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
-            << "  scoreP + UCB: "
-            << (scorePer + ucbValue)
+            << "  scoreP + UCB: " << (scorePer + ucbValue)
+            << "  winning: " << currentNode->childNode[row][col]->winning()
+            << "  losing: " << currentNode->childNode[row][col]->losing()
             << std::endl;
 
   /* destruct all child node */
@@ -116,25 +117,27 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
 
   while (true) {
     int r, c;
-    /* if every point is not empty point */
+    /* if there is no point can select */
     if (!node->selection(r, c, board)) {
       *selectedLeaf = node;
+      if (node->winning()) {
+        /* if no point can select is because of every point is losing */
+        return board->getWhoTurn();
+      }
+      if (node->losing()) {
+        /* if no point can select is because of already winning */
+        return !board->getWhoTurn();
+      }
       return -1;
-    }
-
-    /* handle if already win when playing at child */
-    if (node->getIsSelfWinning()) {
-      *selectedLeaf = node;
-      return !board->getWhoTurn();
     }
 
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
-      bool isWinning = board->play(r, c);
-      node->childNode[r][c] = new Node(node, r, c, isWinning);
+      bool parentWinning = board->play(r, c);
+      node->childNode[r][c] = new Node(node, r, c, parentWinning);
       *selectedLeaf = node->childNode[r][c];
 
-      if (isWinning)
+      if (parentWinning)
         return !board->getWhoTurn();
       else
         return -2;
@@ -159,13 +162,13 @@ void GameTree::backProp(Node* node, int result) {
 }
 
 bool GameTree::play(int row, int col) {
-  bool isWinning = currentBoard->play(row, col);
+  bool winning = currentBoard->play(row, col);
 
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] =
-      new Node(currentNode, row, col, isWinning);
+      new Node(currentNode, row, col, !winning);
 
   currentNode = currentNode->childNode[row][col];
 
-  return currentNode->getIsSelfWinning();
+  return winning;
 }

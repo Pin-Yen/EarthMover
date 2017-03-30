@@ -22,22 +22,19 @@ GameTree::Node::Node() {
   /* initiaize parent node */
   parent = NULL;
 
-  /* initialize winning flags */
-  isChildWinning = false;
-  isSelfWinning = false;
+  winning_ = false;
+  losing_ = false;
 
   #ifdef DEBUG
   ObjectCounter::registerNode();
   #endif
 }
 
-GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning) {
+GameTree::Node::Node(Node *parentNode, int row, int col, bool losing) {
   /* initialize all childNodes to NULL */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       childNode[r][c] = NULL;
-
-  isChildWinning = false;
 
   /* initialize playout counters to 0 */
   for (int i = 0 ; i < 3; ++i)
@@ -46,15 +43,12 @@ GameTree::Node::Node(Node *parentNode, int row, int col, bool isWinning) {
   /* initiaize parent node */
   parent = parentNode;
 
-  /* set isWinning*/
-  isSelfWinning = isWinning;
+  winning_ = false;
+  losing_ = losing;
 
-  /* if is winning, set parent's winning child */
-  if (isSelfWinning) {
-    parent->isChildWinning = true;
-    parent->winningChildRow = row;
-    parent->winningChildCol = col;
-  }
+  /* if is losing, set parent to winning */
+  if (losing)
+    parent->winning_ = true;
 
   #ifdef DEBUG
   ObjectCounter::registerNode();
@@ -80,39 +74,41 @@ void GameTree::Node::update(int result) {
 }
 
 bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
-  /* if there's a winning child then return it */
-  if (isChildWinning) {
-    row = winningChildRow;
-    col = winningChildCol;
-    return true;
-  }
-
   bool whoTurn = board->getWhoTurn();
+
+  if (winning_) return false;
 
   // current max value
   double max = -1;
 
+  bool childWinning = false;
+
   int scoreSum = board->getScoreSum(whoTurn);
   int same = 1;
 
-  //const double WEIGHT = 1000.0;
-  //const double BOUND_MAX = 0.9, BOUND_MIN = 1 - BOUND_MAX;
-
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
+
       int score = board->getScore(r, c, whoTurn);
       /* skip if this point is not empty */
       if (score == -1) continue;
 
-      //int playout = (childNode[r][c] == NULL ? 0 : childNode[r][c]->getTotalPlayout());
-      double ucbValue = getUCBValue(r, c, whoTurn);
 
-      /*
-      double value = ((double)score / scoreSum) *
-                     std::max(BOUND_MIN, ((WEIGHT - playout) / WEIGHT) * BOUND_MAX + BOUND_MIN) +
-                     ucbValue *
-                     std::min(BOUND_MAX, (playout / WEIGHT) * BOUND_MAX + BOUND_MIN);
-      */
+      if (childNode[r][c] != NULL) {
+        /* if child node is winning then DO NOT select this point */
+        if (childNode[r][c]->winning_) {
+          childWinning = true;
+          continue;
+        }
+
+        /* if exist 100% win, select this point */
+        if (childNode[r][c]->getWinRate(whoTurn) == 1) {
+          row = r; col = c;
+          return true;
+        }
+      }
+
+      double ucbValue = getUCBValue(r, c, whoTurn);
 
       double value = ((double)score / scoreSum) + ucbValue;
 
@@ -130,8 +126,18 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       }
     }
 
-  /* return false if every point is not empty */
-  return (max > -1);
+  // TODO: if every child is winning point, set this point to losing
+  if (max == -1) {
+    if (childWinning) {
+      losing_ = true;
+      parent->winning_ = true;
+    }
+
+    /* return false if every point is not empty */
+    return false;
+  }
+
+  return true;
 }
 
 int GameTree::Node::simulation(int maxDepth, VirtualBoard* board) {
