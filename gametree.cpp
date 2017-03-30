@@ -122,30 +122,22 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       *selectedLeaf = node;
       if (node->winning()) {
         /* if no point can select is because of every point is losing */
-        return !board->getWhoTurn();
+        return board->getWhoTurn();
       }
       if (node->losing()) {
         /* if no point can select is because of already winning */
-        return board->getWhoTurn();
+        return !board->getWhoTurn();
       }
       return -1;
     }
 
-
-    /* handle if already win when playing at child */
-    // NOTE: without this scope should still work
-    if (node->winning()) {
-      *selectedLeaf = node;
-      return board->getWhoTurn();
-    }
-
     /* check if reach leaf */
     if (node->childNode[r][c] == NULL) {
-      bool winning = board->play(r, c);
-      node->childNode[r][c] = new Node(node, r, c, winning);
+      bool parentWinning = board->play(r, c);
+      node->childNode[r][c] = new Node(node, r, c, parentWinning);
       *selectedLeaf = node->childNode[r][c];
 
-      if (winning)
+      if (parentWinning)
         return !board->getWhoTurn();
       else
         return -2;
@@ -174,7 +166,7 @@ bool GameTree::play(int row, int col) {
 
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] =
-      new Node(currentNode, row, col, winning);
+      new Node(currentNode, row, col, !winning);
 
   currentNode = currentNode->childNode[row][col];
 

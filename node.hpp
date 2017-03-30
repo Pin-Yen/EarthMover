@@ -6,7 +6,7 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (WITHOUT root node) */
-  Node(Node *parentNode, int row, int col, bool winning);
+  Node(Node *parentNode, int row, int col, bool losing);
 
   ~Node();
 
@@ -47,6 +47,7 @@ class GameTree::Node {
   /* 0 = black, 1 = white, 2 = total */
   int playout[3];
 
+  /* represent is current player winning or losing */
   bool winning_, losing_;
 
   Node *parent;

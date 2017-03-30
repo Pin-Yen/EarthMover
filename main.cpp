@@ -55,7 +55,7 @@ void start_AI() {
     #endif
 
     std::cout << "AI searching..." << std::endl;
-    tree->MCTS(row, col, 2000);
+    tree->MCTS(row, col, 1000);
 
     #ifdef DEBUG
     ObjectCounter::printInfo();
