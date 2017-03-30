@@ -122,11 +122,11 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       *selectedLeaf = node;
       if (node->winning()) {
         /* if no point can select is because of every point is losing */
-        return board->getWhoTurn();
+        return !board->getWhoTurn();
       }
       if (node->losing()) {
         /* if no point can select is because of already winning */
-        return !(board->getWhoTurn());
+        return board->getWhoTurn();
       }
       return -1;
     }
@@ -146,7 +146,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       *selectedLeaf = node->childNode[r][c];
 
       if (winning)
-        return board->getWhoTurn();
+        return !board->getWhoTurn();
       else
         return -2;
     }
