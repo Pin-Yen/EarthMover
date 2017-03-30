@@ -125,7 +125,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
     /* handle if already win when playing at child */
     if (node->getIsSelfWinning()) {
       *selectedLeaf = node;
-      return board->getWhoTurn();
+      return !board->getWhoTurn();
     }
 
     /* check if reach leaf */

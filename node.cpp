@@ -144,7 +144,7 @@ int GameTree::Node::simulation(int maxDepth, VirtualBoard* board) {
 
     /* if win, return who win */
     if (board->play(r, c))
-      return board->getWhoTurn();
+      return !board->getWhoTurn();
   }
 
   return -1;
