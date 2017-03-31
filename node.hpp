@@ -27,12 +27,12 @@ class GameTree::Node {
   double getUCBValue(int r, int c, bool color);
 
   /* get some color's playout / total plaout */
-  double getWinRate(bool color) {
+  double winRate(bool color) {
     return ((playout[color] + (playout[2] - playout[color] - playout[(!color)]) / 2.0) /
             (double)playout[2]);
   }
 
-  int getTotalPlayout() { return playout[2]; }
+  int totalPlayout() { return playout[2]; }
 
   Node* getParent() { return parent; }
 

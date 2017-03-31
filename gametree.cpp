@@ -48,8 +48,8 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   int mostTimes = -1;
   int score;
 
-  int whoTurn = currentBoard->getWhoTurn();
-  int scoreSum = currentBoard->getScoreSum(whoTurn);
+  int whoTurn = currentBoard->whoTurn();
+  int scoreSum = currentBoard->getScoreSum();
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -57,7 +57,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
         #ifdef DEBUG
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
-        double scorePer = (double)(currentBoard->getScore(r, c, whoTurn)) / scoreSum;
+        double scorePer = (double)(currentBoard->getScore(r, c)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
 
         Log log;
@@ -74,30 +74,30 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         #endif
 
         /* priority order: playout -> score */
-        if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
+        if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
           row = r;
           col = c;
-          mostTimes = currentNode->childNode[r][c]->getTotalPlayout();
-          score = currentBoard->getScore(r, c, whoTurn);
-        } else if (currentNode->childNode[r][c]->getTotalPlayout() == mostTimes) {
-          if (currentBoard->getScore(r, c, whoTurn) > score) {
+          mostTimes = currentNode->childNode[r][c]->totalPlayout();
+          score = currentBoard->getScore(r, c);
+        } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
+          if (currentBoard->getScore(r, c) > score) {
             row = r;
             col = c;
-            score = currentBoard->getScore(r, c, whoTurn);
+            score = currentBoard->getScore(r, c);
           }
         }
       }
 
-  int playout = currentNode->childNode[row][col]->getTotalPlayout();
-  double scorePer = (double)(currentBoard->getScore(row, col, whoTurn)) / scoreSum;
+  int playout = currentNode->childNode[row][col]->totalPlayout();
+  double scorePer = (double)(currentBoard->getScore(row, col)) / scoreSum;
   double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
 
   std::cout << std::fixed << std::setprecision(3)
             << "best point: "
             << (char)(col + 65) << row + 1
             << "  sim: " << playout
-            << "  BWinP: " << currentNode->childNode[row][col]->getWinRate(false)
-            << "  WWinP: " << currentNode->childNode[row][col]->getWinRate(true)
+            << "  BWinP: " << currentNode->childNode[row][col]->winRate(false)
+            << "  WWinP: " << currentNode->childNode[row][col]->winRate(true)
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
             << "  scoreP + UCB: " << (scorePer + ucbValue)
@@ -128,11 +128,11 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       *selectedLeaf = node;
       if (node->winning()) {
         /* if no point can select is because of every point is losing */
-        return board->getWhoTurn();
+        return board->whoTurn();
       }
       if (node->losing()) {
         /* if no point can select is because of already winning */
-        return !board->getWhoTurn();
+        return !board->whoTurn();
       }
       return -1;
     }
@@ -144,7 +144,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
       *selectedLeaf = node->childNode[r][c];
 
       if (parentWinning)
-        return !board->getWhoTurn();
+        return !board->whoTurn();
       else
         return -2;
     }

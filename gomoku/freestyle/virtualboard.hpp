@@ -11,13 +11,13 @@ class VirtualBoard {
 
   ~VirtualBoard();
 
-  int getScore(int row, int col, bool color) { return score[row][col][color]; }
+  int getScore(int row, int col) { return score[row][col][playNo & 1]; }
 
   /* get the sume of every point's score */
-  int getScoreSum(bool color);
+  int getScoreSum();
 
   /* get who turn, black = 0, white = 1 */
-  bool getWhoTurn() { return (playNo & 1); }
+  bool whoTurn() { return (playNo & 1); }
 
   /* get the highest score's position, if every point is not empty, return false */
   bool getHSP(int &row, int &col);

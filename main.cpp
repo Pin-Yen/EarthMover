@@ -48,7 +48,7 @@ void start_AI() {
   while (true) {
     int row, col;
 
-    bool whoTurn = board->getWhoTurn();
+    bool whoTurn = board->whoTurn();
 
     #ifdef DEBUG
     log << "==== PLAY #" << board->getPlayNo() << " ====\n";
@@ -78,9 +78,7 @@ void start_AI() {
     /* update tree and handle result */
     if (tree->play(row, col)) {
       /* somebody wins */
-
-      bool winner = board->getWhoTurn();
-      std::cout << (winner ? "black" : "white") << " wins\n";
+      std::cout << (!whoTurn ? "black" : "white") << " wins\n";
       break;
     }
   }
@@ -94,7 +92,7 @@ void start() {
     int row, col;
 
     /* get who turn, 0 = black, 1 = white*/
-    bool whoTurn = board->getWhoTurn();
+    bool whoTurn = board->whoTurn();
 
     // debugger
     VirtualBoard* virtualBoard = tree->getCurrentBoard();
@@ -102,7 +100,7 @@ void start() {
     std::cout << "highest position: "
               << (char)(col + 65) << row + 1
               << " score: "
-              << virtualBoard->getScore(row, col, whoTurn) << std::endl;
+              << virtualBoard->getScore(row, col) << std::endl;
     // end debugger
 
     /* get user's input and try to play, if the input is not valid,*/
@@ -124,14 +122,13 @@ void start() {
     // debugger
     std::cout << (char)(col + 65) << row + 1
               << " score: "
-              << virtualBoard->getScore(row, col, whoTurn) << std::endl;
+              << virtualBoard->getScore(row, col) << std::endl;
     // end debugger
 
     /* update tree and handle result */
     if (tree->play(row, col)) {
       /* somebody wins */
-      bool winner = board->getWhoTurn();
-      std::cout << (winner ? "black" : "white") << " wins\n";
+      std::cout << (!whoTurn ? "black" : "white") << " wins\n";
       break;
     }
   }

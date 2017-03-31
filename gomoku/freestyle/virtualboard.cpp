@@ -119,7 +119,8 @@ VirtualBoard::~VirtualBoard() {
   #endif
 }
 
-int VirtualBoard::getScoreSum(bool color) {
+int VirtualBoard::getScoreSum() {
+  bool color = whoTurn();
   int sum = 0;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -129,7 +130,7 @@ int VirtualBoard::getScoreSum(bool color) {
 }
 
 bool VirtualBoard::getHSP(int &row, int &col) {
-  bool color = getWhoTurn();
+  bool color = whoTurn();
   int max = 0, same = 0;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
