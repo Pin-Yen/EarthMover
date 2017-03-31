@@ -1,10 +1,11 @@
 #include "chesstype.hpp"
 #include "status.hpp"
 #include "typetree.hpp"
-#include "../../objectcounter.hpp"
 
 #include <iostream>
 #include <iomanip>
+
+#include "../../objectcounter.hpp"
 
 /* initialize root*/
 TypeTree::Node* TypeTree::root = new Node();
@@ -258,7 +259,6 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
     status[analyze_length / 2] = EMPTY;
 
     /* keep lType > rType */
-
     if (*lType < *rType)
       std::swap(lType, rType);
 
@@ -283,8 +283,12 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
       /* if left length < 4, return left length - 1
        * (current recursion's result = lower recursion's result - 1) */
       if (checkLevel) {
-        returnType = new ChessType(lType->length() - 1, lType->life(),
-                                   level - (3 - (lType->length() - 1)));
+        if (!lType->life() || lType->length() > 3) {
+          returnType = new ChessType(lType->length() - 1, lType->life(), 0);
+        } else {
+          returnType = new ChessType(lType->length() - 1, lType->life(),
+                                     level - (3 - (lType->length() - 1)));
+        }
       } else {
         returnType = new ChessType(lType->length() - 1, lType->life(), 0);
       }
@@ -322,20 +326,10 @@ void TypeTree::print(STATUS *status, ChessType **type) {
 
   std::cout << ") ";
   for (int i = 0; i < 2; i++) {
-    std::cout << (i == 0 ? "B" : "W") << ":" << std::setw(1);
-
-    if (type[i]->length() > 0 && type[i]->length() < 5)
-      /* print life or dead only if length == 1, 2, 3, 4*/
-      std::cout << (type[i]->life() == 1 ? " L" : " D") << type[i]->length();
-    else
-      std::cout << "  " << type[i]->length();
-
-    if (type[i]->length() > 0 && type[i]->length() < 4 && type[i]->life() == 1)
-      std::cout << " level " << type[i]->level();
-    else
-      std::cout << "        ";
-
-    std::cout << ( i == 0 ? ", " : "   ");
+    std::cout << (i == 0 ? "B" : "W") << ":"
+              << (type[i]->life() == 1 ? " L" : " D") << type[i]->length()
+              << " level " << type[i]->level()
+              << ( i == 0 ? ", " : "   ");
   }
 
   std::cout << "\n";

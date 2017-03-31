@@ -35,9 +35,9 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
   const int SCORE_DEAD4[2] = {250, 140};
   const int SCORE_LIVE3[2][2] = {{220, 280}, {120, 150}};
   const int SCORE_DEAD3[2] = {84, 45};
-  const int SCORE_LIVE2[2][3] = {{45, 60, 84}, {20, 32, 50}};
+  const int SCORE_LIVE2[2][3] = {{45, 66, 88}, {20, 40, 50}};
   const int SCORE_DEAD2[2] = {25, 14};
-  const int SCORE_LIVE1[2][4] = {{4, 6, 12, 20}, {2, 4, 9, 16}};
+  const int SCORE_LIVE1[2][4] = {{6, 9, 15, 20}, {2, 5, 12, 16}};
   const int SCORE_DEAD1[2] = {2, 1};
 
   /*these const are for indexing purposes, enhancing the readibility of the code. */
