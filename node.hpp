@@ -40,7 +40,9 @@ class GameTree::Node {
 
   bool losing() { return losing_; }
 
-  void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0;}
+  void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0; }
+
+  void clearWinLose() { winning_ = false; losing_ = false; }
 
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
  private:

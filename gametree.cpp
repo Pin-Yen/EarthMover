@@ -32,22 +32,21 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
-    VirtualBoard* board = new VirtualBoard(currentBoard);
+    VirtualBoard board(currentBoard);
 
-    int result = selection(&node, board);
+    int result = selection(&node, &board);
 
     if (result == -2) {
       /* simulate only if child is not winning */
-      result = simulation(node, SIMULATE_DEPTH, board);
+      result = simulation(node, SIMULATE_DEPTH, &board);
     }
 
     backProp(node, result);
-
-    delete board;
   }
 
   // return the point that select most times
   int mostTimes = -1;
+  int score;
 
   int whoTurn = currentBoard->getWhoTurn();
   int scoreSum = currentBoard->getScoreSum(whoTurn);
@@ -74,12 +73,18 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "\n";
         #endif
 
+        /* priority order: playout -> score */
         if (currentNode->childNode[r][c]->getTotalPlayout() > mostTimes) {
-          // ?? should we pick a random point if there are multiple best points,
-          // or just pick the first point ??
           row = r;
           col = c;
           mostTimes = currentNode->childNode[r][c]->getTotalPlayout();
+          score = currentBoard->getScore(r, c, whoTurn);
+        } else if (currentNode->childNode[r][c]->getTotalPlayout() == mostTimes) {
+          if (currentBoard->getScore(r, c, whoTurn) > score) {
+            row = r;
+            col = c;
+            score = currentBoard->getScore(r, c, whoTurn);
+          }
         }
       }
 
@@ -110,6 +115,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
       }
 
   currentNode->clearPlayout();
+  currentNode->clearWinLose();
 }
 
 int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
