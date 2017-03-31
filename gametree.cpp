@@ -107,6 +107,9 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */
+
+  return;
+
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
@@ -171,8 +174,16 @@ bool GameTree::play(int row, int col) {
   bool winning = currentBoard->play(row, col);
 
   if (currentNode->childNode[row][col] == NULL)
-    currentNode->childNode[row][col] =
-      new Node(currentNode, row, col, !winning);
+    currentNode->childNode[row][col] = new Node(currentNode, row, col, winning);
+
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->childNode[r][c] != NULL) {
+        if (r == row && c == col) continue;
+
+        delete currentNode->childNode[r][c];
+        currentNode->childNode[r][c] = NULL;
+      }
 
   currentNode = currentNode->childNode[row][col];
 
