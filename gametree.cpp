@@ -103,11 +103,11 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  losing: " << currentNode->childNode[row][col]->losing()
             << std::endl;
 
+  return;
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */
 
-  return;
-
+  /*
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
@@ -117,32 +117,25 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
   currentNode->clearPlayout();
   currentNode->clearWinLose();
+  */
 }
 
-int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
-  Node* node = currentNode;
+int GameTree::selection(Node** node, VirtualBoard* board) {
+  *node = currentNode;
 
   while (true) {
     int r, c;
-    /* if there is no point can select */
-    if (!node->selection(r, c, board)) {
-      *selectedLeaf = node;
-      if (node->winning()) {
-        /* if no point can select is because of every point is losing */
-        return board->whoTurn();
-      }
-      if (node->losing()) {
-        /* if no point can select is because of already winning */
-        return !board->whoTurn();
-      }
-      return -1;
+
+    int result = (*node)->selection(r, c, board);
+    if (result != -2) {
+      return result;
     }
 
     /* check if reach leaf */
-    if (node->childNode[r][c] == NULL) {
+    if ((*node)->childNode[r][c] == NULL) {
       bool parentWinning = board->play(r, c);
-      node->childNode[r][c] = new Node(node, r, c, parentWinning);
-      *selectedLeaf = node->childNode[r][c];
+      (*node)->childNode[r][c] = new Node(*node, r, c, parentWinning);
+      *node = (*node)->childNode[r][c];
 
       if (parentWinning)
         return !board->whoTurn();
@@ -150,7 +143,7 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
         return -2;
     }
 
-    node = node->childNode[r][c];
+    *node = (*node)->childNode[r][c];
     board->play(r, c);
   }
 }
