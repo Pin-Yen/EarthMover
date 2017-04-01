@@ -27,8 +27,6 @@ GameTree::~GameTree() {
 }
 
 void GameTree::MCTS(int &row, int &col, int maxCycle) {
-  const int SIMULATE_DEPTH = 50;
-
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
@@ -38,7 +36,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
     if (result == -2) {
       /* simulate only if child is not winning */
-      result = simulation(node, SIMULATE_DEPTH, &board);
+      result = simulation(&board);
     }
 
     backProp(node, result);
@@ -157,8 +155,21 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
   }
 }
 
-int GameTree::simulation(Node* node, int maxDepth, VirtualBoard* board) {
-  return node->simulation(maxDepth, board);
+int GameTree::simulation(VirtualBoard* board) {
+  const int MAX_DEPTH = 50;
+  /* simulate until reach max depth */
+  for (int d = 0; d < MAX_DEPTH; ++d) {
+    int r, c;
+    /* return tie(-1) if every point is not empty point */
+    if (!board->getHSP(r, c))
+      return -1;
+
+    /* if win, return who win */
+    if (board->play(r, c))
+      return !board->whoTurn();
+  }
+
+  return -1;
 }
 
 void GameTree::backProp(Node* node, int result) {

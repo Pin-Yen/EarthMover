@@ -138,21 +138,22 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   return true;
 }
 
-int GameTree::Node::simulation(int maxDepth, VirtualBoard* board) {
+
+//int GameTree::Node::simulation(int maxDepth, VirtualBoard* board) {
   /* simulate until reach max depth */
-  for (int d = 0; d < maxDepth; ++d) {
-    int r, c;
+//  for (int d = 0; d < maxDepth; ++d) {
+//    int r, c;
     /* return tie(-1) if every point is not empty point */
-    if (!board->getHSP(r, c))
-      return -1;
+//    if (!board->getHSP(r, c))
+//      return -1;
 
     /* if win, return who win */
-    if (board->play(r, c))
-      return !board->whoTurn();
-  }
+//    if (board->play(r, c))
+//      return !board->whoTurn();
+//  }
 
-  return -1;
-}
+//  return -1;
+//}
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {
   if (playout[2] == 0)

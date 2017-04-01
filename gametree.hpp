@@ -31,7 +31,7 @@ class GameTree {
   /* MCTS function
    * simulate the game at most maxDepth move,
    * and return who win (black = 0, white = 1, tie = -1) */
-  int simulation(Node* node, int maxDepth, VirtualBoard* board);
+  int simulation(VirtualBoard* board);
 
   /* MCTS function
    * back propagation form node, until reach the current node */
