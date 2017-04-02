@@ -24,10 +24,6 @@ class GameTree::Node {
   double getUCBValue(int r, int c);
 
   /* get some color's playout / total plaout */
-  /*double winRate(bool color) {
-    return ((playout[color] + (playout[2] - playout[color] - playout[(!color)]) / 2.0) /
-            (double)playout[2]);
-  }*/
   double winRate() {
     return ((playout[0] + (playout[2] - playout[0] - playout[1]) / 2.0) / (double)playout[2]);
   }

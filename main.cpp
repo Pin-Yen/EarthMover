@@ -20,7 +20,7 @@ void start();
 void start_AI();
 
 int main() {
-  srand((unsigned)time(NULL));
+  //srand((unsigned)time(NULL));
 
   #ifdef DEBUG
   ObjectCounter::printInfo();
