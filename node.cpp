@@ -66,18 +66,9 @@ GameTree::Node::~Node() {
   #endif
 }
 
-void GameTree::Node::update(int result) {
-  // update total playout
-  ++playout[2];
-  // if result not tie, update the winner's playout
-  if (result != -1) ++playout[result];
-}
-
 int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
-  bool whoTurn = board->whoTurn();
-
-  if (winning_) return whoTurn;
-  if (losing_) return !whoTurn;
+  if (winning_) return 0;
+  if (losing_) return 1;
 
   /* current max value */
   double max = -1;
@@ -102,13 +93,13 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
         }
 
         /* if exist 100% win, select this point */
-        if (childNode[r][c]->winRate(whoTurn) == 1) {
+        if (childNode[r][c]->winRate() == 1) {
           row = r; col = c;
           return -2;
         }
       }
 
-      double ucbValue = getUCBValue(r, c, whoTurn);
+      double ucbValue = getUCBValue(r, c);
 
       double value = ((double)score / scoreSum) + ucbValue;
 
@@ -132,7 +123,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       losing_ = true;
       parent->winning_ = true;
 
-      return !whoTurn;
+      return 1;
     }
 
     /* return -1 if every point is no child winning point */
@@ -142,14 +133,14 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   return -2;
 }
 
-double GameTree::Node::getUCBValue(int r, int c, bool color) {
+double GameTree::Node::getUCBValue(int r, int c) {
   if (playout[2] == 0)
     return 0;
 
   const int CON = 1;
 
   if (childNode[r][c] != NULL) {
-    return (childNode[r][c]->winRate(color) +
+    return (childNode[r][c]->winRate() +
             sqrt(CON * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
   }
   else {
