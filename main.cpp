@@ -56,11 +56,17 @@ void start_AI() {
 
     std::cout << "AI searching..." << std::endl;
 
+    #ifdef TIME
     clock_t start, finish;
     start = clock();
+    #endif
+
     tree->MCTS(row, col, 10000);
+
+    #ifdef TIME
     finish = clock();
     std::cout << "duration: " << (double)(finish - start) / CLOCKS_PER_SEC << std::endl;
+    #endif
 
     #ifdef DEBUG
     ObjectCounter::printInfo();
