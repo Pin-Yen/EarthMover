@@ -77,6 +77,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   bool whoTurn = board->whoTurn();
 
   if (winning_) return whoTurn;
+  if (losing_) return !whoTurn;
 
   /* current max value */
   double max = -1;
@@ -124,8 +125,9 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       }
     }
 
-  // TODO: if every child is winning point, set this point to losing
+  /* if no point can select */
   if (max == -1) {
+    /* if every point is child winning point, set this point to losing point */
     if (childWinning) {
       losing_ = true;
       parent->winning_ = true;
@@ -133,7 +135,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       return !whoTurn;
     }
 
-    /* return false if every point is not empty */
+    /* return -1 if every point is no child winning point */
     return -1;
   }
 
