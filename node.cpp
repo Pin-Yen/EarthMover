@@ -67,8 +67,8 @@ GameTree::Node::~Node() {
 }
 
 int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
-  if (winning_) return 0;
-  if (losing_) return 1;
+  if (winning_) return 1;
+  if (losing_) return 0;
 
   /* current max value */
   double max = -1;

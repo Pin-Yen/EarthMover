@@ -138,7 +138,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
       *node = (*node)->childNode[r][c];
 
       if (parentWinning)
-        return 1;
+        return 0;
       else
         return -2;
     }
