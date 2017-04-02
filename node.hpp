@@ -23,7 +23,9 @@ class GameTree::Node {
   /* get the Upper Confidence Bound value form child node */
   double getUCBValue(int r, int c);
 
-  /* get some color's playout / total plaout */
+  /* get winRate
+   * NOTE: the win rate is for the upper layer(parent node)
+   * and, in normal circumstances, only the upper layer will call this function*/
   double winRate() {
     return ((playout[0] + (playout[2] - playout[0] - playout[1]) / 2.0) / (double)playout[2]);
   }

@@ -123,7 +123,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       losing_ = true;
       parent->winning_ = true;
 
-      return 1;
+      return 0;
     }
 
     /* return -1 if every point is no child winning point */
@@ -142,8 +142,7 @@ double GameTree::Node::getUCBValue(int r, int c) {
   if (childNode[r][c] != NULL) {
     return (childNode[r][c]->winRate() +
             sqrt(CON * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
-  }
-  else {
+  } else {
     return (sqrt(CON * log10(playout[2]) / 1));
   }
 }
