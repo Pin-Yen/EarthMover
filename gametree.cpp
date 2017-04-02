@@ -160,7 +160,7 @@ int GameTree::simulation(VirtualBoard* board) {
     /* if win, return */
     if (board->play(r, c))
       //return 1;
-      return (d & 1);
+      return ((d + 1) & 1);
   }
 
   return -1;
