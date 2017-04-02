@@ -67,10 +67,6 @@ GameTree::Node::~Node() {
 }
 
 int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
-  //bool whoTurn = board->whoTurn();
-
-  //if (winning_) return whoTurn;
-  //if (losing_) return !whoTurn;
   if (winning_) return 0;
   if (losing_) return 1;
 
@@ -127,7 +123,6 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       losing_ = true;
       parent->winning_ = true;
 
-      //return !whoTurn;
       return 1;
     }
 
@@ -137,21 +132,6 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
 
   return -2;
 }
-
-/*double GameTree::Node::getUCBValue(int r, int c, bool color) {
-  if (playout[2] == 0)
-    return 0;
-
-  const int CON = 1;
-
-  if (childNode[r][c] != NULL) {
-    return (childNode[r][c]->winRate(color) +
-            sqrt(CON * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
-  }
-  else {
-    return (sqrt(CON * log10(playout[2]) / 1));
-  }
-}*/
 
 double GameTree::Node::getUCBValue(int r, int c) {
   if (playout[2] == 0)
