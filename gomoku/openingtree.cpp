@@ -8,3 +8,7 @@ void OpeningTree::initialize() {
   if (isInitialized) return;
   isInitialized = true;
 }
+
+void dfs() {
+
+}

@@ -7,14 +7,13 @@ class OpeningTree {
 
  private:
   struct Node {
-    Node *childNode[][];
+    Node *childNode[9][9];
 
-    double score;
-
-    Node() {
-
-    }
+    int score;
   };
+
+  /* Depth First Search */
+  static void dfs();
 
   static Node* root;
 
