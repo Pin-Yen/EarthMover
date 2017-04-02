@@ -151,7 +151,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
 int GameTree::simulation(VirtualBoard* board) {
   const int MAX_DEPTH = 50;
   /* simulate until reach max depth */
-  for (int d = 0; d < MAX_DEPTH; ++d) {
+  for (int d = 1; d <= MAX_DEPTH; ++d) {
     int r, c;
     /* return tie(-1) if every point is not empty point */
     if (!board->getHSP(r, c))
@@ -159,7 +159,7 @@ int GameTree::simulation(VirtualBoard* board) {
 
     /* if win, return */
     if (board->play(r, c))
-      return ((d + 1) & 1);
+      return (d & 1);
   }
 
   return -1;
