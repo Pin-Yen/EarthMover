@@ -73,12 +73,13 @@ void GameTree::Node::update(int result) {
   if (result != -1) ++playout[result];
 }
 
-bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
-  if (winning_) return false;
-
+int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   bool whoTurn = board->whoTurn();
 
-  // current max value
+  if (winning_) return whoTurn;
+  if (losing_) return !whoTurn;
+
+  /* current max value */
   double max = -1;
 
   bool childWinning = false;
@@ -103,7 +104,7 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
         /* if exist 100% win, select this point */
         if (childNode[r][c]->winRate(whoTurn) == 1) {
           row = r; col = c;
-          return true;
+          return -2;
         }
       }
 
@@ -124,34 +125,21 @@ bool GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       }
     }
 
-  // TODO: if every child is winning point, set this point to losing
+  /* if no point can select */
   if (max == -1) {
+    /* if every point is child winning point, set this point to losing point */
     if (childWinning) {
       losing_ = true;
       parent->winning_ = true;
+
+      return !whoTurn;
     }
 
-    /* return false if every point is not empty */
-    return false;
+    /* return -1 if every point is no child winning point */
+    return -1;
   }
 
-  return true;
-}
-
-int GameTree::Node::simulation(int maxDepth, VirtualBoard* board) {
-  /* simulate until reach max depth */
-  for (int d = 0; d < maxDepth; ++d) {
-    int r, c;
-    /* return tie(-1) if every point is not empty point */
-    if (!board->getHSP(r, c))
-      return -1;
-
-    /* if win, return who win */
-    if (board->play(r, c))
-      return !board->whoTurn();
-  }
-
-  return -1;
+  return -2;
 }
 
 double GameTree::Node::getUCBValue(int r, int c, bool color) {

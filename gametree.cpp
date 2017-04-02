@@ -27,8 +27,6 @@ GameTree::~GameTree() {
 }
 
 void GameTree::MCTS(int &row, int &col, int maxCycle) {
-  const int SIMULATE_DEPTH = 50;
-
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
@@ -38,7 +36,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
     if (result == -2) {
       /* simulate only if child is not winning */
-      result = simulation(node, SIMULATE_DEPTH, &board);
+      result = simulation(&board);
     }
 
     backProp(node, result);
@@ -105,11 +103,11 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
             << "  losing: " << currentNode->childNode[row][col]->losing()
             << std::endl;
 
+  return;
   /* destruct all child node */
   /* note: if want to keep the calculation, then should not call this */
 
-  return;
-
+  /*
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
@@ -119,32 +117,25 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
   currentNode->clearPlayout();
   currentNode->clearWinLose();
+  */
 }
 
-int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
-  Node* node = currentNode;
+int GameTree::selection(Node** node, VirtualBoard* board) {
+  *node = currentNode;
 
   while (true) {
     int r, c;
-    /* if there is no point can select */
-    if (!node->selection(r, c, board)) {
-      *selectedLeaf = node;
-      if (node->winning()) {
-        /* if no point can select is because of every point is losing */
-        return board->whoTurn();
-      }
-      if (node->losing()) {
-        /* if no point can select is because of already winning */
-        return !board->whoTurn();
-      }
-      return -1;
+
+    int result = (*node)->selection(r, c, board);
+    if (result != -2) {
+      return result;
     }
 
     /* check if reach leaf */
-    if (node->childNode[r][c] == NULL) {
+    if ((*node)->childNode[r][c] == NULL) {
       bool parentWinning = board->play(r, c);
-      node->childNode[r][c] = new Node(node, r, c, parentWinning);
-      *selectedLeaf = node->childNode[r][c];
+      (*node)->childNode[r][c] = new Node(*node, r, c, parentWinning);
+      *node = (*node)->childNode[r][c];
 
       if (parentWinning)
         return !board->whoTurn();
@@ -152,13 +143,26 @@ int GameTree::selection(Node** selectedLeaf, VirtualBoard* board) {
         return -2;
     }
 
-    node = node->childNode[r][c];
+    *node = (*node)->childNode[r][c];
     board->play(r, c);
   }
 }
 
-int GameTree::simulation(Node* node, int maxDepth, VirtualBoard* board) {
-  return node->simulation(maxDepth, board);
+int GameTree::simulation(VirtualBoard* board) {
+  const int MAX_DEPTH = 50;
+  /* simulate until reach max depth */
+  for (int d = 0; d < MAX_DEPTH; ++d) {
+    int r, c;
+    /* return tie(-1) if every point is not empty point */
+    if (!board->getHSP(r, c))
+      return -1;
+
+    /* if win, return who win */
+    if (board->play(r, c))
+      return !board->whoTurn();
+  }
+
+  return -1;
 }
 
 void GameTree::backProp(Node* node, int result) {

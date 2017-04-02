@@ -15,13 +15,8 @@ class GameTree::Node {
 
   /* MCTS function, call by GameTree::selection
    * select child according to UCBValue and point's score
-   * return false if every point is not empty */
-  bool selection(int &row, int &col, VirtualBoard* board);
-
-  /* MCTS function, call by GameTree::simulation
-   * simulate the game at most maxDepth move,
-   * and return who win (black = 0, white = 1, tie = -1) */
-  int simulation(int maxDepth, VirtualBoard* board);
+   * return -2 if select to leaf and no result yet */
+  int selection(int &row, int &col, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */
   double getUCBValue(int r, int c, bool color);
