@@ -20,7 +20,7 @@ void start();
 void start_AI();
 
 int main() {
-  srand((unsigned)time(NULL));
+  //srand((unsigned)time(NULL));
 
   #ifdef DEBUG
   ObjectCounter::printInfo();
@@ -55,7 +55,18 @@ void start_AI() {
     #endif
 
     std::cout << "AI searching..." << std::endl;
+
+    #ifdef TIME
+    clock_t start, finish;
+    start = clock();
+    #endif
+
     tree->MCTS(row, col, 10000);
+
+    #ifdef TIME
+    finish = clock();
+    std::cout << "duration: " << (double)(finish - start) / CLOCKS_PER_SEC << std::endl;
+    #endif
 
     #ifdef DEBUG
     ObjectCounter::printInfo();
