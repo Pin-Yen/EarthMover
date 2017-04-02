@@ -10,8 +10,10 @@ class GameTree::Node {
 
   ~Node();
 
-  /* result: -1 = tie, 0 = black win, 1 = white win */
-  void update(int result);
+  /* update when tie */
+  void update() { ++playout[2]; }
+  /* update, result: 0 -> win, 1 -> lose */
+  void update(bool result) { ++playout[2]; ++playout[result]; }
 
   /* MCTS function, call by GameTree::selection
    * select child according to UCBValue and point's score
@@ -19,12 +21,13 @@ class GameTree::Node {
   int selection(int &row, int &col, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */
-  double getUCBValue(int r, int c, bool color);
+  double getUCBValue(int r, int c);
 
-  /* get some color's playout / total plaout */
-  double winRate(bool color) {
-    return ((playout[color] + (playout[2] - playout[color] - playout[(!color)]) / 2.0) /
-            (double)playout[2]);
+  /* get winRate
+   * NOTE: the win rate is for the upper layer(parent node)
+   * and, in normal circumstances, only the upper layer will call this function*/
+  double winRate() {
+    return ((playout[0] + (playout[2] - playout[0] - playout[1]) / 2.0) / (double)playout[2]);
   }
 
   int totalPlayout() { return playout[2]; }
@@ -41,7 +44,7 @@ class GameTree::Node {
 
   Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
  private:
-  /* 0 = black, 1 = white, 2 = total */
+  /* 0 = win, 1 = lose, 2 = total */
   int playout[3];
 
   /* represent is current player winning or losing */

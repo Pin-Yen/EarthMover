@@ -39,14 +39,16 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
       result = simulation(&board);
     }
 
-    backProp(node, result);
+    if (result == -1)
+      backProp(node);
+    else
+      backProp(node, result);
   }
 
   // return the point that select most times
   int mostTimes = -1;
   int score;
 
-  int whoTurn = currentBoard->whoTurn();
   int scoreSum = currentBoard->getScoreSum();
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -56,14 +58,13 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         #ifdef DEBUG
         int playout = currentNode->childNode[r][c]->getTotalPlayout();
         double scorePer = (double)(currentBoard->getScore(r, c)) / scoreSum;
-        double ucbValue = currentNode->getUCBValue(r, c, whoTurn);
+        double ucbValue = currentNode->getUCBValue(r, c);
 
         Log log;
         Log::precision(3);
         log << (char)(c + 65) << r + 1
             << "  sim: " << playout
-            << "  BWinP: " << currentNode->childNode[r][c]->getWinRate(false)
-            << "  WWinP: " << currentNode->childNode[r][c]->getWinRate(true)
+            << "  WinR: " << currentNode->childNode[r][c]->getWinRate()
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
             << "  scoreP + UCB: "
@@ -88,14 +89,13 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
 
   int playout = currentNode->childNode[row][col]->totalPlayout();
   double scorePer = (double)(currentBoard->getScore(row, col)) / scoreSum;
-  double ucbValue = currentNode->getUCBValue(row, col, whoTurn);
+  double ucbValue = currentNode->getUCBValue(row, col);
 
   std::cout << std::fixed << std::setprecision(3)
             << "best point: "
             << (char)(col + 65) << row + 1
             << "  sim: " << playout
-            << "  BWinP: " << currentNode->childNode[row][col]->winRate(false)
-            << "  WWinP: " << currentNode->childNode[row][col]->winRate(true)
+            << "  WinR: " << currentNode->childNode[row][col]->winRate()
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
             << "  scoreP + UCB: " << (scorePer + ucbValue)
@@ -138,7 +138,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
       *node = (*node)->childNode[r][c];
 
       if (parentWinning)
-        return !board->whoTurn();
+        return 0;
       else
         return -2;
     }
@@ -151,27 +151,37 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
 int GameTree::simulation(VirtualBoard* board) {
   const int MAX_DEPTH = 50;
   /* simulate until reach max depth */
-  for (int d = 0; d < MAX_DEPTH; ++d) {
+  for (int d = 1; d <= MAX_DEPTH; ++d) {
     int r, c;
     /* return tie(-1) if every point is not empty point */
     if (!board->getHSP(r, c))
       return -1;
 
-    /* if win, return who win */
+    /* if win, return */
     if (board->play(r, c))
-      return !board->whoTurn();
+      return (d & 1);
   }
 
   return -1;
 }
 
-void GameTree::backProp(Node* node, int result) {
+void GameTree::backProp(Node* node, bool result) {
   // note: cannot use do-while here
   while (node != currentNode) {
     node->update(result);
     node = node->getParent();
+    result = !result;
   }
   node->update(result);
+}
+
+void GameTree::backProp(Node* node) {
+  // note: cannot use do-while here
+  while (node != currentNode) {
+    node->update();
+    node = node->getParent();
+  }
+  node->update();
 }
 
 bool GameTree::play(int row, int col) {

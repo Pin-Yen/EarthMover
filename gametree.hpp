@@ -35,7 +35,8 @@ class GameTree {
 
   /* MCTS function
    * back propagation form node, until reach the current node */
-  void backProp(Node* node, int result);
+  void backProp(Node* node, bool result);
+  void backProp(Node* node);
 
   Node *root, *currentNode;
 
