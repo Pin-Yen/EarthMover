@@ -8,9 +8,15 @@ class GameTree {
   GameTree();
   ~GameTree();
 
+
+
   /* Monty Carlo Tree Search
    * will return the best point's position */
   void MCTS(int &row, int &col, int maxCycle);
+
+  /* Monty Carlo Tree Search in Background
+   * keep searching until reavh the max cycle, or stop become true */
+  void MCTSB(int maxCycle, bool &stop);
 
   /* called when a REAL point is played, updates the currentRoot
    * return true if win after play */

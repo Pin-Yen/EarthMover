@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <thread>
 
 #ifdef DEBUG
 #include "objectcounter.hpp"
@@ -44,6 +45,7 @@ int main() {
 void start_AI() {
   DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
+  //GameTree tree;
 
   #ifdef DEBUG
   Log log;
@@ -76,6 +78,10 @@ void start_AI() {
     ObjectCounter::printInfo();
     #endif
 
+    bool stop = false;
+
+    std::thread backgroundThread(&GameTree::MCTSB, tree, 100000, std::ref(stop));
+
     bool validInput = false;
 
     while (!validInput) {
@@ -89,6 +95,9 @@ void start_AI() {
       if (!validInput)
         std::cout << "Invalid move\n";
     }
+
+    stop = true;
+    backgroundThread.join();
 
     /* update tree and handle result */
     if (tree->play(row, col)) {

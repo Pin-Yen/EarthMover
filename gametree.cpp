@@ -56,7 +56,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
       if (currentNode->childNode[r][c] != NULL) {
 
         #ifdef DEBUG
-        int playout = currentNode->childNode[r][c]->getTotalPlayout();
+        int playout = currentNode->childNode[r][c]->totalPlayout();
         double scorePer = (double)(currentBoard->getScore(r, c)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c);
 
@@ -64,7 +64,7 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         Log::precision(3);
         log << (char)(c + 65) << r + 1
             << "  sim: " << playout
-            << "  WinR: " << currentNode->childNode[r][c]->getWinRate()
+            << "  WinR: " << currentNode->childNode[r][c]->winRate()
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
             << "  scoreP + UCB: "
@@ -87,14 +87,14 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
         }
       }
 
-  int playout = currentNode->childNode[row][col]->totalPlayout();
   double scorePer = (double)(currentBoard->getScore(row, col)) / scoreSum;
   double ucbValue = currentNode->getUCBValue(row, col);
 
   std::cout << std::fixed << std::setprecision(3)
-            << "best point: "
+            << "total sim: " << currentNode->totalPlayout()
+            << "  best point: "
             << (char)(col + 65) << row + 1
-            << "  sim: " << playout
+            << "  sim: " << currentNode->childNode[row][col]->totalPlayout()
             << "  WinR: " << currentNode->childNode[row][col]->winRate()
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
@@ -118,6 +118,68 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
   currentNode->clearPlayout();
   currentNode->clearWinLose();
   */
+}
+
+void GameTree::MCTSB(int maxCycle, bool &stop) {
+  Node* node;
+
+  for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
+    VirtualBoard board(currentBoard);
+
+    int result = selection(&node, &board);
+
+    if (result == -2) {
+      /* simulate only if child is not winning */
+      result = simulation(&board);
+    }
+
+    if (result == -1)
+      backProp(node);
+    else
+      backProp(node, result);
+
+    if (cycle % 1000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
+  }
+
+  int mostTimes = -1;
+  int score;
+
+  int row, col;
+
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->childNode[r][c] != NULL) {
+
+        /* priority order: playout -> score */
+        if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
+          row = r;
+          col = c;
+          mostTimes = currentNode->childNode[r][c]->totalPlayout();
+          score = currentBoard->getScore(r, c);
+        } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
+          if (currentBoard->getScore(r, c) > score) {
+            row = r;
+            col = c;
+            score = currentBoard->getScore(r, c);
+          }
+        }
+      }
+
+  double scorePer = (double)(currentBoard->getScore(row, col)) / currentBoard->getScoreSum();
+  double ucbValue = currentNode->getUCBValue(row, col);
+
+  std::cout << std::fixed << std::setprecision(3)
+            << "total sim: " << currentNode->totalPlayout()
+            << "  best point: "
+            << (char)(col + 65) << row + 1
+            << "  sim: " << currentNode->childNode[row][col]->totalPlayout()
+            << "  WinR: " << currentNode->childNode[row][col]->winRate()
+            << "  scoreP: "  << scorePer
+            << "  UCB: " << ucbValue
+            << "  scoreP + UCB: " << (scorePer + ucbValue)
+            << "  winning: " << currentNode->childNode[row][col]->winning()
+            << "  losing: " << currentNode->childNode[row][col]->losing()
+            << std::endl;
 }
 
 int GameTree::selection(Node** node, VirtualBoard* board) {
