@@ -26,7 +26,7 @@ GameTree::~GameTree() {
   delete root;
 }
 
-void GameTree::MCTS(int &row, int &col, int maxCycle) {
+void GameTree::MCTS(int maxCycle) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
@@ -45,7 +45,45 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
       backProp(node, result);
   }
 
-  // return the point that select most times
+  /* destruct all child node */
+  /* note: if want to keep the calculation, then should not call this */
+
+  /*
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->childNode[r][c] != NULL) {
+        delete currentNode->childNode[r][c];
+        currentNode->childNode[r][c] = NULL;
+      }
+
+  currentNode->clearPlayout();
+  currentNode->clearWinLose();
+  */
+}
+
+void GameTree::MCTS(int maxCycle, bool &stop) {
+  Node* node;
+
+  for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
+    VirtualBoard board(currentBoard);
+
+    int result = selection(&node, &board);
+
+    if (result == -2) {
+      /* simulate only if child is not winning */
+      result = simulation(&board);
+    }
+
+    if (result == -1)
+      backProp(node);
+    else
+      backProp(node, result);
+
+    if (cycle % 1000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
+  }
+}
+
+void GameTree::MCTSResult(int &row, int &col) {
   int mostTimes = -1;
   int score;
 
@@ -88,84 +126,6 @@ void GameTree::MCTS(int &row, int &col, int maxCycle) {
       }
 
   double scorePer = (double)(currentBoard->getScore(row, col)) / scoreSum;
-  double ucbValue = currentNode->getUCBValue(row, col);
-
-  std::cout << std::fixed << std::setprecision(3)
-            << "total sim: " << currentNode->totalPlayout()
-            << "  best point: "
-            << (char)(col + 65) << row + 1
-            << "  sim: " << currentNode->childNode[row][col]->totalPlayout()
-            << "  WinR: " << currentNode->childNode[row][col]->winRate()
-            << "  scoreP: "  << scorePer
-            << "  UCB: " << ucbValue
-            << "  scoreP + UCB: " << (scorePer + ucbValue)
-            << "  winning: " << currentNode->childNode[row][col]->winning()
-            << "  losing: " << currentNode->childNode[row][col]->losing()
-            << std::endl;
-
-  return;
-  /* destruct all child node */
-  /* note: if want to keep the calculation, then should not call this */
-
-  /*
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL) {
-        delete currentNode->childNode[r][c];
-        currentNode->childNode[r][c] = NULL;
-      }
-
-  currentNode->clearPlayout();
-  currentNode->clearWinLose();
-  */
-}
-
-void GameTree::MCTSB(int maxCycle, bool &stop) {
-  Node* node;
-
-  for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
-    VirtualBoard board(currentBoard);
-
-    int result = selection(&node, &board);
-
-    if (result == -2) {
-      /* simulate only if child is not winning */
-      result = simulation(&board);
-    }
-
-    if (result == -1)
-      backProp(node);
-    else
-      backProp(node, result);
-
-    if (cycle % 1000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
-  }
-
-  int mostTimes = -1;
-  int score;
-
-  int row, col;
-
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL) {
-
-        /* priority order: playout -> score */
-        if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
-          row = r;
-          col = c;
-          mostTimes = currentNode->childNode[r][c]->totalPlayout();
-          score = currentBoard->getScore(r, c);
-        } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
-          if (currentBoard->getScore(r, c) > score) {
-            row = r;
-            col = c;
-            score = currentBoard->getScore(r, c);
-          }
-        }
-      }
-
-  double scorePer = (double)(currentBoard->getScore(row, col)) / currentBoard->getScoreSum();
   double ucbValue = currentNode->getUCBValue(row, col);
 
   std::cout << std::fixed << std::setprecision(3)

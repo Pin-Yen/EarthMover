@@ -67,7 +67,8 @@ void start_AI() {
     start = clock();
     #endif
 
-    tree->MCTS(row, col, 10000);
+    tree->MCTS(10000);
+    tree->MCTSResult(row, col);
 
     #ifdef TIME
     finish = clock();
@@ -80,7 +81,9 @@ void start_AI() {
 
     bool stop = false;
 
-    std::thread backgroundThread(&GameTree::MCTSB, tree, 100000, std::ref(stop));
+    std::thread backgroundThread([tree](int maxCycle, bool &stop)
+                                 { tree->MCTS(maxCycle, stop); },
+                                 100000, std::ref(stop));
 
     bool validInput = false;
 
