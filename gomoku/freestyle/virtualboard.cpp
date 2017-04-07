@@ -115,10 +115,6 @@ VirtualBoard::~VirtualBoard() {
   #endif
 }
 
-int VirtualBoard::getScore(int row, int col) {
-  return point[row][col]->getScore(playNo & 1);
-}
-
 int VirtualBoard::getScoreSum() {
   bool color = whoTurn();
   int sum = 0;

@@ -11,7 +11,7 @@ class VirtualBoard {
 
   ~VirtualBoard();
 
-  int getScore(int row, int col);// { return score[row][col][playNo & 1]; }
+  inline int getScore(int row, int col);// { return score[row][col][playNo & 1]; }
 
   /* get the sume of every point's score */
   int getScoreSum();
@@ -37,4 +37,11 @@ class VirtualBoard {
   /* the total number of plays */
   int playNo;
 };
+
+#include "point.hpp"
+
+inline int VirtualBoard::getScore(int row, int col) {
+  return point[row][col]->getScore(playNo & 1);
+}
+
 #endif
