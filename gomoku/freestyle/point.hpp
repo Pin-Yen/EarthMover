@@ -10,22 +10,34 @@ class VirtualBoard::Point {
 
   ~Point();
   /* play at this point */
-  void play(STATUS status) { this->status = status; }
+  void play(STATUS status) { status_ = status; }
 
   /* set the status pointer */
   /* note: to finish initialize this point, shound call this to write all status pointer */
-  void setDirStatus(int dir, int offset, STATUS* status) { dirStatus[dir][offset] = status; }
+  void setDirStatus(int dir, int index, STATUS* status) { dirStatus_[dir][index] = status; }
 
-  void getDirStatusArray(int dir, STATUS* dest);
+  /* get the status by diraction, copy the pointer's value to dest */
+  void getDirStatus(int dir, STATUS* dest);
 
-  /* point's status, the target of the other point's STATUS array pointer*/
-  STATUS status;
+  STATUS status() { return status_; }
+  STATUS* statusRef() { return &status_; }
+
+  int* relScore() { return relScore_; }
+  int* absScore() { return absScore_; }
+
+  int getScore(bool color) { return absScore_[color]; }
+  int setScore(int black, int white) { absScore_[0] = black; absScore_[1] = white;}
 
   ChessType* type[4][2];
  private:
   /* STATUS array pointer, this will point at other point's Status color */
   /* index: 0→ 1↓ 2↗ 3↘ */
-  STATUS* dirStatus[4][8];
+  STATUS* dirStatus_[4][8];
+
+  /* point's status, the target of the other point's STATUS array pointer*/
+  STATUS status_;
+
+  int absScore_[2], relScore_[2];
 };
 
 #endif

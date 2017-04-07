@@ -11,7 +11,7 @@ class VirtualBoard {
 
   ~VirtualBoard();
 
-  int getScore(int row, int col) { return score[row][col][playNo & 1]; }
+  int getScore(int row, int col);// { return score[row][col][playNo & 1]; }
 
   /* get the sume of every point's score */
   int getScoreSum();
@@ -27,10 +27,12 @@ class VirtualBoard {
  private:
   /* nested class */
   class Point;
+  class Evaluator;
 
   /* point array */
   Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-  int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
+  //int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
+  //int basicScore[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
 
   /* the total number of plays */
   int playNo;

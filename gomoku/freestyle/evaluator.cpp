@@ -1,15 +1,17 @@
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "virtualboard.hpp"
+#include "point.hpp"
 #include "evaluator.hpp"
 
 #include "typetree.hpp"
 
-void Evaluator::evaluate_type(STATUS *status, ChessType* type[2]) {
+void VirtualBoard::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
   TypeTree::classify(status, type);
 }
 
 /* score[0]:black's total score,[1]:white's */
-void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
+void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   /* count[color][length][LorD][level]
    * color: 0 for BLACK, 1 for WHITE
    * length: means the length of the type, should be 0~5.
@@ -151,4 +153,12 @@ void Evaluator::evaluate_score(ChessType* type[4][2], int *score) {
         score[selfColor] += SCORE_DEAD1[DEFENSE] * count[opponentColor][1][DEAD][0];
     }
   }
+}
+
+void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point **point,
+                                                     const int dimen) {
+  for (int r = 0; r < dimen; ++r)
+    for (int c = 0; c < dimen; ++c) {
+
+    }
 }

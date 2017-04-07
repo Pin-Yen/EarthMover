@@ -10,7 +10,7 @@
 #endif
 
 VirtualBoard::Point::Point() {
-  status = EMPTY;
+  status_ = EMPTY;
 
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)
@@ -22,7 +22,10 @@ VirtualBoard::Point::Point() {
 }
 
 VirtualBoard::Point::Point(Point* source) {
-  status = source->status;
+  status_ = source->status_;
+
+  absScore_[0] = source->absScore_[0]; absScore_[1] = source->absScore_[1];
+  relScore_[0] = source->relScore_[0]; relScore_[1] = source->relScore_[1];
 
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)
@@ -44,7 +47,7 @@ VirtualBoard::Point::~Point() {
   #endif
 }
 
-void VirtualBoard::Point::getDirStatusArray(int dir, STATUS* dest) {
+void VirtualBoard::Point::getDirStatus(int dir, STATUS* dest) {
   for (int i = 0; i < 8; ++i)
-    dest[i] = (dirStatus[dir][i] == NULL ? BOUND : *(dirStatus[dir][i]));
+    dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
 }
