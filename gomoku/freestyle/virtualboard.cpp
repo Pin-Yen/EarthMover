@@ -16,7 +16,7 @@ VirtualBoard::VirtualBoard() {
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point[r][c] = new Point();
+      point_[r][c] = new Point();
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -35,9 +35,9 @@ VirtualBoard::VirtualBoard() {
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer value to bound */
-            point[r][c]->setDirStatus(d, index, NULL);
+            point_[r][c]->setDirStatus(d, index, NULL);
           else
-            point[r][c]->setDirStatus(d, index, point[checkRow][checkCol]->statusRef());
+            point_[r][c]->setDirStatus(d, index, point_[checkRow][checkCol]->statusRef());
 
           ++index;
         }
@@ -48,15 +48,15 @@ VirtualBoard::VirtualBoard() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       for (int d = 0; d < 4; ++d) {
         /* get status array */
-        STATUS status[8]; point[r][c]->getDirStatus(d, status);
+        STATUS status[8]; point_[r][c]->getDirStatus(d, status);
 
-        Evaluator::evaluateType(status, point[r][c]->type[d]);
+        Evaluator::evaluateType(status, point_[r][c]->type[d]);
       }
 
-      Evaluator::evaluateScore(point[r][c]->type, point[r][c]->absScore());
+      Evaluator::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
     }
 
-  Evaluator::evaluateRelativeScore(point, playNo);
+  Evaluator::evaluateRelativeScore(point_, playNo);
 
   #ifdef DEBUG
   ObjectCounter::registerVB();
@@ -67,7 +67,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point[r][c] = new Point(source->point[r][c]);
+      point_[r][c] = new Point(source->point_[r][c]);
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -86,9 +86,9 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer value to bound */
-            point[r][c]->setDirStatus(d, index, NULL);
+            point_[r][c]->setDirStatus(d, index, NULL);
           else
-            point[r][c]->setDirStatus(d, index, point[checkRow][checkCol]->statusRef());
+            point_[r][c]->setDirStatus(d, index, point_[checkRow][checkCol]->statusRef());
 
           ++index;
         }
@@ -103,7 +103,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
 VirtualBoard::~VirtualBoard() {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      delete point[r][c];
+      delete point_[r][c];
 
   #ifdef DEBUG
   ObjectCounter::unregisterVB();
@@ -112,9 +112,11 @@ VirtualBoard::~VirtualBoard() {
 
 int VirtualBoard::getScoreSum() {
   int sum = 0;
+  int score;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      sum += point[r][c]->getScore();
+      if ((score = point_[r][c]->getScore()) > 0)
+        sum += score;
 
   return sum;
 }
@@ -124,9 +126,9 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
-      if (point[r][c]->status() != EMPTY) continue;
+      if (point_[r][c]->status() != EMPTY) continue;
 
-      int score = point[r][c]->getScore();
+      int score = point_[r][c]->getScore();
 
       if (score > max) {
         same = 1;
@@ -147,16 +149,16 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 bool VirtualBoard::play(int row, int col) {
-  if (point[row][col]->getScore() == 10000000) return true;
+  if (point_[row][col]->getScore() == 10000000) return true;
 
   ++playNo;
 
   STATUS color = ((playNo & 1) ? BLACK : WHITE);
 
   /* set score to -1 */
-  point[row][col]->setScore(-1, -1);
+  point_[row][col]->setScore(-1, -1);
 
-  point[row][col]->play(color);
+  point_[row][col]->play(color);
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -174,8 +176,8 @@ bool VirtualBoard::play(int row, int col) {
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 
-        if (point[checkRow][checkCol]->status() != EMPTY) {
-          block[point[checkRow][checkCol]->status()] = true;
+        if (point_[checkRow][checkCol]->status() != EMPTY) {
+          block[point_[checkRow][checkCol]->status()] = true;
 
           if (block[0] & block[1]) break;
 
@@ -183,16 +185,16 @@ bool VirtualBoard::play(int row, int col) {
         }
 
         /* get status array */
-        STATUS status[8]; point[checkRow][checkCol]->getDirStatus(d, status);
+        STATUS status[8]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
-        Evaluator::evaluateType(status, point[checkRow][checkCol]->type[d]);
+        Evaluator::evaluateType(status, point_[checkRow][checkCol]->type[d]);
 
-        Evaluator::evaluateScore(point[checkRow][checkCol]->type,
-                                 point[checkRow][checkCol]->absScore());
+        Evaluator::evaluateScore(point_[checkRow][checkCol]->type,
+                                 point_[checkRow][checkCol]->absScore());
       }
     }
 
-  Evaluator::evaluateRelativeScore(point, playNo);
+  Evaluator::evaluateRelativeScore(point_, playNo);
 
   return false;
 }

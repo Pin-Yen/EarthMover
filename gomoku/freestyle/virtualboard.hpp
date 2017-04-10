@@ -11,7 +11,7 @@ class VirtualBoard {
 
   ~VirtualBoard();
 
-  inline int getScore(int row, int col);// { return score[row][col][playNo & 1]; }
+  inline int getScore(int row, int col);
 
   /* get the sume of every point's score */
   int getScoreSum();
@@ -30,9 +30,7 @@ class VirtualBoard {
   class Evaluator;
 
   /* point array */
-  Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-  //int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
-  //int basicScore[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
+  Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
   /* the total number of plays */
   int playNo;
@@ -41,7 +39,7 @@ class VirtualBoard {
 #include "point.hpp"
 
 inline int VirtualBoard::getScore(int row, int col) {
-  return point[row][col]->getScore();
+  return point_[row][col]->getScore();
 }
 
 #endif
