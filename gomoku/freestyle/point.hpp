@@ -22,11 +22,14 @@ class VirtualBoard::Point {
   STATUS status() { return status_; }
   STATUS* statusRef() { return &status_; }
 
-  int* relScore() { return relScore_; }
+  //int relScore() { return relScore_; }
   int* absScore() { return absScore_; }
+  int absScore(bool color) { return absScore_[color]; }
 
-  int getScore(bool color) { return absScore_[color]; }
-  int setScore(int black, int white) { absScore_[0] = black; absScore_[1] = white;}
+  int getScore() { return relScore_; }
+  void setScore(int black, int white) { absScore_[0] = black; absScore_[1] = white; }
+
+  void setRelScore(int score) { relScore_ = score; }
 
   ChessType* type[4][2];
  private:
@@ -37,7 +40,8 @@ class VirtualBoard::Point {
   /* point's status, the target of the other point's STATUS array pointer*/
   STATUS status_;
 
-  int absScore_[2], relScore_[2];
+  int absScore_[2];
+  int relScore_;
 };
 
 #endif

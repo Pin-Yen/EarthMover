@@ -25,7 +25,7 @@ VirtualBoard::Point::Point(Point* source) {
   status_ = source->status_;
 
   absScore_[0] = source->absScore_[0]; absScore_[1] = source->absScore_[1];
-  relScore_[0] = source->relScore_[0]; relScore_[1] = source->relScore_[1];
+  relScore_ = source->relScore_;
 
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)

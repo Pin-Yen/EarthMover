@@ -53,9 +53,10 @@ VirtualBoard::VirtualBoard() {
         Evaluator::evaluateType(status, point[r][c]->type[d]);
       }
 
-      //Evaluator::evaluateScore(point[r][c]->type, score[r][c]);
       Evaluator::evaluateScore(point[r][c]->type, point[r][c]->absScore());
     }
+
+  Evaluator::evaluateRelativeScore(point, playNo);
 
   #ifdef DEBUG
   ObjectCounter::registerVB();
@@ -67,12 +68,6 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = new Point(source->point[r][c]);
-
-  /* copy score */
-  /*for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      for (int color = 0; color < 2; ++color)
-        score[r][c][color] = source->score[r][c][color];*/
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -116,33 +111,30 @@ VirtualBoard::~VirtualBoard() {
 }
 
 int VirtualBoard::getScoreSum() {
-  bool color = whoTurn();
   int sum = 0;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      //sum += score[r][c][color];
-      sum += point[r][c]->getScore(color);
+      sum += point[r][c]->getScore();
 
   return sum;
 }
 
 bool VirtualBoard::getHSP(int &row, int &col) {
-  bool color = whoTurn();
   int max = 0, same = 0;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       if (point[r][c]->status() != EMPTY) continue;
 
-      int score = point[r][c]->getScore(color);
+      int score = point[r][c]->getScore();
 
-      if (score/*[r][c][color]*/ > max) {
+      if (score > max) {
         same = 1;
 
-        max = score/*[r][c][color]*/;
+        max = score;
         row = r; col = c;
       }
-      else if (score/*[r][c][color]*/ == max) {
+      else if (score == max) {
         ++same;
         if (((double)rand() / RAND_MAX) <= (1. / same)) {
           row = r; col = c;
@@ -155,15 +147,13 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 bool VirtualBoard::play(int row, int col) {
-  ++playNo;
+  if (point[row][col]->getScore() == 10000000) return true;
 
-  //if (score[row][col][(playNo - 1) & 1] == 10000000) return true;
-  if (point[row][col]->getScore((playNo - 1) & 1) == 10000000) return true;
+  ++playNo;
 
   STATUS color = ((playNo & 1) ? BLACK : WHITE);
 
   /* set score to -1 */
-  //score[row][col][0] = -1; score[row][col][1] = -1;
   point[row][col]->setScore(-1, -1);
 
   point[row][col]->play(color);
@@ -197,12 +187,12 @@ bool VirtualBoard::play(int row, int col) {
 
         Evaluator::evaluateType(status, point[checkRow][checkCol]->type[d]);
 
-        //Evaluator::evaluateScore(point[checkRow][checkCol]->type,
-        //                         score[checkRow][checkCol]);
         Evaluator::evaluateScore(point[checkRow][checkCol]->type,
                                  point[checkRow][checkCol]->absScore());
       }
     }
+
+  Evaluator::evaluateRelativeScore(point, playNo);
 
   return false;
 }

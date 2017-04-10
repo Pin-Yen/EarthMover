@@ -11,7 +11,7 @@ class VirtualBoard::Evaluator {
    * returns black's score in score[0], white's in score[1] */
   static void evaluateScore(ChessType* type[4][2], int *score);
 
-  static void evaluateRelativeScore(VirtualBoard::Point **point, const int dimen);
+  static void evaluateRelativeScore(VirtualBoard::Point* point[15][15], int playNo);
 };
 
 #endif

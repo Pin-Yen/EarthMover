@@ -41,7 +41,7 @@ class VirtualBoard {
 #include "point.hpp"
 
 inline int VirtualBoard::getScore(int row, int col) {
-  return point[row][col]->getScore(playNo & 1);
+  return point[row][col]->getScore();
 }
 
 #endif
