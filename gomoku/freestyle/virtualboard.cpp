@@ -23,10 +23,9 @@ VirtualBoard::VirtualBoard() {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      /* set each poit's status array pointer*/
+      /* set each point's status array pointer */
       for (int d = 0; d < 4; ++d)
         for (int offset = -4, index = 0; offset <= 4; ++offset) {
-
           if (offset == 0) continue;
 
           int checkRow = r + dir[d][0] * offset,
@@ -34,7 +33,7 @@ VirtualBoard::VirtualBoard() {
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
-            /* if out of bound, set pointer value to bound */
+            /* if out of bound, set pointer to NULL */
             point_[r][c]->setDirStatus(d, index, NULL);
           else
             point_[r][c]->setDirStatus(d, index, point_[checkRow][checkCol]->statusRef());
@@ -44,6 +43,7 @@ VirtualBoard::VirtualBoard() {
 
   playNo = 0;
 
+  /* evaluate */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       for (int d = 0; d < 4; ++d) {
@@ -52,10 +52,8 @@ VirtualBoard::VirtualBoard() {
 
         Evaluator::evaluateType(status, point_[r][c]->type[d]);
       }
-
       Evaluator::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
     }
-
   Evaluator::evaluateRelativeScore(point_, playNo);
 
   #ifdef DEBUG
@@ -74,7 +72,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      /* set each point's status array pointer*/
+      /* set each point's status array pointer */
       for (int d = 0; d < 4; ++d)
         for (int offset = -4, index = 0; offset <= 4; ++offset) {
 
@@ -85,7 +83,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
-            /* if out of bound, set pointer value to bound */
+            /* if out of bound, set pointer to NULL */
             point_[r][c]->setDirStatus(d, index, NULL);
           else
             point_[r][c]->setDirStatus(d, index, point_[checkRow][checkCol]->statusRef());
@@ -115,6 +113,7 @@ int VirtualBoard::getScoreSum() {
   int score;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      /* only add the score if it was positive */
       if ((score = point_[r][c]->getScore()) > 0)
         sum += score;
 
@@ -122,6 +121,7 @@ int VirtualBoard::getScoreSum() {
 }
 
 bool VirtualBoard::getHSP(int &row, int &col) {
+  /* current max score, current same score amount */
   int max = 0, same = 0;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -135,8 +135,7 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 
         max = score;
         row = r; col = c;
-      }
-      else if (score == max) {
+      } else if (score == max) {
         ++same;
         if (((double)rand() / RAND_MAX) <= (1. / same)) {
           row = r; col = c;
@@ -176,6 +175,7 @@ bool VirtualBoard::play(int row, int col) {
             checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
           break;
 
+        /* check if block */
         if (point_[checkRow][checkCol]->status() != EMPTY) {
           block[point_[checkRow][checkCol]->status()] = true;
 
