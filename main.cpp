@@ -43,9 +43,12 @@ int main() {
 }
 
 void start_AI() {
+  int cycle;
+  std::cout << "simulate cycle: ";
+  std::cin >> cycle;
+
   DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
-  //GameTree tree;
 
   #ifdef DEBUG
   Log log;
@@ -67,7 +70,7 @@ void start_AI() {
     start = clock();
     #endif
 
-    tree->MCTS(10000);
+    tree->MCTS(cycle);
     tree->MCTSResult(row, col);
 
     #ifdef TIME
