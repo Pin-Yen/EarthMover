@@ -157,23 +157,20 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
 
 void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
                                                     int playNo) {
-  if (playNo < 1) {
-    /* using opening tree */
+    /* this is for first move(set center point to 1) */
+  for (int r = 0; r < 15; ++r)
+    for (int c = 0; c < 15; ++c)
+      point[r][c]->setRelScore(-1);
 
-    /* this is for first move(set center point to 100) */
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c) {
-        point[r][c]->setRelScore(-1);
-      }
-    point[7][7]->setRelScore(100);
+  point[7][7]->setRelScore(1);
 
-  } else {
-    bool whoTurn = playNo & 1;
+}
 
-    /* using absolute score */
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c) {
-        point[r][c]->setRelScore(point[r][c]->absScore(whoTurn));
-      }
-  }
+void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
+                                                    bool whoTurn, const int lastPlay[2]) {
+
+  for (int r = 0; r < 15; ++r)
+    for (int c = 0; c < 15; ++c) {
+      point[r][c]->setRelScore(point[r][c]->absScore(whoTurn));
+    }
 }

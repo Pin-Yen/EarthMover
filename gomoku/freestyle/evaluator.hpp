@@ -12,6 +12,9 @@ class VirtualBoard::Evaluator {
   static void evaluateScore(ChessType* type[4][2], int *score);
 
   static void evaluateRelativeScore(VirtualBoard::Point* point[15][15], int playNo);
+
+  static void evaluateRelativeScore(VirtualBoard::Point* point[15][15],
+                                    bool whoTurn, const int lastPlay[2]);
 };
 
 #endif

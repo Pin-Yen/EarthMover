@@ -17,7 +17,7 @@ class VirtualBoard {
   int getScoreSum();
 
   /* get who turn, black = 0, white = 1 */
-  bool whoTurn() { return (playNo & 1); }
+  bool whoTurn() { return (playNo_ & 1); }
 
   /* get the highest score's position, if every point is not empty, return false */
   bool getHSP(int &row, int &col);
@@ -32,8 +32,11 @@ class VirtualBoard {
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
+  /* last play(row, col) */
+  int lastPlay_[2];
+
   /* the total number of plays */
-  int playNo;
+  int playNo_;
 };
 
 #include "point.hpp"
