@@ -27,7 +27,7 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
          [type[d][color]->life()]
          [type[d][color]->level()]);
 
-  /* [0] attack, [1] defense*/
+  /* [0] attack, [1] defense */
   const int SCORE_5[2] = {10000000, 1000000};
   const int SCORE_LIVE4[2] = {10000, 2500};
   const int SCORE_DOUBLE4[2] = {10000, 2500};
@@ -42,7 +42,7 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   const int SCORE_LIVE1[2][4] = {{6, 9, 15, 20}, {2, 5, 12, 16}};
   const int SCORE_DEAD1[2] = {2, 1};
 
-  /*these const are for indexing purposes, enhancing the readibility of the code. */
+  /* these const are for indexing purposes, enhancing the readibility of the code. */
   const int ATTACK = 0;
   const int DEFENSE = 1;
   const int BLACK = 0;
@@ -65,22 +65,21 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
     /* self l4 */
     else if (count[selfColor][4][LIVE][0] > 0)
       score[selfColor] = SCORE_LIVE4[ATTACK];
-    /* opponent l4 */
-    else if (count[opponentColor][4][LIVE][0] > 0)
-      score[selfColor] = SCORE_LIVE4[DEFENSE];
-
     /* self muliy-4 */
     else if (count[selfColor][4][DEAD][0] >= 2)
       score[selfColor] = SCORE_DOUBLE4[ATTACK];
-    /* opponent muliy-4 */
-    else if (count[opponentColor][4][DEAD][0] >= 2)
-      score[selfColor] = SCORE_DOUBLE4[DEFENSE];
-
     /* self d4-l3 */
     else if (count[selfColor][4][DEAD][0] > 0 &&
              (count[selfColor][3][LIVE][0] > 0 ||
              count[selfColor][3][LIVE][1] > 0))
       score[selfColor] = SCORE_DEAD4LIVE3[ATTACK];
+
+    /* opponent l4 */
+    else if (count[opponentColor][4][LIVE][0] > 0)
+      score[selfColor] = SCORE_LIVE4[DEFENSE];
+    /* opponent muliy-4 */
+    else if (count[opponentColor][4][DEAD][0] >= 2)
+      score[selfColor] = SCORE_DOUBLE4[DEFENSE];
     /* opponent d4-l3 */
     else if (count[opponentColor][4][DEAD][0] > 0 &&
              (count[opponentColor][3][LIVE][0] > 0 ||
