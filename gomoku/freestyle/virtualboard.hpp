@@ -32,9 +32,6 @@ class VirtualBoard {
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-  /* last play(row, col) */
-  int lastPlay_[2];
-
   /* the total number of plays */
   int playNo_;
 };

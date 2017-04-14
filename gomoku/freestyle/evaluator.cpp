@@ -162,14 +162,24 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
       point[r][c]->setRelScore(-1);
 
   point[7][7]->setRelScore(1);
-
 }
 
 void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
-                                                    bool whoTurn, const int lastPlay[2]) {
+                                                    bool whoTurn, int lastScore) {
+  if (lastScore == 10000) {
+    for (int r = 0; r < 15; ++r)
+      for (int c = 0; c < 15; ++c) {
+        int score = point[r][c]->absScore(whoTurn);
+        if (score < 1000000)
+          point[r][c]->setRelScore(-1);
+        else
+          point[r][c]->setRelScore(score);
+      }
+
+    return;
+  }
 
   for (int r = 0; r < 15; ++r)
-    for (int c = 0; c < 15; ++c) {
+    for (int c = 0; c < 15; ++c)
       point[r][c]->setRelScore(point[r][c]->absScore(whoTurn));
-    }
 }

@@ -93,9 +93,6 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
 
   playNo_ = source->playNo_;
 
-  lastPlay_[0] = source->lastPlay_[0];
-  lastPlay_[1] = source->lastPlay_[1];
-
   #ifdef DEBUG
   ObjectCounter::registerVB();
   #endif
@@ -151,18 +148,17 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 bool VirtualBoard::play(int row, int col) {
-  if (point_[row][col]->getScore() == 10000000) return true;
+  int score = point_[row][col]->getScore();
+  if (score == 10000000) return true;
 
   ++playNo_;
 
   STATUS color = ((playNo_ & 1) ? BLACK : WHITE);
 
-  /* set score to -1 */
-  point_[row][col]->setScore(-1, -1);
-
   point_[row][col]->play(color);
 
-  lastPlay_[0] = row; lastPlay_[1] = col;
+  /* set score to -1 */
+  point_[row][col]->setScore(-1, -1);
 
   /* index: 0→ 1↓ 2↗ 3↘ */
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -199,7 +195,7 @@ bool VirtualBoard::play(int row, int col) {
       }
     }
 
-  Evaluator::evaluateRelativeScore(point_, playNo_ & 1, lastPlay_);
+  Evaluator::evaluateRelativeScore(point_, playNo_ & 1, score);
 
   return false;
 }

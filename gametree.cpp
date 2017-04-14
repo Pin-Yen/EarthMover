@@ -30,6 +30,8 @@ void GameTree::MCTS(int maxCycle) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
+    if (currentNode->winning() || currentNode->losing()) return;
+
     VirtualBoard board(currentBoard);
 
     int result = selection(&node, &board);
@@ -65,6 +67,8 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
+    if (currentNode->winning() || currentNode->losing()) return;
+
     VirtualBoard board(currentBoard);
 
     int result = selection(&node, &board);
@@ -137,8 +141,8 @@ void GameTree::MCTSResult(int &row, int &col) {
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
             << "  scoreP + UCB: " << (scorePer + ucbValue)
-            << "  winning: " << currentNode->childNode[row][col]->winning()
-            << "  losing: " << currentNode->childNode[row][col]->losing()
+            << "  winning: " << currentNode->winning()
+            << "  losing: " << currentNode->losing()
             << std::endl;
 }
 
