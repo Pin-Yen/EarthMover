@@ -43,13 +43,14 @@ int main(){
     return -1;
   }
 
-  const int BUFFER_SIZE = 1024, MESSAGE_SIZE = 1024;
+  const int BUFFER_SIZE = 1024;
+
   char buffer[BUFFER_SIZE];
   recv(server, buffer, BUFFER_SIZE, 0);
   cout << buffer << endl;
 
   fstream file;
-  char message[MESSAGE_SIZE];
+  char message[1024] = "";
   file.open("test.html", ios::in);
 
   if (!file) {
@@ -62,6 +63,40 @@ int main(){
   file.close();
 
   send(server, message, strlen(message), 0);
+
+  close(server);
+
+  while (1) {
+    server = accept(client, (struct sockaddr*)&serverAddress, &size);
+    if (server <= 0) break;
+
+    recv(server, buffer, BUFFER_SIZE, 0);
+    cout << buffer << endl;
+
+    char text[128] = "";
+
+    for (int i = 0, start = -1; i < BUFFER_SIZE; ++i) {
+      if (buffer[i] == '?') {
+        start = 0;
+        ++i;
+      }
+
+      if (start != -1) {
+        text[start] = buffer[i];
+        ++start;
+
+        if (buffer[i + 1] == ' ') {
+          text[start] = '\0';
+          break;
+        }
+      }
+    }
+
+    send(server, message, strlen(message), 0);
+    send(server, text, strlen(text), 0);
+
+    close(server);
+  }
 
   return 0;
 }
