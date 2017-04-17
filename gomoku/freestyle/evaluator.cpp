@@ -25,17 +25,46 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
    * length: means the length of the type, should be 0~5.
    * LorD: 0 for LIVE, 1 for DEAD
    * e.g count[1][4][0] means the number of white dead fours */
-  int count[2][6][2][4] = {{{0}}};
+  int count[2][6][2][4] = {{{{0}}}};
 
   /* count the types in 4 directions */
-  for (int color = 0; color < 2; ++color)
-    for (int d = 0; d < 4; ++d)
+
+
+  //len, LorD, lev, col
+  const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},
+                                  {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},
+                                 {{{2, 1}, {0, 0}, {0, 0}, {0, 0}},
+                                  {{6, 2}, {9, 5}, {15, 12}, {20, 16}}},
+                                 {{{25, 14}, {0, 0}, {0, 0}, {0, 0}},
+                                  {{45, 20}, {66, 40}, {88, 50}, {0, 0}}},
+                                 {{{84, 45}, {0, 0}, {0, 0}, {0, 0}},
+                                  {{220, 120}, {280, 150}, {0, 0}, {0, 0}}},
+                                 {{{250, 140}, {0, 0}, {0, 0}, {0, 0}},
+                                  {{25000, 2500}, {0, 0}, {0, 0}, {0, 0}}},
+                                 {{{10000000, 500000}, {0, 0}, {0, 0}, {0, 0}},
+                                  {{0, 0}, {0, 0}, {0, 0}, {0, 0}}}};
+
+  score[0] = 0; score[1] = 0;
+
+  for (int color = 0, opponentColor = 1; color < 2; ++color, opponentColor = 0)
+    for (int d = 0; d < 4; ++d) {
       ++(count[color]
-         [type[d][color]->length()]
-         [type[d][color]->life()]
-         [type[d][color]->level()]);
+              [type[d][color]->length()]
+              [type[d][color]->life()]
+              [type[d][color]->level()]);
+
+      score[color] += SCORE[type[d][color]->length()]
+                           [type[d][color]->life()]
+                           [type[d][color]->level()]
+                           [0];
+      score[opponentColor] += SCORE[type[d][color]->length()]
+                                   [type[d][color]->life()]
+                                   [type[d][color]->level()]
+                                   [1];
+    }
 
   /* [0] attack, [1] defense */
+                                  /*
   const int SCORE_5[2] = {10000000, 1000000};
   const int SCORE_LIVE4[2] = {10000, 2500};
   const int SCORE_DOUBLE4[2] = {10000, 2500};
@@ -48,7 +77,11 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   const int SCORE_LIVE2[2][3] = {{45, 66, 88}, {20, 40, 50}};
   const int SCORE_DEAD2[2] = {25, 14};
   const int SCORE_LIVE1[2][4] = {{6, 9, 15, 20}, {2, 5, 12, 16}};
-  const int SCORE_DEAD1[2] = {2, 1};
+  const int SCORE_DEAD1[2] = {2, 1};*/
+
+  const int SCORE_DOUBLE4[2] = {25000, 2500};
+  const int SCORE_DEAD4LIVE3[2] = {20000, 2000};
+  const int SCORE_DOUBLELIVE3[2] = {1000, 200};
 
   /* these const are for indexing purposes, enhancing the readibility of the code. */
   const int ATTACK = 0;
@@ -58,106 +91,31 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   const int LIVE = 1;
   const int DEAD = 0;
 
-  score[BLACK] = 0; score[WHITE] = 0;
-
   /* calculate score */
   for (int selfColor = BLACK, opponentColor = WHITE, i = 0; i < 2;
        selfColor = WHITE, opponentColor = BLACK, ++i) {
-    /* self 5 */
-    if (count[selfColor][5][0][0] > 0)
-      score[selfColor] = SCORE_5[ATTACK];
-    /* opponent 5 */
-    else if (count[opponentColor][5][0][0] > 0)
-      score[selfColor] = SCORE_5[DEFENSE];
-
-    /* self l4 */
-    else if (count[selfColor][4][LIVE][0] > 0)
-      score[selfColor] = SCORE_LIVE4[ATTACK];
-    /* self muliy-4 */
-    else if (count[selfColor][4][DEAD][0] >= 2)
-      score[selfColor] = SCORE_DOUBLE4[ATTACK];
-    /* self d4-l3 */
-    else if (count[selfColor][4][DEAD][0] > 0 &&
+    if (count[selfColor][4][DEAD][0] >= 2) {
+      /* self muliy-4 */
+      score[selfColor] += SCORE_DOUBLE4[ATTACK];
+    } else if (count[selfColor][4][DEAD][0] > 0 &&
              (count[selfColor][3][LIVE][0] > 0 ||
-             count[selfColor][3][LIVE][1] > 0))
-      score[selfColor] = SCORE_DEAD4LIVE3[ATTACK];
-
-    /* opponent l4 */
-    else if (count[opponentColor][4][LIVE][0] > 0)
-      score[selfColor] = SCORE_LIVE4[DEFENSE];
-    /* opponent muliy-4 */
-    else if (count[opponentColor][4][DEAD][0] >= 2)
-      score[selfColor] = SCORE_DOUBLE4[DEFENSE];
-    /* opponent d4-l3 */
-    else if (count[opponentColor][4][DEAD][0] > 0 &&
+             count[selfColor][3][LIVE][1] > 0)) {
+      /* self d4-l3 */
+      score[selfColor] += SCORE_DEAD4LIVE3[ATTACK];
+    } else if (count[opponentColor][4][DEAD][0] >= 2) {
+      /* opponent muliy-4 */
+      score[selfColor] += SCORE_DOUBLE4[DEFENSE];
+    } else if (count[opponentColor][4][DEAD][0] > 0 &&
              (count[opponentColor][3][LIVE][0] > 0 ||
-             count[opponentColor][3][LIVE][1] > 0))
-      score[selfColor] = SCORE_DEAD4LIVE3[DEFENSE];
-    else {
+             count[opponentColor][3][LIVE][1] > 0)) {
+      /* opponent d4-l3 */
+      score[selfColor] += SCORE_DEAD4LIVE3[DEFENSE];
+    } else if (count[selfColor][3][LIVE][0] + count[selfColor][3][LIVE][1] >= 2) {
       /* self multi-3 */
-      if (count[selfColor][3][LIVE][0] + count[selfColor][3][LIVE][1] >= 2) {
-        score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
-      } else {
-        /* self live 3 */
-        for (int i = 0; i < 2; ++i) {
-          score[selfColor] += SCORE_LIVE3[ATTACK][i] * count[selfColor][3][LIVE][i];
-        }
-      }
+      score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
+    } else if (count[opponentColor][3][LIVE][0] + count[opponentColor][3][LIVE][1] >= 2) {
       /* opponent multi-3 */
-      if (count[opponentColor][3][LIVE][0] + count[opponentColor][3][LIVE][1] >= 2) {
-        score[selfColor] += SCORE_DOUBLELIVE3[DEFENSE];
-      } else {
-        /* opponent live 3 */
-        for (int i = 0; i < 2; ++i) {
-          score[selfColor] += SCORE_LIVE3[DEFENSE][i] * count[opponentColor][3][LIVE][i];
-        }
-      }
-
-      /* self dead 4 */
-      if (count[selfColor][4][DEAD][0])
-        score[selfColor] += SCORE_DEAD4[ATTACK];
-      /* opponent dead4 */
-      if (count[opponentColor][4][DEAD][0])
-        score[selfColor] += SCORE_DEAD4[DEFENSE];
-
-      /* self dead 3 */
-      if (count[selfColor][3][DEAD][0])
-        score[selfColor] += SCORE_DEAD3[ATTACK] * count[selfColor][3][DEAD][0];
-      /* opponent dead 3 */
-      if (count[opponentColor][3][DEAD][0])
-        score[selfColor] += SCORE_DEAD3[DEFENSE] * count[opponentColor][3][DEAD][0];
-
-      /* self live 2 */
-      for (int i = 0; i < 3; ++i) {
-        score[selfColor] += SCORE_LIVE2[ATTACK][i] * count[selfColor][2][LIVE][i];
-      }
-      /* opponent live 2 */
-      for (int i = 0; i < 3; ++i) {
-        score[selfColor] += SCORE_LIVE2[DEFENSE][i] * count[opponentColor][2][LIVE][i];
-      }
-
-      /* self dead 2 */
-      if (count[selfColor][2][DEAD][0])
-        score[selfColor] += SCORE_DEAD2[ATTACK] * count[selfColor][2][DEAD][0];
-      /* opponent dead 2 */
-      if (count[opponentColor][2][DEAD][0])
-        score[selfColor] += SCORE_DEAD2[DEFENSE] * count[opponentColor][2][DEAD][0];
-
-      /* self live 1 */
-      for (int i = 0; i < 4; ++i) {
-        score[selfColor] += SCORE_LIVE1[ATTACK][i] * count[selfColor][1][LIVE][i];
-      }
-      /* opponent live 1 */
-      for (int i = 0; i < 4; ++i) {
-        score[selfColor] += SCORE_LIVE1[DEFENSE][i] * count[opponentColor][1][LIVE][i];
-      }
-
-      /* self dead 1 */
-      if (count[selfColor][1][DEAD][0])
-        score[selfColor] += SCORE_DEAD1[ATTACK] * count[selfColor][1][DEAD][0];
-      /* opponent dead 1*/
-      if (count[opponentColor][1][DEAD][0])
-        score[selfColor] += SCORE_DEAD1[DEFENSE] * count[opponentColor][1][DEAD][0];
+      score[selfColor] += SCORE_DOUBLELIVE3[DEFENSE];
     }
   }
 }
@@ -190,7 +148,7 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
         if (point[r][c]->absScore(whoTurn) > highestScore)
           highestScore = point[r][c]->absScore(whoTurn);
 
-    if (highestScore == 10000000) {
+    if (highestScore >= 10000000) {
       /* if exist five */
       for (int r = 0; r < 15; ++r) {
         for (int c = 0; c < 15; ++c) {
@@ -200,7 +158,7 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
             point[r][c]->setRelScore(highestScore);
         }
       }
-    } else if (highestScore == 1000000) {
+    } else if (highestScore >= 500000) {
       /* if exist opponent five */
       for (int r = 0; r < 15; ++r) {
         for (int c = 0; c < 15; ++c) {
