@@ -164,30 +164,56 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
 
 void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
                                                     int playNo) {
-    /* this is for first move(set center point to 1) */
-  for (int r = 0; r < 15; ++r)
-    for (int c = 0; c < 15; ++c)
-      point[r][c]->setRelScore(-1);
+  const int USING_OPEINIG = 0;
 
-  point[7][7]->setRelScore(1);
-}
+  if (playNo <= USING_OPEINIG) {
+    /* using opening tree */
+    //switch (playNo) {
+      //case 0: /* first move(set center point to 1) */
+        for (int r = 0; r < 15; ++r)
+          for (int c = 0; c < 15; ++c)
+            point[r][c]->setRelScore(-1);
 
-void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
-                                                    bool whoTurn, int lastScore) {
-  if (lastScore == 10000) {
+        point[7][7]->setRelScore(1);
+        //break;
+    //}
+
+  } else {
+    /* using absloute score */
+
+    bool whoTurn = playNo & 1;
+
+    /* get highest score */
+    int highestScore = -1;
     for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c) {
-        int score = point[r][c]->absScore(whoTurn);
-        if (score < 1000000)
-          point[r][c]->setRelScore(-1);
-        else
-          point[r][c]->setRelScore(score);
+      for (int c = 0; c < 15; ++c)
+        if (point[r][c]->absScore(whoTurn) > highestScore)
+          highestScore = point[r][c]->absScore(whoTurn);
+
+    if (highestScore == 10000000) {
+      /* if exist five */
+      for (int r = 0; r < 15; ++r) {
+        for (int c = 0; c < 15; ++c) {
+          if (point[r][c]->absScore(whoTurn) < highestScore)
+            point[r][c]->setRelScore(-1);
+          else
+            point[r][c]->setRelScore(highestScore);
+        }
       }
-
-    return;
+    } else if (highestScore == 1000000) {
+      /* if exist opponent five */
+      for (int r = 0; r < 15; ++r) {
+        for (int c = 0; c < 15; ++c) {
+          if (point[r][c]->absScore(whoTurn) < highestScore)
+            point[r][c]->setRelScore(-1);
+          else
+            point[r][c]->setRelScore(highestScore);
+        }
+      }
+    } else {
+      for (int r = 0; r < 15; ++r)
+        for (int c = 0; c < 15; ++c)
+          point[r][c]->setRelScore(point[r][c]->absScore(whoTurn));
+    }
   }
-
-  for (int r = 0; r < 15; ++r)
-    for (int c = 0; c < 15; ++c)
-      point[r][c]->setRelScore(point[r][c]->absScore(whoTurn));
 }

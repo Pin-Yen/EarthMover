@@ -15,9 +15,6 @@ class VirtualBoard::Evaluator {
 
   static void evaluateRelativeScore(VirtualBoard::Point* point[15][15], int playNo);
 
-  static void evaluateRelativeScore(VirtualBoard::Point* point[15][15],
-                                    bool whoTurn, int lastScore);
-
  private:
   class TypeTree;
 
