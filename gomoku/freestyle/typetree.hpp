@@ -5,7 +5,7 @@
 #include "../../objectcounter.hpp"
 #endif
 
-class TypeTree {
+class VirtualBoard::Evaluator::TypeTree {
  public:
   static void classify(const STATUS *status, ChessType *(type[2]));
 
@@ -40,8 +40,6 @@ class TypeTree {
   };
 
   static Node* root;
-
-  static bool isInitialized;
 
   /* Depth First Search
    * parameters of the initial call should be:

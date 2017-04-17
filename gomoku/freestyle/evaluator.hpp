@@ -3,6 +3,8 @@
 
 class VirtualBoard::Evaluator {
  public:
+  static void initialize();
+
   /* inputs status array in *status.
    * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
   static void evaluateType(STATUS *status, ChessType* type[2]);
@@ -15,6 +17,11 @@ class VirtualBoard::Evaluator {
 
   static void evaluateRelativeScore(VirtualBoard::Point* point[15][15],
                                     bool whoTurn, int lastScore);
+
+ private:
+  class TypeTree;
+
+  static bool isInitialized;
 };
 
 #endif

@@ -3,8 +3,16 @@
 #include "virtualboard.hpp"
 #include "point.hpp"
 #include "evaluator.hpp"
-
 #include "typetree.hpp"
+
+bool VirtualBoard::Evaluator::isInitialized = false;
+
+void VirtualBoard::Evaluator::initialize() {
+  if (isInitialized) return;
+  isInitialized = true;
+
+  TypeTree::initialize();
+}
 
 void VirtualBoard::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
   TypeTree::classify(status, type);

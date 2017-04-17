@@ -1,21 +1,20 @@
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "virtualboard.hpp"
+#include "evaluator.hpp"
 #include "typetree.hpp"
 
 #include <iostream>
 #include <iomanip>
 
+#ifdef DEBUG
 #include "../../objectcounter.hpp"
+#endif
 
 /* initialize root*/
-TypeTree::Node* TypeTree::root = new Node();
-bool TypeTree::isInitialized = false;
+VirtualBoard::Evaluator::TypeTree::Node* VirtualBoard::Evaluator::TypeTree::root = new Node();
 
-void TypeTree::initialize() {
-
-  if (isInitialized) return;
-  isInitialized = true;
-
+void VirtualBoard::Evaluator::TypeTree::initialize() {
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
@@ -35,8 +34,8 @@ void TypeTree::initialize() {
 /* connect is used to prevent already exist five while length == 11
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
-                   bool blackBlock, bool whiteBlock) {
+void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
+                                            int move, bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
     case BLACK:
@@ -91,7 +90,7 @@ void TypeTree::dfs(Node *root, STATUS *status, int location, int move,
   status[location] = EMPTY;
 }
 
-ChessType** TypeTree::cutSameResultChild(Node *root) {
+ChessType** VirtualBoard::Evaluator::TypeTree::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
   if (root->type[0] != NULL) {
@@ -128,7 +127,7 @@ ChessType** TypeTree::cutSameResultChild(Node *root) {
   return currentType;
 }
 
-void TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
+void VirtualBoard::Evaluator::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
   /* switch root */
   Node* node = root;
 
@@ -153,14 +152,14 @@ void TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
     }
 }
 
-ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) {
+ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
+                                                          bool checkLevel) {
   int connect = 1;
 
   /* check the length of the connection around the analize point
    * under the following, we call this chess group "center group" (CG)
    * for example: --X O*OOX-- ; OOOO* O X
    *                   ^^^^      ^^^^^     */
-
   for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
       if (status[checkPoint] != color) break;
@@ -301,7 +300,9 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
   }
 }
 
-void TypeTree::print(STATUS *status, ChessType **type) {
+#ifdef DEBUG_TYPETREE
+
+void VirtualBoard::Evaluator::TypeTree::print(STATUS *status, ChessType **type) {
   std::cout << std::setw(5) << "(";
   /* print status array*/
   for (int i = 0; i < analyze_length; ++i) {
@@ -335,7 +336,8 @@ void TypeTree::print(STATUS *status, ChessType **type) {
   std::cout << "\n";
 }
 
-void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
+void VirtualBoard::Evaluator::TypeTree::searchAll(Node* node, STATUS *status,
+                                                  int location, int move) {
   if (node->type[0] != NULL) {
     print(status, node->type);
     return;
@@ -359,8 +361,9 @@ void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
   status[location] = EMPTY;
 }
 
-/*
+
 int main() {
   TypeTree::initialize();
 }
-*/
+
+#endif

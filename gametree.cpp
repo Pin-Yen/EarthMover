@@ -7,15 +7,11 @@
 #include <iostream>
 #include <iomanip>
 
-#include "gomoku/freestyle/typetree.hpp"
-
 #ifdef DEBUG
 #include "log.hpp"
 #endif
 
 GameTree::GameTree() {
-  TypeTree::initialize();
-
   /* create the grand root(e.g. a root representing a blank board) */
   root = new Node();
   currentNode = root;

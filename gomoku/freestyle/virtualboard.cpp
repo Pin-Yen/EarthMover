@@ -13,6 +13,8 @@
 #endif
 
 VirtualBoard::VirtualBoard() {
+  Evaluator::initialize();
+
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
