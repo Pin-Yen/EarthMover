@@ -1,64 +1,53 @@
+#include "../chesstype.hpp"
+#include "../status.hpp"
+#include "virtualboard.hpp"
 #include "point.hpp"
 
-Point::Point(int row, int col)
-{
-  this->row = row;
-  this->col = col;
+#include <cstddef>
 
-  playNo = 0;
-  status = EMPTY;
-}
+#ifdef DEBUG
+#include "../../objectcounter.hpp"
+#endif
 
-Point::Point(Point* source)
-{
-  row = source->getRow();
-  col = source->getColumn();
-  playNo = source->getPlayNo();
-
-  source->getScore(score);
-
-  status = source->status;
+VirtualBoard::Point::Point() {
+  status_ = EMPTY;
 
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)
-      type[dir][i] = new ChessType(source->type[dir][i]->length, source->type[dir][i]->life);
+      type[dir][i] = NULL;
+
+  #ifdef DEBUG
+  ObjectCounter::registerPoint();
+  #endif
 }
 
-void Point::setDirStatus(int dir, int offset, STATUS* status)
-{
-  dirStatus[dir][offset] = status;
+VirtualBoard::Point::Point(Point* source) {
+  status_ = source->status_;
+
+  absScore_[0] = source->absScore_[0]; absScore_[1] = source->absScore_[1];
+  relScore_ = source->relScore_;
+
+  for (int dir = 0; dir < 4; ++dir)
+    for (int i = 0; i < 2; ++i)
+      type[dir][i] = new ChessType(source->type[dir][i]);
+
+  #ifdef DEBUG
+  ObjectCounter::registerPoint();
+  #endif
 }
 
-void Point::reset()
-{
-  playNo = 0;
-  status = EMPTY;
+VirtualBoard::Point::~Point() {
+  for (int dir = 0; dir < 4; ++dir)
+    for (int i = 0; i < 2; ++i)
+      if (type[dir][i] != NULL)
+        delete type[dir][i];
+
+  #ifdef DEBUG
+  ObjectCounter::unregisterPoint();
+  #endif
 }
 
-void Point::play(STATUS status, int playNo)
-{
-  this->status = status;
-  this->playNo = playNo;
+void VirtualBoard::Point::getDirStatus(int dir, STATUS* dest) {
+  for (int i = 0; i < 10; ++i)
+    dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
 }
-
-int Point::getRow()
-{
-  return row;
-}
-
-int Point::getColumn()
-{
-  return col;
-}
-
-int Point::getPlayNo()
-{
-  return playNo;
-}
-
-void Point::getScore(int* destination)
-{
-  destination[0] = score[0];
-  destination[1] = score[1];
-}
-

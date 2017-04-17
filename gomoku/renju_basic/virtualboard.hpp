@@ -1,26 +1,45 @@
-#include "point.hpp"
-#include "evaluator.hpp"
-#include "status.hpp"
+#ifndef VIRTUAL_BOARD_H
+#define VIRTUAL_BOARD_H
 
-class VirtualBoard
-{
-public:
+class VirtualBoard {
+ public:
   static const int CHESSBOARD_DIMEN = 15;
 
   VirtualBoard();
-  /* copy the source board to consturct the board*/
-  VirtualBoard(VirtualBoard* source)
+  /* copy the source board to consturct the board */
+  VirtualBoard(VirtualBoard* source);
 
-  /* puts a new chess, if the point is not empty then return false */
-  bool play(STATUS color, int row, int col);
+  ~VirtualBoard();
 
-private:
+  inline int getScore(int row, int col);
+
+  /* get the sume of every point's score */
+  int getScoreSum();
+
+  /* get who turn, black = 0, white = 1 */
+  bool whoTurn() { return (playNo_ & 1); }
+
+  /* get the highest score's position, if every point is not empty, return false */
+  bool getHSP(int &row, int &col);
+
+  /* puts a new chess if win after play then return true */
+  bool play(int row, int col);
+ private:
+  /* nested class */
+  class Point;
+  class Evaluator;
+
   /* point array */
-  Point* point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
-  /* score array */
-  int score[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN][2];
-  /* the total number of plays */
-  int playNo;
+  Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
-  bool checkForbidden;
+  /* the total number of plays */
+  int playNo_;
 };
+
+#include "point.hpp"
+
+inline int VirtualBoard::getScore(int row, int col) {
+  return point_[row][col]->getScore();
+}
+
+#endif
