@@ -153,7 +153,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
       return result;
     }
 
-    /* check if reach leaf */
+    /* check if reached leaf */
     if ((*node)->childNode[r][c] == NULL) {
       bool parentWinning = board->play(r, c);
       (*node)->childNode[r][c] = new Node(*node, r, c, parentWinning);

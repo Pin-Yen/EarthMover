@@ -84,7 +84,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       int score = board->getScore(r, c);
 
-      /* skip if this point is not empty */
+      /* skip if this point is occupied */
       if (score == -1) continue;
 
       if (childNode[r][c] != NULL) {
@@ -94,7 +94,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
           continue;
         }
 
-        /* if exist 100% win, select this point */
+        /* if there exists a point that wins in all previous simulations, select this point */
         if (childNode[r][c]->winRate() == 1) {
           row = r; col = c;
           return -2;
@@ -120,7 +120,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
 
   /* if no point can select */
   if (max == -1) {
-    /* if every point is child winning point, set this point to losing point */
+    /* if every child wins, mark this point as a losing point */
     if (childWinning) {
       losing_ = true;
       parent->winning_ = true;
@@ -128,7 +128,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
       return 0;
     }
 
-    /* return -1 if every point is no child winning point */
+    /* if the chessboard is FULL */
     return -1;
   }
 
