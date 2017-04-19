@@ -5,7 +5,7 @@ class GameTree::Node {
  public:
   /* consturctor for root */
   Node();
-  /* constructor for node (WITHOUT root node) */
+  /* constructor for node (EXCEPT root node) */
   Node(Node *parentNode, int row, int col, bool losing);
 
   ~Node();
@@ -17,7 +17,8 @@ class GameTree::Node {
 
   /* MCTS function, call by GameTree::selection
    * select child according to UCBValue and point's score
-   * return -2 if select to leaf and no result yet */
+   * return -2 if select to leaf and no result yet, 0 for losing, 1 for winning, -1 if chessboard is full */
+  // FIX: discription of return value not complete.
   int selection(int &row, int &col, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */

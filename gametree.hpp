@@ -32,7 +32,7 @@ class GameTree {
   /* MCTS function
    * keep select the child node from the current node, until reach the leaf or a winning node
    * puts the result to node,
-   * returns -1 for a not-winning leaf node, 0 for black-winning, 1 for white-winning */
+   * returns -2 for a no result leaf node, -1 for FULL chessboard, 0 for losing, 1 for winning */
   int selection(Node** node, VirtualBoard* board);
 
   /* MCTS function
