@@ -26,17 +26,17 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
                                  {{{2, 1}, {0, 0}, {0, 0}, {0, 0}},             /* D1 */
                                   {{6, 2}, {9, 5}, {15, 12}, {20, 16}}},        /* L1 */
                                  {{{25, 14}, {0, 0}, {0, 0}, {0, 0}},           /* D2 */
-                                  {{45, 20}, {66, 40}, {88, 50}, {0, 0}}},      /* L2 */
-                                 {{{84, 45}, {0, 0}, {0, 0}, {0, 0}},           /* D3 */
-                                  {{220, 120}, {280, 150}, {0, 0}, {0, 0}}},    /* L3 */
-                                 {{{250, 150}, {0, 0}, {0, 0}, {0, 0}},         /* D4 */
-                                  {{10000, 1000}, {0, 0}, {0, 0}, {0, 0}}},     /* L4 */
-                                 {{{10000000, 500000}, {0, 0}, {0, 0}, {0, 0}}, /* 5 */
+                                  {{64, 40}, {90, 62}, {110, 75}, {0, 0}}},     /* L2 */
+                                 {{{95, 60}, {0, 0}, {0, 0}, {0, 0}},           /* D3 */
+                                  {{265, 135}, {320, 170}, {0, 0}, {0, 0}}},    /* L3 */
+                                 {{{300, 185}, {0, 0}, {0, 0}, {0, 0}},         /* D4 */
+                                  {{10000, 800}, {0, 0}, {0, 0}, {0, 0}}},      /* L4 */
+                                 {{{SCORE_WIN, 500000}, {0, 0}, {0, 0}, {0, 0}},/* 5 */
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}}};           /* X */
 
-  const int SCORE_DOUBLE4[2] = {10000, 1000};
-  const int SCORE_DEAD4LIVE3[2] = {8000, 800};
-  const int SCORE_DOUBLELIVE3[2] = {800, 200};
+  const int SCORE_DOUBLE4[2] = {10000, 500};
+  const int SCORE_DEAD4LIVE3[2] = {8000, 400};
+  const int SCORE_DOUBLELIVE3[2] = {320, 160};
 
   /* these const are for indexing purposes, enhancing the readibility of the code. */
   const int ATTACK = 0;
@@ -139,7 +139,7 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
     for (int r = 0; r < 15; ++r)
       for (int c = 0; c < 15; ++c) {
         int score = point[r][c]->absScore(whoTurn);
-        if (score * 10 < highestScore)
+        if (score * 8 < highestScore)
           point[r][c]->setRelScore(-1);
         else
           point[r][c]->setRelScore(score);
