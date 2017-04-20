@@ -13,7 +13,7 @@ class HttpServer
   ~HttpServer();
 
   /* sends EM's decision to the client via a http response */
-  void responsePoint(int rol, int col);
+  void responsePoint(int row, int col);
 
   /* listens for client connection, and transmit the initial webpage to the client via a http response,
    * returns true if success. */
