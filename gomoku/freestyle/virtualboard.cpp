@@ -145,12 +145,13 @@ bool VirtualBoard::getHSP(int &row, int &col) {
       }
     }
 
-  /* if every point has chess, then return false */
-  return (max > -1);
+  /* return false means that there is no useful point(can pass now)
+   * Not representative of each point is occupied */
+  return (max > 0);
 }
 
 bool VirtualBoard::play(int row, int col) {
-  if (point_[row][col]->getScore() >= 10000000) return true;
+  if (point_[row][col]->getScore() >= Evaluator::SCORE_WIN) return true;
 
   ++playNo_;
 
