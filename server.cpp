@@ -12,7 +12,7 @@ using namespace std;
 
 int main(){
   int server, client;
-  const int PORT_NUMBER = 8080;
+  const int PORT_NUMBER = 1202;
   struct sockaddr_in serverAddress;
   socklen_t size;
 
