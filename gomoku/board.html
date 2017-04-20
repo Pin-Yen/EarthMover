@@ -5,7 +5,28 @@
 </head>
 <body>
   <form>
-    <img src="board.png">
+    <img src="board.png" id="imageBoard" width="500" height="500"
+         style="left: 50px; top: 50px; z-index: 1;
+                position: absolute;">
+    <canvas id="canvasBoard" width="500" height="500"
+            style="left: 50px; top: 50px; z-index: 2;
+                   position: absolute;"></canvas>
+
   </form>
 </body>
+<script type="text/javascript">
+  document.getElementById('canvasBoard').onmousemove = function(event) {
+    draw(event);
+  }
+
+  function draw(event) {
+    var canvas = document.getElementById('canvasBoard');
+    if (canvas.getContext) {
+      var context = canvas.getContext("2d");
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = "rgb(255, 0, 0)";
+      context.fillRect(event.clientX - 50 - 10, event.clientY - 50 - 10, 20, 20);
+    }
+  }
+</script>
 </html>
