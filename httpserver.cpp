@@ -29,7 +29,7 @@ HttpServer::HttpServer() {
 
 }
 
-bool HttpServer::listenAndResponse() {
+void listen() {
   listen(client, 1);
 
   socklen_t size = sizeof(serverAddress);
@@ -39,12 +39,52 @@ bool HttpServer::listenAndResponse() {
     return false;
   }
 
+  /* store request in buffer */
   const int REQUEST_BUFFER_SIZE = 1000;
   char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
   recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
   std::cout << "request:\n" << requestBuffer;
 
-  char webContentBuffer[BUFFER_SIZE];
+  std::string request(requestBuffer);
+
+  /* parse request directory */
+  int directoryStart = request.find("/");
+  int directoryEnd = request.find(" ", directoryStart);
+  std::string directory = request.substr(directoryStart, directoryEnd - directoryStart + 1);
+
+  /* extract request body */
+  int bodyStart = (int)request.find("\r\n\r\n") + 4;
+  std::string requestBody = request.substr(bodyStart);
+
+  /* request handlers */
+  if (directory == "/") {
+    responeBoard();
+
+  } else if(directory == "/play") {
+     /* extract row & col from encoded request body */
+    int rowPosStart = requestBody.find("row=") + 4;
+    int rowPosEnd = requestBody.find("&",rowPosStart);
+    int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
+
+    int colPosStart = requestBody.find("col=") + 4;
+    int colPosEnd = requestBody.find("\0",colPosStart);
+    int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
+
+    if (rawRow < 0 || rawRow >= 15 || rawCol < 0 || rawCol >= 15) {
+      /* invalid input, either there's bug in client-side's chessboard script,
+       * or the user is manually posting data */
+      responseHttpError(400);
+    } else {
+      requestAiPlay(row, col);
+    }
+
+  } else {
+    /* unhandled directories */
+    responseHttpError(404);
+  }
+}
+
+bool HttpServer::responseBoard() {
 
   std::ifstream file;
   file.open(HTML_PAGE_PATH);
@@ -56,13 +96,16 @@ bool HttpServer::listenAndResponse() {
     return false;
   }
 
-  /* read the file into memory, then send it to the client*/
+  /* calculate file length */
   file.seekg(0, std::ios::end);
   int htmlContentLength = file.tellg();
   ++htmlContentLength; /* length = endposition + 1*/
   assert(htmlContentLength < BUFFER_SIZE);
 
+  /* read the file into memory */
+  char webContentBuffer[BUFFER_SIZE];
   file.read(webContentBuffer, htmlContentLength);
+
   /* add string terminator at end of char[], doesn't matter in the http response,
    * but just in case we printed it out with std::cout when debugging */
   webContentBuffer[htmlContentLength] = '\0';
@@ -72,40 +115,15 @@ bool HttpServer::listenAndResponse() {
   return true;
 }
 
-void HttpServer::responsePoint(int row, int col) {
+void HttpServer::requestAiPlay(int clientRow, int clientCol) {
+  int EMRow, EMCol;
+  earthMover->clientPlay(clientRow,clientCol, &EMRow, &EMCol);
+
+  /* return EM's play to client */
   char response[50];
 
   sprintf(response, "{\"row\":%d,\"col\":%d}", row, col);
   send(server, response, strlen(response), 0);
-}
-
-void HttpServer::getClientPlay(int *row, int *col) {
-  const int REQUEST_BUFFER_SIZE = 1000;
-  char requestContent[REQUEST_BUFFER_SIZE] = {'\0'};
-  recv(server, requestContent, REQUEST_BUFFER_SIZE, 0);
-
-  std::string requestString(requestContent);
-
-  /* extract row & col from encoded request body */
-  int rowPosStart = requestString.find("row=") + 4;
-  int rowPosEnd = requestString.find("&",rowPosStart);
-  int rawRow = atoi(requestString.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
-
-  int colPosStart = requestString.find("col=") + 4;
-  int colPosEnd = requestString.find("\0",colPosStart);
-  int rawCol = atoi(requestString.substr(colPosStart, colPosEnd - colPosStart).c_str());
-
-  if (rawRow < 0 || rawRow >= 15 || rawCol < 0 || rawCol >= 15) {
-    /* invalid input, either there's bug in client-side's chessboard script,
-     * or the user is manually posting data */
-    responseHttpError(400);
-    *row = -1;
-    *col = -1;
-  }
-  else {
-    *row = rawRow;
-    *col = rawCol;
-  }
 }
 
 
@@ -114,8 +132,9 @@ void HttpServer::responseHttpError(int errorCode) {
   char header[100] = {'\0'};
 
   switch (errorCode) {
+    case 400: sprintf(header, headerTemplate, errorCode, "BAD REQUEST"); break;
+    case 404: sprintf(header, headerTemplate, errorCode, "NOT FOUND"); break;
     case 500: sprintf(header, headerTemplate, errorCode, "INTERNAL SERVER ERROR"); break;
-    case 400: sprintf(header, headerTemplate, errorCode, "BAD REQUEST");break;
     default: assert(0);
   }
 

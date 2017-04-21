@@ -12,16 +12,8 @@ class HttpServer
   HttpServer();
   ~HttpServer();
 
-  /* sends EM's decision to the client via a http response */
-  void responsePoint(int row, int col);
-
-  /* listens for client connection, and transmit the initial webpage to the client via a http response,
-   * returns true if success. */
-  bool listenAndResponse();
-
-  /* listen for client post requests and return the client's play in the provided pointers
-   * pointers are set to -1 if clients play are invalid */
-  void getClientPlay(int* row, int* col);
+  /* listens for client connection, and process the request */
+  void listen();
 
  private:
   const int PORT_NUMBER = 1202;
@@ -29,10 +21,15 @@ class HttpServer
   int client, server;
   struct sockaddr_in serverAddress;
 
-  /* Prepares the initial webpage content.
-   * Returns a char* pointing to the start of the content array
-   * called by listenAndResponse */
-  char* prepareWebpage();
+  // TODO: initialize earthmover
+  AI *earthMover;
+
+  /* transmit chessboard html to client,
+   * returns true on success */
+  bool responseBoard();
+
+  /* request AI's play, and returns it to the client via http response */
+  void requestAiPlay(int clientRow, int clientCol);
 
   /* Returns a error message to client
    * errorCode: http error code */
