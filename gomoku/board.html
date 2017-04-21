@@ -5,27 +5,44 @@
 </head>
 <body>
   <form>
-    <img src="board.png" id="imageBoard" width="500" height="500"
-         style="left: 50px; top: 50px; z-index: 1;
+    <img src="board.png" id="imageBoard" width="525" height="525"
+         style="left: 20px; top: 20px; z-index: 1;
                 position: absolute;">
-    <canvas id="canvasBoard" width="500" height="500"
-            style="left: 50px; top: 50px; z-index: 2;
+    <canvas id="canvasBoard" width="525" height="525"
+            style="left: 20px; top: 20px; z-index: 2;
                    position: absolute;"></canvas>
 
   </form>
 </body>
 <script type="text/javascript">
+  var mousePosX = -1, mousePosY = -1;
+
   document.getElementById('canvasBoard').onmousemove = function(event) {
-    draw(event);
+    var x = Math.min(Math.floor((event.clientX - 20) / 35), 14),
+        y = Math.min(Math.floor((event.clientY - 20) / 35), 14);
+    if (mousePosX != x || mousePosY != y) {
+      mousePosX = x; mousePosY = y;
+      draw(this, x, y);
+    }
   }
 
-  function draw(event) {
-    var canvas = document.getElementById('canvasBoard');
+  document.getElementById('canvasBoard').onmouseout = function() {
+    mousePosX = -1; mousePosY = -1;
+    var context = this.getContext("2d");
+    context.clearRect(0, 0, this.width, this.height);
+  }
+
+  function draw(canvas, x, y) {
     if (canvas.getContext) {
       var context = canvas.getContext("2d");
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = "rgb(255, 0, 0)";
-      context.fillRect(event.clientX - 50 - 10, event.clientY - 50 - 10, 20, 20);
+
+      var image = new Image();
+
+      image.onload = function() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, x * 35 + 4, y * 35 + 4, 27, 27);
+      }
+      image.src = "chess_black_transparent.png";
     }
   }
 </script>
