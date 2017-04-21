@@ -82,21 +82,26 @@
 
     // if the position is empty
     if (!boardStatus[x * 15 + y]) {
-      boardStatus[x * 15 + y] = true;
-      mousePosX = -1; mousePosY = -1;
-
-      var context = this.getContext("2d");
-      context.drawImage(chessImage[whoTurn * 3 + 2], x * 35 + 4, y * 35 + 4, 27, 27);
-
-      whoTurn = whoTurn * -1 + 1;
-
-      if (lastPlayX > 0) {
-        context.clearRect(lastPlayX * 35 + 4, lastPlayY * 35 + 4, 27, 27);
-        context.drawImage(chessImage[whoTurn * 3 + 1],
-                          lastPlayX * 35 + 4, lastPlayY * 35 + 4, 27, 27);
-      }
-      lastPlayX = x; lastPlayY = y;
+      play(x, y);
     }
+  }
+
+  // play at (x, y), we should make sure that (x, y) is empty
+  function play(x, y) {
+    boardStatus[x * 15 + y] = true;
+    mousePosX = -1; mousePosY = -1;
+
+    var context = document.getElementById('canvasBoard').getContext("2d");
+    context.drawImage(chessImage[whoTurn * 3 + 2], x * 35 + 4, y * 35 + 4, 27, 27);
+
+    whoTurn = whoTurn * -1 + 1;
+
+    if (lastPlayX > 0) {
+      context.clearRect(lastPlayX * 35 + 4, lastPlayY * 35 + 4, 27, 27);
+      context.drawImage(chessImage[whoTurn * 3 + 1],
+                        lastPlayX * 35 + 4, lastPlayY * 35 + 4, 27, 27);
+    }
+    lastPlayX = x; lastPlayY = y;
   }
 </script>
 </html>
