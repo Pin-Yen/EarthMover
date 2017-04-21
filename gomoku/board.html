@@ -17,33 +17,39 @@
 <script type="text/javascript">
   var mousePosX = -1, mousePosY = -1;
 
+  var image = new Image();
+
+  window.onload = function() {
+    image.src = "chess_black_transparent.png";
+  }
+
   document.getElementById('canvasBoard').onmousemove = function(event) {
+    // get the coordinate (0 ~ 14)
     var x = Math.min(Math.floor((event.clientX - 20) / 35), 14),
         y = Math.min(Math.floor((event.clientY - 20) / 35), 14);
+
+    // draw only if mouse at the new coordinate
     if (mousePosX != x || mousePosY != y) {
+      var context = this.getContext("2d");
+      // clear the previous image
+      context.clearRect(mousePosX * 35 + 4, mousePosY * 35 + 4, 27, 27);
+      // draw image in new position
+      context.drawImage(image, x * 35 + 4, y * 35 + 4, 27, 27);
+
+      // update mousePos
       mousePosX = x; mousePosY = y;
-      draw(this, x, y);
     }
   }
 
   document.getElementById('canvasBoard').onmouseout = function() {
+    // clear the previous image
+    this.getContext("2d").clearRect(mousePosX * 35 + 4, mousePosY * 35 + 4, 27, 27);
+    // set mousePos to -1, -1
     mousePosX = -1; mousePosY = -1;
-    var context = this.getContext("2d");
-    context.clearRect(0, 0, this.width, this.height);
   }
 
   function draw(canvas, x, y) {
-    if (canvas.getContext) {
-      var context = canvas.getContext("2d");
 
-      var image = new Image();
-
-      image.onload = function() {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(image, x * 35 + 4, y * 35 + 4, 27, 27);
-      }
-      image.src = "chess_black_transparent.png";
-    }
   }
 </script>
 </html>
