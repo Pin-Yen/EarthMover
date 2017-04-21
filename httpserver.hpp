@@ -8,8 +8,10 @@ class HttpServer
 {
 
  public:
-  /* constructor, initialize serverAddress and establishes socket connection */
-  HttpServer();
+  /* constructor
+   * initialize serverAddress and establishes socket connection
+   * set AI reference */
+  HttpServer(AI *earthMover, DisplayBoard *board);
   ~HttpServer();
 
   /* listens for client connection, and process the request */
@@ -23,6 +25,7 @@ class HttpServer
 
   // TODO: initialize earthmover
   AI *earthMover;
+  DisplayBoard *board;
 
   /* transmit chessboard html to client,
    * returns true on success */

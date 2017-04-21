@@ -6,16 +6,26 @@ class AI
 {
  public:
 
-  /* set MCTS cycle*/
-  AI(int cycle);
+  /* cycle: nubmer of MCTS cycles */
+  AI(int cycle, DisplayBoard *board);
 
   /* initializes board & tree */
   void initialize();
 
   ~AI();
 
-  /* think of a play, and return it */
+  /* puts a new point on displayboard
+   * returns false if the point is invalid */
+  bool displayNewPoint(int row, int col);
+
+  /* think of a play, and return it.
+   * (clientRow, clientCol) is the previous play, and is (-1,-1) if doesn't exist */
   void think(int clientRow, int clientCol, int *Row, int *Col);
+
+  /* plays a new point, returns true if someone wins after this move */
+  bool play(int row, int col);
+
+  bool getWhoTurn() {return (bool)board->getWhoTurn();}
 
  private:
   /* this thread lets EM thinks in the background when it's the users turn */

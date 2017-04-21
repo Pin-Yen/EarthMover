@@ -2,8 +2,9 @@
 #include <assert.h>
 
 
-AI::AI(int cycle) {
+AI::AI(int cycle, DisplayBoard *board) {
   this->cycle = cycle;
+  this->board = board;
 }
 
 void AI::initialize() {
@@ -22,8 +23,9 @@ AI::~AI() {
 }
 
 void AI::think(int clientRow, int clientCol, int *row, int *col) {
-  // TODO, check if the user wins
-  int result = tree->play(*row, *col);
+  // TODO, check if the user wins (or, an alternative, let the board handle it)
+  if( clientCol != -1)
+    int result = tree->play(*row, *col);
 
   if (backgroundThread != NULL) {
     stopBackgroundThread = true;
@@ -39,7 +41,7 @@ void AI::think(int clientRow, int clientCol, int *row, int *col) {
                               100000, std::ref(stopBackgroundThread));
 
   int result = tree->play(*row, *col);
-  // TODO: check if EM wins,
+  // TODO: check if EM wins (again, an alternative is to let the board handle it)
 }
 
 AI::board = NULL;

@@ -1,4 +1,5 @@
 #include "httpserver.hpp"
+#include "ai.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -14,7 +15,10 @@
 #define HTML_PAGE_PATH "test.html"
 #define BUFFER_SIZE 10000
 
-HttpServer::HttpServer() {
+HttpServer::HttpServer(AI *earthMover, Displayboard *board) {
+  this->earthMover = earthMover;
+  this->board = board;
+
   client = socket(AF_INET, SOCK_STREAM, 0);
 
   if (client < 0)
@@ -39,48 +43,52 @@ void listen() {
     return false;
   }
 
-  /* store request in buffer */
-  const int REQUEST_BUFFER_SIZE = 1000;
-  char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
-  recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
-  std::cout << "request:\n" << requestBuffer;
 
-  std::string request(requestBuffer);
+  while (true) {
+    /* store request in buffer */
+    const int REQUEST_BUFFER_SIZE = 1000;
+    char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
+    recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
+    std::cout << "request:\n" << requestBuffer;
 
-  /* parse request directory */
-  int directoryStart = request.find("/");
-  int directoryEnd = request.find(" ", directoryStart);
-  std::string directory = request.substr(directoryStart, directoryEnd - directoryStart + 1);
+    std::string request(requestBuffer);
 
-  /* extract request body */
-  int bodyStart = (int)request.find("\r\n\r\n") + 4;
-  std::string requestBody = request.substr(bodyStart);
+    /* parse request directory */
+    int directoryStart = request.find("/");
+    int directoryEnd = request.find(" ", directoryStart);
+    std::string directory = request.substr(directoryStart, directoryEnd - directoryStart + 1);
 
-  /* request handlers */
-  if (directory == "/") {
-    responeBoard();
+    /* extract request body */
+    int bodyStart = (int)request.find("\r\n\r\n") + 4;
+    std::string requestBody = request.substr(bodyStart);
 
-  } else if(directory == "/play") {
-     /* extract row & col from encoded request body */
-    int rowPosStart = requestBody.find("row=") + 4;
-    int rowPosEnd = requestBody.find("&",rowPosStart);
-    int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
+    /* request handlers */
+    if (directory == "/") {
+      responeBoard();
 
-    int colPosStart = requestBody.find("col=") + 4;
-    int colPosEnd = requestBody.find("\0",colPosStart);
-    int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
+    } else if(directory == "/play") {
+       /* extract row & col from encoded request body */
+      int rowPosStart = requestBody.find("row=") + 4;
+      int rowPosEnd = requestBody.find("&",rowPosStart);
+      int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
 
-    if (rawRow < 0 || rawRow >= 15 || rawCol < 0 || rawCol >= 15) {
-      /* invalid input, either there's bug in client-side's chessboard script,
-       * or the user is manually posting data */
-      responseHttpError(400);
+      int colPosStart = requestBody.find("col=") + 4;
+      int colPosEnd = requestBody.find("\0",colPosStart);
+      int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
+
+      if ( ! board->play(row, col)) {
+        /* invalid input, either there's bug in client-side's chessboard script,
+         * or the user is manually posting wrong data */
+        responseHttpError(400);
+      } else {
+        requestAiPlay(row, col);
+      }
+
     } else {
-      requestAiPlay(row, col);
+      /* unhandled directories */
+      responseHttpError(404);
+      // NOTE: be aware of directory-traversal-attack, do not pass unprocessed directory to file.open()
     }
-
-  } else {
-    /* unhandled directories */
-    responseHttpError(404);
   }
 }
 
@@ -118,9 +126,13 @@ bool HttpServer::responseBoard() {
 void HttpServer::requestAiPlay(int clientRow, int clientCol) {
   int EMRow, EMCol;
   earthMover->clientPlay(clientRow,clientCol, &EMRow, &EMCol);
+  // TODO: handle win / lose
+
+  board->play(EMRow, EMCol);
 
   /* return EM's play to client */
   char response[50];
+
 
   sprintf(response, "{\"row\":%d,\"col\":%d}", row, col);
   send(server, response, strlen(response), 0);

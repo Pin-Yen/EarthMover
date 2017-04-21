@@ -185,7 +185,7 @@ int GameTree::simulation(VirtualBoard* board) {
   }
 
   return -1;
-}
+}+
 
 void GameTree::backProp(Node* node, bool result) {
   // note: cannot use do-while here

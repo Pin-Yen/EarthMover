@@ -158,6 +158,8 @@ void DisplayBoard::printBoard(int row, int col, int color) {
 
 /* puts a new chess, if the point is not empty then return false */
 bool DisplayBoard::play(int row, int col) {
+
+  if (row >= 15 || row < 0 || col >= 15 || col < 0) return false;
   if (point[row][col] != 0) return false;
 
   ++playNo;
