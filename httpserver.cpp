@@ -76,13 +76,7 @@ void listen() {
       int colPosEnd = requestBody.find("\0",colPosStart);
       int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
 
-      if ( ! board->play(row, col)) {
-        /* invalid input, either there's bug in client-side's chessboard script,
-         * or the user is manually posting wrong data */
-        responseHttpError(400);
-      } else {
-        requestAiPlay(row, col);
-      }
+      requestAiPlay(row, col);
 
     } else {
       /* unhandled directories */
@@ -124,11 +118,24 @@ bool HttpServer::responseBoard() {
 }
 
 void HttpServer::requestAiPlay(int clientRow, int clientCol) {
-  int EMRow, EMCol;
-  earthMover->clientPlay(clientRow,clientCol, &EMRow, &EMCol);
+  /* play client's move */
+  if( !board->play(clientRow, clientCol)) {
+    /* invalid client play, either there's bug in client-side's chessboard script,
+     * or the user is manually posting wrong data */
+
+    responseHttpError(400);
+    return;
+  }
+  int gameStatus = earthMover->play(clientRow, clientCol);
   // TODO: handle win / lose
 
+
+  int EMRow, EMCol;
+  earthMover->think(clientRow,clientCol, &EMRow, &EMCol);
+
   board->play(EMRow, EMCol);
+  gameStatus = earthMover->play(EMRow, EMCol);
+  // TODO: handle win / lose
 
   /* return EM's play to client */
   char response[50];
