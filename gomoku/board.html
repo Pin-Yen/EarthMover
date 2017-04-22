@@ -83,6 +83,7 @@
     // if the position is empty
     if (!boardStatus[x * 15 + y]) {
       play(x, y);
+      post(x, y);
     }
   }
 
@@ -103,5 +104,21 @@
     }
     lastPlayX = x; lastPlayY = y;
   }
+
+  function post(row, col) {
+
+    var http = XMLHttpRequest();
+    http.open('POST', '/play');
+    var params = { row: row, col: col };
+
+    http.onreadystatechange = function() {
+      if (http.readyState == 4 && http.status == 200) {
+        alert(http.responseText);
+      }
+    }
+
+    http.send(params);
+  }
+
 </script>
 </html>
