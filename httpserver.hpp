@@ -38,6 +38,22 @@ class HttpServer
    * errorCode: http error code */
   void responseHttpError(int errorCode);
 
+  /* checks if the requested uri is permitted
+   * returns false if not permitted */
+  bool sanitize(std::string uri) {
+
+    /* check if the uri is under /gomoku/src/ */
+    std::string allowedRoot("/gomoku/src/");
+    if(uri.find(allowedRoot) != 0)
+      return false;
+
+    /* check if the uri contains .. */
+    if(uri.find("..") != string::npos)
+      return false;
+
+    return true;
+  }
+
 };
 
 #endif

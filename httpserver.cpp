@@ -79,9 +79,26 @@ void listen() {
       requestAiPlay(row, col);
 
     } else {
-      /* unhandled directories */
-      responseHttpError(404);
-      // NOTE: be aware of directory-traversal-attack, do not pass unprocessed directory to file.open()
+      if (sanitize(directory)) {
+        // if access to this directory is permitted
+        fstream resourceFile;
+        resourceFile.open(directory.substr(1).c_str()); /* use the sub-string from pos=1 to skip the first '/' in directory path */
+
+        if( !resource.is_open()) {
+          responseHttpError(404);
+        } else {
+          HttpResponse response(200);
+          response.setContentType(directory.substr(directory.find_last_of(".")));
+          response.setBody(resourceFile);
+          std::string responseData = response.getResponseString();
+          send(server, responseData.c_str(), responseData.length(), 0);
+        }
+
+      }
+
+      /* access denied */
+      responseHttpError(403);
+
     }
   }
 }
@@ -158,4 +175,50 @@ void HttpServer::responseHttpError(int errorCode) {
   }
 
   send(server, header, strlen(header), 0);
+}
+
+HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
+  statusCode = httpResponseCode;
+  status.append("HTTP/1.1 ");
+  status.append(std::to_string(statusCode));
+  status.append(" ");
+
+  switch (statusCode) {
+    case 200: status.append("OK"); break;
+  }
+}
+
+void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
+  contentType.append("Content-Type: ")
+  if (fileExtension.strcmp(".png"))
+    contentType.append("image/png");
+  else if (fileExtension.strcmp(".js"))
+    contentType.append("application/javascript");
+  else if (fileExtension.strcmp(".html"))
+    contentType.append("text/html");
+
+}
+
+void HttpServer::HttpResponse::setBody(File *file) {
+  file->seek(ios_base::end);
+  int fileLength = (int)file->tellg() + 1;
+  /* max size for a source file is 5mb */
+  const int MAX_SRC_FILE_SIZE = 5 * 1024 * 1024;
+  assert (fileLength <= MAX_SRC_FILE_SIZE);
+
+  char buffer[MAX_SRC_FILE_SIZE];
+  file->read(buffer, fileLength);
+
+  body = string(buffer);
+}
+
+std::string HttpServer::HttpResponse::getResponseString() {
+  std::string response();
+
+  response.append(status).append("\r\n")
+          .append(contentType).append("\r\n")
+          .append("\r\n")
+          .append(body);
+
+  return response;
 }
