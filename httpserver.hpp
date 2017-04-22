@@ -19,6 +19,7 @@ class HttpServer
 
  private:
   const int PORT_NUMBER = 1202;
+  class HttpResponse;
 
   int client, server;
   struct sockaddr_in serverAddress;
@@ -26,10 +27,6 @@ class HttpServer
   // TODO: initialize earthmover
   AI *earthMover;
   DisplayBoard *board;
-
-  /* transmit chessboard html to client,
-   * returns true on success */
-  bool responseBoard();
 
   /* request AI's play, and returns it to the client via http response */
   void requestAiPlay(int clientRow, int clientCol);
@@ -54,6 +51,29 @@ class HttpServer
     return true;
   }
 
+};
+
+class HttpServer::HttpResponse
+{
+ public:
+  /* creates a httpResponse with statusCode = httpResponseCode*/
+  HttpResponse(int httpResponseCode);
+
+  /* set content-type header according to fileExtension */
+  void setContentType(std::string fileExtension);
+
+  /* sets the response body */
+  void setBody(File *file);
+
+  /* returns a string of the request */
+  std::string getResponseString();
+
+
+ private:
+  int statusCode;
+  std::string contentType;
+  std::string body;
+  std::string status;
 };
 
 #endif

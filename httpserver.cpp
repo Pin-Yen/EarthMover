@@ -62,12 +62,14 @@ void listen() {
     int bodyStart = (int)request.find("\r\n\r\n") + 4;
     std::string requestBody = request.substr(bodyStart);
 
-    /* request handlers */
+    /* if requested path is "/", redirect it to /gomoku/board.html */
     if (directory == "/") {
-      responeBoard();
+      directory.append("gomoku/board.html");
+    }
 
-    } else if(directory == "/play") {
-       /* extract row & col from encoded request body */
+    /* request handlers */
+    if(directory == "/play") {
+      /* extract row & col from encoded request body */
       int rowPosStart = requestBody.find("row=") + 4;
       int rowPosEnd = requestBody.find("&",rowPosStart);
       int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
@@ -79,6 +81,7 @@ void listen() {
       requestAiPlay(row, col);
 
     } else {
+      /* requesting some resource */
       if (sanitize(directory)) {
         // if access to this directory is permitted
         fstream resourceFile;
@@ -101,37 +104,6 @@ void listen() {
 
     }
   }
-}
-
-bool HttpServer::responseBoard() {
-
-  std::ifstream file;
-  file.open(HTML_PAGE_PATH);
-
-  /* If cannot open http file */
-  if (!file.is_open()) {
-    std::cout << "Failed to open html file." << std::endl;
-    responseHttpError(500);
-    return false;
-  }
-
-  /* calculate file length */
-  file.seekg(0, std::ios::end);
-  int htmlContentLength = file.tellg();
-  ++htmlContentLength; /* length = endposition + 1*/
-  assert(htmlContentLength < BUFFER_SIZE);
-
-  /* read the file into memory */
-  char webContentBuffer[BUFFER_SIZE];
-  file.read(webContentBuffer, htmlContentLength);
-
-  /* add string terminator at end of char[], doesn't matter in the http response,
-   * but just in case we printed it out with std::cout when debugging */
-  webContentBuffer[htmlContentLength] = '\0';
-
-  send(server, webContentBuffer, htmlContentLength, 0);
-
-  return true;
 }
 
 void HttpServer::requestAiPlay(int clientRow, int clientCol) {
