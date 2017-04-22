@@ -127,11 +127,15 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol) {
   // TODO: handle win / lose
 
   /* return EM's play to client */
-  char response[50];
+  char responseBody[50];
 
+  string response("HTTP/1.1 200 OK\r\n");
+  response.append("Content-Type: application/json\r\n\r\n");
 
-  sprintf(response, "{\"row\":%d,\"col\":%d}", row, col);
-  send(server, response, strlen(response), 0);
+  sprintf(responseBody, "{\"row\":%d,\"col\":%d}", row, col);
+  response.append(responseBody);
+
+  send(server, response.c_str(), response.length(), 0);
 }
 
 
