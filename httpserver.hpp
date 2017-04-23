@@ -16,7 +16,6 @@ class HttpServer
    * initialize serverAddress and establishes socket connection
    * set AI reference */
   HttpServer(AI *earthMover, DisplayBoard *board);
-  ~HttpServer();
 
   /* listens for client connection, and process the request */
   void listenConnection();

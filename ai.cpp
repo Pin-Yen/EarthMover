@@ -39,11 +39,16 @@ void AI::think(int clientRow, int clientCol, int *row, int *col) {
   tree->MCTSResult(*row, *col);
 
   stopBackgroundThread = false;
-  backgroundThread = new std::thread([tree](int maxCycle, bool &stop)
-                              { tree->MCTS(maxCycle, stop); },
-                              100000, std::ref(stopBackgroundThread));
-
+  GameTree* treeRef = tree;
   int result = tree->play(*row, *col);
   // TODO: check if EM wins (again, an alternative is to let the board handle it)
+
+  backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
+                              { treeRef->MCTS(maxCycle, stop); },
+                              100000, std::ref(stopBackgroundThread));
+
 }
 
+bool AI::play(int row, int col) {
+  return tree->play(row, col);
+}
