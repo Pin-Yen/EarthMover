@@ -1,5 +1,8 @@
 #ifndef VIRTUAL_BOARD_POINT_H
 #define VIRTUAL_BOARD_POINT_H
+#include "point.hpp"
+#include "../status.hpp"
+#include "../chesstype.hpp"
 
 class VirtualBoard::Point {
  public:

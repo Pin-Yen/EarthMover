@@ -1,6 +1,8 @@
 #ifndef GAME_TREE_H
 #define GAME_TREE_H
 
+#include "gomoku/freestyle/virtualboard.hpp"
+
 class GameTree {
  public:
   static const int CHESSBOARD_DIMEN = 15;
