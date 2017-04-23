@@ -49,3 +49,6 @@ void AI::think(int clientRow, int clientCol, int *row, int *col) {
 
 }
 
+bool AI::play(int row, int col) {
+  return tree->play(row, col);
+}
