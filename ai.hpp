@@ -35,7 +35,7 @@ class AI
   std::thread *backgroundThread;
   bool stopBackgroundThread;
   DisplayBoard *board;
-  GameTree *gametree;
+  GameTree *tree;
 
   /* the number of MCTS cycle*/
   int cycle;

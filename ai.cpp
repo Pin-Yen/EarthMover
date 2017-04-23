@@ -5,6 +5,8 @@
 AI::AI(int cycle, DisplayBoard *board) {
   this->cycle = cycle;
   this->board = board;
+
+
 }
 
 void AI::initialize() {
@@ -29,11 +31,12 @@ void AI::think(int clientRow, int clientCol, int *row, int *col) {
 
   if (backgroundThread != NULL) {
     stopBackgroundThread = true;
-    backgroundThread.join();
+    backgroundThread->join();
+    delete backgroundThread;
   }
 
   tree->MCTS(cycle);
-  tree->MCTSResult(row, col);
+  tree->MCTSResult(*row, *col);
 
   stopBackgroundThread = false;
   backgroundThread = new std::thread([tree](int maxCycle, bool &stop)
@@ -44,6 +47,3 @@ void AI::think(int clientRow, int clientCol, int *row, int *col) {
   // TODO: check if EM wins (again, an alternative is to let the board handle it)
 }
 
-AI::board = NULL;
-AI::tree = NULL;
-AI::backgroundThread = NULL;

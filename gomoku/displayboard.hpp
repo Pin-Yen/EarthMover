@@ -1,12 +1,12 @@
-#ifndef DISPLAYBOAARD_H_
-#define DISPLAYBOAARD_H_
+#ifndef DISPLAYBOARD_H_
+#define DISPLAYBOARD_H_
 
 class DisplayBoard {
  public:
   DisplayBoard();
 
   /* get user's input */
-  void getInput(int &row, int &col);
+  void getInput(int *row, int *col);
 
   /* puts a new chess, if the point is not empty or outofbound then return false */
   bool play(int row, int col);

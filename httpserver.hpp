@@ -19,7 +19,7 @@ class HttpServer
   ~HttpServer();
 
   /* listens for client connection, and process the request */
-  void listen();
+  void listenConnection();
 
  private:
   const int PORT_NUMBER = 1202;
@@ -56,7 +56,7 @@ class HttpServer::HttpResponse
   void setContentType(std::string fileExtension);
 
   /* sets the response body */
-  void setBody(File *file);
+  void setBody(std::ifstream *file);
 
   /* returns a string of the request */
   std::string getResponseString();
