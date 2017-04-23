@@ -3,11 +3,37 @@
 <head>
   <title></title>
 </head>
-<body>
-  <img src="board.png" id="imageBoard" width="525" height="525"
-       style="left: 20px; top: 20px; z-index: 1; position: absolute;">
-  <canvas id="canvasBoard" width="525" height="525"
-          style="left: 20px; top: 20px; z-index: 2; position: absolute;">
+<body style="margin: 0px;">
+  <div style="margin: 2px;">tool box here (new game, setting...)</div>
+  <span style="display: inline-block; background-color: #AAAA00;
+                position: absolute;
+                text-overflow: ellipsis; overflow: hidden;
+                width: 15%; left: 0px; height: 565px;">
+      Opp Information...
+      <br>
+      <br>
+      <div style="max-width: 100px; margin: auto; background-color: #00FF00">EM's ICON?</div>
+  </span>
+  <span style="display: inline-block; background-color: #AAAAAA;
+              position: relative; left: 15%; width: 70%; height: 565px;">
+    <img src="board.png" id="imageBoard" width="525" height="525"
+         style="left: 0; right: 0; margin: 20px auto; max-width: 100%;height: auto;
+                z-index: 1; position: absolute;">
+    <canvas id="canvasBoard" width="525" height="525"
+            style="left: 0; right: 0; margin: 20px auto; max-width: 100%; height: auto;
+                z-index: 2; position: absolute;"> </canvas>
+  </span>
+  <span style="display: inline-block; background-color: #AAAA00;
+               position: absolute;
+               text-overflow: ellipsis; overflow: hidden;
+               width: 15%; right: 0px; height: 565px;">
+      Self Information
+      <br>
+      <br>
+      <br>
+      <div style="background-color: #FF0000">maybe something like timer</div>
+  </span>
+
 </body>
 <script type="text/javascript">
   var mousePosX = -1, mousePosY = -1;
@@ -19,6 +45,8 @@
   var chessImage = new Array(6);
 
   var boardStatus = new Array(225);
+
+  const CHESS_DIMEN = 33;
 
   window.onload = function() {
     for (var i = boardStatus.length - 1; i >= 0; i--) {
@@ -39,8 +67,9 @@
 
   document.getElementById('canvasBoard').onmousemove = function(event) {
     // get the coordinate (0 ~ 14)
-    var x = Math.min(Math.floor((event.clientX - 20) / 35), 14),
-        y = Math.min(Math.floor((event.clientY - 20) / 35), 14);
+    var rect = this.getBoundingClientRect();
+    var x = Math.min(Math.floor((event.clientX - rect.left) / 35), 14),
+        y = Math.min(Math.floor((event.clientY - rect.top) / 35), 14);
 
     // if the position is empty
     if (!boardStatus[x * 15 + y]) {
@@ -48,16 +77,19 @@
       if (mousePosX != x || mousePosY != y) {
         var context = this.getContext("2d");
         // clear the previous image
-        context.clearRect(mousePosX * 35 + 3, mousePosY * 35 + 3, 29, 29);
+        context.clearRect(mousePosX * 35 + 1, mousePosY * 35 + 1,
+                          CHESS_DIMEN, CHESS_DIMEN);
         // draw image in new position
-        context.drawImage(chessImage[whoTurn * 3], x * 35 + 3, y * 35 + 3, 29, 29);
+        context.drawImage(chessImage[whoTurn * 3], x * 35 + 1, y * 35 + 1,
+                          CHESS_DIMEN, CHESS_DIMEN);
 
         // update mousePos
         mousePosX = x; mousePosY = y;
       }
     } else {
       // clear the previous image
-      this.getContext("2d").clearRect(mousePosX * 35 + 3, mousePosY * 35 + 3, 29, 29);
+      this.getContext("2d").clearRect(mousePosX * 35 + 1, mousePosY * 35 + 1,
+                                      CHESS_DIMEN, CHESS_DIMEN);
       // set mousePos to -1, -1
       mousePosX = -1; mousePosY = -1;
     }
@@ -65,15 +97,17 @@
 
   document.getElementById('canvasBoard').onmouseout = function() {
     // clear the previous image
-    this.getContext("2d").clearRect(mousePosX * 35 + 3, mousePosY * 35 + 3, 29, 29);
+    this.getContext("2d").clearRect(mousePosX * 35 + 1, mousePosY * 35 + 1,
+                                    CHESS_DIMEN, CHESS_DIMEN);
     // set mousePos to -1, -1
     mousePosX = -1; mousePosY = -1;
   }
 
   document.getElementById('canvasBoard').onclick = function(event) {
     // get the coordinate (0 ~ 14)
-    var x = Math.min(Math.floor((event.clientX - 20) / 35), 14),
-        y = Math.min(Math.floor((event.clientY - 20) / 35), 14);
+    var rect = this.getBoundingClientRect();
+    var x = Math.min(Math.floor((event.clientX - rect.left) / 35), 14),
+        y = Math.min(Math.floor((event.clientY - rect.top) / 35), 14);
 
     // if the position is empty
     if (!boardStatus[x * 15 + y]) {
@@ -88,14 +122,15 @@
     mousePosX = -1; mousePosY = -1;
 
     var context = document.getElementById('canvasBoard').getContext("2d");
-    context.drawImage(chessImage[whoTurn * 3 + 2], x * 35 + 3, y * 35 + 3, 29, 29);
+    context.drawImage(chessImage[whoTurn * 3 + 2], x * 35 + 1, y * 35 + 1,
+                      CHESS_DIMEN, CHESS_DIMEN);
 
     whoTurn = whoTurn * -1 + 1;
 
     if (lastPlayX > 0) {
-      context.clearRect(lastPlayX * 35 + 3, lastPlayY * 35 + 3, 29, 29);
+      context.clearRect(lastPlayX * 35 + 1, lastPlayY * 35 + 1, CHESS_DIMEN, CHESS_DIMEN);
       context.drawImage(chessImage[whoTurn * 3 + 1],
-                        lastPlayX * 35 + 3, lastPlayY * 35 + 3, 29, 29);
+                        lastPlayX * 35 + 1, lastPlayY * 35 + 1, CHESS_DIMEN, CHESS_DIMEN);
     }
     lastPlayX = x; lastPlayY = y;
   }
