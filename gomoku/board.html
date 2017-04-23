@@ -4,15 +4,10 @@
   <title></title>
 </head>
 <body>
-  <form>
-    <img src="board.png" id="imageBoard" width="525" height="525"
-         style="left: 20px; top: 20px; z-index: 1;
-                position: absolute;">
-    <canvas id="canvasBoard" width="525" height="525"
-            style="left: 20px; top: 20px; z-index: 2;
-                   position: absolute;"></canvas>
-
-  </form>
+  <img src="board.png" id="imageBoard" width="525" height="525"
+       style="left: 20px; top: 20px; z-index: 1; position: absolute;">
+  <canvas id="canvasBoard" width="525" height="525"
+          style="left: 20px; top: 20px; z-index: 2; position: absolute;">
 </body>
 <script type="text/javascript">
   var mousePosX = -1, mousePosY = -1;
@@ -53,16 +48,16 @@
       if (mousePosX != x || mousePosY != y) {
         var context = this.getContext("2d");
         // clear the previous image
-        context.clearRect(mousePosX * 35 + 4, mousePosY * 35 + 4, 27, 27);
+        context.clearRect(mousePosX * 35 + 3, mousePosY * 35 + 3, 29, 29);
         // draw image in new position
-        context.drawImage(chessImage[whoTurn * 3], x * 35 + 4, y * 35 + 4, 27, 27);
+        context.drawImage(chessImage[whoTurn * 3], x * 35 + 3, y * 35 + 3, 29, 29);
 
         // update mousePos
         mousePosX = x; mousePosY = y;
       }
     } else {
       // clear the previous image
-      this.getContext("2d").clearRect(mousePosX * 35 + 4, mousePosY * 35 + 4, 27, 27);
+      this.getContext("2d").clearRect(mousePosX * 35 + 3, mousePosY * 35 + 3, 29, 29);
       // set mousePos to -1, -1
       mousePosX = -1; mousePosY = -1;
     }
@@ -70,7 +65,7 @@
 
   document.getElementById('canvasBoard').onmouseout = function() {
     // clear the previous image
-    this.getContext("2d").clearRect(mousePosX * 35 + 4, mousePosY * 35 + 4, 27, 27);
+    this.getContext("2d").clearRect(mousePosX * 35 + 3, mousePosY * 35 + 3, 29, 29);
     // set mousePos to -1, -1
     mousePosX = -1; mousePosY = -1;
   }
@@ -93,14 +88,14 @@
     mousePosX = -1; mousePosY = -1;
 
     var context = document.getElementById('canvasBoard').getContext("2d");
-    context.drawImage(chessImage[whoTurn * 3 + 2], x * 35 + 4, y * 35 + 4, 27, 27);
+    context.drawImage(chessImage[whoTurn * 3 + 2], x * 35 + 3, y * 35 + 3, 29, 29);
 
     whoTurn = whoTurn * -1 + 1;
 
     if (lastPlayX > 0) {
-      context.clearRect(lastPlayX * 35 + 4, lastPlayY * 35 + 4, 27, 27);
+      context.clearRect(lastPlayX * 35 + 3, lastPlayY * 35 + 3, 29, 29);
       context.drawImage(chessImage[whoTurn * 3 + 1],
-                        lastPlayX * 35 + 4, lastPlayY * 35 + 4, 27, 27);
+                        lastPlayX * 35 + 3, lastPlayY * 35 + 3, 29, 29);
     }
     lastPlayX = x; lastPlayY = y;
   }
