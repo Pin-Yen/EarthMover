@@ -1,7 +1,11 @@
 #ifndef HTTP_SERVER_H_
 #define HTTP_SERVER_H_
 
+#include "ai.hpp"
+#include "gomoku/displayboard.hpp"
 
+#include <string>
+#include <fstream>
 #include <netinet/in.h> /* sockaddr_in*/
 
 class HttpServer
@@ -37,19 +41,8 @@ class HttpServer
 
   /* checks if the requested uri is permitted
    * returns false if not permitted */
-  bool sanitize(std::string uri) {
+  bool sanitize(std::string uri);
 
-    /* check if the uri is under /gomoku/src/ */
-    std::string allowedRoot("/gomoku/src/");
-    if(uri.find(allowedRoot) != 0)
-      return false;
-
-    /* check if the uri contains .. */
-    if(uri.find("..") != string::npos)
-      return false;
-
-    return true;
-  }
 
 };
 

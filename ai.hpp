@@ -1,6 +1,9 @@
 #ifndef AI_H_
 #define AI_H_
 
+#include "gomoku/displayboard.hpp"
+#include "gametree.hpp"
+#include <thread>
 
 class AI
 {
@@ -25,14 +28,14 @@ class AI
   /* plays a new point, returns true if someone wins after this move */
   bool play(int row, int col);
 
-  bool getWhoTurn() {return (bool)board->getWhoTurn();}
+  bool getWhoTurn() {return (bool)board->whoTurn();}
 
  private:
   /* this thread lets EM thinks in the background when it's the users turn */
   std::thread *backgroundThread;
   bool stopBackgroundThread;
   DisplayBoard *board;
-  Gametree *gametree;
+  GameTree *gametree;
 
   /* the number of MCTS cycle*/
   int cycle;

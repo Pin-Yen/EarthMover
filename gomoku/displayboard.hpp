@@ -1,3 +1,6 @@
+#ifndef DISPLAYBOAARD_H_
+#define DISPLAYBOAARD_H_
+
 class DisplayBoard {
  public:
   DisplayBoard();
@@ -35,3 +38,5 @@ class DisplayBoard {
   /* print a part of the board */
   void printBoard(int row, int col, int color);
 };
+
+#endif

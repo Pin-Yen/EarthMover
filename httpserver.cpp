@@ -153,6 +153,20 @@ void HttpServer::responseHttpError(int errorCode) {
   send(server, header, strlen(header), 0);
 }
 
+bool HttpServer::sanitize(std::string uri) {
+  /* check if the uri is under /gomoku/src/ */
+  std::string allowedRoot("/gomoku/src/");
+  if(uri.find(allowedRoot) != 0)
+    return false;
+
+    /* check if the uri contains .. */
+  if(uri.find("..") != string::npos)
+    return false;
+
+  return true;
+}
+
+
 HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
   statusCode = httpResponseCode;
   status.append("HTTP/1.1 ");
