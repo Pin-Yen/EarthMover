@@ -36,6 +36,7 @@ int main() {
       earthMover.think(inputRow, inputCol, &EMRow, &EMCol);
 
       board.getInput(&inputRow, &inputCol);
+      board.play(inputRow, inputCol);
 
       if (earthMover.play(inputRow, inputCol)) {
         /* someone wins */
