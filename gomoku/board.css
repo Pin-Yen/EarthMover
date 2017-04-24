@@ -1,0 +1,45 @@
+.board{
+  width: 525px;
+  height: 525px;
+  left: 0;
+  right: 0;
+  top: 20px;
+  margin: auto;
+  height: auto;
+  z-index: 2;
+  position: absolute;
+}
+
+#board_background{
+  display: inline-block;
+  background-color: #AAAAAA;
+  position: absolute;
+  left: 15%;
+  width: 70%;
+  height: 565px;
+  z-index: 0;
+}
+
+.information{
+  display: inline-block;
+  background-color: #AAAA00;
+  position: absolute;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 15%;
+  height: 565px;
+  z-index: -1;
+}
+
+@media screen and (max-width: 760px) {
+  #board_background{
+    left: 0px;
+    top: 120px;
+    width: 100%;
+  }
+
+  .information{
+    width: 50%;
+    height: 120px;
+  }
+}
