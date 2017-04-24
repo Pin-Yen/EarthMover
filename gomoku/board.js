@@ -30,8 +30,10 @@ chessImage[5].src = "chess_white_marked.png";
 canvas.onmousemove = function(event) {
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
-  var x = Math.min(Math.floor((event.clientX - rect.left) / 35), 14),
-      y = Math.min(Math.floor((event.clientY - rect.top) / 35), 14);
+  var scaling = this.scrollWidth / 525;
+
+  var x = Math.min(Math.floor((event.clientX - rect.left)  / (35 * scaling)), 14),
+      y = Math.min(Math.floor((event.clientY - rect.top) / (35 * scaling)), 14);
 
   // if the position is empty
   if (!boardStatus[x * 15 + y]) {
@@ -39,13 +41,13 @@ canvas.onmousemove = function(event) {
     if (mousePosX != x || mousePosY != y) {
       var context = this.getContext("2d");
       // clear the previous image
-      context.clearRect(mousePosX * 35 + 1,
-                        mousePosY * 35 + 1,
+      context.clearRect((mousePosX * 35 + 1),
+                        (mousePosY * 35 + 1),
                         CHESS_DIMEN, CHESS_DIMEN);
           // draw image in new position
       context.drawImage(chessImage[whoTurn * 3],
-                        x * 35 + 1,
-                        y * 35 + 1,
+                        (x * 35 + 1),
+                        (y * 35 + 1),
                         CHESS_DIMEN, CHESS_DIMEN);
 
       // update mousePos
@@ -54,8 +56,8 @@ canvas.onmousemove = function(event) {
   } else {
     if (mousePosX != -1) {
       // clear the previous image
-      this.getContext("2d").clearRect(mousePosX * 35 + 1,
-                                      mousePosY * 35 + 1,
+      this.getContext("2d").clearRect((mousePosX * 35 + 1) * scaling,
+                                      (mousePosY * 35 + 1) * scaling,
                                       CHESS_DIMEN, CHESS_DIMEN);
       // set mousePos to -1
       mousePosX = -1;
@@ -75,10 +77,12 @@ canvas.onmouseout = function() {
 }
 
 canvas.onclick = function(event) {
+
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
   var x = Math.min(Math.floor((event.clientX - rect.left) / 35), 14),
       y = Math.min(Math.floor((event.clientY - rect.top) / 35), 14);
+
 
   // if the position is empty
   if (!boardStatus[x * 15 + y]) {

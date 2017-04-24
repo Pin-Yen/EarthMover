@@ -4,26 +4,29 @@
   <title></title>
   <link rel="stylesheet" type="text/css" href="board.css">
 </head>
-<body style="margin: 0px;">
-  <div style="margin: 2px;">tool box here (new game, setting...)</div>
-  <div style="position: relative;">
-  <span class="information" style="left: 0px;">
+<body style="position: relative; margin: 0px;
+            height: 100%; width: 100%;">
+  <div id="toolbox">
+    tool box here (new game, setting...)
+  </div>
+  <div id="main">
+    <span class="information" style="left: 0px;">
       Opp Information...
       <br>
       <br>
-      <div style="max-width: 100px; margin: auto; background-color: #00FF00">EM's ICON?</div>
-  </span>
-  <span id="board_background">
-    <img src="board.png" id="imageBoard" class="board">
-    <canvas id="canvasBoard" class="board"> </canvas>
-  </span>
-  <span class="information" style="right: 0px;">
+      <div style="max-width: 100px; margin: auto; background-color: #00FF00;">EM's ICON?</div>
+    </span>
+    <span id="board_background">
+      <img src="board.png" id="imageBoard" class="board">
+      <canvas id="canvasBoard" class="board"> </canvas>
+    </span>
+    <span class="information" style="right: 0px;">
       Self Information
       <br>
       <br>
       <br>
       <div style="background-color: #FF0000">maybe something like timer</div>
-  </span>
+    </span>
   </div>
 
 </body>
