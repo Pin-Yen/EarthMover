@@ -80,9 +80,10 @@ canvas.onclick = function(event) {
 
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
-  var x = Math.min(Math.floor((event.clientX - rect.left) / 35), 14),
-      y = Math.min(Math.floor((event.clientY - rect.top) / 35), 14);
+  var scaling = this.scrollWidth / 525;
 
+  var x = Math.min(Math.floor((event.clientX - rect.left)  / (35 * scaling)), 14),
+      y = Math.min(Math.floor((event.clientY - rect.top) / (35 * scaling)), 14);
 
   // if the position is empty
   if (!boardStatus[x * 15 + y]) {
