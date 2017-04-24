@@ -6,7 +6,7 @@ AI::AI(int cycle, DisplayBoard *board) {
   this->cycle = cycle;
   this->board = board;
 
-
+  backgroundThread = NULL;
 }
 
 void AI::initialize() {
