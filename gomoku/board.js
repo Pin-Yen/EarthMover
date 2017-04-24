@@ -56,8 +56,8 @@ canvas.onmousemove = function(event) {
   } else {
     if (mousePosX != -1) {
       // clear the previous image
-      this.getContext("2d").clearRect((mousePosX * 35 + 1) * scaling,
-                                      (mousePosY * 35 + 1) * scaling,
+      this.getContext("2d").clearRect(mousePosX * 35 + 1,
+                                      mousePosY * 35 + 1,
                                       CHESS_DIMEN, CHESS_DIMEN);
       // set mousePos to -1
       mousePosX = -1;
