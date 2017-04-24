@@ -139,7 +139,7 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
     for (int r = 0; r < 15; ++r)
       for (int c = 0; c < 15; ++c) {
         int score = point[r][c]->absScore(whoTurn);
-        if (score * 8 < highestScore)
+        if (score * 8 < highestScore || (playNo < 5 && score < 140))
           point[r][c]->setRelScore(-1);
         else
           point[r][c]->setRelScore(score);
