@@ -53,12 +53,12 @@ canvas.onmousemove = function(event) {
     }
   } else {
     if (mousePosX != -1) {
-    // clear the previous image
+      // clear the previous image
       this.getContext("2d").clearRect(mousePosX * 35 + 1,
                                       mousePosY * 35 + 1,
                                       CHESS_DIMEN, CHESS_DIMEN);
-        // set mousePos to -1
-        mousePosX = -1;
+      // set mousePos to -1
+      mousePosX = -1;
     }
   }
 }
@@ -80,7 +80,7 @@ canvas.onclick = function(event) {
   var x = Math.min(Math.floor((event.clientX - rect.left) / 35), 14),
       y = Math.min(Math.floor((event.clientY - rect.top) / 35), 14);
 
-      // if the position is empty
+  // if the position is empty
   if (!boardStatus[x * 15 + y]) {
     play(x, y);
     post(x, y);
@@ -100,7 +100,7 @@ function play(x, y) {
 
   whoTurn = whoTurn * -1 + 1;
 
-  if (lastPlayX > 0) {
+  if (lastPlayX != -1) {
     context.clearRect(lastPlayX * 35 + 1,
                       lastPlayY * 35 + 1,
                       CHESS_DIMEN, CHESS_DIMEN);
