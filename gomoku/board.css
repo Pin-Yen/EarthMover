@@ -2,44 +2,51 @@ html {
   height: 100%;
 }
 
-#toolbox{
-  height: 4%;
-  background-color: #CCCCCC;
-}
-
-#main{
+body {
+  height: 100%;
+  margin: 0;
   position: relative;
-  height: 96%;
+  width: 100%;
 }
 
-.board{
+#toolbox {
+  background-color: #CCC;
+  height: 4%;
+}
+
+#main {
+  height: 96%;
+  position: relative;
+}
+
+.board {
+  bottom: 0;
   height: 95%;
-  width: auto;
   left: 0;
+  margin: auto;
+  position: absolute;
   right: 0;
   top: 0;
-  bottom: 0;
-  margin: auto;
+  width: auto;
   z-index: 2;
-  position: absolute;
 }
 
-#board_background{
+#board_background {
+  background-color: #AAA;
   display: inline-block;
-  background-color: #AAAAAA;
+  height: 100%;
   position: absolute;
   width: 100%;
-  height: 100%;
   z-index: 0;
 }
 
-.information{
+.information {
+  background-color: #AA0;
   display: inline-block;
-  background-color: #AAAA00;
+  height: 100%;
+  overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
-  overflow: hidden;
   width: 15%;
-  height: 100%;
   z-index: 1;
 }

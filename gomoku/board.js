@@ -11,7 +11,7 @@ for (var i = chessImage.length - 1; i >= 0; i--) {
 
 const CHESS_DIMEN = 33;
 
-var canvas = document.getElementById('canvasBoard');
+var canvas = document.getElementById('cvs_board');
 canvas.setAttribute('width', 525);
 canvas.setAttribute('height', 525);
 
@@ -130,4 +130,8 @@ function post(row, col) {
   }
 
   http.send(params);
+}
+
+document.getElementById('btn_new_game').onclick = function() {
+  alert("TODO: implement new game");
 }
