@@ -5,16 +5,8 @@
 AI::AI(int cycle, DisplayBoard *board) {
   this->cycle = cycle;
   this->board = board;
-
+  tree = new GameTree();
   backgroundThread = NULL;
-}
-
-void AI::initialize() {
-  assert(board == NULL);
-  board = new DisplayBoard();
-
-  assert(tree == NULL);
-  tree = new GameTree;
 }
 
 AI::~AI() {
@@ -41,7 +33,7 @@ void AI::think(int clientRow, int clientCol, int *row, int *col) {
 }
 
 bool AI::play(int row, int col) {
-  int result = tree->play(row, col);
+  bool hasSomeoneWin = tree->play(row, col);
 
   stopBackgroundThread = false;
   GameTree* treeRef = tree;
@@ -49,4 +41,5 @@ bool AI::play(int row, int col) {
   backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
                               { treeRef->MCTS(maxCycle, stop); },
                               100000, std::ref(stopBackgroundThread));
+  return hasSomeoneWin;
 }
