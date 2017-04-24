@@ -12,9 +12,6 @@ class AI
   /* cycle: nubmer of MCTS cycles */
   AI(int cycle, DisplayBoard *board);
 
-  /* initializes board & tree */
-  void initialize();
-
   ~AI();
 
   /* puts a new point on displayboard
