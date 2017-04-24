@@ -1,5 +1,6 @@
 html {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -9,39 +10,53 @@ body {
   width: 100%;
 }
 
+#toolbox button {
+  height: 100%;
+}
+
 #toolbox {
   background-color: #CCC;
-  height: 4%;
+  height: 5%;
+  position: relative;
+  z-index: 1;
 }
 
 #main {
-  height: 96%;
+  height: 95%;
   position: relative;
 }
 
 .board {
   bottom: 0;
-  height: 95%;
+  height: auto;
   left: 0;
   margin: auto;
   position: absolute;
   right: 0;
   top: 0;
-  width: auto;
+  width: 45%;
   z-index: 2;
 }
 
-#board_background {
-  background-color: #AAA;
+#background {
+  background: linear-gradient(to bottom right, white, gray, white, gray, white);
+  background: -moz-linear-gradient(bottom right, white, gray, white, gray, white);
+  background: -o-linear-gradient(bottom right, white, gray, white, gray, white);
+  background: -webkit-linear-gradient(left top, white, gray, white, gray, white);
+  bottom: 0;
   display: inline-block;
-  height: 100%;
+  margin: auto;
+  height: 100vw;
+  left: 0;
   position: absolute;
+  right: 0;
+  top: 0;
   width: 100%;
   z-index: 0;
 }
 
 .information {
-  background-color: #AA0;
+  background-color: rgba(200, 240, 255, 0.6);
   display: inline-block;
   height: 100%;
   overflow: hidden;
