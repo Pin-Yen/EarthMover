@@ -1,0 +1,67 @@
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  position: relative;
+  width: 100%;
+}
+
+#toolbox button {
+  height: 100%;
+}
+
+#toolbox {
+  background-color: #CCC;
+  height: 5%;
+  position: relative;
+  z-index: 1;
+}
+
+#main {
+  height: 95%;
+  position: relative;
+}
+
+.board {
+  bottom: 0;
+  height: auto;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 45%;
+  z-index: 2;
+}
+
+#background {
+  background: linear-gradient(to bottom right, white, gray, white, gray, white);
+  background: -moz-linear-gradient(bottom right, white, gray, white, gray, white);
+  background: -o-linear-gradient(bottom right, white, gray, white, gray, white);
+  background: -webkit-linear-gradient(left top, white, gray, white, gray, white);
+  bottom: 0;
+  display: inline-block;
+  margin: auto;
+  height: 100vw;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 0;
+}
+
+.information {
+  background-color: rgba(200, 240, 255, 0.6);
+  display: inline-block;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  width: 15%;
+  z-index: 1;
+}
