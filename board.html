@@ -5,29 +5,30 @@
   <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
 </head>
 <body>
-  <div id="toolbox">
+  <div class="toolbox top">
     <button id="btn_new_game">new game</button>
     tool box here (new game, setting...)
+  </div>
+  <div id="dialog">
+    <div class="dialog_body">
+      TODO: create new game
+      <button id="btn_dialog_ok">OK</button>
+    </div>
   </div>
   <div id="main">
     <span id="background"></span>
     <span class="inf opp">
       Opp Information...
-      <br>
-      <br>
-      <div style="max-width: 100px; margin: auto; background-color: #00FF00;">EM's ICON?</div>
     </span>
     <img src="gomoku/src/board.png" class="board">
       <canvas id="cvs_board" class="board"> </canvas>
     <span class="inf sel">
       Self Information
-      <br>
-      <br>
-      <br>
-      <div style="background-color: #FF0000">maybe something like timer</div>
     </span>
   </div>
-
+  <div class="toolbox bottom">
+    game control bar(pass, resign...)
+  </div>
 </body>
 <script type="text/javascript" src="gomoku/src/board.js"></script>
 </html>

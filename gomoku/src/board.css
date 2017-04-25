@@ -10,19 +10,55 @@ body {
   width: 100%;
 }
 
-#toolbox button {
+#dialog {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  position: fixed;
+  display: none;
+  width: 100%;
+  z-index: 10;
+}
+
+.dialog_body {
+  background-color: white;
+  bottom: 0;
+  height: 50%;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+}
+
+#btn_dialog_ok {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+}
+
+.toolbox button {
   height: 100%;
 }
 
-#toolbox {
+.toolbox {
   background-color: #CCC;
-  height: 6%;
+
   position: relative;
   z-index: 1;
 }
 
+.toolbox.top {
+  height: 5%;
+}
+
+.toolbox.bottom {
+  bottom: 0;
+  height: 10%;
+}
+
 #main {
-  height: 94%;
+  height: 85%;
   position: relative;
 }
 
@@ -67,12 +103,12 @@ body {
   }
 
   .board {
-    height: 70%;
+    height: 90%;
   }
 
   .inf {
     height: 100%;
-    width: 15%;
+    width: 12%;
   }
 
   .inf.opp {
@@ -95,7 +131,7 @@ body {
   }
 
   .inf {
-    height: 12%;
+    height: 10%;
     width: 100%;
   }
 
