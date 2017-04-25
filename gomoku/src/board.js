@@ -20,12 +20,12 @@ for (var i = boardStatus.length - 1; i >= 0; i--) {
   boardStatus[i] = false;
 }
 
-chessImage[0].src = "chess_black_transparent.png";
-chessImage[1].src = "chess_black.png";
-chessImage[2].src = "chess_black_marked.png";
-chessImage[3].src = "chess_white_transparent.png";
-chessImage[4].src = "chess_white.png";
-chessImage[5].src = "chess_white_marked.png";
+chessImage[0].src = "gomoku/src/chess_black_transparent.png";
+chessImage[1].src = "gomoku/src/chess_black.png";
+chessImage[2].src = "gomoku/src/chess_black_marked.png";
+chessImage[3].src = "gomoku/src/chess_white_transparent.png";
+chessImage[4].src = "gomoku/src/chess_white.png";
+chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
 canvas.onmousemove = function(event) {
   // get the coordinate (0 ~ 14)

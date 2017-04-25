@@ -72,7 +72,7 @@ void HttpServer::listenConnection() {
     std::cout << "path: " << directory << std::endl;
     /* if requested path is "/", redirect it to /gomoku/board.html */
     if (directory == "/") {
-      directory.append("gomoku/src/board.html");
+      directory.append("board.html");
     }
     std::cout << "path: " << directory << "end" << std::endl;
 
@@ -168,6 +168,7 @@ void HttpServer::responseHttpError(int errorCode) {
 }
 
 bool HttpServer::sanitize(std::string uri) {
+  if (uri == "/board.html") return true;
   /* check if the uri is under /gomoku/src/ */
   std::string allowedRoot("/gomoku/src/");
   if(uri.find(allowedRoot) != 0)
