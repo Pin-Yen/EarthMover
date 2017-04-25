@@ -59,16 +59,22 @@ void HttpServer::listenConnection() {
     /* parse request directory */
     int directoryStart = request.find("/");
     int directoryEnd = request.find(" ", directoryStart);
-    std::string directory = request.substr(directoryStart, directoryEnd - directoryStart + 1);
+    std::string directory = request.substr(directoryStart, directoryEnd - directoryStart );
 
     /* extract request body */
-    int bodyStart = (int)request.find("\r\n\r\n") + 4;
-    std::string requestBody = request.substr(bodyStart);
+    std::string requestBody;
+    int bodyStart = request.find("\r\n\r\n");
+    if (bodyStart != std::string::npos) {
+      bodyStart += 4;
+      requestBody = request.substr(bodyStart);
+    }
 
+    std::cout << "path: " << directory << std::endl;
     /* if requested path is "/", redirect it to /gomoku/board.html */
     if (directory == "/") {
       directory.append("gomoku/board.html");
     }
+    std::cout << "path: " << directory << "end" << std::endl;
 
     /* request handlers */
     if(directory == "/play") {
@@ -89,11 +95,13 @@ void HttpServer::listenConnection() {
     if (sanitize(directory)) {
         // if access to this directory is permitted
       std::ifstream resourceFile;
-        resourceFile.open(directory.substr(1).c_str()); /* use the sub-string from pos=1 to skip the first '/' in directory path */
+      resourceFile.open(directory.substr(1).c_str()); /* use the sub-string from pos=1 to skip the first '/' in directory path */
+      std::cout << "file path = " << directory.substr(1).c_str() << std::endl;
 
       if( !resourceFile.is_open()) {
         responseHttpError(404);
       } else {
+        std::cout << "200 ok" << std::endl;
         HttpResponse response(200);
         response.setContentType(directory.substr(directory.find_last_of(".")));
         response.setBody(&resourceFile);
@@ -103,6 +111,7 @@ void HttpServer::listenConnection() {
 
     } else {
       /* access denied */
+      std::cout << "access denied" << std::endl;
       responseHttpError(403);
     }
   }
