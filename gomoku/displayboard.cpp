@@ -34,10 +34,10 @@ void DisplayBoard::getInput(int *row, int *col) {
 
       /* get column*/
       *col = input[0];
-      if (*col >= 'A' && *col <= 'A' + CHESSBOARD_DIMEN) {
+      if (*col >= 'A' && *col < 'A' + CHESSBOARD_DIMEN) {
         *col -= 'A';
         validColumn = true;
-      } else if (*col >= 'a' && *col <= 'a' + CHESSBOARD_DIMEN) {
+      } else if (*col >= 'a' && *col < 'a' + CHESSBOARD_DIMEN) {
         *col -= 'a';
         validColumn = true;
       }
@@ -53,7 +53,9 @@ void DisplayBoard::getInput(int *row, int *col) {
         *row = std::stoi(input.substr(1, n - 1));
 
         if (*row >= 1 && *row <= CHESSBOARD_DIMEN) {
-          *row--;
+
+
+          (*row)--;
           validRow = true;
         }
       }
