@@ -83,28 +83,27 @@ void HttpServer::listenConnection() {
 
       requestAiPlay(row, col);
 
-    } else {
-      /* requesting some resource */
-      if (sanitize(directory)) {
+    }
+
+    /* requesting some resource */
+    if (sanitize(directory)) {
         // if access to this directory is permitted
-        std::ifstream resourceFile;
+      std::ifstream resourceFile;
         resourceFile.open(directory.substr(1).c_str()); /* use the sub-string from pos=1 to skip the first '/' in directory path */
 
-        if( !resourceFile.is_open()) {
-          responseHttpError(404);
-        } else {
-          HttpResponse response(200);
-          response.setContentType(directory.substr(directory.find_last_of(".")));
-          response.setBody(&resourceFile);
-          std::string responseData = response.getResponseString();
-          send(server, responseData.c_str(), responseData.length(), 0);
-        }
-
+      if( !resourceFile.is_open()) {
+        responseHttpError(404);
+      } else {
+        HttpResponse response(200);
+        response.setContentType(directory.substr(directory.find_last_of(".")));
+        response.setBody(&resourceFile);
+        std::string responseData = response.getResponseString();
+        send(server, responseData.c_str(), responseData.length(), 0);
       }
 
+    } else {
       /* access denied */
       responseHttpError(403);
-
     }
   }
 }
@@ -190,6 +189,10 @@ void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
     contentType.append("application/javascript");
   else if (fileExtension.compare(".html") == 0)
     contentType.append("text/html");
+  else if(fileExtension.compare(".css") == 0)
+    contentType.append("text/css");
+  else
+    std::cout << "unrecognized file type" << std::endl;
 
 }
 
