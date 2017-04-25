@@ -72,7 +72,7 @@ void HttpServer::listenConnection() {
     std::cout << "path: " << directory << std::endl;
     /* if requested path is "/", redirect it to /gomoku/board.html */
     if (directory == "/") {
-      directory.append("gomoku/board.html");
+      directory.append("gomoku/src/board.html");
     }
     std::cout << "path: " << directory << "end" << std::endl;
 
@@ -106,7 +106,9 @@ void HttpServer::listenConnection() {
         response.setContentType(directory.substr(directory.find_last_of(".")));
         response.setBody(&resourceFile);
         std::string responseData = response.getResponseString();
+        std::cout << responseData.c_str() << std::endl;
         send(server, responseData.c_str(), responseData.length(), 0);
+        std::cout << "sent!" << std::endl;
       }
 
     } else {
@@ -207,15 +209,16 @@ void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
 }
 
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
-  file->seekg(std::ios_base::end);
+  file->seekg(0, std::ios_base::end);
   int fileLength = (int)file->tellg() + 1;
+  std::cout << "file length: "<<fileLength << std::endl;
   /* max size for a source file is 5mb */
   const int MAX_SRC_FILE_SIZE = 5 * 1024 * 1024;
   assert (fileLength <= MAX_SRC_FILE_SIZE);
 
   char buffer[MAX_SRC_FILE_SIZE];
 
-  file->seekg(std::ios_base::beg);
+  file->seekg(0, std::ios_base::beg);
   file->read(buffer, fileLength);
 
   body = std::string(buffer);
@@ -228,6 +231,6 @@ std::string HttpServer::HttpResponse::getResponseString() {
           .append(contentType).append("\r\n")
           .append("\r\n")
           .append(body);
-
+          std::cout << response << std::endl;
   return response;
 }
