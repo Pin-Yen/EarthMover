@@ -148,6 +148,7 @@ void HttpServer::responseHttpError(int errorCode) {
 
   switch (errorCode) {
     case 400: sprintf(header, headerTemplate, errorCode, "BAD REQUEST"); break;
+    case 403: sprintf(header, headerTemplate, errorCode, "FORBIDDEN"); break;
     case 404: sprintf(header, headerTemplate, errorCode, "NOT FOUND"); break;
     case 500: sprintf(header, headerTemplate, errorCode, "INTERNAL SERVER ERROR"); break;
     default: assert(0);
