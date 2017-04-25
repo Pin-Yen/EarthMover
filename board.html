@@ -2,18 +2,23 @@
 <html>
 <head>
   <title></title>
-  <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
 </head>
 <body>
-  <div class="toolbox top">
-    <button id="btn_new_game">new game</button>
-    tool box here (new game, setting...)
-  </div>
   <div id="dialog">
     <div class="dialog_body">
-      TODO: create new game
+      Black:
+      <input type="radio" name="black" value="human" checked="true">human
+      <input type="radio" name="black" value="computer">computer<br>
+      <br>
+      White:
+      <input type="radio" name="whitw" value="human" checked="true">human
+      <input type="radio" name="white" value="computer">computer<br>
       <button id="btn_dialog_ok">OK</button>
     </div>
+  </div>
+  <div class="tool">
+    <button id="btn_new_game">new game</button>
   </div>
   <div id="main">
     <span id="background"></span>
@@ -26,7 +31,7 @@
       Self Information
     </span>
   </div>
-  <div class="toolbox bottom">
+  <div class="control">
     game control bar(pass, resign...)
   </div>
 </body>

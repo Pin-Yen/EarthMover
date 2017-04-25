@@ -137,6 +137,7 @@ document.getElementById('btn_new_game').onclick = function() {
   document.getElementById('dialog').style.display = "block";
 }
 
+
 document.getElementById('btn_dialog_ok').onclick = function() {
   document.getElementById('dialog').style.display = "none";
 }

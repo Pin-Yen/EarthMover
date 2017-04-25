@@ -13,7 +13,7 @@ body {
 #dialog {
   background-color: rgba(0, 0, 0, 0.5);
   height: 100%;
-  position: fixed;
+  position: absolute;
   display: none;
   width: 100%;
   z-index: 10;
@@ -37,24 +37,23 @@ body {
   right: 0;
 }
 
-.toolbox button {
+.tool button {
   height: 100%;
 }
 
-.toolbox {
+.tool {
   background-color: #CCC;
-
+  height: 5%;
   position: relative;
   z-index: 1;
 }
 
-.toolbox.top {
-  height: 5%;
-}
-
-.toolbox.bottom {
+.control {
+  background-color: #AAA;
   bottom: 0;
   height: 10%;
+  position: relative;
+  z-index: 1;
 }
 
 #main {
