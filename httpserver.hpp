@@ -64,6 +64,7 @@ class HttpServer::HttpResponse
  private:
   int statusCode;
   std::string contentType;
+  std::string contentLength;
   std::string body;
   std::string status;
 };

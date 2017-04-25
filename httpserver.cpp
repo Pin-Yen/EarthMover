@@ -210,7 +210,7 @@ void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
 
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   file->seekg(0, std::ios_base::end);
-  int fileLength = (int)file->tellg() + 1;
+  int fileLength = (int)file->tellg();
   std::cout << "file length: "<<fileLength << std::endl;
   /* max size for a source file is 5mb */
   const int MAX_SRC_FILE_SIZE = 5 * 1024 * 1024;
@@ -222,6 +222,12 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   file->read(buffer, fileLength);
 
   body = std::string(buffer);
+  // set content-length
+  char temp[30];
+  sprintf(temp, "Content-Length: %d", fileLength);
+  // sprintf(temp, "Content-Length: 500");
+  contentLength = std::string(temp);
+
 }
 
 std::string HttpServer::HttpResponse::getResponseString() {
@@ -229,6 +235,7 @@ std::string HttpServer::HttpResponse::getResponseString() {
 
   response.append(status).append("\r\n")
           .append(contentType).append("\r\n")
+          .append(contentLength).append("\r\n")
           .append("\r\n")
           .append(body);
           std::cout << response << std::endl;
