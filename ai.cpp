@@ -17,15 +17,18 @@ AI::~AI() {
 }
 
 void AI::think(int clientRow, int clientCol, int *row, int *col) {
-  // TODO, check if the user wins (or, an alternative, let the board handle it)
-  if( clientCol != -1)
-    int result = tree->play(*row, *col);
-
   if (backgroundThread != NULL) {
     stopBackgroundThread = true;
     backgroundThread->join();
     delete backgroundThread;
   }
+
+
+
+  // TODO, check if the user wins (or, an alternative, let the board handle it)
+  if( clientCol != -1)
+    int result = tree->play(*row, *col);
+
 
   tree->MCTS(cycle);
   tree->MCTSResult(*row, *col);
