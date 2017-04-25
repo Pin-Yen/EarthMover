@@ -31,10 +31,8 @@ body {
   width: 50%;
 }
 
-#btn_dialog_ok {
-  bottom: 0;
-  position: absolute;
-  right: 0;
+.btn_dialog {
+  float: right;
 }
 
 .tool button {
