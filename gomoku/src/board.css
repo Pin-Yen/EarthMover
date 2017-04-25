@@ -16,25 +16,23 @@ body {
 
 #toolbox {
   background-color: #CCC;
-  height: 5%;
+  height: 6%;
   position: relative;
   z-index: 1;
 }
 
 #main {
-  height: 95%;
+  height: 94%;
   position: relative;
 }
 
 .board {
   bottom: 0;
-  height: auto;
   left: 0;
   margin: auto;
   position: absolute;
   right: 0;
   top: 0;
-  width: 45%;
   z-index: 2;
 }
 
@@ -46,22 +44,66 @@ body {
   bottom: 0;
   display: inline-block;
   margin: auto;
-  height: 100vw;
   left: 0;
   position: absolute;
   right: 0;
   top: 0;
-  width: 100%;
   z-index: 0;
 }
 
-.information {
+.inf {
   background-color: rgba(200, 240, 255, 0.6);
   display: inline-block;
-  height: 100%;
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
-  width: 15%;
   z-index: 1;
+}
+
+@media screen and (orientation: landscape) {
+  #background {
+    height: 100vw;
+    width: 100%;
+  }
+
+  .board {
+    height: 70%;
+  }
+
+  .inf {
+    height: 100%;
+    width: 15%;
+  }
+
+  .inf.opp {
+    left: 0;
+  }
+
+  .inf.sel {
+    right: 0;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  #background {
+    height: 100%;
+    width: 100vh;
+  }
+
+  .board {
+    width: 70%;
+  }
+
+  .inf {
+    height: 12%;
+    width: 100%;
+  }
+
+  .inf.opp {
+    top: 0;
+  }
+
+  .inf.sel {
+    bottom: 0;
+  }
 }
