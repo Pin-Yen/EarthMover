@@ -51,21 +51,27 @@ class HttpServer::HttpResponse
   /* creates a httpResponse with statusCode = httpResponseCode*/
   HttpResponse(int httpResponseCode);
 
+  ~HttpResponse();
+
   /* set content-type header according to fileExtension */
   void setContentType(std::string fileExtension);
 
   /* sets the response body */
   void setBody(std::ifstream *file);
 
-  /* returns a string of the request */
-  std::string getResponseString();
+  std::string getHeaderString();
 
+  char* getBody();
+
+  int getBodyLength();
 
  private:
   int statusCode;
   std::string contentType;
   std::string contentLength;
-  std::string body;
+  char *body;
+  int bodyLength;
+
   std::string status;
 };
 

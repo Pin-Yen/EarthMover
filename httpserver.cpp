@@ -49,7 +49,7 @@ void HttpServer::listenConnection() {
 
   while (true) {
     /* store request in buffer */
-    const int REQUEST_BUFFER_SIZE = 1000;
+    const int REQUEST_BUFFER_SIZE = 4000;
     char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
     recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
     std::cout << "request:\n" << requestBuffer;
@@ -105,9 +105,13 @@ void HttpServer::listenConnection() {
         HttpResponse response(200);
         response.setContentType(directory.substr(directory.find_last_of(".")));
         response.setBody(&resourceFile);
-        std::string responseData = response.getResponseString();
-        std::cout << responseData.c_str() << std::endl;
-        send(server, responseData.c_str(), responseData.length(), 0);
+        std::string header = response.getHeaderString();
+        std::cout << header << std::endl;
+        // send header
+        send(server, header.c_str(), header.length(), 0);
+        // send body
+        send(server, response.getBody(), response.getBodyLength(), 0);
+
         std::cout << "sent!" << std::endl;
       }
 
@@ -212,33 +216,40 @@ void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   file->seekg(0, std::ios_base::end);
   int fileLength = (int)file->tellg();
-  std::cout << "file length: "<<fileLength << std::endl;
-  /* max size for a source file is 5mb */
-  const int MAX_SRC_FILE_SIZE = 5 * 1024 * 1024;
-  assert (fileLength <= MAX_SRC_FILE_SIZE);
+  bodyLength = fileLength;
 
-  char buffer[MAX_SRC_FILE_SIZE];
+  std::cout << "file length: "<<fileLength << std::endl;
+
+  body = new char[fileLength];
 
   file->seekg(0, std::ios_base::beg);
-  file->read(buffer, fileLength);
+  file->read(body, fileLength);
 
-  body = std::string(buffer);
-  // set content-length
+  /* set content-length header */
   char temp[30];
   sprintf(temp, "Content-Length: %d", fileLength);
-  // sprintf(temp, "Content-Length: 500");
   contentLength = std::string(temp);
 
 }
+std::string HttpServer::HttpResponse::getHeaderString(){
+  std::string header;
 
-std::string HttpServer::HttpResponse::getResponseString() {
-  std::string response;
-
-  response.append(status).append("\r\n")
+  header.append(status).append("\r\n")
           .append(contentType).append("\r\n")
           .append(contentLength).append("\r\n")
-          .append("\r\n")
-          .append(body);
-          std::cout << response << std::endl;
-  return response;
+          .append("\r\n");
+
+  return header;
+}
+
+char* HttpServer::HttpResponse::getBody() {
+  return body;
+}
+
+int HttpServer::HttpResponse::getBodyLength() {
+  return bodyLength;
+}
+
+HttpServer::HttpResponse::~HttpResponse() {
+  delete[] body;
 }
