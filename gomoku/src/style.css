@@ -1,3 +1,9 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 html {
   height: 100%;
   overflow: hidden;
@@ -10,29 +16,55 @@ body {
   width: 100%;
 }
 
-#dialog {
+.dialog_background {
   background-color: rgba(0, 0, 0, 0.5);
+  display: none;
   height: 100%;
   position: absolute;
-  display: none;
   width: 100%;
   z-index: 10;
 }
 
 .dialog_body {
-  background-color: white;
+  background-color: #FFE;
   bottom: 0;
-  height: 50%;
+  height: 200px;
   left: 0;
   margin: auto;
   position: absolute;
   right: 0;
   top: 0;
-  width: 50%;
+  width: 300px;
+}
+
+.dialog_btn_bar {
+  background-color: #EEE;
+  bottom: 0;
+  text-align: right;
+  position: absolute;
+  width: 100%;
+}
+
+.dialog_radio_block {
+  border-color: #CCC;
+  border-width: 2px;
+  border-style: solid;
+  display: inline-block;
+  margin: 8px;
+  padding: 2px;
+  width: 134px;
+}
+
+.dialog_radio_block.left {
+  margin-right: 4px;
+}
+
+.dialog_radio_block.right {
+  margin-left: 4px;
 }
 
 .btn_dialog {
-  float: right;
+  margin: 2px;
 }
 
 .tool button {

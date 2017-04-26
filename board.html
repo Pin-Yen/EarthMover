@@ -5,20 +5,23 @@
   <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
 </head>
 <body>
-  <div id="dialog">
+  <div id="dialog" class="dialog_background">
     <div class="dialog_body">
-      <span>
+      <span class="dialog_radio_block left">
         Black:<br>
         <input type="radio" name="black" value="human" checked="true">human<br>
         <input type="radio" name="black" value="computer">computer<br>
       </span>
-      <span>
+      <span class="dialog_radio_block right">
         White:<br>
         <input type="radio" name="white" value="human" checked="true">human<br>
         <input type="radio" name="white" value="computer">computer<br>
       </span>
-      <button id="btn_dialog_ok" class="btn_dialog">OK</button>
-      <button id="btn_dialog_cancel" class="btn_dialog">Cancel</button>
+      <br><br><br>RESERVED SBACE...<br>
+      <div class="dialog_btn_bar">
+        <button id="btn_dialog_ok" class="btn_dialog">OK</button>
+        <button id="btn_dialog_cancel" class="btn_dialog">Cancel</button>
+      </div>
     </div>
   </div>
   <div class="tool">
@@ -27,7 +30,7 @@
   <div id="main">
     <span id="background"></span>
     <span class="inf opp">
-      Opp Information...
+      Opp Information
     </span>
     <img src="gomoku/src/board.png" class="board">
       <canvas id="cvs_board" class="board"> </canvas>
@@ -37,6 +40,7 @@
   </div>
   <div class="control">
     game control bar(pass, resign...)
+    <br>RESERVED SBACE...
   </div>
 </body>
 <script type="text/javascript" src="gomoku/src/board.js"></script>
