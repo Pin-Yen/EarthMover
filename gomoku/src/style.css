@@ -1,6 +1,7 @@
-html {
-  height: 100%;
-  overflow: hidden;
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
@@ -10,51 +11,28 @@ body {
   width: 100%;
 }
 
-#dialog {
-  background-color: rgba(0, 0, 0, 0.5);
+html {
   height: 100%;
-  position: fixed;
-  display: none;
-  width: 100%;
-  z-index: 10;
+  overflow: hidden;
 }
 
-.dialog_body {
-  background-color: white;
-  bottom: 0;
-  height: 50%;
-  left: 0;
-  margin: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 50%;
-}
-
-#btn_dialog_ok {
-  bottom: 0;
-  position: absolute;
-  right: 0;
-}
-
-.toolbox button {
+.tool button {
   height: 100%;
 }
 
-.toolbox {
+.tool {
   background-color: #CCC;
-
+  height: 5%;
   position: relative;
   z-index: 1;
 }
 
-.toolbox.top {
-  height: 5%;
-}
-
-.toolbox.bottom {
+.control {
+  background-color: #AAA;
   bottom: 0;
   height: 10%;
+  position: relative;
+  z-index: 1;
 }
 
 #main {
