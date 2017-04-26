@@ -1,4 +1,4 @@
-.dialog_background {
+.dialog-background {
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
   height: 100%;
@@ -7,7 +7,7 @@
   z-index: 10;
 }
 
-.dialog_body {
+.dialog-body {
   background-color: #FFE;
   bottom: 0;
   height: 200px;
@@ -19,7 +19,7 @@
   width: 300px;
 }
 
-.dialog_btn_bar {
+.dialog-btn-bar {
   background-color: #EEE;
   bottom: 0;
   text-align: right;
@@ -27,24 +27,37 @@
   width: 100%;
 }
 
-.dialog_radio_block {
+.dialog-radio-block {
   border-color: #CCC;
   border-width: 2px;
   border-style: solid;
   display: inline-block;
-  margin: 8px;
-  padding: 2px;
-  width: 134px;
+  padding: 4px;
+  position: absolute;
 }
 
-.dialog_radio_block.left {
-  margin-right: 4px;
+.dialog-radio-block.left {
+  height: 76px;
+  left: 8px;
+  top: 12px;
+  width: 138px;
 }
 
-.dialog_radio_block.right {
-  margin-left: 4px;
+.dialog-radio-block.right {
+  height: 76px;
+  right: 8px;
+  top: 12px;
+  width: 138px;
 }
 
-.btn_dialog {
+.dialog-radio-block.bottom {
+  height: 40px;
+  left: 8px;
+  text-align: center;
+  top: 100px;
+  width: 284px;
+}
+
+.btn-dialog {
   margin: 2px;
 }

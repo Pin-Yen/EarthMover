@@ -11,7 +11,7 @@ for (var i = chessImage.length - 1; i >= 0; i--) {
 
 const CHESS_DIMEN = 33;
 
-var canvas = document.getElementById('cvs_board');
+var canvas = document.getElementById('cvs-board');
 canvas.setAttribute('width', 525);
 canvas.setAttribute('height', 525);
 
@@ -133,15 +133,15 @@ function post(row, col) {
 }
 
 
-document.getElementById('btn_new_game').onclick = function() {
+document.getElementById('btn-new-game').onclick = function() {
   document.getElementById('dialog').style.display = "block";
 }
 
 
-document.getElementById('btn_dialog_ok').onclick = function() {
+document.getElementById('btn-dialog-ok').onclick = function() {
   document.getElementById('dialog').style.display = "none";
 }
 
-document.getElementById('btn_dialog_cancel').onclick = function() {
+document.getElementById('btn-dialog-cancel').onclick = function() {
   document.getElementById('dialog').style.display = "none";
 }
