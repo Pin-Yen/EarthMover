@@ -4,6 +4,7 @@
   <title></title>
   <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/dialogstyle.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/playerinfstyle.css">
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game' -->
@@ -44,15 +45,25 @@
     <!-- this backgroung is square so the border will go beyond the screen -->
     <span id="background"></span>
 
-    <span class="inf opp">
-      Opp Information
+    <span class="player-inf opp">
+      <img src="gomoku/src/icon.png" class="player-inf-icon">
+      <div class="player-inf-background1">
+        <img src="gomoku/src/chess_black.png" class="player-inf-color">
+        Timer
+      </div>
+      <span class="player-inf-name">EarthMover</span>
     </span>
     <!-- board image and canvas that used to draw chess on board -->
     <img src="gomoku/src/board.png" class="board">
     <canvas id="cvs-board" class="board"></canvas>
 
-    <span class="inf sel">
-      Self Information
+    <span class="player-inf sel">
+      <img src="gomoku/src/icon.png" class="player-inf-icon">
+      <div class="player-inf-background1">
+        <img src="gomoku/src/chess_white.png" class="player-inf-color">
+        Timer
+      </div>
+      <span class="player-inf-name">You</span>
     </span>
   </div>
   <!-- game control bar -->
