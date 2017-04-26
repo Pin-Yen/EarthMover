@@ -6,19 +6,20 @@
   <link rel="stylesheet" type="text/css" href="gomoku/src/dialogstyle.css">
 </head>
 <body>
-  <div id="dialog" class="dialog_background">
-    <div class="dialog_body">
-      <span class="dialog_radio_block left">
+  <!-- this dialog will show when click 'btn-new-game' -->
+  <div id="dialog" class="dialog-background">
+    <div class="dialog-body">
+      <span class="dialog-radio-block left">
         Black:<br>
         <input type="radio" name="black" value="human" checked="true">human<br>
         <input type="radio" name="black" value="computer">computer<br>
       </span>
-      <span class="dialog_radio_block right">
+      <span class="dialog-radio-block right">
         White:<br>
         <input type="radio" name="white" value="human" checked="true">human<br>
         <input type="radio" name="white" value="computer">computer<br>
       </span>
-      <span class="dialog_radio_block bottom">
+      <span class="dialog-radio-block bottom">
         Computer Level
         <select>
           <option>NORMAL</option>
@@ -26,26 +27,35 @@
           <option>MASTER</option>
         </select>
       </span>
-      <div class="dialog_btn_bar">
-        <button id="btn_dialog_ok" class="btn_dialog">OK</button>
-        <button id="btn_dialog_cancel" class="btn_dialog">Cancel</button>
+      <div class="dialog-btn-bar">
+        <button id="btn-dialog-ok" class="btn-dialog">OK</button>
+        <button id="btn-dialog-cancel" class="btn-dialog">Cancel</button>
       </div>
     </div>
   </div>
+
+  <!-- tool bar at the top of the screen -->
   <div class="tool">
-    <button id="btn_new_game">new game</button>
+    <button id="btn-new-game">new game</button>
   </div>
+
+  <!-- main div -->
   <div id="main">
+    <!-- this backgroung is square so the border will go beyond the screen -->
     <span id="background"></span>
+
     <span class="inf opp">
       Opp Information
     </span>
+    <!-- board image and canvas that used to draw chess on board -->
     <img src="gomoku/src/board.png" class="board">
-      <canvas id="cvs_board" class="board"> </canvas>
+    <canvas id="cvs-board" class="board"></canvas>
+
     <span class="inf sel">
       Self Information
     </span>
   </div>
+  <!-- game control bar -->
   <div class="control">
     game control bar(pass, resign...)
     <br>RESERVED SPACE...

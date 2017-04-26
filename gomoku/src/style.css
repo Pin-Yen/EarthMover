@@ -17,11 +17,9 @@ html {
 }
 
 .tool button {
-  bottom: 0;
   height: 90%;
-  margin: auto;
-  position: absolute;
-  top: 0;
+  position: relative;
+  top: 5%;
 }
 
 .tool {
@@ -30,6 +28,7 @@ html {
   background: -o-linear-gradient(bottom, #7DF, #BEF);
   background: -webkit-linear-gradient(top, #7DF, #BEF);
   height: 5%;
+  line-height: 90%;
   position: relative;
   z-index: 1;
 }
