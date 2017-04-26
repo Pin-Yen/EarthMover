@@ -52,13 +52,21 @@ void HttpServer::listenConnection() {
     const int REQUEST_BUFFER_SIZE = 4000;
     char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
     recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
-    std::cout << "request:\n" << requestBuffer;
+    std::cout << "recieving something" << std::flush;
+    std::cout << "request:\n" << requestBuffer <<std::flush;
 
     std::string request(requestBuffer);
+    std::cout << "requestBufferLen:" << request.length() << std::endl;
+    /* chrome sends useless empty requests */
+    if (request.length() == 0) {
+      responseHttpError(400);
+      continue;
+    }
 
     /* parse request directory */
     int directoryStart = request.find("/");
     int directoryEnd = request.find(" ", directoryStart);
+    assert(directoryStart >= 0 &&  directoryEnd < 150);
     std::string directory = request.substr(directoryStart, directoryEnd - directoryStart );
 
     /* extract request body */
@@ -74,7 +82,6 @@ void HttpServer::listenConnection() {
     if (directory == "/") {
       directory.append("board.html");
     }
-    std::cout << "path: " << directory << "end" << std::endl;
 
     /* request handlers */
     if(directory == "/play") {
@@ -90,12 +97,16 @@ void HttpServer::listenConnection() {
       requestAiPlay(row, col);
 
     }
+    // favicon
+    if (directory == "/favicon.ico") {
+      directory = std::string("/gomoku/src/chess_white.png");
+    }
 
     /* requesting some resource */
     if (sanitize(directory)) {
         // if access to this directory is permitted
       std::ifstream resourceFile;
-      resourceFile.open(directory.substr(1).c_str()); /* use the sub-string from pos=1 to skip the first '/' in directory path */
+      resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary); /* use the sub-string from pos=1 to skip the first '/' in directory path */
       std::cout << "file path = " << directory.substr(1).c_str() << std::endl;
 
       if( !resourceFile.is_open()) {
