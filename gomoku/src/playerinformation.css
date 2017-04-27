@@ -24,6 +24,8 @@
 }
 
 .pi-icon {
+  border-color: rgba(205, 242, 255, 0.8);
+  border-style: outset;
   position: absolute;
 }
 
@@ -63,7 +65,7 @@
   right: 5%;
 }
 
-@media screen and (min-aspect-ratio: 6/5) {
+@media screen and (min-aspect-ratio: 19/20) {
   .player-information {
     border-width: .5vw;
     height: 86vh;
@@ -135,10 +137,10 @@
   }
 }
 
-@media screen and (max-aspect-ratio: 6/5) {
+@media screen and (max-aspect-ratio: 19/20) {
   .player-information {
     border-width: .5vh;
-    height: 8.5vh;
+    height: 9vh;
     width: 100vw;
   }
 
@@ -153,7 +155,7 @@
   }
 
   .pi-icon {
-    height: 6.5vh;
+    height: 7vh;
     top: .5vh;
     position: absolute;
     width: auto;
@@ -191,7 +193,7 @@
 
   .pi-name {
     font-size: 3vh;
-    height: 5.5vh;
+    height: 6vh;
     line-height: 5.5vh;
     position: absolute;
     text-align: center;

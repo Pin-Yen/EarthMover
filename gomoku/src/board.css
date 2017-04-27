@@ -1,4 +1,6 @@
 .board {
+  border-color: black;
+  border-style: outset;
   bottom: 0;
   display: inline-block;
   margin: auto;
@@ -39,23 +41,30 @@
   }
 }
 
-@media screen and (min-aspect-ratio: 6/5) {
+@media screen and (min-aspect-ratio: 11/10) {
   .board {
-    height: 85%;
+    border-width: .88vh;
+    height: 88%;
   }
 }
 
-@media screen and (max-aspect-ratio: 6/5) {
-
-  @media screen and (min-aspect-ratio: 4/5) {
-    .board {
-      height: 75%;
-    }
+@media screen and (max-aspect-ratio: 11/10) and (min-aspect-ratio: 19/20) {
+  .board {
+    border-width: .70vw;
+    width: 67%;
   }
+}
 
-  @media screen and (max-aspect-ratio: 4/5) {
-    .board {
-      width: 80%;
-    }
+@media screen and (max-aspect-ratio: 19/20) and (min-aspect-ratio: 7/10) {
+  .board {
+    border-width: .74vh;
+    height: 74%;
+  }
+}
+
+@media screen and (max-aspect-ratio: 7/10) {
+  .board {
+    border-width: .95vw;
+    width: 90%;
   }
 }
