@@ -1,3 +1,12 @@
+.player-inf {
+  background-color: rgba(200, 240, 255, 0.6);
+  display: inline-block;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  z-index: 1;
+}
+
 .player-inf-background.opp {
   background: linear-gradient(to bottom, #888, #555, #666, #777, #888, #999);
   background: -moz-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
@@ -12,115 +21,157 @@
   background: -webkit-linear-gradient(top, #ccc, #eee, #ccc, #bbb, #aaa, #999);
 }
 
+.player-inf-timer {
+  left: 30%;
+  margin: auto;
+  text-align: center;
+  padding: 0;
+  position: absolute;
+  width: 70%;
+  bottom: 0;
+}
+
+.player-inf-timer.opp {
+  color: white;
+  right: 0;
+}
+
+.player-inf-timer.sel {
+  left: 0;
+  color: black;
+}
+
+.player-inf-color {
+  bottom: 0;
+  height: auto;
+  margin: auto;
+  top: 0;
+  position: absolute;
+  width: 20%;
+}
+
+.player-inf-color.opp {
+  left: 5%;
+}
+
+.player-inf-color.sel {
+  right: 5%;
+}
+
 @media screen and (min-aspect-ratio: 6/5) {
+  .player-inf {
+    height: 86vh;
+    width: 14vw;
+  }
+
+  .player-inf.opp {
+    left: 0;
+  }
+
+  .player-inf.sel {
+    right: 0;
+  }
+
   .player-inf-icon {
     height: auto;
-    margin: 16%;
+    margin: 2vw;
     position: absolute;
-    width: 64%;
+    width: 10vw;
   }
 
   .player-inf-background {
     border-radius: 3vw;
     height: 4vw;
     left: 0;
-    margin: 96% auto;
+    margin: 14vw auto;
     position: absolute;
     right: 0;
     width: 84%;
   }
 
-  .player-inf-color {
-    bottom: 0;
-    height: auto;
-    margin: auto;
-    top: 0;
-    position: absolute;
-    width: 20%;
-  }
-
-  .player-inf-color.opp {
-    left: 5%;
-  }
-
-  .player-inf-color.sel {
-    right: 5%;
-  }
-
   .player-inf-timer {
-    font-size: 2vw;
+    font-size: 2.4vw;
     height: 4vw;
-    left: 30%;
-    margin: auto;
     line-height: 4vw;
-    text-align: center;
-    padding: 0;
-    position: absolute;
-    width: 70%;
-    bottom: 0;
   }
 
   .player-inf-name {
-    height: 10%;
-    margin: 150% 10%;
-    position: absolute;
-    width: auto;
-  }
-
-  .player-inf-timer {
-    font-size: 2vw;
+    font-size: 1.6vw;
     height: 4vw;
-    margin: auto;
     line-height: 4vw;
-    text-align: center;
-    padding: 0;
+    margin: 18vw 10%;
     position: absolute;
-    width: 70%;
-    bottom: 0;
-  }
-
-  .player-inf-timer.opp {
-    color: white;
-    right: 0;
-  }
-
-  .player-inf-timer.sel {
-    left: 0;
-    color: black;
+    text-align: center;
+    width: 80%;
   }
 }
 
 @media screen and (max-aspect-ratio: 6/5) {
+  .player-inf {
+    height: 8.5vh;
+    width: 100vw;
+  }
+
+  .player-inf.opp {
+    top: 0;
+  }
+
+  .player-inf.sel {
+    bottom: 0;
+  }
+
   .player-inf-icon {
-  height: 64%;
-  top: 16%;
-  left: 10%;
-  position: absolute;
-  width: auto;
-}
+    height: 6.5vh;
+    top: 1vh;
+    position: absolute;
+    width: auto;
+  }
 
-.player-inf-background {
-  background-color: #EEF;
-  left: 20%;
-  height: 80%;
-  top: 10%;
-  position: absolute;
-  width: 32%;
-}
+  .player-inf-icon.opp {
+    left: 1vh;
+  }
 
-.player-inf-color {
-  height: 60%;
-  left: 30%;
-  top: 20%;
-  position: relative;
-  width: auto;
-}
+  .player-inf-icon.sel {
+    right: 1vh;
+  }
 
-.player-inf-name {
-  height: 60%;
-  top: 20%;
-  left: 50%;
-  position: absolute;
-  width: auto;
-}
+  .player-inf-background {
+    border-radius: 3vh;
+    height: 5.5vh;
+    position: absolute;
+    top: 1.5vh;
+    width: 20vh;
+  }
+
+  .player-inf-background.opp {
+    left: 8.5vh;
+  }
+
+  .player-inf-background.sel {
+    right: 8.5vh;
+  }
+
+  .player-inf-timer {
+    font-size: 3.2vh;
+    height: 5.5vh;
+    line-height: 5.5vh;
+  }
+
+  .player-inf-name {
+    font-size: 3vh;
+    height: 5.5vh;
+    line-height: 5.5vh;
+    position: absolute;
+    text-align: center;
+    top: 1.5vh;
+    width: auto;
+  }
+
+  .player-inf-name.opp {
+    left: 30vh;
+  }
+
+  .player-inf-name.sel {
+    right: 30vh;
+  }
 }

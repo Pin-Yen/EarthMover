@@ -23,15 +23,6 @@
   z-index: 0;
 }
 
-.player-inf {
-  background-color: rgba(200, 240, 255, 0.6);
-  display: inline-block;
-  overflow: hidden;
-  position: absolute;
-  text-overflow: ellipsis;
-  z-index: 1;
-}
-
 @media screen and (orientation: landscape) {
   #background {
     height: 100vw;
@@ -50,19 +41,6 @@
   .board {
     height: 85%;
   }
-
-  .player-inf {
-    height: 100%;
-    width: 14%;
-  }
-
-  .player-inf.opp {
-    left: 0;
-  }
-
-  .player-inf.sel {
-    right: 0;
-  }
 }
 
 @media screen and (max-aspect-ratio: 6/5) {
@@ -77,18 +55,5 @@
     .board {
       width: 80%;
     }
-  }
-
-  .player-inf {
-    height: 10%;
-    width: 100%;
-  }
-
-  .player-inf.opp {
-    top: 0;
-  }
-
-  .player-inf.sel {
-    bottom: 0;
   }
 }
