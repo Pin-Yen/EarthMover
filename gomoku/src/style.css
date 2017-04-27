@@ -17,10 +17,13 @@ html {
 }
 
 .tool button {
-  height: 90%;
-  position: relative;
+  bottom: 0;
   font-size: 3vh;
-  top: 5%;
+  height: 90%;
+  margin: auto .4vh;
+  padding: 0 1vh;
+  position: absolute;
+  top: 0;
 }
 
 .tool {
@@ -44,86 +47,4 @@ html {
 #main {
   height: 86%;
   position: relative;
-}
-
-.board {
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 2;
-}
-
-#background {
-  background: linear-gradient(to bottom right, white, gray, white, gray, white);
-  background: -moz-linear-gradient(bottom right, white, gray, white, gray, white);
-  background: -o-linear-gradient(bottom right, white, gray, white, gray, white);
-  background: -webkit-linear-gradient(left top, white, gray, white, gray, white);
-  bottom: 0;
-  display: inline-block;
-  margin: auto;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 0;
-}
-
-.player-inf {
-  background-color: rgba(200, 240, 255, 0.6);
-  display: inline-block;
-  overflow: hidden;
-  position: absolute;
-  text-overflow: ellipsis;
-  z-index: 1;
-}
-
-@media screen and (orientation: landscape) {
-  #background {
-    height: 100vw;
-    width: 100vw;
-  }
-
-  .board {
-    height: 85%;
-  }
-
-  .player-inf {
-    height: 100%;
-    width: 12%;
-  }
-
-  .player-inf.opp {
-    left: 0;
-  }
-
-  .player-inf.sel {
-    right: 0;
-  }
-}
-
-@media screen and (orientation: portrait) {
-  #background {
-    height: 100vh;
-    width: 100vh;
-  }
-
-  .board {
-    width: 65%;
-  }
-
-  .player-inf {
-    height: 10%;
-    width: 100%;
-  }
-
-  .player-inf.opp {
-    top: 0;
-  }
-
-  .player-inf.sel {
-    bottom: 0;
-  }
 }
