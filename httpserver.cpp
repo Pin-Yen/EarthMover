@@ -37,7 +37,7 @@ HttpServer::HttpServer(AI *earthMover, DisplayBoard *board) {
 }
 
 void HttpServer::listenConnection() {
-  listen(client, 1);
+  listen(client, 5);
 
   socklen_t size = sizeof(serverAddress);
   server = accept(client, (struct sockaddr*)&serverAddress, &size);
@@ -46,12 +46,18 @@ void HttpServer::listenConnection() {
     return;
   }
 
-
+  int consecutiveEmptyRequests = 0;
   while (true) {
+    /* outputs client port number (only works for ipv4) */
+    struct sockaddr_in *clientAddr = (struct sockaddr_in*) &serverAddress;
+    int clientPort = ntohs(clientAddr->sin_port);
+    std::cout << "client port: " << clientPort << std::endl;
+
     /* store request in buffer */
     const int REQUEST_BUFFER_SIZE = 4000;
     char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
-    recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
+    int recvReturnValue = recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
+    std::cout << "recv return value: " << recvReturnValue << std::endl;
     std::cout << "recieving something" << std::flush;
     std::cout << "request:\n" << requestBuffer <<std::flush;
 
@@ -60,6 +66,11 @@ void HttpServer::listenConnection() {
     /* chrome sends useless empty requests */
     if (request.length() == 0) {
       responseHttpError(400);
+      std::cout << "empty response\n"<<std::endl;
+      if (consecutiveEmptyRequests > 100)
+        close(server);
+      else
+        consecutiveEmptyRequests++;
       continue;
     }
 
@@ -248,6 +259,7 @@ std::string HttpServer::HttpResponse::getHeaderString(){
   header.append(status).append("\r\n")
           .append(contentType).append("\r\n")
           .append(contentLength).append("\r\n")
+          .append("Connection: Closed").append("\r\n")
           .append("\r\n");
 
   return header;
