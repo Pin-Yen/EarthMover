@@ -79,7 +79,6 @@ canvas.onmouseout = function() {
 }
 
 canvas.onclick = function(event) {
-
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
   var scaling = this.scrollWidth / 525;
@@ -140,10 +139,41 @@ document.getElementById('btn-new-game').onclick = function() {
 }
 
 
-document.getElementById('btn-dialog-ok').onclick = function() {
+document.getElementById('btn-dialog-cancel').onclick = function() {
   document.getElementById('dialog').style.display = "none";
 }
 
-document.getElementById('btn-dialog-cancel').onclick = function() {
+document.getElementById('btn-dialog-ok').onclick = function() {
+  // get the black/white player's ratio buttons' result
+  var black = document.getElementsByName('black');
+  var blackresult;
+  for (var i = black.length - 1; i >= 0; i--) {
+    if (black[i].check) {
+      blackresult = black[i].value;
+      break;
+    }
+  }
+  var white = document.getElementsByName('white');
+  var whiteresult;
+  for (var i = white.length - 1; i >= 0; i--) {
+    if (white[i].check) {
+      whiteresult = white[i].value;
+      break;
+    }
+  }
+
+  var result = { black: blackresult, white: whiteresult};
+
+  var http = new XMLHttpRequest();
+  http.open('POST', '/play');
+
+  http.onreadystatechange = function() {
+    if (http.readyState == 4 && http.status == 200) {
+      alert(http.responseText);
+    }
+  };
+
+  http.send(result);
+
   document.getElementById('dialog').style.display = "none";
 }
