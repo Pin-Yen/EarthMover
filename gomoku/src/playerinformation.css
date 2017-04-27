@@ -171,9 +171,9 @@
 
   .pi-background {
     border-radius: 3vh;
-    height: 80%;
+    height: 6vh;
     position: absolute;
-    top: 10%;
+    top: 1vh;
     width: 20vh;
   }
 
@@ -187,14 +187,14 @@
 
   .pi-timer {
     font-size: 3.2vh;
-    height: 5.5vh;
-    line-height: 5.5vh;
+    height: 6vh;
+    line-height: 6vh;
   }
 
   .pi-name {
     font-size: 3vh;
     height: 6vh;
-    line-height: 5.5vh;
+    line-height: 6vh;
     position: absolute;
     text-align: center;
     top: 1vh;
