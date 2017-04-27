@@ -89,7 +89,8 @@ canvas.onclick = function(event) {
   // if the position is empty
   if (!boardStatus[x * 15 + y]) {
     play(x, y);
-    post(x, y);
+    var params = { row: x, col: y };
+    post(params, 'play');
   }
 }
 
@@ -119,10 +120,10 @@ function play(x, y) {
   lastPlayX = x; lastPlayY = y;
 }
 
-function post(row, col) {
+// post request, pareams should be json type
+function post(params, path) {
   var http = new XMLHttpRequest();
-  http.open('POST', '/play');
-  var params = { row: row, col: col };
+  http.open('POST', path);
 
   http.onreadystatechange = function() {
     if (http.readyState == 4 && http.status == 200) {
@@ -130,7 +131,7 @@ function post(row, col) {
     }
   };
 
-  http.send(params);
+  http.send(JSON.stringify(params));
 }
 
 
@@ -148,7 +149,7 @@ document.getElementById('btn-dialog-ok').onclick = function() {
   var black = document.getElementsByName('black');
   var blackresult;
   for (var i = black.length - 1; i >= 0; i--) {
-    if (black[i].check) {
+    if (black[i].checked) {
       blackresult = black[i].value;
       break;
     }
@@ -156,7 +157,7 @@ document.getElementById('btn-dialog-ok').onclick = function() {
   var white = document.getElementsByName('white');
   var whiteresult;
   for (var i = white.length - 1; i >= 0; i--) {
-    if (white[i].check) {
+    if (white[i].checked) {
       whiteresult = white[i].value;
       break;
     }
@@ -164,16 +165,7 @@ document.getElementById('btn-dialog-ok').onclick = function() {
 
   var result = { black: blackresult, white: whiteresult};
 
-  var http = new XMLHttpRequest();
-  http.open('POST', '/play');
-
-  http.onreadystatechange = function() {
-    if (http.readyState == 4 && http.status == 200) {
-      alert(http.responseText);
-    }
-  };
-
-  http.send(result);
+  post(result, 'start');
 
   document.getElementById('dialog').style.display = "none";
 }
