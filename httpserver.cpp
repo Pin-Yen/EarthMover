@@ -40,26 +40,33 @@ void HttpServer::listenConnection() {
   listen(client, 1);
 
   socklen_t size = sizeof(serverAddress);
-  server = accept(client, (struct sockaddr*)&serverAddress, &size);
-  if (server < 0) {
-    std::cout <<"Failed to accept" << std::endl;
-    return;
-  }
 
-
+  int consecutiveEmptyRequests = 0;
   while (true) {
+    // accepts a new connection from the connection queue
+    server = accept(client, (struct sockaddr*)&serverAddress, &size);
+    if (server < 0) {
+      std::cout <<"Failed to accept" << std::endl;
+      return;
+    }
+
+    /* outputs client port number (only works for ipv4) */
+    struct sockaddr_in *clientAddr = (struct sockaddr_in*) &serverAddress;
+    int clientPort = ntohs(clientAddr->sin_port);
+    std::cout << "client port: " << clientPort << std::endl;
+
     /* store request in buffer */
     const int REQUEST_BUFFER_SIZE = 4000;
     char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
-    recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
-    std::cout << "recieving something" << std::flush;
+    int recvReturnValue = recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
     std::cout << "request:\n" << requestBuffer <<std::flush;
 
     std::string request(requestBuffer);
     std::cout << "requestBufferLen:" << request.length() << std::endl;
-    /* chrome sends useless empty requests */
+
     if (request.length() == 0) {
       responseHttpError(400);
+      std::cout << "received empty request"<<std::endl;
       continue;
     }
 
@@ -77,7 +84,6 @@ void HttpServer::listenConnection() {
       requestBody = request.substr(bodyStart);
     }
 
-    std::cout << "path: " << directory << std::endl;
     /* if requested path is "/", redirect it to /gomoku/board.html */
     if (directory == "/") {
       directory.append("board.html");
@@ -107,7 +113,6 @@ void HttpServer::listenConnection() {
         // if access to this directory is permitted
       std::ifstream resourceFile;
       resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary); /* use the sub-string from pos=1 to skip the first '/' in directory path */
-      std::cout << "file path = " << directory.substr(1).c_str() << std::endl;
 
       if( !resourceFile.is_open()) {
         responseHttpError(404);
@@ -131,6 +136,8 @@ void HttpServer::listenConnection() {
       std::cout << "access denied" << std::endl;
       responseHttpError(403);
     }
+
+    close(server);
   }
 }
 
@@ -248,6 +255,7 @@ std::string HttpServer::HttpResponse::getHeaderString(){
   header.append(status).append("\r\n")
           .append(contentType).append("\r\n")
           .append(contentLength).append("\r\n")
+          .append("Connection: closed").append("\r\n")
           .append("\r\n");
 
   return header;
