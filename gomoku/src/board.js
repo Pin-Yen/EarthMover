@@ -121,7 +121,7 @@ function play(x, y) {
 }
 
 function post(row, col) {
-  var http = XMLHttpRequest();
+  var http = new XMLHttpRequest();
   http.open('POST', '/play');
   var params = { row: row, col: col };
 
@@ -129,7 +129,7 @@ function post(row, col) {
     if (http.readyState == 4 && http.status == 200) {
       alert(http.responseText);
     }
-  }
+  };
 
   http.send(params);
 }
