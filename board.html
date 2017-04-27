@@ -47,27 +47,32 @@
     <!-- this backgroung is square so the border will go beyond the screen -->
     <span id="background"></span>
 
-    <span class="player-inf opp">
-      <img src="gomoku/src/icon.png" class="player-inf-icon opp">
-      <div class="player-inf-background opp">
-        <img src="gomoku/src/chess_black.png" class="player-inf-color opp">
-        <span class="player-inf-timer opp">00:00</span>
+    <!-- opponent player information
+         NOTE: in this scope, player information is abridged as pi -->
+    <span class="player-information opp">
+      <img src="gomoku/src/icon.png" class="pi-icon opp">
+      <div class="pi-background opp">
+        <img src="gomoku/src/chess_black.png" class="pi-color opp">
+        <span class="pi-timer opp">00:00</span>
       </div>
-      <span class="player-inf-name opp">EarthMover</span>
+      <span class="pi-name opp">EarthMover</span>
     </span>
     <!-- board image and canvas that used to draw chess on board -->
     <img src="gomoku/src/board.png" class="board">
     <canvas id="cvs-board" class="board"></canvas>
 
-    <span class="player-inf sel">
-      <img src="gomoku/src/icon.png" class="player-inf-icon sel">
-      <div class="player-inf-background sel">
-        <img src="gomoku/src/chess_white.png" class="player-inf-color sel">
-        <span class="player-inf-timer sel">00:00</span>
+    <!-- self player information
+         NOTE: in this scope, player information is abridged as pi -->
+    <span class="player-information sel">
+      <img src="gomoku/src/icon.png" class="pi-icon sel">
+      <div class="pi-background sel">
+        <img src="gomoku/src/chess_white.png" class="pi-color sel">
+        <span class="pi-timer sel">00:00</span>
       </div>
-      <span class="player-inf-name sel">You</span>
+      <span class="pi-name sel">You</span>
     </span>
   </div>
+
   <!-- game control bar -->
   <div class="control">
     game control bar(pass, resign...)

@@ -1,7 +1,8 @@
 .board {
   bottom: 0;
-  left: 0;
+  display: inline-block;
   margin: auto;
+  left: 0;
   position: absolute;
   right: 0;
   top: 0;
@@ -13,19 +14,18 @@
   background: -moz-linear-gradient(bottom right, white, gray, white, gray, white);
   background: -o-linear-gradient(bottom right, white, gray, white, gray, white);
   background: -webkit-linear-gradient(left top, white, gray, white, gray, white);
-  bottom: 0;
   display: inline-block;
-  margin: auto;
-  left: 0;
+  left: 50%;
   position: absolute;
-  right: 0;
-  top: 0;
+  top: 50%;
   z-index: 0;
 }
 
 @media screen and (orientation: landscape) {
   #background {
     height: 100vw;
+    margin-left: -50vw;
+    margin-top: -50vw;
     width: 100vw;
   }
 }
@@ -33,6 +33,8 @@
 @media screen and (orientation: portrait) {
   #background {
     height: 100vh;
+    margin-left: -50vh;
+    margin-top: -50vh;
     width: 100vh;
   }
 }
