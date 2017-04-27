@@ -146,6 +146,7 @@ document.getElementById('btn-dialog-cancel').onclick = function() {
 
 document.getElementById('btn-dialog-ok').onclick = function() {
   // get the black/white player's ratio buttons' result
+  /*
   var black = document.getElementsByName('black');
   var blackresult;
   for (var i = black.length - 1; i >= 0; i--) {
@@ -161,9 +162,12 @@ document.getElementById('btn-dialog-ok').onclick = function() {
       whiteresult = white[i].value;
       break;
     }
-  }
+  }*/
 
-  var result = { black: blackresult, white: whiteresult};
+  var black = document.querySelector('input[name="black"]:checked').value,
+      white = document.querySelector('input[name="white"]:checked').value;
+
+  var result = { black: black, white: white};
 
   post(result, 'start');
 
