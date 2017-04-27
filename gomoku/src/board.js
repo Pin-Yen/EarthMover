@@ -8,19 +8,6 @@ var chessImage = new Array(6);
 for (var i = chessImage.length - 1; i >= 0; i--) {
   chessImage[i] = new Image();
 }
-
-const CHESS_DIMEN = 33;
-
-var canvas = document.getElementById('cvs-board');
-canvas.setAttribute('width', 525);
-canvas.setAttribute('height', 525);
-
-var boardStatus = new Array(225);
-for (var i = boardStatus.length - 1; i >= 0; i--) {
-  boardStatus[i] = false;
-}
-
-
 chessImage[0].src = "gomoku/src/chess_black_transparent.png";
 chessImage[1].src = "gomoku/src/chess_black.png";
 chessImage[2].src = "gomoku/src/chess_black_marked.png";
@@ -28,6 +15,17 @@ chessImage[3].src = "gomoku/src/chess_white_transparent.png";
 chessImage[4].src = "gomoku/src/chess_white.png";
 chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
+const CHESS_DIMEN = 33;
+
+var canvas = document.getElementById('cvs-board');
+canvas.setAttribute('width', 525);
+canvas.setAttribute('height', 525);
+
+// board status array
+var boardStatus = new Array(225);
+for (var i = boardStatus.length - 1; i >= 0; i--) {
+  boardStatus[i] = false;
+}
 
 canvas.onmousemove = function(event) {
   // get the coordinate (0 ~ 14)
@@ -136,36 +134,25 @@ function post(params, path) {
 
 
 document.getElementById('btn-new-game').onclick = function() {
+  // set dialog visibility
   document.getElementById('dialog').style.display = "block";
 }
 
 
 document.getElementById('btn-dialog-cancel').onclick = function() {
+  // close dialog
   document.getElementById('dialog').style.display = "none";
 }
 
 document.getElementById('btn-dialog-ok').onclick = function() {
   // get the black/white player's ratio buttons' result
-  var black = document.getElementsByName('black');
-  var blackresult;
-  for (var i = black.length - 1; i >= 0; i--) {
-    if (black[i].checked) {
-      blackresult = black[i].value;
-      break;
-    }
-  }
-  var white = document.getElementsByName('white');
-  var whiteresult;
-  for (var i = white.length - 1; i >= 0; i--) {
-    if (white[i].checked) {
-      whiteresult = white[i].value;
-      break;
-    }
-  }
+  var black = document.querySelector('input[name="black"]:checked').value,
+      white = document.querySelector('input[name="white"]:checked').value;
 
-  var result = { black: blackresult, white: whiteresult};
+  var result = { black: black, white: white};
 
   post(result, 'start');
 
+  // close dialog
   document.getElementById('dialog').style.display = "none";
 }
