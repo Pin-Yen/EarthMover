@@ -48,7 +48,7 @@
 
 @media screen and (min-aspect-ratio: 6/5) {
   .board {
-    height: 82%;
+    height: 85%;
   }
 
   .player-inf {
@@ -66,8 +66,17 @@
 }
 
 @media screen and (max-aspect-ratio: 6/5) {
-  .board {
-    width: 65%;
+
+  @media screen and (min-aspect-ratio: 4/5) {
+    .board {
+      height: 75%;
+    }
+  }
+
+  @media screen and (max-aspect-ratio: 4/5) {
+    .board {
+      width: 80%;
+    }
   }
 
   .player-inf {
