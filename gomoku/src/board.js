@@ -1,5 +1,5 @@
 var gameStarted = false;
-var youTurn = false;
+var boardEnable = false;
 
 var mousePosX = -1, mousePosY;
 var lastPlayX = -1, lastPlayY;
@@ -31,7 +31,7 @@ for (var i = boardStatus.length - 1; i >= 0; i--) {
 }
 
 canvas.onmousemove = function(event) {
-  if (!youTurn) return;
+  if (!boardEnable) return;
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
   var scaling = this.scrollWidth / 525;
@@ -70,7 +70,7 @@ canvas.onmousemove = function(event) {
 }
 
 canvas.onmouseout = function() {
-  if (!youTurn) return;
+  if (!boardEnable) return;
   if (mousePosX != -1) {
     // clear the previous image
     this.getContext("2d").clearRect(mousePosX * 35 + 1,
@@ -88,7 +88,7 @@ canvas.onclick = function(event) {
     return;
   }
 
-  if (!youTurn) return;
+  if (!boardEnable) return;
 
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
@@ -100,7 +100,7 @@ canvas.onclick = function(event) {
   // if the position is empty
   if (!boardStatus[x * 15 + y]) {
     play(x, y);
-    var params = { row: x, col: y };
+    var params = { row: y, col: x };
     post(params, 'play');
   }
 }
@@ -177,7 +177,7 @@ document.getElementById('btn-dialog-ok').onclick = function() {
     document.getElementById('pi-icon-opp').src =
       (result.white == 'human' ? 'gomoku/src/human.png' : 'gomoku/src/icon.png');
 
-    youTurn = true;
+    boardEnable = true;
   } else {
     document.getElementById('pi-icon-opp').src = 'gomoku/src/icon.png';
     if (result.white == 'human') {
@@ -197,7 +197,7 @@ document.getElementById('btn-dialog-ok').onclick = function() {
       document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
       document.getElementById('pi-icon-sel').src = 'gomoku/src/icon.png';
     }
-    youTurn = false;
+    boardEnable = false;
   }
 
   gameStarted = true;
