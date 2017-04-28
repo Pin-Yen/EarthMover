@@ -53,6 +53,7 @@ void HttpServer::listenConnection() {
     /* outputs client port number (only works for ipv4) */
     struct sockaddr_in *clientAddr = (struct sockaddr_in*) &serverAddress;
     int clientPort = ntohs(clientAddr->sin_port);
+
     std::cout << "client port: " << clientPort << std::endl;
 
     /* store request in buffer */
@@ -92,12 +93,12 @@ void HttpServer::listenConnection() {
     /* request handlers */
     if(directory == "/play") {
       /* extract row & col from encoded request body */
-      int rowPosStart = requestBody.find("row=") + 4;
-      int rowPosEnd = requestBody.find("&",rowPosStart);
+      int rowPosStart = requestBody.find("\"row\":") + 6;
+      int rowPosEnd = requestBody.find(",",rowPosStart);
       int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
 
-      int colPosStart = requestBody.find("col=") + 4;
-      int colPosEnd = requestBody.find("\0",colPosStart);
+      int colPosStart = requestBody.find("\"col\":") + 6;
+      int colPosEnd = requestBody.find("}",colPosStart);
       int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
 
       requestAiPlay(row, col);
