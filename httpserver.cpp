@@ -1,6 +1,7 @@
 #include "httpserver.hpp"
 #include "ai.hpp"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <assert.h>
@@ -86,16 +87,22 @@ void HttpServer::listenConnection() {
 
     if (directory == "/play") {
        /* extract row & col from encoded request body */
-      int rowPosStart = requestBody.find("\"row\":") + 6;
-      int rowPosEnd = requestBody.find(",",rowPosStart);
-      int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
+      int row = atoi(findAttributeInJson(requestBody, "row").c_str());
+      int col = atoi(findAttributeInJson(requestBody, "col").c_str());
 
-      int colPosStart = requestBody.find("\"col\":") + 6;
-      int colPosEnd = requestBody.find("}",colPosStart);
-      int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
+      requestAiPlay(row, col, false);
 
-      requestAiPlay(row, col);
-    } else {
+    } else if (directory == "/start") {
+
+      if (findAttributeInJson(requestBody, "black") == "computer")
+        isBlackAi = true;
+      if (findAttributeInJson(requestBody, "white") == "computer")
+        isWhiteAi = true;
+
+      if (isBlackAi)
+        requestAiPlay(-1, -1, true);
+    }
+    else {
 
       /* redirect path */
       if (directory == "/")
@@ -137,25 +144,32 @@ void HttpServer::listenConnection() {
   }
 }
 
-void HttpServer::requestAiPlay(int clientRow, int clientCol) {
-  /* play client's move */
-  if( !board->play(clientRow, clientCol)) {
+void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
+  int gameStatus;
+
+  /* play client's move if it is not the first move and not both players are ai */
+  if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
+    /* play client's move */
+    if( !board->play(clientRow, clientCol)) {
     /* invalid client play, either there's bug in client-side's chessboard script,
      * or the user is manually posting wrong data */
 
-    responseHttpError(400);
-    return;
+      responseHttpError(400);
+      return;
+    }
+    gameStatus = earthMover->play(clientRow, clientCol);
+    // TODO: handle win / lose
   }
-  int gameStatus = earthMover->play(clientRow, clientCol);
-  // TODO: handle win / lose
-
 
   int EMRow, EMCol;
   earthMover->think(clientRow,clientCol, &EMRow, &EMCol);
 
-  board->play(EMRow, EMCol);
-  gameStatus = earthMover->play(EMRow, EMCol);
-  // TODO: handle win / lose
+  /* if at least one player is ai, play ai's move on the board */
+  if (isBlackAi || isWhiteAi) {
+    board->play(EMRow, EMCol);
+    gameStatus = earthMover->play(EMRow, EMCol);
+    // TODO: handle win / lose
+  }
 
   /* return EM's play to client */
   char responseBody[50];
@@ -199,6 +213,23 @@ bool HttpServer::sanitize(std::string uri) {
   return true;
 }
 
+std::string HttpServer::findAttributeInJson(std::string json, const char* rawAttr) {
+  std::string attr(rawAttr);
+
+  int startPos = json.find("\"" + attr + "\":") + attr.length() + 3;
+  int endPos = std::min(json.find(",", startPos), json.find("}", startPos));
+
+  assert(endPos != std::string::npos && startPos != std::string::npos);
+  std::string value = json.substr(startPos, endPos);
+
+  /* if the value is string type, erase its qoutation marks */
+  if (value.front() == '\"' && value.back() == '\"') {
+    value.erase(value.length() - 1, 1);
+    value.erase(0, 1);
+  }
+
+  return value;
+}
 
 HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
   statusCode = httpResponseCode;
