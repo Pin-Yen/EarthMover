@@ -1,4 +1,4 @@
-var gameStarted = false;
+var game = { black: 'human', white: 'computer'};
 var boardEnable = false;
 
 var mousePosX = -1, mousePosY;
@@ -129,6 +129,12 @@ function play(x, y) {
   }
 
   lastPlayX = x; lastPlayY = y;
+
+  if ((whoTurn == 0 && game.black == 'computer') ||
+      (whoTurn == 1 && game.white == 'computer'))
+    boardEnable = false;
+  else
+    boardEnable = true;
 }
 
 // post request, pareams should be json type
@@ -138,7 +144,8 @@ function post(params, path) {
 
   http.onreadystatechange = function() {
     if (http.readyState == 4 && http.status == 200) {
-      alert(http.responseText);
+      var response = JSON.parse(http.responseText);
+      play(response.col, response.row);
     }
   };
 
@@ -162,11 +169,11 @@ document.getElementById('btn-dialog-ok').onclick = function() {
   var black = document.querySelector('input[name="black"]:checked').value,
       white = document.querySelector('input[name="white"]:checked').value;
 
-  var result = { black: black, white: white};
+  game = { black: black, white: white};
 
-  post(result, 'start');
+  post(game, 'start');
 
-  if (result.black == 'human') {
+  if (game.black == 'human') {
     document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_black.png';
     document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_white.png';
     document.getElementById('pi-background-sel').className = 'pi-background sel black';
@@ -175,12 +182,12 @@ document.getElementById('btn-dialog-ok').onclick = function() {
     document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
     document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
     document.getElementById('pi-icon-opp').src =
-      (result.white == 'human' ? 'gomoku/src/human.png' : 'gomoku/src/icon.png');
+      (game.white == 'human' ? 'gomoku/src/human.png' : 'gomoku/src/icon.png');
 
     boardEnable = true;
   } else {
     document.getElementById('pi-icon-opp').src = 'gomoku/src/icon.png';
-    if (result.white == 'human') {
+    if (game.white == 'human') {
       document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_white.png';
       document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_black.png';
       document.getElementById('pi-background-sel').className = 'pi-background sel white';
