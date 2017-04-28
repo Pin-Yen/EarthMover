@@ -1,5 +1,6 @@
 var game = { black: 'human', white: 'computer'};
 var boardEnable = false;
+var gameStarted = false;
 
 var mousePosX = -1, mousePosY;
 var lastPlayX = -1, lastPlayY;
