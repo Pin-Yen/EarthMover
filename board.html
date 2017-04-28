@@ -9,20 +9,23 @@
   <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
 </head>
 <body>
-  <!-- this dialog will show when click 'btn-new-game' -->
-  <div id="dialog" class="dialog-background">
-    <div class="dialog-body">
-      <span class="dialog-radio-block left">
+  <!-- this dialog will show when click 'btn-new-game'
+       NOTE: in this scope, dialog is abridged as dl -->
+  <div id="dialog-new-game">
+    <div class="dl-body">
+      <span class="dl-block left">
         Black:<br>
         <input type="radio" name="black" value="human" checked="true">human<br>
+        <input id="dl-name-black" class="dl-name" type="text" value="you"><br>
         <input type="radio" name="black" value="computer">computer<br>
       </span>
-      <span class="dialog-radio-block right">
+      <span class="dl-block right">
         White:<br>
         <input type="radio" name="white" value="human" checked="true">human<br>
+        <input id="dl-name-white" class="dl-name" type="text" value="you"><br>
         <input type="radio" name="white" value="computer">computer<br>
       </span>
-      <span class="dialog-radio-block bottom">
+      <span class="dl-block bottom">
         Computer Level
         <select>
           <option>NORMAL</option>
@@ -30,9 +33,9 @@
           <option>MASTER</option>
         </select>
       </span>
-      <div class="dialog-btn-bar">
-        <button id="btn-dialog-ok" class="btn-dialog">OK</button>
-        <button id="btn-dialog-cancel" class="btn-dialog">Cancel</button>
+      <div class="dl-btn-bar">
+        <button id="btn-dialog-ok" class="dl-btn">OK</button>
+        <button id="btn-dialog-cancel" class="dl-btn">Cancel</button>
       </div>
     </div>
   </div>
@@ -57,7 +60,7 @@
         <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
         <span id="pi-timer-opp" class="pi-timer opp white">00:00</span>
       </div>
-      <span class="pi-name opp">EarthMover</span>
+      <span id="pi-name-opp" class="pi-name opp">EarthMover</span>
     </span>
     <!-- board image and canvas that used to draw chess on board -->
     <img src="gomoku/src/board.png" class="board">
@@ -73,7 +76,7 @@
         <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
         <span id="pi-timer-sel" class="pi-timer sel black">00:00</span>
       </div>
-      <span class="pi-name sel">You</span>
+      <span id="pi-name-sel" class="pi-name sel">You</span>
     </span>
   </div>
 

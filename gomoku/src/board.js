@@ -85,7 +85,7 @@ canvas.onmouseout = function() {
 canvas.onclick = function(event) {
   if (!gameStarted) {
     // set dialog visibility
-    document.getElementById('dialog').style.display = "block";
+    document.getElementById('dialog-new-game').style.display = "block";
     return;
   }
 
@@ -156,13 +156,13 @@ function post(params, path) {
 
 document.getElementById('btn-new-game').onclick = function() {
   // set dialog visibility
-  document.getElementById('dialog').style.display = "block";
+  document.getElementById('dialog-new-game').style.display = "block";
 }
 
 
 document.getElementById('btn-dialog-cancel').onclick = function() {
   // close dialog
-  document.getElementById('dialog').style.display = "none";
+  document.getElementById('dialog-new-game').style.display = "none";
 }
 
 document.getElementById('btn-dialog-ok').onclick = function() {
@@ -184,10 +184,15 @@ document.getElementById('btn-dialog-ok').onclick = function() {
     document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
     document.getElementById('pi-icon-opp').src =
       (game.white == 'human' ? 'gomoku/src/human.png' : 'gomoku/src/icon.png');
+    document.getElementById('pi-name-sel').innerHTML =
+      document.getElementById('dl-name-black').value;
+    document.getElementById('pi-name-opp').innerHTML =
+      (game.white == 'human' ? document.getElementById('dl-name-white').value : 'EarthMover');
 
     boardEnable = true;
   } else {
     document.getElementById('pi-icon-opp').src = 'gomoku/src/icon.png';
+    document.getElementById('pi-name-opp').innerHTML = 'EarthMover';
     if (game.white == 'human') {
       document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_white.png';
       document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_black.png';
@@ -196,6 +201,8 @@ document.getElementById('btn-dialog-ok').onclick = function() {
       document.getElementById('pi-timer-sel').className = 'pi-timer sel white';
       document.getElementById('pi-timer-opp').className = 'pi-timer opp black';
       document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
+      document.getElementById('pi-name-sel').innerHTML =
+        document.getElementById('dl-name-white').value;
     } else {
       document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_black.png';
       document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_white.png';
@@ -204,6 +211,7 @@ document.getElementById('btn-dialog-ok').onclick = function() {
       document.getElementById('pi-timer-sel').className = 'pi-timer sel black';
       document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
       document.getElementById('pi-icon-sel').src = 'gomoku/src/icon.png';
+      document.getElementById('pi-name-sel').innerHTML = 'EarthMover';
     }
     boardEnable = false;
   }
@@ -211,5 +219,5 @@ document.getElementById('btn-dialog-ok').onclick = function() {
   gameStarted = true;
 
   // close dialog
-  document.getElementById('dialog').style.display = "none";
+  document.getElementById('dialog-new-game').style.display = "none";
 }
