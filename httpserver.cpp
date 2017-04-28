@@ -41,7 +41,6 @@ void HttpServer::listenConnection() {
 
   socklen_t size = sizeof(serverAddress);
 
-  int consecutiveEmptyRequests = 0;
   while (true) {
     // accepts a new connection from the connection queue
     server = accept(client, (struct sockaddr*)&serverAddress, &size);
@@ -85,14 +84,8 @@ void HttpServer::listenConnection() {
       requestBody = request.substr(bodyStart);
     }
 
-    /* if requested path is "/", redirect it to /gomoku/board.html */
-    if (directory == "/") {
-      directory.append("board.html");
-    }
-
-    /* request handlers */
-    if(directory == "/play") {
-      /* extract row & col from encoded request body */
+    if (directory == "/play") {
+       /* extract row & col from encoded request body */
       int rowPosStart = requestBody.find("\"row\":") + 6;
       int rowPosEnd = requestBody.find(",",rowPosStart);
       int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
@@ -102,40 +95,42 @@ void HttpServer::listenConnection() {
       int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
 
       requestAiPlay(row, col);
-
-    }
-    // favicon
-    if (directory == "/favicon.ico") {
-      directory = std::string("/gomoku/src/chess_white.png");
-    }
-
-    /* requesting some resource */
-    if (sanitize(directory)) {
-        // if access to this directory is permitted
-      std::ifstream resourceFile;
-      resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary); /* use the sub-string from pos=1 to skip the first '/' in directory path */
-
-      if( !resourceFile.is_open()) {
-        responseHttpError(404);
-      } else {
-        std::cout << "200 ok" << std::endl;
-        HttpResponse response(200);
-        response.setContentType(directory.substr(directory.find_last_of(".")));
-        response.setBody(&resourceFile);
-        std::string header = response.getHeaderString();
-        std::cout << header << std::endl;
-        // send header
-        send(server, header.c_str(), header.length(), 0);
-        // send body
-        send(server, response.getBody(), response.getBodyLength(), 0);
-
-        std::cout << "sent!" << std::endl;
-      }
-
     } else {
-      /* access denied */
-      std::cout << "access denied" << std::endl;
-      responseHttpError(403);
+
+      /* redirect path */
+      if (directory == "/")
+        directory.append("board.html");
+      else if (directory == "/favicon.ico")
+        directory = std::string("/gomoku/src/chess_white.png");
+
+      /* check permission and access resource */
+      if (sanitize(directory)) {
+        // if access to this directory is permitted
+        std::ifstream resourceFile;
+        resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary); /* use the sub-string from pos=1 to skip the first '/' in directory path */
+
+        if( !resourceFile.is_open()) {
+          responseHttpError(404);
+        } else {
+          std::cout << "200 ok" << std::endl;
+          HttpResponse response(200);
+          response.setContentType(directory.substr(directory.find_last_of(".")));
+          response.setBody(&resourceFile);
+          std::string header = response.getHeaderString();
+          std::cout << header << std::endl;
+          // send header
+          send(server, header.c_str(), header.length(), 0);
+          // send body
+          send(server, response.getBody(), response.getBodyLength(), 0);
+
+          std::cout << "sent!" << std::endl;
+        }
+
+      } else {
+        /* access denied */
+        std::cout << "access denied" << std::endl;
+        responseHttpError(403);
+      }
     }
 
     close(server);
