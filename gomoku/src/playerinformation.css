@@ -90,6 +90,7 @@
   }
 
   .pi-icon {
+    border-width: .4vw;
     height: auto;
     left: 2vw;
     width: 9vw;
@@ -162,9 +163,9 @@
   }
 
   .pi-icon {
+    border-width: .4vh;
     height: 7vh;
     top: .5vh;
-    position: absolute;
     width: auto;
   }
 

@@ -1,4 +1,6 @@
 .board {
+  border-color: #999;
+  border-style: outset;
   bottom: 0;
   display: inline-block;
   margin: auto;
@@ -7,11 +9,6 @@
   right: 0;
   top: 0;
   z-index: 2;
-}
-
-.board.img {
-  border-color: #999;
-  border-style: outset;
 }
 
 #background {
@@ -46,40 +43,28 @@
 
 @media screen and (min-aspect-ratio: 11/10) {
   .board {
-    height: 88%;
-  }
-
-  .board.img{
     border-width: .88vh;
+    height: 88%;
   }
 }
 
 @media screen and (max-aspect-ratio: 11/10) and (min-aspect-ratio: 19/20) {
   .board {
-    width: 67%;
-  }
-
-  .board.img{
     border-width: .70vw;
+    width: 67%;
   }
 }
 
 @media screen and (max-aspect-ratio: 19/20) and (min-aspect-ratio: 7/10) {
   .board {
-    height: 74%;
-  }
-
-  .board.img{
     border-width: .74vh;
+    height: 74%;
   }
 }
 
 @media screen and (max-aspect-ratio: 7/10) {
   .board {
-    width: 90%;
-  }
-
-  .board.img{
     border-width: .95vw;
+    width: 90%;
   }
 }
