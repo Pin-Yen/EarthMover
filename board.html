@@ -50,10 +50,12 @@
     <!-- opponent player information
          NOTE: in this scope, player information is abridged as pi -->
     <span class="player-information opp">
-      <img src="gomoku/src/icon.png" class="pi-icon opp">
-      <div class="pi-background opp">
-        <img src="gomoku/src/chess_black.png" class="pi-color opp">
-        <span class="pi-timer opp">00:00</span>
+      <!-- icon -->
+      <img id="pi-icon-opp" src="gomoku/src/icon.png" class="pi-icon opp">
+
+      <div id="pi-background-opp" class="pi-background opp white">
+        <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
+        <span id="pi-timer-opp" class="pi-timer opp white">00:00</span>
       </div>
       <span class="pi-name opp">EarthMover</span>
     </span>
@@ -64,10 +66,12 @@
     <!-- self player information
          NOTE: in this scope, player information is abridged as pi -->
     <span class="player-information sel">
-      <img src="gomoku/src/icon.png" class="pi-icon sel">
-      <div class="pi-background sel">
-        <img src="gomoku/src/chess_white.png" class="pi-color sel">
-        <span class="pi-timer sel">00:00</span>
+      <!-- icon -->
+      <img id="pi-icon-sel" src="gomoku/src/human.png" class="pi-icon sel">
+
+      <div id="pi-background-sel" class="pi-background sel black">
+        <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
+        <span id="pi-timer-sel" class="pi-timer sel black">00:00</span>
       </div>
       <span class="pi-name sel">You</span>
     </span>

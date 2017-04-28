@@ -1,3 +1,6 @@
+var gameStarted = false;
+var boardEnable = false;
+
 var mousePosX = -1, mousePosY;
 var lastPlayX = -1, lastPlayY;
 
@@ -28,6 +31,7 @@ for (var i = boardStatus.length - 1; i >= 0; i--) {
 }
 
 canvas.onmousemove = function(event) {
+  if (!boardEnable) return;
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
   var scaling = this.scrollWidth / 525;
@@ -66,6 +70,7 @@ canvas.onmousemove = function(event) {
 }
 
 canvas.onmouseout = function() {
+  if (!boardEnable) return;
   if (mousePosX != -1) {
     // clear the previous image
     this.getContext("2d").clearRect(mousePosX * 35 + 1,
@@ -77,6 +82,14 @@ canvas.onmouseout = function() {
 }
 
 canvas.onclick = function(event) {
+  if (!gameStarted) {
+    // set dialog visibility
+    document.getElementById('dialog').style.display = "block";
+    return;
+  }
+
+  if (!boardEnable) return;
+
   // get the coordinate (0 ~ 14)
   var rect = this.getBoundingClientRect();
   var scaling = this.scrollWidth / 525;
@@ -87,7 +100,7 @@ canvas.onclick = function(event) {
   // if the position is empty
   if (!boardStatus[x * 15 + y]) {
     play(x, y);
-    var params = { row: x, col: y };
+    var params = { row: y, col: x };
     post(params, 'play');
   }
 }
@@ -152,6 +165,42 @@ document.getElementById('btn-dialog-ok').onclick = function() {
   var result = { black: black, white: white};
 
   post(result, 'start');
+
+  if (result.black == 'human') {
+    document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_black.png';
+    document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_white.png';
+    document.getElementById('pi-background-sel').className = 'pi-background sel black';
+    document.getElementById('pi-background-opp').className = 'pi-background opp white';
+    document.getElementById('pi-timer-sel').className = 'pi-timer sel black';
+    document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
+    document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
+    document.getElementById('pi-icon-opp').src =
+      (result.white == 'human' ? 'gomoku/src/human.png' : 'gomoku/src/icon.png');
+
+    boardEnable = true;
+  } else {
+    document.getElementById('pi-icon-opp').src = 'gomoku/src/icon.png';
+    if (result.white == 'human') {
+      document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_white.png';
+      document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_black.png';
+      document.getElementById('pi-background-sel').className = 'pi-background sel white';
+      document.getElementById('pi-background-opp').className = 'pi-background opp black';
+      document.getElementById('pi-timer-sel').className = 'pi-timer sel white';
+      document.getElementById('pi-timer-opp').className = 'pi-timer opp black';
+      document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
+    } else {
+      document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_black.png';
+      document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_white.png';
+      document.getElementById('pi-background-sel').className = 'pi-background sel black';
+      document.getElementById('pi-background-opp').className = 'pi-background opp white';
+      document.getElementById('pi-timer-sel').className = 'pi-timer sel black';
+      document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
+      document.getElementById('pi-icon-sel').src = 'gomoku/src/icon.png';
+    }
+    boardEnable = false;
+  }
+
+  gameStarted = true;
 
   // close dialog
   document.getElementById('dialog').style.display = "none";
