@@ -94,13 +94,15 @@ void HttpServer::listenConnection() {
 
     } else if (directory == "/start") {
 
-      if (findAttributeInJson(requestBody, "black") == "computer")
-        isBlackAi = true;
-      if (findAttributeInJson(requestBody, "white") == "computer")
-        isWhiteAi = true;
+      isBlackAi = (findAttributeInJson(requestBody, "black") == "computer");
+      isWhiteAi = (findAttributeInJson(requestBody, "white") == "computer");
 
-      if (isBlackAi)
+      if (isBlackAi){
         requestAiPlay(-1, -1, true);
+      } else {
+        HttpResponse response(204);
+        send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+      }
     }
     else {
 
@@ -158,6 +160,7 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
      * or the user is manually posting wrong data */
 
       responseHttpError(400);
+      std::cout << "400 bad request" << std::endl;
       return;
     }
     gameStatus = earthMover->play(clientRow, clientCol, false);
@@ -223,18 +226,19 @@ std::string HttpServer::findAttributeInJson(std::string json, const char* rawAtt
   int endPos = std::min(json.find(",", startPos), json.find("}", startPos));
 
   assert(endPos != std::string::npos && startPos != std::string::npos);
-  std::string value = json.substr(startPos, endPos);
+  std::string value = json.substr(startPos, endPos - startPos);
 
   /* if the value is string type, erase its qoutation marks */
   if (value.front() == '\"' && value.back() == '\"') {
     value.erase(value.length() - 1, 1);
     value.erase(0, 1);
   }
-
   return value;
 }
 
 HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
+  body = NULL;
+
   statusCode = httpResponseCode;
   status.append("HTTP/1.1 ");
   status.append(std::to_string(statusCode));
@@ -242,6 +246,7 @@ HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
 
   switch (statusCode) {
     case 200: status.append("OK"); break;
+    case 204: status.append("NO CONTENT"); break;
   }
 }
 
@@ -268,6 +273,9 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
 
   std::cout << "file length: "<<fileLength << std::endl;
 
+  if (body != NULL) {
+    delete body;
+  }
   body = new char[fileLength];
 
   file->seekg(0, std::ios_base::beg);
@@ -282,9 +290,12 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
 std::string HttpServer::HttpResponse::getHeaderString(){
   std::string header;
 
-  header.append(status).append("\r\n")
-          .append(contentType).append("\r\n")
-          .append(contentLength).append("\r\n")
+  header.append(status).append("\r\n");
+
+  if (contentType != "")
+    header.append(contentType).append("\r\n");
+
+  header.append(contentLength).append("\r\n")
           .append("Connection: closed").append("\r\n")
           .append("\r\n");
 
@@ -300,5 +311,6 @@ int HttpServer::HttpResponse::getBodyLength() {
 }
 
 HttpServer::HttpResponse::~HttpResponse() {
-  delete[] body;
+  if (body != NULL)
+    delete[] body;
 }
