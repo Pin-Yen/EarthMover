@@ -18,14 +18,17 @@ class AI
    * returns false if the point is invalid */
   bool displayNewPoint(int row, int col);
 
-  /* think of a play, and return it.
-   * (clientRow, clientCol) is the previous play, and is (-1,-1) if doesn't exist */
-  void think(int clientRow, int clientCol, int *Row, int *Col);
+  /* think of a play, and return it. */
+  void think(int *Row, int *Col);
 
-  /* plays a new point, returns true if someone wins after this move */
-  bool play(int row, int col);
+  /* plays a new point, returns true if someone wins after this move.
+   * triggerBackgroundThread: true: start bg thread */
+  bool play(int row, int col, bool triggerBackgroundThread);
 
   bool getWhoTurn() {return (bool)board->whoTurn();}
+
+  /* stops background thread */
+  void stopBGThread();
 
  private:
   /* this thread lets EM thinks in the background when it's the users turn */

@@ -149,6 +149,9 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
 
   /* play client's move if it is not the first move and not both players are ai */
   if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
+    /* stop background thread */
+    earthMover->stopBGThread();
+
     /* play client's move */
     if( !board->play(clientRow, clientCol)) {
     /* invalid client play, either there's bug in client-side's chessboard script,
@@ -157,17 +160,17 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
       responseHttpError(400);
       return;
     }
-    gameStatus = earthMover->play(clientRow, clientCol);
+    gameStatus = earthMover->play(clientRow, clientCol, false);
     // TODO: handle win / lose
   }
 
   int EMRow, EMCol;
-  earthMover->think(clientRow,clientCol, &EMRow, &EMCol);
+  earthMover->think(&EMRow, &EMCol);
 
   /* if at least one player is ai, play ai's move on the board */
   if (isBlackAi || isWhiteAi) {
     board->play(EMRow, EMCol);
-    gameStatus = earthMover->play(EMRow, EMCol);
+    gameStatus = earthMover->play(EMRow, EMCol, true);
     // TODO: handle win / lose
   }
 
