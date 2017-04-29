@@ -1,17 +1,16 @@
 var game = { black: 'human', white: 'computer'};
-var boardEnable = false;
-var gameStarted = false;
 
-var mousePos = [-1, -1];
-var lastPlay = [-1, -1];
+var boardEnable = false, gameStarted = false;
+
+var mousePos = [-1, -1], lastPlay = [-1, -1];
 
 var whoTurn = 0;
 
 // image array
 var chessImage = new Array(6);
-for (var i = chessImage.length - 1; i >= 0; i--) {
+for (var i = chessImage.length - 1; i >= 0; i--)
   chessImage[i] = new Image();
-}
+
 chessImage[0].src = "gomoku/src/chess_black_transparent.png";
 chessImage[1].src = "gomoku/src/chess_black.png";
 chessImage[2].src = "gomoku/src/chess_black_marked.png";
@@ -28,7 +27,21 @@ var playNo = 0;
 // board status array
 var boardStatus = new Array(15);
 for (var i = boardStatus.length - 1; i >= 0; i--)
-  boardStatus[i] = new Array(15).fill(0);
+  boardStatus[i] = new Array(15);
+
+// initialize game
+function initialize() {
+  playNo = 0;
+
+  for (var row = boardStatus.length - 1; row >= 0; row--)
+    for (var col = boardStatus[row].length - 1; col >= 0; col--)
+      boardStatus[row][col] = 0;
+
+  mousePos = [-1, -1];
+  lastPlay = [-1, -1];
+
+  canvas.getContext("2d").clearRect(0, 0, 525, 525);
+}
 
 canvas.onmousemove = function(event) {
   if (!boardEnable) return;
@@ -97,14 +110,14 @@ function getPosition(event) {
 
 // draw iamge at position
 function draw(position, image) {
-  var context = canvas.getContext("2d");
-  context.drawImage(image, position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
+  canvas.getContext("2d").drawImage
+    (image, position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
 }
 
 // clear the position
 function clear(position) {
-  var context = canvas.getContext("2d");
-  context.clearRect(position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
+  canvas.getContext("2d").
+    clearRect(position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
 }
 
 // play at position, we should make sure that position is empty
@@ -122,11 +135,8 @@ function play(position) {
 
   lastPlay = position.slice();
 
-  if ((whoTurn == 0 && game.black == 'computer') ||
-      (whoTurn == 1 && game.white == 'computer'))
-    boardEnable = false;
-  else
-    boardEnable = true;
+  boardEnable = ((whoTurn == 0 && game.black == 'human') ||
+                 (whoTurn == 1 && game.white == 'human'));
 }
 
 // post request, pareams should be json type
@@ -208,6 +218,10 @@ $('#btn-dialog-ok').click(function() {
 
   gameStarted = true;
 
+  // initialize game
+  initialize();
+
   // close dialog
   $('#dialog-new-game').css('display', 'none');
 });
+
