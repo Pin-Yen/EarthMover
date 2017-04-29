@@ -1,5 +1,4 @@
 .board {
-  border-color: #999;
   border-style: outset;
   bottom: 0;
   display: inline-block;
@@ -9,6 +8,14 @@
   right: 0;
   top: 0;
   z-index: 2;
+}
+
+.board.img {
+  border-color: #999;
+}
+
+.board.cvs {
+  border-color: transparent;
 }
 
 #background {

@@ -4,8 +4,6 @@ var boardEnable = false, gameStarted = false;
 
 var mousePos = [-1, -1], lastPlay = [-1, -1];
 
-var whoTurn = 0;
-
 // image array
 var chessImage = new Array(6);
 for (var i = chessImage.length - 1; i >= 0; i--)
@@ -19,8 +17,7 @@ chessImage[4].src = "gomoku/src/chess_white.png";
 chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
 var canvas = document.getElementById('cvs-board');
-canvas.setAttribute('width', 525);
-canvas.setAttribute('height', 525);
+$('#cvs-board').attr({ 'width': 525, 'height': 525 });
 
 var playNo = 0;
 
@@ -29,8 +26,8 @@ var boardStatus = new Array(15);
 for (var i = boardStatus.length - 1; i >= 0; i--)
   boardStatus[i] = new Array(15);
 
-// initialize game
-function initialize() {
+// initialize board
+function initBoard() {
   playNo = 0;
 
   for (var row = boardStatus.length - 1; row >= 0; row--)
@@ -54,7 +51,7 @@ canvas.onmousemove = function(event) {
     // draw only if mouse at the new coordinate
     if (mousePos !== position) {
       clear(mousePos);
-      draw(position, chessImage[whoTurn * 3]);
+      draw(position, chessImage[(playNo & 1) * 3]);
 
       // update mousePos
       mousePos = position.slice();
@@ -70,19 +67,21 @@ canvas.onmousemove = function(event) {
 
 canvas.onmouseout = function() {
   if (!boardEnable) return;
-  if (mousePos === [-1, -1]) return;
 
-  // clear the previous image
-  clear(mousePos);
+  // if mouse's previous position not has chess
+  if (mousePos !== [-1, -1]) {
+    // clear the previous image
+    clear(mousePos);
 
-  // set mousePos to -1, -1
-  mousePos = [-1, -1];
+    // set mousePos to -1, -1
+    mousePos = [-1, -1];
+  }
 }
 
 canvas.onclick = function(event) {
+  // if the game does not started, show new game dialog
   if (!gameStarted) {
-    // show dialog
-    document.getElementById('dialog-new-game').style.display = "block";
+    $('#dialog-new-game').show();;
     return;
   }
 
@@ -124,19 +123,22 @@ function clear(position) {
 function play(position) {
   ++playNo;
   boardStatus[position[0]][position[1]] = playNo;
+
   mousePos = [-1, -1];
 
-  draw(position, chessImage[whoTurn * 3 + 2]);
+  // draw a marked chess
+  draw(position, chessImage[((playNo - 1) & 1) * 3 + 2]);
 
-  whoTurn = whoTurn * -1 + 1;
-
+  // redraw last play's image (remove the mark)
   clear(lastPlay);
-  draw(lastPlay, chessImage[whoTurn * 3 + 1])
+  draw(lastPlay, chessImage[(playNo & 1) * 3 + 1])
 
+  // update last play
   lastPlay = position.slice();
 
-  boardEnable = ((whoTurn == 0 && game.black == 'human') ||
-                 (whoTurn == 1 && game.white == 'human'));
+  // check board's enable
+  boardEnable = (((playNo & 1)== 0 && game.black == 'human') ||
+                 ((playNo & 1) == 1 && game.white == 'human'));
 }
 
 // post request, pareams should be json type
@@ -155,73 +157,71 @@ function post(params, path) {
   http.send(JSON.stringify(params));
 }
 
+// initialize player
+// NOTE: player should be 'sel' or 'opp', color should be 'black' or 'white'
+// human is bool
+function initPlayer(player, color, human) {
+  var oppColor = (color == 'black' ? 'white' : 'black');
+
+  // set png
+  $('#pi-chess-' + player).attr('src', 'gomoku/src/chess_' + color + '.png');
+  $('#pi-icon-' + player).
+    attr('src', 'gomoku/src/' + (human ? 'human' : 'icon') + '.png');
+
+  // set background
+  $('#pi-background-' + player).removeClass(oppColor);
+  $('#pi-background-' + player).addClass(color);
+
+  // set timer
+  $('#pi-timer-' + player).removeClass(oppColor);
+  $('#pi-timer-' + player).addClass(color);
+
+  // set name
+  $('#pi-name-' + player).html((human ? $('dl-name-' + color).val() : 'EarthMover'));
+}
+
 $('#btn-new-game').click(function() {
-  // set dialog visibility
-  $('#dialog-new-game').css('display', 'block');
+  $('#dialog-new-game').show();
 });
 
 $('#btn-dialog-cancel').click(function() {
-  // close dialog
-  $('#dialog-new-game').css('display', 'none');
+  $('#dialog-new-game').hide();
 });
 
 $('#btn-dialog-ok').click(function() {
-  // get the black/white player's ratio buttons' result
-  var black = document.querySelector('input[name="black"]:checked').value,
-      white = document.querySelector('input[name="white"]:checked').value;
+  // get the black/white player's radio buttons' result
+  var black = $('input[name="black"]:checked').val(),
+      white = $('input[name="white"]:checked').val();
 
   game = { black: black, white: white};
 
   post(game, 'start');
 
+  // deside player's place
   if (game.black == 'human') {
-    document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_black.png';
-    document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_white.png';
-    document.getElementById('pi-background-sel').className = 'pi-background sel black';
-    document.getElementById('pi-background-opp').className = 'pi-background opp white';
-    document.getElementById('pi-timer-sel').className = 'pi-timer sel black';
-    document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
-    document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
-    document.getElementById('pi-icon-opp').src =
-      (game.white == 'human' ? 'gomoku/src/human.png' : 'gomoku/src/icon.png');
-    document.getElementById('pi-name-sel').innerHTML =
-      document.getElementById('dl-name-black').value;
-    document.getElementById('pi-name-opp').innerHTML =
-      (game.white == 'human' ? document.getElementById('dl-name-white').value : 'EarthMover');
-
+    // black == human, white == human -> sel: black, human, opp: white, human
+    // black == human, white == ai -> sel: black, human, opp: white, ai
+    initPlayer('sel', 'black', true);
+    initPlayer('opp', 'white', (game.white == 'human'));
     boardEnable = true;
   } else {
-    document.getElementById('pi-icon-opp').src = 'gomoku/src/icon.png';
-    document.getElementById('pi-name-opp').innerHTML = 'EarthMover';
     if (game.white == 'human') {
-      document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_white.png';
-      document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_black.png';
-      document.getElementById('pi-background-sel').className = 'pi-background sel white';
-      document.getElementById('pi-background-opp').className = 'pi-background opp black';
-      document.getElementById('pi-timer-sel').className = 'pi-timer sel white';
-      document.getElementById('pi-timer-opp').className = 'pi-timer opp black';
-      document.getElementById('pi-icon-sel').src = 'gomoku/src/human.png';
-      document.getElementById('pi-name-sel').innerHTML =
-        document.getElementById('dl-name-white').value;
+      // black == ai, white == human -> sel: white, human, opp: black, ai
+      initPlayer('sel', 'white', true);
+      initPlayer('opp', 'black', false);
     } else {
-      document.getElementById('pi-chess-sel').src = 'gomoku/src/chess_black.png';
-      document.getElementById('pi-chess-opp').src = 'gomoku/src/chess_white.png';
-      document.getElementById('pi-background-sel').className = 'pi-background sel black';
-      document.getElementById('pi-background-opp').className = 'pi-background opp white';
-      document.getElementById('pi-timer-sel').className = 'pi-timer sel black';
-      document.getElementById('pi-timer-opp').className = 'pi-timer opp white';
-      document.getElementById('pi-icon-sel').src = 'gomoku/src/icon.png';
-      document.getElementById('pi-name-sel').innerHTML = 'EarthMover';
+      // black == ai, white == ai -> sel: black, ai, opp: white, ai
+      initPlayer('sel', 'black', false);
+      initPlayer('opp', 'white', false);
     }
     boardEnable = false;
   }
 
   gameStarted = true;
 
-  // initialize game
-  initialize();
+  // initialize board
+  initBoard();
 
-  // close dialog
-  $('#dialog-new-game').css('display', 'none');
+  $('#dialog-new-game').hide();
 });
 
