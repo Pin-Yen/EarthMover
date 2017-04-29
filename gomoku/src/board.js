@@ -2,8 +2,8 @@ var game = { black: 'human', white: 'computer'};
 var boardEnable = false;
 var gameStarted = false;
 
-var mousePosX = -1, mousePosY;
-var lastPlayX = -1, lastPlayY;
+var mousePos = [-1, -1];
+var lastPlay = [-1, -1];
 
 var whoTurn = 0;
 
@@ -19,117 +19,108 @@ chessImage[3].src = "gomoku/src/chess_white_transparent.png";
 chessImage[4].src = "gomoku/src/chess_white.png";
 chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
-const CHESS_DIMEN = 33;
-
 var canvas = document.getElementById('cvs-board');
 canvas.setAttribute('width', 525);
 canvas.setAttribute('height', 525);
 
+var playNo = 0;
+
 // board status array
-var boardStatus = new Array(225);
-for (var i = boardStatus.length - 1; i >= 0; i--) {
-  boardStatus[i] = false;
-}
+var boardStatus = new Array(15);
+for (var i = boardStatus.length - 1; i >= 0; i--)
+  boardStatus[i] = new Array(15).fill(0);
 
 canvas.onmousemove = function(event) {
   if (!boardEnable) return;
-  // get the coordinate (0 ~ 14)
-  var rect = this.getBoundingClientRect();
-  var scaling = this.scrollWidth / 525;
 
-  var x = Math.min(Math.floor((event.clientX - rect.left)  / (35 * scaling)), 14),
-      y = Math.min(Math.floor((event.clientY - rect.top) / (35 * scaling)), 14);
+  // get the coordinate
+  var position = getPosition(event);
 
   // if the position is empty
-  if (!boardStatus[x * 15 + y]) {
+  if (!boardStatus[position[0]][position[1]]) {
     // draw only if mouse at the new coordinate
-    if (mousePosX != x || mousePosY != y) {
-      var context = this.getContext("2d");
-      // clear the previous image
-      context.clearRect((mousePosX * 35 + 1),
-                        (mousePosY * 35 + 1),
-                        CHESS_DIMEN, CHESS_DIMEN);
-          // draw image in new position
-      context.drawImage(chessImage[whoTurn * 3],
-                        (x * 35 + 1),
-                        (y * 35 + 1),
-                        CHESS_DIMEN, CHESS_DIMEN);
+    if (mousePos !== position) {
+      clear(mousePos);
+      draw(position, chessImage[whoTurn * 3]);
 
       // update mousePos
-      mousePosX = x; mousePosY = y;
+      mousePos = position.slice();
     }
   } else {
-    if (mousePosX != -1) {
-      // clear the previous image
-      this.getContext("2d").clearRect(mousePosX * 35 + 1,
-                                      mousePosY * 35 + 1,
-                                      CHESS_DIMEN, CHESS_DIMEN);
-      // set mousePos to -1
-      mousePosX = -1;
+    // if mouse at the exist chess, clear mose position
+    if (mousePos !== [-1, -1]) {
+      clear(mousePos);
+      mousePos = [-1, -1];
     }
   }
 }
 
 canvas.onmouseout = function() {
   if (!boardEnable) return;
-  if (mousePosX != -1) {
-    // clear the previous image
-    this.getContext("2d").clearRect(mousePosX * 35 + 1,
-                                    mousePosY * 35 + 1,
-                                    CHESS_DIMEN, CHESS_DIMEN);
-    // set mousePos to -1, -1
-    mousePosX = -1;
-  }
+  if (mousePos === [-1, -1]) return;
+
+  // clear the previous image
+  clear(mousePos);
+
+  // set mousePos to -1, -1
+  mousePos = [-1, -1];
 }
 
 canvas.onclick = function(event) {
   if (!gameStarted) {
-    // set dialog visibility
+    // show dialog
     document.getElementById('dialog-new-game').style.display = "block";
     return;
   }
 
   if (!boardEnable) return;
 
-  // get the coordinate (0 ~ 14)
-  var rect = this.getBoundingClientRect();
-  var scaling = this.scrollWidth / 525;
+  var position = getPosition(event);
+
+  // if the position is empty, play and post
+  if (!boardStatus[position[0]][position[1]]) {
+    play(position);
+    post({ row: position[1], col: position[0] }, 'play');
+  }
+}
+
+// get position array [x, y]
+function getPosition(event) {
+  var rect = canvas.getBoundingClientRect();
+  var scaling = canvas.scrollWidth / 525;
 
   var x = Math.min(Math.floor((event.clientX - rect.left)  / (35 * scaling)), 14),
       y = Math.min(Math.floor((event.clientY - rect.top) / (35 * scaling)), 14);
 
-  // if the position is empty
-  if (!boardStatus[x * 15 + y]) {
-    play(x, y);
-    var params = { row: y, col: x };
-    post(params, 'play');
-  }
+  return [x, y];
 }
 
-// play at (x, y), we should make sure that (x, y) is empty
-function play(x, y) {
-  boardStatus[x * 15 + y] = true;
-  mousePosX = -1;
-
+// draw iamge at position
+function draw(position, image) {
   var context = canvas.getContext("2d");
-  context.drawImage(chessImage[whoTurn * 3 + 2],
-                    x * 35 + 1,
-                    y * 35 + 1,
-                    CHESS_DIMEN, CHESS_DIMEN);
+  context.drawImage(image, position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
+}
+
+// clear the position
+function clear(position) {
+  var context = canvas.getContext("2d");
+  context.clearRect(position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
+}
+
+// play at position, we should make sure that position is empty
+function play(position) {
+  ++playNo;
+  boardStatus[position[0]][position[1]] = playNo;
+  mousePos = [-1, -1];
+
+  draw(position, chessImage[whoTurn * 3 + 2]);
 
   whoTurn = whoTurn * -1 + 1;
 
-  if (lastPlayX != -1) {
-    context.clearRect(lastPlayX * 35 + 1,
-                      lastPlayY * 35 + 1,
-                      CHESS_DIMEN, CHESS_DIMEN);
-    context.drawImage(chessImage[whoTurn * 3 + 1],
-                      lastPlayX * 35 + 1,
-                      lastPlayY * 35 + 1,
-                      CHESS_DIMEN, CHESS_DIMEN);
-  }
+  clear(lastPlay);
+  draw(lastPlay, chessImage[whoTurn * 3 + 1])
 
-  lastPlayX = x; lastPlayY = y;
+  lastPlay = position.slice();
 
   if ((whoTurn == 0 && game.black == 'computer') ||
       (whoTurn == 1 && game.white == 'computer'))
@@ -146,26 +137,25 @@ function post(params, path) {
   http.onreadystatechange = function() {
     if (http.readyState == 4 && http.status == 200) {
       var response = JSON.parse(http.responseText);
-      play(response.col, response.row);
+      // change JSON to array
+      play([response.col, response.row]);
     }
   };
 
   http.send(JSON.stringify(params));
 }
 
-
-document.getElementById('btn-new-game').onclick = function() {
+$('#btn-new-game').click(function() {
   // set dialog visibility
-  document.getElementById('dialog-new-game').style.display = "block";
-}
+  $('#dialog-new-game').css('display', 'block');
+});
 
-
-document.getElementById('btn-dialog-cancel').onclick = function() {
+$('#btn-dialog-cancel').click(function() {
   // close dialog
-  document.getElementById('dialog-new-game').style.display = "none";
-}
+  $('#dialog-new-game').css('display', 'none');
+});
 
-document.getElementById('btn-dialog-ok').onclick = function() {
+$('#btn-dialog-ok').click(function() {
   // get the black/white player's ratio buttons' result
   var black = document.querySelector('input[name="black"]:checked').value,
       white = document.querySelector('input[name="white"]:checked').value;
@@ -219,5 +209,5 @@ document.getElementById('btn-dialog-ok').onclick = function() {
   gameStarted = true;
 
   // close dialog
-  document.getElementById('dialog-new-game').style.display = "none";
-}
+  $('#dialog-new-game').css('display', 'none');
+});
