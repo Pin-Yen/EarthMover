@@ -298,6 +298,32 @@ HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribut
   return *this;
 }
 
+HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribute, const char* value) {
+  attribute.insert(0, "\"");
+  attribute.append("\":");
+
+  std::string valueString(value);
+
+  valueString.insert(0, "\"");
+  valueString.append("\"");
+  attribute.append(valueString);
+
+  int insertPos = body.find('}');
+
+  if (insertPos == std::string::npos) {
+    body.append("{}");
+    insertPos = 1;
+  } else {
+    body.insert(insertPos, ",");
+    ++insertPos;
+  }
+
+  body.insert(insertPos, attribute);
+  bodyLength = body.length();
+
+  return *this;
+}
+
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   isBin = true;
 

@@ -68,6 +68,8 @@ class HttpServer::HttpResponse
   /* Add JSON {attribute:value} to response body, returns *this for chainning */
   HttpResponse& addJson(std::string attribute, int value);
 
+  HttpResponse& addJson(std::string attribute, const char* value);
+
   /* sets the response body */
   void setBody(std::ifstream *file);
 
