@@ -1,0 +1,99 @@
+.tool {
+  background: linear-gradient(to bottom, #7df, #bef);
+  background: -moz-linear-gradient(bottom, #7df, #bef);
+  background: -o-linear-gradient(bottom, #7df, #bef);
+  background: -webkit-linear-gradient(top, #7df, #bef);
+  height: 6vh;
+  position: relative;
+  z-index: 2;
+}
+
+.tool span {
+  height: 6vh;
+  position: absolute;
+  width: 15vh;
+}
+
+.tool span span {
+  color: #206;
+  font-size: 3.2vh;
+  text-align: center;
+  line-height: 6vh;
+}
+
+.tool div {
+  background-color: #def;
+  height: 0;
+  top: 6vh;
+  overflow: hidden;
+  position: absolute;
+  width: 20vh;
+  z-index: -2;
+}
+
+.tool span span:hover {
+  background-color: rgba(20, 0, 60, .1);
+}
+
+.tool span:hover div {
+  height: auto;
+}
+
+.tool li {
+  border-color: transparent;
+  border-style: outset;
+  border-width: .1vh;
+  font-size: 3vh;
+  height: 5vh;
+  line-height: 5vh;
+  list-style-type: none;
+  margin: .2vh;
+  padding-left: 1vh;
+  z-index: 2;
+}
+
+.tool li:hover {
+  border-color: #aaa;
+}
+
+.tool li:hover::before,
+.tool li:hover::after {
+  content: "";
+  height: 2.5vh;
+  left: 0;
+  margin: .2vh;
+  position: absolute;
+  width: 19.6vh;
+  z-index: -1;
+}
+
+.tool li:hover::before {
+  top: 0;
+  background: linear-gradient(to bottom, #ffe, #ffa);
+  background: -moz-linear-gradient(bottom, #ffe, #ffa);
+  background: -o-linear-gradient(bottom, #ffe, #ffa);
+  background: -webkit-linear-gradient(top, #ffe, #ffa);
+}
+
+.tool li:hover::after {
+  bottom: 0;
+  background: linear-gradient(to bottom, #fd6, #fe9);
+  background: -moz-linear-gradient(bottom, #fd6, #fe9);
+  background: -o-linear-gradient(bottom, #fd6, #fe9);
+  background: -webkit-linear-gradient(top, #fd6, #fe9);
+}
+
+.tl-game {
+  left: .5vh;
+}
+
+.tl-view {
+  left: 16vh;
+}
+
+.control {
+  background-color: #aaa;
+  height: 6vh;
+  position: relative;
+  z-index: -2;
+}

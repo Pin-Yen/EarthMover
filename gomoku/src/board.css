@@ -27,7 +27,7 @@
   left: 50%;
   position: absolute;
   top: 50%;
-  z-index: 0;
+  z-index: -10;
 }
 
 @media screen and (orientation: landscape) {
@@ -48,21 +48,21 @@
   }
 }
 
-@media screen and (min-aspect-ratio: 11/10) {
+@media screen and (min-aspect-ratio: 6/5) {
   .board {
-    border-width: .88vh;
-    height: 88%;
+    border-width: .9vh;
+    height: 90%;
   }
 }
 
-@media screen and (max-aspect-ratio: 11/10) and (min-aspect-ratio: 19/20) {
+@media screen and (max-aspect-ratio: 6/5) and (min-aspect-ratio: 1/1) {
   .board {
     border-width: .70vw;
-    width: 67%;
+    width: 66%;
   }
 }
 
-@media screen and (max-aspect-ratio: 19/20) and (min-aspect-ratio: 7/10) {
+@media screen and (max-aspect-ratio: 1/1) and (min-aspect-ratio: 7/10) {
   .board {
     border-width: .74vh;
     height: 74%;

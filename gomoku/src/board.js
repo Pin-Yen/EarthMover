@@ -195,7 +195,7 @@ function initPlayer(player, color, human) {
   $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));
 }
 
-$('#btn-new-game').click(function() {
+$('#new-game').click(function() {
   $('#dialog-new-game').show();
 });
 

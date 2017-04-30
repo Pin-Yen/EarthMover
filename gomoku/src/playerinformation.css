@@ -72,10 +72,10 @@
   right: 5%;
 }
 
-@media screen and (min-aspect-ratio: 19/20) {
+@media screen and (min-aspect-ratio: 1/1) {
   .player-information {
     border-width: .5vw;
-    height: 86vh;
+    height: 88vh;
     width: 14vw;
   }
 
@@ -145,7 +145,7 @@
   }
 }
 
-@media screen and (max-aspect-ratio: 19/20) {
+@media screen and (max-aspect-ratio: 1/1) {
   .player-information {
     border-width: .5vh;
     height: 9vh;
