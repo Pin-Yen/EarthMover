@@ -31,8 +31,12 @@ class HttpServer
   AI *earthMover;
   DisplayBoard *board;
 
-  /* request AI's play, and returns it to the client via http response */
-  void requestAiPlay(int clientRow, int clientCol);
+  bool isBlackAi, isWhiteAi;
+
+
+  /* Request AI's play, and returns it to the client via http response.
+   * If requesting AI for the first move, clientRow & clientCol should be -1, and isFirstMove should be true */
+  void requestAiPlay(int clientRow, int clientCol, bool isFirstMove);
 
   /* Returns a error message to client
    * errorCode: http error code */
@@ -42,6 +46,8 @@ class HttpServer
    * returns false if not permitted */
   bool sanitize(std::string uri);
 
+  /* given json data, find the value of 'attr' attribute and return string representation of the value */
+  std::string findAttributeInJson(std::string json, const char* rawAttr);
 
 };
 
@@ -74,6 +80,8 @@ class HttpServer::HttpResponse
   int getBodyLength();
 
  private:
+
+
   int statusCode;
   std::string contentType;
   std::string contentLength;

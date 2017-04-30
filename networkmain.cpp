@@ -33,12 +33,12 @@ int main() {
     bool gameEnd = false;
 
     while (! gameEnd){
-      earthMover.think(inputRow, inputCol, &EMRow, &EMCol);
+      earthMover.think(&EMRow, &EMCol);
 
       board.getInput(&inputRow, &inputCol);
       board.play(inputRow, inputCol);
 
-      if (earthMover.play(inputRow, inputCol)) {
+      if (earthMover.play(inputRow, inputCol, true)) {
         /* someone wins */
         gameEnd = true;
 

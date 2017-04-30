@@ -1,4 +1,4 @@
-.dialog_background {
+#dialog-new-game {
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
   height: 100%;
@@ -7,7 +7,7 @@
   z-index: 10;
 }
 
-.dialog_body {
+.dl-body {
   background-color: #FFE;
   bottom: 0;
   height: 200px;
@@ -19,7 +19,7 @@
   width: 300px;
 }
 
-.dialog_btn_bar {
+.dl-btn-bar {
   background-color: #EEE;
   bottom: 0;
   text-align: right;
@@ -27,24 +27,45 @@
   width: 100%;
 }
 
-.dialog_radio_block {
+.dl-block {
   border-color: #CCC;
   border-width: 2px;
   border-style: solid;
   display: inline-block;
-  margin: 8px;
-  padding: 2px;
-  width: 134px;
+  position: absolute;
 }
 
-.dialog_radio_block.left {
-  margin-right: 4px;
+.dl-block.left {
+  height: 100px;
+  left: 8px;
+  padding: 4px;
+  top: 12px;
+  width: 138px;
 }
 
-.dialog_radio_block.right {
-  margin-left: 4px;
+.dl-block.right {
+  height: 100px;
+  right: 8px;
+  padding: 4px;
+  top: 12px;
+  width: 138px;
 }
 
-.btn_dialog {
+.dl-block.bottom {
+  height: 40px;
+  left: 8px;
+  line-height: 40px;
+  text-align: center;
+  top: 124px;
+  width: 284px;
+}
+
+.dl-name {
+  left: 20px;
+  position: relative;
+  width: 100px;
+}
+
+.dl-btn {
   margin: 2px;
 }

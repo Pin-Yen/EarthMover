@@ -16,33 +16,39 @@ AI::~AI() {
     delete tree;
 }
 
-void AI::think(int clientRow, int clientCol, int *row, int *col) {
+void AI::think(int *row, int *col) {
   if (backgroundThread != NULL) {
     stopBackgroundThread = true;
     backgroundThread->join();
     delete backgroundThread;
+    backgroundThread = NULL;
   }
-
-
-
-  // TODO, check if the user wins (or, an alternative, let the board handle it)
-  if( clientCol != -1)
-    int result = tree->play(*row, *col);
-
 
   tree->MCTS(cycle);
   tree->MCTSResult(*row, *col);
 
 }
 
-bool AI::play(int row, int col) {
+bool AI::play(int row, int col, bool triggerBackgroundThread ) {
   bool hasSomeoneWin = tree->play(row, col);
 
-  stopBackgroundThread = false;
-  GameTree* treeRef = tree;
+  if (triggerBackgroundThread) {
+    stopBackgroundThread = false;
+    GameTree* treeRef = tree;
 
-  backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
-                              { treeRef->MCTS(maxCycle, stop); },
-                              100000, std::ref(stopBackgroundThread));
+    backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
+                                        { treeRef->MCTS(maxCycle, stop); },
+                                        100000, std::ref(stopBackgroundThread));
+  }
+
   return hasSomeoneWin;
+}
+
+void AI::stopBGThread() {
+  if (backgroundThread != NULL) {
+    stopBackgroundThread = true;
+    backgroundThread->join();
+    delete backgroundThread;
+    backgroundThread = NULL;
+  }
 }

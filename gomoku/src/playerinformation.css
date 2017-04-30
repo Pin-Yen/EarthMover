@@ -1,0 +1,219 @@
+.player-information {
+  background-color: rgba(190, 235, 255, 0.4);
+  border-color: rgba(205, 242, 255, 0.8);
+  border-style: ridge;
+  display: inline-block;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  z-index: 1;
+}
+
+.pi-background.black {
+  background: linear-gradient(to bottom, #888, #555, #666, #777, #888, #999);
+  background: -moz-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
+  background: -o-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
+  background: -webkit-linear-gradient(top, #888, #555, #666, #777, #888, #999);
+}
+
+.pi-background.white {
+  background: linear-gradient(to bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
+  background: -moz-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
+  background: -o-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
+  background: -webkit-linear-gradient(top, #ccc, #eee, #ccc, #bbb, #aaa, #999);
+}
+
+.pi-icon {
+  border-color: rgba(205, 242, 255, 0.8);
+  border-style: outset;
+  position: absolute;
+}
+
+.pi-timer {
+  margin: auto;
+  text-align: center;
+  padding: 0;
+  position: absolute;
+  width: 65%;
+  bottom: 0;
+}
+
+.pi-timer.opp {
+  right: 5%;
+}
+
+.pi-timer.sel {
+  left: 5%;
+}
+
+.pi-timer.black {
+  color: white;
+}
+
+.pi-timer.white {
+  color: black;
+}
+
+.pi-chess {
+  bottom: 0;
+  display: block;
+  height: auto;
+  margin: auto;
+  top: 0;
+  position: absolute;
+  width: 20%;
+}
+
+.pi-chess.opp {
+  left: 5%;
+}
+
+.pi-chess.sel {
+  right: 5%;
+}
+
+@media screen and (min-aspect-ratio: 19/20) {
+  .player-information {
+    border-width: .5vw;
+    height: 86vh;
+    width: 14vw;
+  }
+
+  .player-information.opp {
+    border-radius: 0 0 14vw 0;
+    left: 0;
+  }
+
+  .player-information.sel {
+    border-radius: 14vw 0 0 0;
+    right: 0;
+  }
+
+  .pi-icon {
+    border-width: .4vw;
+    height: auto;
+    left: 2vw;
+    width: 9vw;
+  }
+
+  .pi-icon.opp {
+    top: 2.5vw;
+  }
+
+  .pi-icon.sel {
+    bottom: 2.5vw;
+  }
+
+  .pi-background {
+    border-radius: 3vw;
+    height: 4vw;
+    left: 10%;
+    position: absolute;
+    width: 80%;
+  }
+
+  .pi-background.opp {
+    top: 14vw;
+  }
+
+  .pi-background.sel {
+    bottom: 14vw;
+  }
+
+  .pi-timer {
+    font-size: 2.4vw;
+    height: 4vw;
+    line-height: 4vw;
+  }
+
+  .pi-name {
+    font-size: 1.6vw;
+    height: 4vw;
+    left: 10%;
+    line-height: 4vw;
+    position: absolute;
+    text-align: center;
+    width: 80%;
+  }
+
+  .pi-name.opp {
+    top: 18vw;
+  }
+
+  .pi-name.sel {
+    bottom: 18vw;
+  }
+}
+
+@media screen and (max-aspect-ratio: 19/20) {
+  .player-information {
+    border-width: .5vh;
+    height: 9vh;
+    width: 100vw;
+  }
+
+  .player-information.opp {
+    border-radius: 0 0 14vh 0;
+    top: 0;
+  }
+
+  .player-information.sel {
+    border-radius: 14vh 0 0 0;
+    bottom: 0;
+  }
+
+  .pi-icon {
+    border-width: .4vh;
+    height: 7vh;
+    top: .5vh;
+    width: auto;
+  }
+
+  .pi-icon.opp {
+    left: 1vh;
+  }
+
+  .pi-icon.sel {
+    right: 1vh;
+  }
+
+  .pi-background {
+    border-radius: 3vh;
+    height: 6vh;
+    position: absolute;
+    top: 1vh;
+    width: 20vh;
+  }
+
+  .pi-background.opp {
+    left: 8.5vh;
+  }
+
+  .pi-background.sel {
+    right: 8.5vh;
+  }
+
+  .pi-timer {
+    font-size: 3.2vh;
+    height: 6vh;
+    line-height: 6vh;
+  }
+
+  .pi-name {
+    font-size: 3vh;
+    height: 6vh;
+    line-height: 6vh;
+    position: absolute;
+    text-align: center;
+    top: 1vh;
+    width: auto;
+  }
+
+  .pi-name.opp {
+    left: 30vh;
+  }
+
+  .pi-name.sel {
+    right: 30vh;
+  }
+}

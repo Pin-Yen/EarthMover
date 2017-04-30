@@ -2,48 +2,93 @@
 
 <html>
 <head>
-  <title></title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/dialogstyle.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/dialog.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
 </head>
 <body>
-  <div id="dialog" class="dialog_background">
-    <div class="dialog_body">
-      <span class="dialog_radio_block left">
+  <!-- this dialog will show when click 'btn-new-game'
+       NOTE: in this scope, dialog is abridged as dl -->
+  <div id="dialog-new-game">
+    <div class="dl-body">
+      <span class="dl-block left">
         Black:<br>
         <input type="radio" name="black" value="human" checked="true">human<br>
+        <input id="dl-name-black" class="dl-name" type="text" value="you"><br>
         <input type="radio" name="black" value="computer">computer<br>
       </span>
-      <span class="dialog_radio_block right">
+      <span class="dl-block right">
         White:<br>
         <input type="radio" name="white" value="human" checked="true">human<br>
+        <input id="dl-name-white" class="dl-name" type="text" value="you"><br>
         <input type="radio" name="white" value="computer">computer<br>
       </span>
-      <br><br><br>RESERVED SBACE...<br>
-      <div class="dialog_btn_bar">
-        <button id="btn_dialog_ok" class="btn_dialog">OK</button>
-        <button id="btn_dialog_cancel" class="btn_dialog">Cancel</button>
+      <span class="dl-block bottom">
+        Computer Level
+        <select>
+          <option>NORMAL</option>
+          <option>ADVANCED</option>
+          <option>MASTER</option>
+        </select>
+      </span>
+      <div class="dl-btn-bar">
+        <button id="btn-dialog-ok" class="dl-btn">OK</button>
+        <button id="btn-dialog-cancel" class="dl-btn">Cancel</button>
       </div>
     </div>
   </div>
+
+  <!-- tool bar at the top of the screen -->
   <div class="tool">
-    <button id="btn_new_game">new game</button>
+    <button id="btn-new-game">new game</button>
   </div>
+
+  <!-- main div -->
   <div id="main">
+    <!-- this backgroung is square so the border will go beyond the screen -->
     <span id="background"></span>
-    <span class="inf opp">
-      Opp Information
+
+    <!-- opponent player information
+         NOTE: in this scope, player information is abridged as pi -->
+    <span class="player-information opp">
+      <!-- icon -->
+      <img id="pi-icon-opp" src="gomoku/src/icon.png" class="pi-icon opp">
+
+      <div id="pi-background-opp" class="pi-background opp white">
+        <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
+        <span id="pi-timer-opp" class="pi-timer opp white">00:00</span>
+      </div>
+      <span id="pi-name-opp" class="pi-name opp">EarthMover</span>
     </span>
-    <img src="gomoku/src/board.png" class="board">
-      <canvas id="cvs_board" class="board"> </canvas>
-    <span class="inf sel">
-      Self Information
+    <!-- board image and canvas that used to draw chess on board -->
+    <img src="gomoku/src/board.png" class="board img">
+    <canvas id="cvs-board" class="board cvs"></canvas>
+
+    <!-- self player information
+         NOTE: in this scope, player information is abridged as pi -->
+    <span class="player-information sel">
+      <!-- icon -->
+      <img id="pi-icon-sel" src="gomoku/src/human.png" class="pi-icon sel">
+
+      <div id="pi-background-sel" class="pi-background sel black">
+        <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
+        <span id="pi-timer-sel" class="pi-timer sel black">00:00</span>
+      </div>
+      <span id="pi-name-sel" class="pi-name sel">You</span>
     </span>
   </div>
+
+  <!-- game control bar -->
   <div class="control">
     game control bar(pass, resign...)
-    <br>RESERVED SBACE...
+    <br>RESERVED SPACE...
   </div>
+  <img src="gomoku/src/chess_black_transparent.png" style="display: none;">
+  <img src="gomoku/src/chess_black_marked.png" style="display: none;">
+  <img src="gomoku/src/chess_white_transparent.png" style="display: none;">
+  <img src="gomoku/src/chess_white_marked.png" style="display: none;">
 </body>
 <script type="text/javascript" src="gomoku/src/board.js"></script>
 </html>

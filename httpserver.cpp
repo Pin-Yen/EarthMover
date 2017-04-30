@@ -1,6 +1,7 @@
 #include "httpserver.hpp"
 #include "ai.hpp"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <assert.h>
@@ -40,26 +41,33 @@ void HttpServer::listenConnection() {
   listen(client, 1);
 
   socklen_t size = sizeof(serverAddress);
-  server = accept(client, (struct sockaddr*)&serverAddress, &size);
-  if (server < 0) {
-    std::cout <<"Failed to accept" << std::endl;
-    return;
-  }
-
 
   while (true) {
+    // accepts a new connection from the connection queue
+    server = accept(client, (struct sockaddr*)&serverAddress, &size);
+    if (server < 0) {
+      std::cout <<"Failed to accept" << std::endl;
+      return;
+    }
+
+    /* outputs client port number (only works for ipv4) */
+    struct sockaddr_in *clientAddr = (struct sockaddr_in*) &serverAddress;
+    int clientPort = ntohs(clientAddr->sin_port);
+
+    std::cout << "client port: " << clientPort << std::endl;
+
     /* store request in buffer */
     const int REQUEST_BUFFER_SIZE = 4000;
     char requestBuffer[REQUEST_BUFFER_SIZE] = {'\0'};
-    recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
-    std::cout << "recieving something" << std::flush;
+    int recvReturnValue = recv(server, requestBuffer, REQUEST_BUFFER_SIZE, 0);
     std::cout << "request:\n" << requestBuffer <<std::flush;
 
     std::string request(requestBuffer);
     std::cout << "requestBufferLen:" << request.length() << std::endl;
-    /* chrome sends useless empty requests */
+
     if (request.length() == 0) {
       responseHttpError(400);
+      std::cout << "received empty request"<<std::endl;
       continue;
     }
 
@@ -77,82 +85,97 @@ void HttpServer::listenConnection() {
       requestBody = request.substr(bodyStart);
     }
 
-    std::cout << "path: " << directory << std::endl;
-    /* if requested path is "/", redirect it to /gomoku/board.html */
-    if (directory == "/") {
-      directory.append("board.html");
-    }
+    if (directory == "/play") {
+       /* extract row & col from encoded request body */
+      int row = atoi(findAttributeInJson(requestBody, "row").c_str());
+      int col = atoi(findAttributeInJson(requestBody, "col").c_str());
 
-    /* request handlers */
-    if(directory == "/play") {
-      /* extract row & col from encoded request body */
-      int rowPosStart = requestBody.find("row=") + 4;
-      int rowPosEnd = requestBody.find("&",rowPosStart);
-      int row = atoi(requestBody.substr(rowPosStart, rowPosEnd - rowPosStart).c_str());
+      requestAiPlay(row, col, false);
 
-      int colPosStart = requestBody.find("col=") + 4;
-      int colPosEnd = requestBody.find("\0",colPosStart);
-      int col = atoi(requestBody.substr(colPosStart, colPosEnd - colPosStart).c_str());
+    } else if (directory == "/start") {
 
-      requestAiPlay(row, col);
+      isBlackAi = (findAttributeInJson(requestBody, "black") == "computer");
+      isWhiteAi = (findAttributeInJson(requestBody, "white") == "computer");
 
-    }
-    // favicon
-    if (directory == "/favicon.ico") {
-      directory = std::string("/gomoku/src/chess_white.png");
-    }
-
-    /* requesting some resource */
-    if (sanitize(directory)) {
-        // if access to this directory is permitted
-      std::ifstream resourceFile;
-      resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary); /* use the sub-string from pos=1 to skip the first '/' in directory path */
-      std::cout << "file path = " << directory.substr(1).c_str() << std::endl;
-
-      if( !resourceFile.is_open()) {
-        responseHttpError(404);
+      if (isBlackAi){
+        requestAiPlay(-1, -1, true);
       } else {
-        std::cout << "200 ok" << std::endl;
-        HttpResponse response(200);
-        response.setContentTypeByFileExt(directory.substr(directory.find_last_of(".")));
-        response.setBody(&resourceFile);
-        std::string header = response.getHeaderString();
-        std::cout << header << std::endl;
-        // send header
-        send(server, header.c_str(), header.length(), 0);
-        // send body
-        send(server, response.getBody(), response.getBodyLength(), 0);
-
-        std::cout << "sent!" << std::endl;
+        HttpResponse response(204);
+        send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
       }
-
-    } else {
-      /* access denied */
-      std::cout << "access denied" << std::endl;
-      responseHttpError(403);
     }
+    else {
+
+      /* redirect path */
+      if (directory == "/")
+        directory.append("board.html");
+      else if (directory == "/favicon.ico")
+        directory = std::string("/gomoku/src/chess_white.png");
+
+      /* check permission and access resource */
+      if (sanitize(directory)) {
+        // if access to this directory is permitted
+        std::ifstream resourceFile;
+        resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary); /* use the sub-string from pos=1 to skip the first '/' in directory path */
+
+        if( !resourceFile.is_open()) {
+          responseHttpError(404);
+        } else {
+          std::cout << "200 ok" << std::endl;
+          HttpResponse response(200);
+          response.setContentType(directory.substr(directory.find_last_of(".")));
+          response.setBody(&resourceFile);
+          std::string header = response.getHeaderString();
+          std::cout << header << std::endl;
+          // send header
+          send(server, header.c_str(), header.length(), 0);
+          // send body
+          send(server, response.getBody(), response.getBodyLength(), 0);
+
+          std::cout << "sent!" << std::endl;
+        }
+
+      } else {
+        /* access denied */
+        std::cout << "access denied" << std::endl;
+        responseHttpError(403);
+      }
+    }
+
+    close(server);
   }
 }
 
-void HttpServer::requestAiPlay(int clientRow, int clientCol) {
-  /* play client's move */
-  if( !board->play(clientRow, clientCol)) {
+void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
+  int gameStatus;
+
+  /* play client's move if it is not the first move and not both players are ai */
+  if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
+    /* stop background thread */
+    earthMover->stopBGThread();
+
+    /* play client's move */
+    if( !board->play(clientRow, clientCol)) {
     /* invalid client play, either there's bug in client-side's chessboard script,
      * or the user is manually posting wrong data */
 
-    responseHttpError(400);
-    return;
+      responseHttpError(400);
+      std::cout << "400 bad request" << std::endl;
+      return;
+    }
+    gameStatus = earthMover->play(clientRow, clientCol, false);
+    // TODO: handle win / lose
   }
-  int gameStatus = earthMover->play(clientRow, clientCol);
-  // TODO: handle win / lose
-
 
   int EMRow, EMCol;
-  earthMover->think(clientRow,clientCol, &EMRow, &EMCol);
+  earthMover->think(&EMRow, &EMCol);
 
-  board->play(EMRow, EMCol);
-  gameStatus = earthMover->play(EMRow, EMCol);
-  // TODO: handle win / lose
+  /* if at least one player is ai, play ai's move on the board */
+  if (isBlackAi || isWhiteAi) {
+    board->play(EMRow, EMCol);
+    gameStatus = earthMover->play(EMRow, EMCol, true);
+    // TODO: handle win / lose
+  }
 
   /* return EM's play to client */
   char responseBody[50];
@@ -196,8 +219,26 @@ bool HttpServer::sanitize(std::string uri) {
   return true;
 }
 
+std::string HttpServer::findAttributeInJson(std::string json, const char* rawAttr) {
+  std::string attr(rawAttr);
+
+  int startPos = json.find("\"" + attr + "\":") + attr.length() + 3;
+  int endPos = std::min(json.find(",", startPos), json.find("}", startPos));
+
+  assert(endPos != std::string::npos && startPos != std::string::npos);
+  std::string value = json.substr(startPos, endPos - startPos);
+
+  /* if the value is string type, erase its qoutation marks */
+  if (value.front() == '\"' && value.back() == '\"') {
+    value.erase(value.length() - 1, 1);
+    value.erase(0, 1);
+  }
+  return value;
+}
 
 HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
+  body = NULL;
+
   statusCode = httpResponseCode;
   status.append("HTTP/1.1 ");
   status.append(std::to_string(statusCode));
@@ -205,6 +246,7 @@ HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
 
   switch (statusCode) {
     case 200: status.append("OK"); break;
+    case 204: status.append("NO CONTENT"); break;
   }
 }
 
@@ -261,6 +303,9 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
 
   std::cout << "file length: "<<fileLength << std::endl;
 
+  if (body != NULL) {
+    delete body;
+  }
   body = new char[fileLength];
 
   file->seekg(0, std::ios_base::beg);
@@ -275,9 +320,13 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
 std::string HttpServer::HttpResponse::getHeaderString(){
   std::string header;
 
-  header.append(status).append("\r\n")
-          .append(contentType).append("\r\n")
-          .append(contentLength).append("\r\n")
+  header.append(status).append("\r\n");
+
+  if (contentType != "")
+    header.append(contentType).append("\r\n");
+
+  header.append(contentLength).append("\r\n")
+          .append("Connection: closed").append("\r\n")
           .append("\r\n");
 
   return header;
@@ -292,5 +341,6 @@ int HttpServer::HttpResponse::getBodyLength() {
 }
 
 HttpServer::HttpResponse::~HttpResponse() {
-  delete[] body;
+  if (body != NULL)
+    delete[] body;
 }
