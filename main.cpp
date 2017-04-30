@@ -92,7 +92,7 @@ void start_AI() {
 
     while (!validInput) {
       /* get user input*/
-      board->getInput(row, col);
+      board->getInput(&row, &col);
 
       /* tries to play at (row, col) */
       validInput = board->play(row, col);
@@ -139,7 +139,7 @@ void start() {
 
     while (!validInput) {
       /* get user input*/
-      board->getInput(row, col);
+      board->getInput(&row, &col);
 
       /* tries to play at (row, col) */
       validInput = board->play(row, col);

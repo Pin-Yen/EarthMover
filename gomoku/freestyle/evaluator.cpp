@@ -29,13 +29,13 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
                                   {{64, 40}, {90, 62}, {110, 75}, {0, 0}}},     /* L2 */
                                  {{{95, 60}, {0, 0}, {0, 0}, {0, 0}},           /* D3 */
                                   {{265, 135}, {320, 170}, {0, 0}, {0, 0}}},    /* L3 */
-                                 {{{300, 185}, {0, 0}, {0, 0}, {0, 0}},         /* D4 */
+                                 {{{310, 190}, {0, 0}, {0, 0}, {0, 0}},         /* D4 */
                                   {{10000, 800}, {0, 0}, {0, 0}, {0, 0}}},      /* L4 */
                                  {{{SCORE_WIN, 500000}, {0, 0}, {0, 0}, {0, 0}},/* 5 */
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}}};           /* X */
 
-  const int SCORE_DOUBLE4[2] = {10000, 500};
-  const int SCORE_DEAD4LIVE3[2] = {8000, 400};
+  const int SCORE_DOUBLE4[2] = {9000, 500};
+  const int SCORE_DEAD4LIVE3[2] = {2400, 400};
   const int SCORE_DOUBLELIVE3[2] = {320, 160};
 
   /* these const are for indexing purposes, enhancing the readibility of the code. */
@@ -139,7 +139,7 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
     for (int r = 0; r < 15; ++r)
       for (int c = 0; c < 15; ++c) {
         int score = point[r][c]->absScore(whoTurn);
-        if (score * 8 < highestScore || (playNo < 5 && score < 140))
+        if (score * 8 < highestScore || (playNo < 10 && score < 140))
           point[r][c]->setRelScore(-1);
         else
           point[r][c]->setRelScore(score);
