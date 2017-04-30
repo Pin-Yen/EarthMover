@@ -123,7 +123,7 @@ void HttpServer::listenConnection() {
         } else {
           std::cout << "200 ok" << std::endl;
           HttpResponse response(200);
-          response.setContentType(directory.substr(directory.find_last_of(".")));
+          response.setContentTypeByFileExt(directory.substr(directory.find_last_of(".")));
           response.setBody(&resourceFile);
           std::string header = response.getHeaderString();
           std::cout << header << std::endl;
@@ -178,15 +178,15 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
   }
 
   /* return EM's play to client */
-  char responseBody[50];
+  HttpResponse response(200);
+  response.setContentType("application/json")
+          .addJson("row", EMRow)
+          .addJson("col", EMCol);
 
-  std::string response("HTTP/1.1 200 OK\r\n");
-  response.append("Content-Type: application/json\r\n\r\n");
-
-  sprintf(responseBody, "{\"row\":%d,\"col\":%d}", EMRow, EMCol);
-  response.append(responseBody);
-
-  send(server, response.c_str(), response.length(), 0);
+  std::cout << response.getHeaderString();
+  std::cout << response.getBody();
+  send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
 }
 
 
@@ -237,7 +237,8 @@ std::string HttpServer::findAttributeInJson(std::string json, const char* rawAtt
 }
 
 HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
-  body = NULL;
+  binBody = NULL;
+  isBin = false;
 
   statusCode = httpResponseCode;
   status.append("HTTP/1.1 ");
@@ -250,11 +251,11 @@ HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
   }
 }
 
-HttpServer::HttpResponse HttpServer::HttpResponse::setContentType(std::string contentType) {
+HttpServer::HttpResponse& HttpServer::HttpResponse::setContentType(const char* type) {
   contentType.append("Content-Type: ")
-             .append(contentType);
+             .append(type);
 
-  return *this
+  return *this;
 }
 
 void HttpServer::HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
@@ -273,7 +274,7 @@ void HttpServer::HttpResponse::setContentTypeByFileExt(std::string fileExtension
 
 }
 
-HttpServer::HttpResponse HttpServer::HttpResponse::addJson(std::string attribute, int value) {
+HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribute, int value) {
   attribute.insert(0, "\"");
   attribute.append("\":");
 
@@ -287,37 +288,41 @@ HttpServer::HttpResponse HttpServer::HttpResponse::addJson(std::string attribute
     body.append("{}");
     insertPos = 1;
   } else {
-    body.insert(closeTagPos, ",");
+    body.insert(insertPos, ",");
     ++insertPos;
   }
 
   body.insert(insertPos, attribute);
+  bodyLength = body.length();
 
   return *this;
 }
 
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
+  isBin = true;
+
   file->seekg(0, std::ios_base::end);
   int fileLength = (int)file->tellg();
   bodyLength = fileLength;
 
   std::cout << "file length: "<<fileLength << std::endl;
 
-  if (body != NULL) {
-    delete body;
+  if (binBody != NULL) {
+    delete binBody;
   }
-  body = new char[fileLength];
+  binBody = new char[fileLength];
 
   file->seekg(0, std::ios_base::beg);
-  file->read(body, fileLength);
-
-  /* set content-length header */
-  char temp[30];
-  sprintf(temp, "Content-Length: %d", fileLength);
-  contentLength = std::string(temp);
+  file->read(binBody, fileLength);
 
 }
+
 std::string HttpServer::HttpResponse::getHeaderString(){
+  /* set content-length header */
+  char temp[30];
+  sprintf(temp, "Content-Length: %d", bodyLength);
+  contentLength = std::string(temp);
+
   std::string header;
 
   header.append(status).append("\r\n");
@@ -329,11 +334,15 @@ std::string HttpServer::HttpResponse::getHeaderString(){
           .append("Connection: closed").append("\r\n")
           .append("\r\n");
 
+  headerLength = header.length();
   return header;
 }
 
-char* HttpServer::HttpResponse::getBody() {
-  return body;
+const char* HttpServer::HttpResponse::getBody() {
+  if (binBody)
+    return binBody;
+  else
+    return body.c_str();
 }
 
 int HttpServer::HttpResponse::getBodyLength() {
@@ -341,6 +350,6 @@ int HttpServer::HttpResponse::getBodyLength() {
 }
 
 HttpServer::HttpResponse::~HttpResponse() {
-  if (body != NULL)
-    delete[] body;
+  if (binBody != NULL)
+    delete[] binBody;
 }
