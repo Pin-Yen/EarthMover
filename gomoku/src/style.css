@@ -3,7 +3,9 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 
-  font-family: serif;
+  cursor: default;
+
+  font-family: sans-serif;
 
   -webkit-touch-callout: none;
   -webkit-user-select: none;

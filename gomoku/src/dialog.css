@@ -7,6 +7,10 @@
   z-index: 10;
 }
 
+.dl-block input {
+  margin: 0 4px;
+}
+
 .dl-body {
   background-color: #FFE;
   bottom: 0;
@@ -61,11 +65,12 @@
 }
 
 .dl-name {
-  left: 20px;
+  left: 16px;
   position: relative;
   width: 100px;
 }
 
 .dl-btn {
   margin: 2px;
+  padding: 0 4px;
 }
