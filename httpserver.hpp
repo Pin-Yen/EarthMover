@@ -60,14 +60,24 @@ class HttpServer::HttpResponse
   ~HttpResponse();
 
   /* set content-type header according to fileExtension */
-  void setContentType(std::string fileExtension);
+  void setContentTypeByFileExt(std::string fileExtension);
+
+  /* explicitly set content type */
+  HttpResponse& setContentType(const char* type);
+
+  /* Add JSON {attribute:value} to response body, returns *this for chainning */
+  HttpResponse& addJson(std::string attribute, int value);
+
+  HttpResponse& addJson(std::string attribute, const char* value);
 
   /* sets the response body */
   void setBody(std::ifstream *file);
 
   std::string getHeaderString();
 
-  char* getBody();
+  int getHeaderLength() { return headerLength; }
+
+  const char* getBody();
 
   int getBodyLength();
 
@@ -77,8 +87,11 @@ class HttpServer::HttpResponse
   int statusCode;
   std::string contentType;
   std::string contentLength;
-  char *body;
+  char *binBody;
+  std::string body;
+  bool isBin;
   int bodyLength;
+  int headerLength;
 
   std::string status;
 };

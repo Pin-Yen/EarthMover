@@ -123,7 +123,7 @@ void HttpServer::listenConnection() {
         } else {
           std::cout << "200 ok" << std::endl;
           HttpResponse response(200);
-          response.setContentType(directory.substr(directory.find_last_of(".")));
+          response.setContentTypeByFileExt(directory.substr(directory.find_last_of(".")));
           response.setBody(&resourceFile);
           std::string header = response.getHeaderString();
           std::cout << header << std::endl;
@@ -147,7 +147,7 @@ void HttpServer::listenConnection() {
 }
 
 void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
-  int gameStatus;
+  int gameStatus, winner = -1;
 
   /* play client's move if it is not the first move and not both players are ai */
   if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
@@ -164,29 +164,43 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
       return;
     }
     gameStatus = earthMover->play(clientRow, clientCol, false);
-    // TODO: handle win / lose
+    if (gameStatus) {
+      //human won
+      winner = (earthMover->whoTurn() == 0)? 1:0;
+    }
   }
 
-  int EMRow, EMCol;
+  int EMRow, EMCol, loser;
   earthMover->think(&EMRow, &EMCol);
 
   /* if at least one player is ai, play ai's move on the board */
   if (isBlackAi || isWhiteAi) {
     board->play(EMRow, EMCol);
     gameStatus = earthMover->play(EMRow, EMCol, true);
-    // TODO: handle win / lose
+
+    if (gameStatus) {
+      //EM won
+      winner = (earthMover->whoTurn() == 0)? 1:0;
+    }
   }
 
   /* return EM's play to client */
-  char responseBody[50];
+  HttpResponse response(200);
+  response.setContentType("application/json")
+          .addJson("row", EMRow)
+          .addJson("col", EMCol);
 
-  std::string response("HTTP/1.1 200 OK\r\n");
-  response.append("Content-Type: application/json\r\n\r\n");
+  switch (winner) {
+    case -1: response.addJson("winner", "none"); break;
+    case 0: response.addJson("winner", "black"); break;
+    case 1: response.addJson("winner", "white"); break;
+    default: assert(0);
+  }
 
-  sprintf(responseBody, "{\"row\":%d,\"col\":%d}", EMRow, EMCol);
-  response.append(responseBody);
-
-  send(server, response.c_str(), response.length(), 0);
+  std::cout << response.getHeaderString();
+  std::cout << response.getBody();
+  send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
 }
 
 
@@ -237,7 +251,8 @@ std::string HttpServer::findAttributeInJson(std::string json, const char* rawAtt
 }
 
 HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
-  body = NULL;
+  binBody = NULL;
+  isBin = false;
 
   statusCode = httpResponseCode;
   status.append("HTTP/1.1 ");
@@ -250,7 +265,14 @@ HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
   }
 }
 
-void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
+HttpServer::HttpResponse& HttpServer::HttpResponse::setContentType(const char* type) {
+  contentType.append("Content-Type: ")
+             .append(type);
+
+  return *this;
+}
+
+void HttpServer::HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
   contentType.append("Content-Type: ");
 
   if (fileExtension.compare(".png") == 0)
@@ -266,28 +288,81 @@ void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
 
 }
 
+HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribute, int value) {
+  attribute.insert(0, "\"");
+  attribute.append("\":");
+
+  char valueChar[12];
+  sprintf(valueChar, "%d", value);
+  attribute.append(valueChar);
+
+  int insertPos = body.find('}');
+
+  if (insertPos == std::string::npos) {
+    body.append("{}");
+    insertPos = 1;
+  } else {
+    body.insert(insertPos, ",");
+    ++insertPos;
+  }
+
+  body.insert(insertPos, attribute);
+  bodyLength = body.length();
+
+  return *this;
+}
+
+HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribute, const char* value) {
+  attribute.insert(0, "\"");
+  attribute.append("\":");
+
+  std::string valueString(value);
+
+  valueString.insert(0, "\"");
+  valueString.append("\"");
+  attribute.append(valueString);
+
+  int insertPos = body.find('}');
+
+  if (insertPos == std::string::npos) {
+    body.append("{}");
+    insertPos = 1;
+  } else {
+    body.insert(insertPos, ",");
+    ++insertPos;
+  }
+
+  body.insert(insertPos, attribute);
+  bodyLength = body.length();
+
+  return *this;
+}
+
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
+  isBin = true;
+
   file->seekg(0, std::ios_base::end);
   int fileLength = (int)file->tellg();
   bodyLength = fileLength;
 
   std::cout << "file length: "<<fileLength << std::endl;
 
-  if (body != NULL) {
-    delete body;
+  if (binBody != NULL) {
+    delete binBody;
   }
-  body = new char[fileLength];
+  binBody = new char[fileLength];
 
   file->seekg(0, std::ios_base::beg);
-  file->read(body, fileLength);
-
-  /* set content-length header */
-  char temp[30];
-  sprintf(temp, "Content-Length: %d", fileLength);
-  contentLength = std::string(temp);
+  file->read(binBody, fileLength);
 
 }
+
 std::string HttpServer::HttpResponse::getHeaderString(){
+  /* set content-length header */
+  char temp[30];
+  sprintf(temp, "Content-Length: %d", bodyLength);
+  contentLength = std::string(temp);
+
   std::string header;
 
   header.append(status).append("\r\n");
@@ -299,11 +374,15 @@ std::string HttpServer::HttpResponse::getHeaderString(){
           .append("Connection: closed").append("\r\n")
           .append("\r\n");
 
+  headerLength = header.length();
   return header;
 }
 
-char* HttpServer::HttpResponse::getBody() {
-  return body;
+const char* HttpServer::HttpResponse::getBody() {
+  if (binBody)
+    return binBody;
+  else
+    return body.c_str();
 }
 
 int HttpServer::HttpResponse::getBodyLength() {
@@ -311,6 +390,6 @@ int HttpServer::HttpResponse::getBodyLength() {
 }
 
 HttpServer::HttpResponse::~HttpResponse() {
-  if (body != NULL)
-    delete[] body;
+  if (binBody != NULL)
+    delete[] binBody;
 }

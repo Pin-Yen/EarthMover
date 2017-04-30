@@ -25,7 +25,7 @@ class AI
    * triggerBackgroundThread: true: start bg thread */
   bool play(int row, int col, bool triggerBackgroundThread);
 
-  bool getWhoTurn() {return (bool)board->whoTurn();}
+  bool whoTurn() {return (bool)board->whoTurn();}
 
   /* stops background thread */
   void stopBGThread();
