@@ -114,7 +114,7 @@ void HttpServer::listenConnection() {
       } else {
         std::cout << "200 ok" << std::endl;
         HttpResponse response(200);
-        response.setContentType(directory.substr(directory.find_last_of(".")));
+        response.setContentTypeByFileExt(directory.substr(directory.find_last_of(".")));
         response.setBody(&resourceFile);
         std::string header = response.getHeaderString();
         std::cout << header << std::endl;
@@ -208,7 +208,14 @@ HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
   }
 }
 
-void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
+HttpServer::HttpResponse HttpServer::HttpResponse::setContentType(std::string contentType) {
+  contentType.append("Content-Type: ")
+             .append(contentType);
+
+  return *this
+}
+
+void HttpServer::HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
   contentType.append("Content-Type: ");
 
   if (fileExtension.compare(".png") == 0)
@@ -222,6 +229,29 @@ void HttpServer::HttpResponse::setContentType(std::string fileExtension) {
   else
     std::cout << "unrecognized file type" << std::endl;
 
+}
+
+HttpServer::HttpResponse HttpServer::HttpResponse::addJson(std::string attribute, int value) {
+  attribute.insert(0, "\"");
+  attribute.append("\":");
+
+  char valueChar[12];
+  sprintf(valueChar, "%d", value);
+  attribute.append(valueChar);
+
+  int insertPos = body.find('}');
+
+  if (insertPos == std::string::npos) {
+    body.append("{}");
+    insertPos = 1;
+  } else {
+    body.insert(closeTagPos, ",");
+    ++insertPos;
+  }
+
+  body.insert(insertPos, attribute);
+
+  return *this;
 }
 
 void HttpServer::HttpResponse::setBody(std::ifstream *file) {
