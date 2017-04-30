@@ -1,6 +1,7 @@
 var game = { black: 'human', white: 'computer'};
 
 var boardEnable = false, gameStarted = false;
+var playNumber = false;
 
 var mousePos = [-1, -1], lastPlay = [-1, -1];
 
@@ -17,6 +18,7 @@ chessImage[4].src = "gomoku/src/chess_white.png";
 chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
 var canvas = document.getElementById('cvs-board');
+var context = canvas.getContext("2d");
 $('#cvs-board').attr({ 'width': 525, 'height': 525 });
 
 var playNo = 0;
@@ -37,7 +39,7 @@ function initBoard() {
   mousePos = [-1, -1];
   lastPlay = [-1, -1];
 
-  canvas.getContext("2d").clearRect(0, 0, 525, 525);
+  context.clearRect(0, 0, 525, 525);
 }
 
 canvas.onmousemove = function(event) {
@@ -51,14 +53,14 @@ canvas.onmousemove = function(event) {
     // draw only if mouse at the new coordinate
     if (mousePos !== position) {
       clear(mousePos);
-      draw(position, chessImage[(playNo & 1) * 3]);
+      draw(position);
 
       // update mousePos
       mousePos = position.slice();
     }
   } else {
     // if mouse at the exist chess, clear mose position
-    if (mousePos !== [-1, -1]) {
+    if (mousePos[0] != -1) {
       clear(mousePos);
       mousePos = [-1, -1];
     }
@@ -69,7 +71,7 @@ canvas.onmouseout = function() {
   if (!boardEnable) return;
 
   // if mouse's previous position not has chess
-  if (mousePos !== [-1, -1]) {
+  if (mousePos[0] != -1) {
     // clear the previous image
     clear(mousePos);
 
@@ -108,15 +110,37 @@ function getPosition(event) {
 }
 
 // draw iamge at position
-function draw(position, image) {
-  canvas.getContext("2d").drawImage
-    (image, position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
+function draw(pos) {
+  if (pos[0] == -1) return;
+
+  var whoTurn = playNo & 1;
+  var status = boardStatus[pos[0]][pos[1]];
+  if (status == 0) {
+    image = chessImage[whoTurn * 3];
+  } else if (status == playNo) {
+    image = (playNumber ? chessImage[(whoTurn * -1 + 1) * 3 + 1] :
+                          chessImage[(whoTurn * -1 + 1) * 3 + 2]);
+  } else {
+    image = chessImage[whoTurn * 3 + 1];
+  }
+
+  context.drawImage(image, pos[0] * 35 + 1, pos[1] * 35 + 1, 33, 33);
+  if (playNumber && status > 0) {
+    if (status == playNo)
+      context.fillStyle = 'red';
+    else {
+      context.fillStyle = whoTurn ? 'black' : 'white';
+    }
+
+    context.fillText(status, pos[0] * 35 + 17, pos[1] * 35 + 17);
+  }
 }
 
 // clear the position
-function clear(position) {
-  canvas.getContext("2d").
-    clearRect(position[0] * 35 + 1, position[1] * 35 + 1, 33, 33);
+function clear(pos) {
+  if (pos[0] == -1) return;
+
+  context.clearRect(pos[0] * 35 + 1, pos[1] * 35 + 1, 33, 33);
 }
 
 // play at position, we should make sure that position is empty
@@ -127,14 +151,14 @@ function play(position) {
   mousePos = [-1, -1];
 
   // draw a marked chess
-  draw(position, chessImage[((playNo - 1) & 1) * 3 + 2]);
+  draw(position);
 
   // redraw last play's image (remove the mark)
   clear(lastPlay);
-  draw(lastPlay, chessImage[(playNo & 1) * 3 + 1])
+  draw(lastPlay);
 
   // update last play
-  lastPlay = position.slice();
+  lastPlay = position.slice(0);
 
   // check board's enable
   boardEnable = (((playNo & 1)== 0 && game.black == 'human') ||
@@ -240,3 +264,11 @@ $('#btn-dialog-ok').click(function() {
   $('#dialog-new-game').hide();
 });
 
+$('#play-number').click(function() {
+  playNumber = !playNumber;
+
+  for (var row = boardStatus.length - 1; row >= 0; row--)
+    for (var col = boardStatus[row].length - 1; col >= 0; col--)
+      if (boardStatus[row][col] > 0)
+        draw([row, col]);
+});
