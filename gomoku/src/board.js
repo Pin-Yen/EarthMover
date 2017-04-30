@@ -177,7 +177,7 @@ function initPlayer(player, color, human) {
   $('#pi-timer-' + player).addClass(color);
 
   // set name
-  $('#pi-name-' + player).html((human ? $('dl-name-' + color).val() : 'EarthMover'));
+  $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));
 }
 
 $('#btn-new-game').click(function() {
