@@ -27,8 +27,15 @@
   top: 6vh;
   overflow: hidden;
   position: absolute;
-  width: 20vh;
   z-index: -2;
+}
+
+.tl-game-sub {
+  width: 20vh;
+}
+
+.tl-view-sub {
+  width: 24vh;
 }
 
 .tool span span:hover {
@@ -59,16 +66,13 @@
 .tool li:hover::before,
 .tool li:hover::after {
   content: "";
-  height: 2.5vh;
-  left: 0;
-  margin: .2vh;
+  height: 2.4vh;
+  left: .2vh;
   position: absolute;
-  width: 19.6vh;
   z-index: -1;
 }
 
 .tool li:hover::before {
-  top: 0;
   background: linear-gradient(to bottom, #ffe, #ffa);
   background: -moz-linear-gradient(bottom, #ffe, #ffa);
   background: -o-linear-gradient(bottom, #ffe, #ffa);
@@ -76,11 +80,40 @@
 }
 
 .tool li:hover::after {
-  bottom: 0;
   background: linear-gradient(to bottom, #fd6, #fe9);
   background: -moz-linear-gradient(bottom, #fd6, #fe9);
   background: -o-linear-gradient(bottom, #fd6, #fe9);
   background: -webkit-linear-gradient(top, #fd6, #fe9);
+}
+
+#new-game:hover::before {
+  top: .2vh;
+  width: 19.6vh;
+}
+
+#new-game:hover::after  {
+  top: 2.6vh;
+  width: 19.6vh;
+}
+
+#play-number:hover::before {
+  top: .2;
+  width: 23.6vh;
+}
+
+#play-number:hover::after  {
+  top: 2.6vh;
+  width: 23.6vh;
+}
+
+#coordinate:hover::before {
+  top: 5.4;
+  width: 23.6vh;
+}
+
+#coordinate:hover::after  {
+  top: 7.8vh;
+  width: 23.6vh;
 }
 
 .tl-game {
