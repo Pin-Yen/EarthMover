@@ -141,7 +141,12 @@ function play(position) {
                  ((playNo & 1) == 1 && game.white == 'human'));
 }
 
-// post request, pareams should be json type
+function notifyWinner(winnerColor) {
+  // TODO: display game status
+  alert(winnerColor + " wins !");
+}
+
+// post request, params should be json type
 function post(params, path) {
   var http = new XMLHttpRequest();
   http.open('POST', path);
@@ -149,10 +154,20 @@ function post(params, path) {
   http.onreadystatechange = function() {
     if (http.readyState == 4 && http.status == 200) {
       var response = JSON.parse(http.responseText);
-      // change JSON to array
-      play([response.col, response.row]);
+
+      // play EM's move only if user's previous move is not winning.
+      if (response.winner == 'none' ||
+          (response.winner == 'black' && game.black == 'computer') ||
+          (response.winner == 'white' && game.white == 'computer')) {
+        // change JSON to array, and play
+        play([response.col, response.row]);
+      }
+
+      if (response.winner != 'none')
+        notifyWinner(response.winner);
     }
   };
+
 
   http.send(JSON.stringify(params));
 }
