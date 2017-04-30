@@ -5,6 +5,7 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/dialog.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/toolbar.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
 </head>
@@ -42,7 +43,20 @@
 
   <!-- tool bar at the top of the screen -->
   <div class="tool">
-    <button id="btn-new-game">new game</button>
+    <span class="tl-game">
+      <span>game</span>
+      <div class="tl-game sub">
+        <li id="new-game" class="tl-game-item">new game</li>
+      </div>
+    </span>
+    <span class="tl-view">
+      <span>view</span>
+    </span>
+  </div>
+
+  <!-- game control bar -->
+  <div class="control">
+
   </div>
 
   <!-- main div -->
@@ -80,11 +94,6 @@
     </span>
   </div>
 
-  <!-- game control bar -->
-  <div class="control">
-    game control bar(pass, resign...)
-    <br>RESERVED SPACE...
-  </div>
   <img src="gomoku/src/chess_black_transparent.png" style="display: none;">
   <img src="gomoku/src/chess_black_marked.png" style="display: none;">
   <img src="gomoku/src/chess_white_transparent.png" style="display: none;">
