@@ -147,7 +147,7 @@ void HttpServer::listenConnection() {
 }
 
 void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
-  int gameStatus;
+  int gameStatus, winner = -1;
 
   /* play client's move if it is not the first move and not both players are ai */
   if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
@@ -164,17 +164,24 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
       return;
     }
     gameStatus = earthMover->play(clientRow, clientCol, false);
-    // TODO: handle win / lose
+    if (gameStatus) {
+      //human won
+      winner = (earthMover->whoTurn() == 0)? 1:0;
+    }
   }
 
-  int EMRow, EMCol;
+  int EMRow, EMCol, loser;
   earthMover->think(&EMRow, &EMCol);
 
   /* if at least one player is ai, play ai's move on the board */
   if (isBlackAi || isWhiteAi) {
     board->play(EMRow, EMCol);
     gameStatus = earthMover->play(EMRow, EMCol, true);
-    // TODO: handle win / lose
+
+    if (gameStatus) {
+      //EM won
+      winner = (earthMover->whoTurn() == 0)? 1:0;
+    }
   }
 
   /* return EM's play to client */
@@ -182,6 +189,13 @@ void HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
   response.setContentType("application/json")
           .addJson("row", EMRow)
           .addJson("col", EMCol);
+
+  switch (winner) {
+    case -1: response.addJson("winner", "none"); break;
+    case 0: response.addJson("winner", "black"); break;
+    case 1: response.addJson("winner", "white"); break;
+    default: assert(0);
+  }
 
   std::cout << response.getHeaderString();
   std::cout << response.getBody();

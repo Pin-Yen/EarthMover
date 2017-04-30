@@ -42,7 +42,7 @@ int main() {
         /* someone wins */
         gameEnd = true;
 
-        if (earthMover.getWhoTurn())
+        if (earthMover.whoTurn())
           std::cout << "black wins";
         else
           std::cout << "white wins";
