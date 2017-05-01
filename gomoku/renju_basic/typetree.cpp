@@ -38,23 +38,23 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
  *               ^^^^^               ^^^^^ */
 void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
                                             int move,  int blackConnect, int whiteConnect,
-                                            bool blackblock, bool whiteBlock) {
+                                            bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
-    case (BLACK):
-      blackblock = true; break;
-    case (WHITE):
+    case BLACK:
+      blackBlock = true; break;
+    case WHITE:
       whiteBlock = true;
   }
 
-  if ((blackblock && whiteBlock) || status[location] == BOUND ||
-      location <= 0 || location >= length - 1) {
+  if ((blackBlock && whiteBlock) || status[location] == BOUND ||
+      location <= 0 || location >= analyze_length - 1) {
     if (move == 1) {
       /* reached leaf */
 
       /* set type */
-      root->type[0] = typeAnalyze(status, checkForbidden, BLACK);
-      root->type[1] = typeAnalyze(status, checkForbidden, WHITE);
+      root->type[0] = typeAnalyze(status, BLACK, true);
+      root->type[1] = typeAnalyze(status, WHITE, true);
 
       /* set child node to NULL*/
       for (int i = 0; i < 4; ++i)
@@ -62,15 +62,15 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
 
       return;
     } else {
-      /* set this node to jump node*/
+      /* set this node to jump node */
       root->jump = true;
 
       /* jump to middle of the status */
       move += 2;
-      location = length / 2;
+      location = analyze_length / 2;
 
       /* reset block */
-      blackblock = false; whiteBlock = false;
+      blackBlock = false; whiteBlock = false;
 
       /* reset connect */
       blackConnect = 0; whiteConnect = 0;
@@ -78,14 +78,14 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
   } else {
     /* if status == black or white, increase connect */
     switch (status[location]) {
-      case (BLACK):
+      case BLACK:
         ++blackConnect; break;
-      case (WHITE):
+      case WHITE:
         ++whiteConnect;
     }
   }
 
-  /* move location*/
+  /* move location */
   location += move;
 
   root->type[0] = NULL; root->type[1] = NULL;
@@ -103,7 +103,7 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
     root->childNode[i] = new Node();
     status[location] = s[i];
     dfs(root->childNode[i], status, location, move,
-        blackConnect, whiteConnect, blackblock, whiteBlock);
+        blackConnect, whiteConnect, blackBlock, whiteBlock);
   }
 
   /* restore current location to EMPTY
@@ -191,7 +191,10 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
 
   if (connect > 5) {
     /* CG's length > 5, return -1 */
-    return new ChessType(-1, 0, 0);
+    if (color == BLACK)
+      return new ChessType(-1, 0, 0);
+    else
+      return new ChessType(5, 0, 0);
   } else if (connect == 5) {
     /* CG's length == 5, return 5 */
     return new ChessType(5, 0, 0);
@@ -239,7 +242,6 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
             type = new ChessType(0, 0, 0);
           }
 
-          /* set analize result l/rType */
           if (move == -1) {
             /* left type result */
             if (lType == NULL) {
