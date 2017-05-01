@@ -8,20 +8,17 @@
   z-index: 10;
 }
 
-.tool span {
+.tl-title {
   height: 6vh;
   position: absolute;
   width: 15vh;
-}
-
-.tool span span {
   color: #206;
   font-size: 3.2vh;
   text-align: center;
   line-height: 6vh;
 }
 
-.tool div {
+.tl-sub {
   -webkit-transition: height .2s;
   -moz-transition: height .2s;
   -o-transition: height .2s;
@@ -31,30 +28,31 @@
   top: 6vh;
   overflow: hidden;
   position: absolute;
+  text-align: left;
   z-index: -1;
 }
 
-.tl-game-sub {
+.tl-sub.game {
   width: 20vh;
 }
 
-.tl-view-sub {
+.tl-sub.view {
   width: 24vh;
 }
 
-.tool span span:hover {
+.tl-title:hover {
   background-color: rgba(20, 0, 60, .1);
 }
 
-.tool span:hover .tl-game-sub {
+.tl-title:hover .tl-sub.game {
   height: 5.4vh;
 }
 
-.tool span:hover .tl-view-sub {
+.tl-title:hover .tl-sub.view {
   height: 10.6vh;
 }
 
-.tool li {
+.tl-item {
   border-color: transparent;
   border-style: outset;
   border-width: .1vh;
@@ -64,70 +62,44 @@
   list-style-type: none;
   margin: .2vh;
   padding-left: 1vh;
+  position: relative;
 }
 
-.tool li:hover {
+.tl-item:hover {
   border-color: #aaa;
 }
 
-.tool li:hover::before,
-.tool li:hover::after {
+.tl-item:hover::before,
+.tl-item:hover::after {
   content: "";
-  height: 2.4vh;
-  left: .2vh;
+  height: 50%;
+  left: 0;
   position: absolute;
+  width: 100%;
   z-index: -1;
 }
 
-.tool li:hover::before {
+.tl-item:hover::before {
   background: linear-gradient(to bottom, #ffe, #ffa);
   background: -moz-linear-gradient(bottom, #ffe, #ffa);
   background: -o-linear-gradient(bottom, #ffe, #ffa);
   background: -webkit-linear-gradient(top, #ffe, #ffa);
+  top: 0;
 }
 
-.tool li:hover::after {
+.tl-item:hover::after {
+  bottom: 0;
   background: linear-gradient(to bottom, #fd6, #fe9);
   background: -moz-linear-gradient(bottom, #fd6, #fe9);
   background: -o-linear-gradient(bottom, #fd6, #fe9);
   background: -webkit-linear-gradient(top, #fd6, #fe9);
 }
 
-#new-game:hover::before {
-  top: .2vh;
-  width: 19.6vh;
-}
-
-#new-game:hover::after  {
-  top: 2.6vh;
-  width: 19.6vh;
-}
-
-#play-number:hover::before {
-  top: .2;
-  width: 23.6vh;
-}
-
-#play-number:hover::after  {
-  top: 2.6vh;
-  width: 23.6vh;
-}
-
-#coordinate:hover::before {
-  top: 5.4;
-  width: 23.6vh;
-}
-
-#coordinate:hover::after  {
-  top: 7.8vh;
-  width: 23.6vh;
-}
-
-.tl-game {
+.tl-title.game {
   left: .5vh;
 }
 
-.tl-view {
+.tl-title.view {
   left: 16vh;
 }
 
