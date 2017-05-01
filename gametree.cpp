@@ -28,7 +28,7 @@ void GameTree::clear() {
   currentNode = root;
 
   delete currentBoard;
-  currentBoard = new currentBoard();
+  currentBoard = new VirtualBoard();
 }
 
 void GameTree::MCTS(int maxCycle) {
