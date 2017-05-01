@@ -2,6 +2,7 @@ var game = { black: 'human', white: 'computer'};
 
 var boardEnable = false, gameStarted = false;
 var playNumber = false;
+var coordinate = false;
 
 var mousePos = [-1, -1], lastPlay = [-1, -1];
 
@@ -39,7 +40,7 @@ function initBoard() {
   mousePos = [-1, -1];
   lastPlay = [-1, -1];
 
-  context.clearRect(0, 0, 565, 565);
+  context.clearRect(20, 20, 525, 525);
 }
 
 canvas.onmousemove = function(event) {
@@ -295,4 +296,28 @@ $('#play-number').click(function() {
         clear([row, col]);
         draw([row, col]);
       }
+});
+
+$('#coordinate').click(function() {
+  coordinate = !coordinate;
+
+  if (coordinate) {
+    $('#coordinate-check').show();
+    context.fillStyle = '#444';
+    context.font = '12px Ubuntu';
+    context.textAlign = 'center';
+    for (var i = 0; i < 15; ++i) {
+      var text = String.fromCharCode(65 + i);
+      context.fillText(text, i * 35 + 37, 15);
+      context.fillText(text, i * 35 + 37, 558);
+      context.fillText(i, 10, i * 35 + 42);
+      context.fillText(i, 552, i * 35 + 42);
+    }
+  } else {
+    $('#coordinate-check').hide();
+    context.clearRect(0, 20, 20, 525);
+    context.clearRect(545, 20, 20, 525);
+    context.clearRect(20, 0, 525, 20);
+    context.clearRect(20, 545, 525, 20);
+  }
 });
