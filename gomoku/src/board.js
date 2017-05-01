@@ -30,7 +30,7 @@ for (var i = boardStatus.length - 1; i >= 0; i--)
 
 // initialize board
 function initBoard() {
-  playNo = 0;
+  playNo = 100;
 
   for (var row = boardStatus.length - 1; row >= 0; row--)
     for (var col = boardStatus[row].length - 1; col >= 0; col--)
@@ -113,26 +113,29 @@ function getPosition(event) {
 function draw(pos) {
   if (pos[0] == -1) return;
 
-  var whoTurn = playNo & 1;
   var status = boardStatus[pos[0]][pos[1]];
+  var image;
   if (status == 0) {
-    image = chessImage[whoTurn * 3];
+    image = chessImage[(playNo & 1) * 3];
   } else if (status == playNo) {
-    image = (playNumber ? chessImage[(whoTurn * -1 + 1) * 3 + 1] :
-                          chessImage[(whoTurn * -1 + 1) * 3 + 2]);
+    image = playNumber ? chessImage[((status - 1) & 1) * 3 + 1] :
+                         chessImage[((status - 1) & 1) * 3 + 2];
   } else {
-    image = chessImage[whoTurn * 3 + 1];
+    image = chessImage[((status - 1) & 1) * 3 + 1];
   }
 
   context.drawImage(image, pos[0] * 35 + 1, pos[1] * 35 + 1, 33, 33);
+
   if (playNumber && status > 0) {
     if (status == playNo)
       context.fillStyle = 'red';
     else {
-      context.fillStyle = whoTurn ? 'black' : 'white';
+      context.fillStyle = ((status - 1) & 1) ? 'black' : 'white';
     }
+    context.font = '29px Ubuntu';
+    context.textAlign = 'center';
 
-    context.fillText(status, pos[0] * 35 + 17, pos[1] * 35 + 17);
+    context.fillText(status, pos[0] * 35 + 17, pos[1] * 35 + 27, 27);
   }
 }
 
@@ -269,6 +272,8 @@ $('#play-number').click(function() {
 
   for (var row = boardStatus.length - 1; row >= 0; row--)
     for (var col = boardStatus[row].length - 1; col >= 0; col--)
-      if (boardStatus[row][col] > 0)
+      if (boardStatus[row][col] > 0) {
+        clear([row, col]);
         draw([row, col]);
+      }
 });
