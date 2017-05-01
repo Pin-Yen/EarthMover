@@ -30,7 +30,7 @@ for (var i = boardStatus.length - 1; i >= 0; i--)
 
 // initialize board
 function initBoard() {
-  playNo = 100;
+  playNo = 0;
 
   for (var row = boardStatus.length - 1; row >= 0; row--)
     for (var col = boardStatus[row].length - 1; col >= 0; col--)

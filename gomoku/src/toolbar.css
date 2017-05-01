@@ -5,7 +5,7 @@
   background: -webkit-linear-gradient(top, #7df, #bef);
   height: 6vh;
   position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 
 .tool span {
@@ -22,12 +22,16 @@
 }
 
 .tool div {
+  -webkit-transition: height .2s;
+  -moz-transition: height .2s;
+  -o-transition: height .2s;
+  transition: height .2s;
   background-color: #def;
   height: 0;
   top: 6vh;
   overflow: hidden;
   position: absolute;
-  z-index: -2;
+  z-index: -1;
 }
 
 .tl-game-sub {
@@ -42,8 +46,12 @@
   background-color: rgba(20, 0, 60, .1);
 }
 
-.tool span:hover div {
-  height: auto;
+.tool span:hover .tl-game-sub {
+  height: 5.4vh;
+}
+
+.tool span:hover .tl-view-sub {
+  height: 10.6vh;
 }
 
 .tool li {
@@ -56,7 +64,6 @@
   list-style-type: none;
   margin: .2vh;
   padding-left: 1vh;
-  z-index: 2;
 }
 
 .tool li:hover {
