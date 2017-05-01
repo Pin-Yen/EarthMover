@@ -32,6 +32,14 @@
   z-index: -1;
 }
 
+.tl-check {
+  display: none;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
 .tl-sub.game {
   width: 20vh;
 }
