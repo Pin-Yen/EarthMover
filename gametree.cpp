@@ -22,13 +22,13 @@ GameTree::~GameTree() {
   delete root;
 }
 
-void GameTree::clear() {
+void GameTree::reset() {
   delete root;
   root = new Node();
   currentNode = root;
 
   delete currentBoard;
-  currentBoard = new currentBoard();
+  currentBoard = new VirtualBoard();
 }
 
 void GameTree::MCTS(int maxCycle) {

@@ -30,6 +30,12 @@ class AI
   /* stops background thread */
   void stopBGThread();
 
+  /* resets AI for a new game */
+  void reset();
+
+  /* change number of MCTS cycle. */
+  void getCycle(int cylce);
+
  private:
   /* this thread lets EM thinks in the background when it's the users turn */
   std::thread *backgroundThread;
