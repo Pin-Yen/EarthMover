@@ -10,8 +10,6 @@ AI::AI(int cycle, DisplayBoard *board) {
 }
 
 AI::~AI() {
-  if (board != NULL)
-    delete board;
   if (tree != NULL)
     delete tree;
 }
@@ -51,4 +49,14 @@ void AI::stopBGThread() {
     delete backgroundThread;
     backgroundThread = NULL;
   }
+}
+
+void AI::reset() {
+  stopBGThread();
+  board->wipe();
+  tree->reset();
+}
+
+void AI::getCycle(int cycle) {
+  this->cycle = cycle;
 }

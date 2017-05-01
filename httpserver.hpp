@@ -15,7 +15,9 @@ class HttpServer
   /* constructor
    * initialize serverAddress and establishes socket connection
    * set AI reference */
-  HttpServer(AI *earthMover, DisplayBoard *board);
+  HttpServer();
+
+  ~HttpServer();
 
   /* listens for client connection, and process the request */
   void listenConnection();
@@ -33,14 +35,34 @@ class HttpServer
 
   bool isBlackAi, isWhiteAi;
 
+  /* Check if we should redirect the request uri. */
+  void redirect(std::string *directory);
+
+  /* Initializes a new game according to the settings specified in request.
+   * Clear data of previous game if exist. */
+  void handleStart(std::string requestBody);
+
+  /* Plays a point specified in request. */
+  bool handlePlay(std::string requestBody);
+
+  /* response a resource specified by "directory" to client, or some http error. */
+  void handleResourceRequest(std::string requestBody, std::string directory);
+
+  /* extracts directory from request */
+  std::string parseRequestDirectory(std::string request);
+
+  /* extracts body from request */
+  std::string parseRequestBody(std::string request);
+
 
   /* Request AI's play, and returns it to the client via http response.
-   * If requesting AI for the first move, clientRow & clientCol should be -1, and isFirstMove should be true */
-  void requestAiPlay(int clientRow, int clientCol, bool isFirstMove);
+   * If requesting AI for the first move, clientRow & clientCol should be -1, and isFirstMove should be true.
+   * Returns true if someone won. */
+  bool requestAiPlay(int clientRow, int clientCol, bool isFirstMove);
 
   /* Returns a error message to client
    * errorCode: http error code */
-  void responseHttpError(int errorCode);
+  void responseHttpError(int errorCode, const char* message);
 
   /* checks if the requested uri is permitted
    * returns false if not permitted */

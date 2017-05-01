@@ -19,11 +19,9 @@ int main() {
       break;
   }
 
-  DisplayBoard board;
-  AI earthMover(10000, &board);
 
   if (mode == 'N') {
-    HttpServer server(&earthMover, &board);
+    HttpServer server;
 
     // TODO: determine who's black and who's white
 
@@ -35,6 +33,8 @@ int main() {
     bool gameEnd = false;
 
     while (! gameEnd){
+      DisplayBoard board;
+      AI earthMover(10000, &board);
       earthMover.think(&EMRow, &EMCol);
 
       board.getInput(&inputRow, &inputCol);

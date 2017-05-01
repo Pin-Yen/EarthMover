@@ -11,7 +11,7 @@ class GameTree {
   ~GameTree();
 
   /* clear the whole gametree */
-  void clear();
+  void reset();
 
   /* Monty Carlo Tree Search
    * keep searching until reach the max cycle */
