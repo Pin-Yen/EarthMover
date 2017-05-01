@@ -179,6 +179,7 @@ function play(position) {
 
 function notifyWinner(winnerColor) {
   // TODO: display game status
+  boardEnable = false;
   alert(winnerColor + " wins !");
 }
 
