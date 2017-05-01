@@ -235,6 +235,11 @@ $('#btn-dialog-ok').click(function() {
   var black = $('input[name="black"]:checked').val(),
       white = $('input[name="white"]:checked').val();
 
+  if ($('#dl-name-black').val().trim() == '')
+    $('#dl-name-black').val('you');
+  if ($('#dl-name-white').val().trim() == '')
+    $('#dl-name-white').val('you');
+
   game = { black: black, white: white};
 
   post(game, 'start');

@@ -54,6 +54,11 @@
   color: black;
 }
 
+.pi-name {
+  border-color: rgba(205, 242, 255, 0.8);
+  border-style: outset;
+}
+
 .pi-chess {
   bottom: 0;
   display: block;
@@ -127,21 +132,21 @@
   }
 
   .pi-name {
+    border-width: .4vw;
     font-size: 1.6vw;
-    height: 4vw;
-    left: 10%;
-    line-height: 4vw;
+    left: 5%;
+    line-height: 3.2vw;
     position: absolute;
     text-align: center;
-    width: 80%;
+    width: 90%;
   }
 
   .pi-name.opp {
-    top: 18vw;
+    top: 20vw;
   }
 
   .pi-name.sel {
-    bottom: 18vw;
+    bottom: 20vw;
   }
 }
 
@@ -200,9 +205,11 @@
   }
 
   .pi-name {
+    border-width: .5vh;
     font-size: 3vh;
     height: 6vh;
-    line-height: 6vh;
+    line-height: 5vh;
+    padding: 0 1.2vh;
     position: absolute;
     text-align: center;
     top: 1vh;

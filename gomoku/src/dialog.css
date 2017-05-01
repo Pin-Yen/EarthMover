@@ -9,6 +9,12 @@
 
 .dl-block input {
   margin: 0 4px;
+  -webkit-touch-callout: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 .dl-body {
