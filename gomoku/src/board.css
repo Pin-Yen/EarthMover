@@ -48,30 +48,30 @@
   }
 }
 
-@media screen and (min-aspect-ratio: 6/5) {
+@media screen and (min-aspect-ratio: 20/17) {
   .board {
-    border-width: .9vh;
-    height: 90%;
+    border-width: .8vh;
+    height: 80vh;
   }
 }
 
-@media screen and (max-aspect-ratio: 6/5) and (min-aspect-ratio: 1/1) {
+@media screen and (max-aspect-ratio: 20/17) and (orientation: landscape) {
   .board {
-    border-width: .70vw;
-    width: 66%;
+    border-width: .68vw;
+    width: 68vw;
   }
 }
 
-@media screen and (max-aspect-ratio: 1/1) and (min-aspect-ratio: 7/10) {
+@media screen and (orientation: portrait) and (min-aspect-ratio: 17/23) {
   .board {
-    border-width: .74vh;
-    height: 74%;
+    border-width: .68vh;
+    height: 68vh;
   }
 }
 
-@media screen and (max-aspect-ratio: 7/10) {
+@media screen and (max-aspect-ratio: 17/23) {
   .board {
-    border-width: .95vw;
-    width: 90%;
+    border-width: .92vw;
+    width: 92vw;
   }
 }

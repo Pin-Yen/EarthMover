@@ -19,7 +19,7 @@ chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
 var canvas = document.getElementById('cvs-board');
 var context = canvas.getContext("2d");
-$('#cvs-board').attr({ 'width': 525, 'height': 525 });
+$('#cvs-board').attr({ 'width': 565, 'height': 565 });
 
 var playNo = 0;
 
@@ -39,7 +39,7 @@ function initBoard() {
   mousePos = [-1, -1];
   lastPlay = [-1, -1];
 
-  context.clearRect(0, 0, 525, 525);
+  context.clearRect(0, 0, 565, 565);
 }
 
 canvas.onmousemove = function(event) {
@@ -48,8 +48,12 @@ canvas.onmousemove = function(event) {
   // get the coordinate
   var position = getPosition(event);
 
-  // if the position is empty
-  if (!boardStatus[position[0]][position[1]]) {
+  // if out of bound
+  if (position[0] == -1) {
+    clear(mousePos);
+    mousePos = [-1, -1];
+  } else if (!boardStatus[position[0]][position[1]]) {
+    // if the position is empty
     // draw only if mouse at the new coordinate
     if (mousePos !== position) {
       clear(mousePos);
@@ -101,10 +105,14 @@ canvas.onclick = function(event) {
 // get position array [x, y]
 function getPosition(event) {
   var rect = canvas.getBoundingClientRect();
-  var scaling = canvas.scrollWidth / 525;
+  var scaling = canvas.scrollWidth / 565;
 
-  var x = Math.min(Math.floor((event.clientX - rect.left)  / (35 * scaling)), 14),
-      y = Math.min(Math.floor((event.clientY - rect.top) / (35 * scaling)), 14);
+  var x = Math.floor((event.clientX - rect.left - 20)  / (35 * scaling)),
+      y = Math.floor((event.clientY - rect.top - 20) / (35 * scaling));
+
+  if (x < 0 || x > 14 || y < 0 || y > 14) {
+    x = -1; y = -1;
+  }
 
   return [x, y];
 }
@@ -124,7 +132,7 @@ function draw(pos) {
     image = chessImage[((status - 1) & 1) * 3 + 1];
   }
 
-  context.drawImage(image, pos[0] * 35 + 1, pos[1] * 35 + 1, 33, 33);
+  context.drawImage(image, pos[0] * 35 + 21, pos[1] * 35 + 21, 33, 33);
 
   if (playNumber && status > 0) {
     if (status == playNo)
@@ -135,7 +143,7 @@ function draw(pos) {
     context.font = '29px Ubuntu';
     context.textAlign = 'center';
 
-    context.fillText(status, pos[0] * 35 + 17, pos[1] * 35 + 27, 27);
+    context.fillText(status, pos[0] * 35 + 37, pos[1] * 35 + 47, 27);
   }
 }
 
@@ -143,7 +151,7 @@ function draw(pos) {
 function clear(pos) {
   if (pos[0] == -1) return;
 
-  context.clearRect(pos[0] * 35 + 1, pos[1] * 35 + 1, 33, 33);
+  context.clearRect(pos[0] * 35 + 21, pos[1] * 35 + 21, 33, 33);
 }
 
 // play at position, we should make sure that position is empty
