@@ -22,6 +22,15 @@ GameTree::~GameTree() {
   delete root;
 }
 
+void GameTree::clear() {
+  delete root;
+  root = new Node();
+  currentNode = root;
+
+  delete currentBoard;
+  currentBoard = new currentBoard();
+}
+
 void GameTree::MCTS(int maxCycle) {
   Node* node;
 
@@ -42,21 +51,6 @@ void GameTree::MCTS(int maxCycle) {
     else
       backProp(node, result);
   }
-
-  /* destruct all child node */
-  /* note: if want to keep the calculation, then should not call this */
-
-  /*
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL) {
-        delete currentNode->childNode[r][c];
-        currentNode->childNode[r][c] = NULL;
-      }
-
-  currentNode->clearPlayout();
-  currentNode->clearWinLose();
-  */
 }
 
 void GameTree::MCTS(int maxCycle, bool &stop) {

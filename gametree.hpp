@@ -10,6 +10,9 @@ class GameTree {
   GameTree();
   ~GameTree();
 
+  /* clear the whole gametree */
+  void clear();
+
   /* Monty Carlo Tree Search
    * keep searching until reach the max cycle */
   void MCTS(int maxCycle);
