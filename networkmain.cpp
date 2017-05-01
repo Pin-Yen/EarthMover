@@ -5,6 +5,8 @@
 #include <iostream>
 
 int main() {
+  srand((unsigned)time(NULL));
+
   char mode;
 
   while (true){
