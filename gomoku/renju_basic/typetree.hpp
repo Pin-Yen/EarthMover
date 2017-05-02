@@ -44,7 +44,8 @@ class VirtualBoard::Evaluator::TypeTree {
   /* Depth First Search
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
-  static void dfs(Node *root, STATUS *status, int location, int move,
+  static void dfs(Node *root, STATUS *status, int location,
+                  int move,  int blackConnect, int whiteConnect,
                   bool blackBlock, bool whiteBlock);
 
   /* cut the tree node that all child has same result */
@@ -54,14 +55,6 @@ class VirtualBoard::Evaluator::TypeTree {
   static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 
   static const int analyze_length = 11, classify_length = 10;
-
-  /* debugging purposes */
-
-  /* copied from chesstypemaker.cpp, print the status and type */
-  static void print(STATUS *status, ChessType **type);
-
-  /* search all the tree and print the leaves */
-  static void searchAll(Node* root, STATUS *status, int location, int move);
 };
 
 #endif

@@ -23,10 +23,6 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
-
-  #ifdef DEBUG_TYPETREE
-  searchAll(root, status, analyze_length / 2, -1);
-  #endif
 }
 
 /* Depth First Search
@@ -38,23 +34,23 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
  *               ^^^^^               ^^^^^ */
 void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
                                             int move,  int blackConnect, int whiteConnect,
-                                            bool blackblock, bool whiteBlock) {
+                                            bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
-    case (BLACK):
-      blackblock = true; break;
-    case (WHITE):
+    case BLACK:
+      blackBlock = true; break;
+    case WHITE:
       whiteBlock = true;
   }
 
-  if ((blackblock && whiteBlock) || status[location] == BOUND ||
-      location <= 0 || location >= length - 1) {
+  if ((blackBlock && whiteBlock) || status[location] == BOUND ||
+      location <= 0 || location >= analyze_length - 1) {
     if (move == 1) {
       /* reached leaf */
 
       /* set type */
-      root->type[0] = typeAnalyze(status, checkForbidden, BLACK);
-      root->type[1] = typeAnalyze(status, checkForbidden, WHITE);
+      root->type[0] = typeAnalyze(status, BLACK, true);
+      root->type[1] = typeAnalyze(status, WHITE, true);
 
       /* set child node to NULL*/
       for (int i = 0; i < 4; ++i)
@@ -62,15 +58,15 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
 
       return;
     } else {
-      /* set this node to jump node*/
+      /* set this node to jump node */
       root->jump = true;
 
       /* jump to middle of the status */
       move += 2;
-      location = length / 2;
+      location = analyze_length / 2;
 
       /* reset block */
-      blackblock = false; whiteBlock = false;
+      blackBlock = false; whiteBlock = false;
 
       /* reset connect */
       blackConnect = 0; whiteConnect = 0;
@@ -78,14 +74,14 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
   } else {
     /* if status == black or white, increase connect */
     switch (status[location]) {
-      case (BLACK):
+      case BLACK:
         ++blackConnect; break;
-      case (WHITE):
+      case WHITE:
         ++whiteConnect;
     }
   }
 
-  /* move location*/
+  /* move location */
   location += move;
 
   root->type[0] = NULL; root->type[1] = NULL;
@@ -103,7 +99,7 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
     root->childNode[i] = new Node();
     status[location] = s[i];
     dfs(root->childNode[i], status, location, move,
-        blackConnect, whiteConnect, blackblock, whiteBlock);
+        blackConnect, whiteConnect, blackBlock, whiteBlock);
   }
 
   /* restore current location to EMPTY
@@ -191,7 +187,10 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
 
   if (connect > 5) {
     /* CG's length > 5, return -1 */
-    return new ChessType(-1, 0, 0);
+    if (color == BLACK)
+      return new ChessType(-1, 0, 0);
+    else
+      return new ChessType(5, 0, 0);
   } else if (connect == 5) {
     /* CG's length == 5, return 5 */
     return new ChessType(5, 0, 0);
@@ -225,8 +224,8 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               int transformation_index = i - (analyze_length / 2 - checkPoint);
 
               if (transformation_index < 0 || transformation_index >= analyze_length)
-                  /* if out of bound, see it as empty point */
-                newStatus[i] = EMPTY;
+                  /* if out of bound, set it to Bound */
+                newStatus[i] = BOUND;
               else
                 newStatus[i] = status[transformation_index];
             }
@@ -239,7 +238,6 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
             type = new ChessType(0, 0, 0);
           }
 
-          /* set analize result l/rType */
           if (move == -1) {
             /* left type result */
             if (lType == NULL) {
@@ -320,71 +318,3 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
     return returnType;
   }
 }
-
-#ifdef DEBUG_TYPETREE
-
-void VirtualBoard::Evaluator::TypeTree::print(STATUS *status, ChessType **type) {
-  std::cout << std::setw(5) << "(";
-  /* print status array*/
-  for (int i = 0; i < analyze_length; ++i) {
-    char c;
-    if (i == analyze_length / 2)
-      c = '*';
-    else
-      switch (status[i]) {
-        case 0:
-          c = 'X'; break;
-        case 1:
-          c = 'O'; break;
-        case 2:
-          c = ' '; break;
-        case 3:
-          c = '|';
-      }
-
-    std::cout << c;
-  }
-
-
-  std::cout << ") ";
-  for (int i = 0; i < 2; i++) {
-    std::cout << (i == 0 ? "B" : "W") << ":"
-              << (type[i]->life() == 1 ? " L" : " D") << type[i]->length()
-              << " level " << type[i]->level()
-              << ( i == 0 ? ", " : "   ");
-  }
-
-  std::cout << "\n";
-}
-
-void VirtualBoard::Evaluator::TypeTree::searchAll(Node* node, STATUS *status,
-                                                  int location, int move) {
-  if (node->type[0] != NULL) {
-    print(status, node->type);
-    return;
-  }
-
-  if (node->jump) {
-    move += 2;
-    location = analyze_length / 2;
-  }
-
-  location += move;
-
-  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
-
-  for (int i = 0; i < 4; i++)
-    if (node->childNode[i] != NULL) {
-      status[location] = s[i];
-      searchAll(node->childNode[i], status, location, move);
-    }
-
-  status[location] = EMPTY;
-}
-
-
-int main() {
-  TypeTree::initialize();
-}
-
-#endif

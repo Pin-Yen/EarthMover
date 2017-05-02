@@ -1,28 +1,24 @@
 #include "../chesstype.hpp"
 #include "../status.hpp"
-#include "virtualboard.hpp"
-#include "evaluator.hpp"
-#include "typetree.hpp"
+#include "typetree_test.hpp"
 
 #include <iostream>
 #include <iomanip>
 
-#ifdef DEBUG
-#include "../../objectcounter.hpp"
-#endif
-
 /* initialize root*/
-VirtualBoard::Evaluator::TypeTree::Node* VirtualBoard::Evaluator::TypeTree::root = new Node();
+TypeTree::Node* TypeTree::root = new Node();
 
-void VirtualBoard::Evaluator::TypeTree::initialize() {
+void TypeTree::initialize() {
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
     status[i] = EMPTY;
 
-  dfs(root, status, analyze_length / 2, -1, false, false);
+  dfs(root, status, analyze_length / 2, -1, 0, 0, false, false);
 
   cutSameResultChild(root);
+
+  searchAll(root, status, analyze_length / 2, -1);
 }
 
 /* Depth First Search
@@ -32,8 +28,9 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
 /* connect is used to prevent already exist five while length == 11
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
-                                            int move, bool blackBlock, bool whiteBlock) {
+void TypeTree::dfs(Node *root, STATUS *status, int location,
+                   int move,  int blackConnect, int whiteConnect,
+                   bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
     case BLACK:
@@ -66,6 +63,17 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
 
       /* reset block */
       blackBlock = false; whiteBlock = false;
+
+      /* reset connect */
+      blackConnect = 0; whiteConnect = 0;
+    }
+  } else {
+    /* if status == black or white, increase connect */
+    switch (status[location]) {
+      case BLACK:
+        ++blackConnect; break;
+      case WHITE:
+        ++whiteConnect;
     }
   }
 
@@ -74,12 +82,20 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
 
   root->type[0] = NULL; root->type[1] = NULL;
 
+  /* if connect == 4, stop playing same color at this point to prevent appearing five */
+
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
+    if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4)) {
+      root->childNode[i] = NULL;
+      continue;
+    }
+
     root->childNode[i] = new Node();
     status[location] = s[i];
-    dfs(root->childNode[i], status, location, move, blackBlock, whiteBlock);
+    dfs(root->childNode[i], status, location, move,
+        blackConnect, whiteConnect, blackBlock, whiteBlock);
   }
 
   /* restore current location to EMPTY
@@ -88,7 +104,7 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
   status[location] = EMPTY;
 }
 
-ChessType** VirtualBoard::Evaluator::TypeTree::cutSameResultChild(Node *root) {
+ChessType** TypeTree::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
   if (root->type[0] != NULL) {
@@ -125,7 +141,7 @@ ChessType** VirtualBoard::Evaluator::TypeTree::cutSameResultChild(Node *root) {
   return currentType;
 }
 
-void VirtualBoard::Evaluator::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
+void TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
   /* switch root */
   Node* node = root;
 
@@ -150,8 +166,7 @@ void VirtualBoard::Evaluator::TypeTree::classify(const STATUS *status, ChessType
     }
 }
 
-ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
-                                                          bool checkLevel) {
+ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
 
   /* check the length of the connection around the analize point
@@ -165,7 +180,13 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
       ++connect;
     }
 
-  if (connect >= 5) {
+  if (connect > 5) {
+    /* CG's length > 5, return -1 */
+    if (color == BLACK)
+      return new ChessType(-1, 0, 0);
+    else
+      return new ChessType(5, 0, 0);
+  } else if (connect == 5) {
     /* CG's length == 5, return 5 */
     return new ChessType(5, 0, 0);
   } else {
@@ -198,7 +219,7 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               int transformation_index = i - (analyze_length / 2 - checkPoint);
 
               if (transformation_index < 0 || transformation_index >= analyze_length)
-                /* if out of bound, set it to bound */
+                  /*  if out of bound, set it to Bound  */
                 newStatus[i] = BOUND;
               else
                 newStatus[i] = status[transformation_index];
@@ -267,7 +288,7 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
       /* if there is only one side produces 5 after play at analize point,
        * it is a dead four type */
       returnType = new ChessType(4, 0, 0);
-    } else if (lType->length() == 0) {
+    } else if (lType->length() <= 0) {
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
       returnType = new ChessType(0, 0, 0);
@@ -291,4 +312,67 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
 
     return returnType;
   }
+}
+
+void TypeTree::print(STATUS *status, ChessType **type) {
+  std::cout << std::setw(5) << "(";
+  /* print status array*/
+  for (int i = 0; i < analyze_length; ++i) {
+    char c;
+    if (i == analyze_length / 2)
+      c = '*';
+    else
+      switch (status[i]) {
+        case 0:
+          c = 'X'; break;
+        case 1:
+          c = 'O'; break;
+        case 2:
+          c = ' '; break;
+        case 3:
+          c = '|';
+      }
+
+    std::cout << c;
+  }
+
+
+  std::cout << ") ";
+  for (int i = 0; i < 2; i++) {
+    std::cout << (i == 0 ? "B" : "W") << ":"
+              << (type[i]->life() == 1 ? " L" : " D") << type[i]->length()
+              << " level " << type[i]->level()
+              << ( i == 0 ? ", " : "   ");
+  }
+
+  std::cout << "\n";
+}
+
+void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
+  if (node->type[0] != NULL) {
+    print(status, node->type);
+    return;
+  }
+
+  if (node->jump) {
+    move += 2;
+    location = analyze_length / 2;
+  }
+
+  location += move;
+
+  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
+
+  for (int i = 0; i < 4; i++)
+    if (node->childNode[i] != NULL) {
+      status[location] = s[i];
+      searchAll(node->childNode[i], status, location, move);
+    }
+
+  status[location] = EMPTY;
+}
+
+
+int main() {
+  TypeTree::initialize();
 }

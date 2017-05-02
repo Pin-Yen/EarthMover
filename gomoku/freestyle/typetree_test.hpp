@@ -1,11 +1,4 @@
-#ifndef TYPE_TREE_H
-#define TYPE_TREE_H
-
-#ifdef DEBUG
-#include "../../objectcounter.hpp"
-#endif
-
-class VirtualBoard::Evaluator::TypeTree {
+class TypeTree {
  public:
   static void classify(const STATUS *status, ChessType *(type[2]));
 
@@ -23,19 +16,11 @@ class VirtualBoard::Evaluator::TypeTree {
 
     Node() {
       jump = false;
-
-      #ifdef DEBUG
-      ObjectCounter::registerTypeTreeNode();
-      #endif
     }
 
     ~Node() {
       for (int i = 0; i < 2; ++i)
         delete type[i];
-
-      #ifdef DEBUG
-      ObjectCounter::unregisterTypeTreeNode();
-      #endif
     }
   };
 
@@ -54,6 +39,12 @@ class VirtualBoard::Evaluator::TypeTree {
   static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 
   static const int analyze_length = 9, classify_length = 8;
-};
 
-#endif
+  /* debugging purposes */
+
+  /* copied from chesstypemaker.cpp, print the status and type */
+  static void print(STATUS *status, ChessType **type);
+
+  /* search all the tree and print the leaves */
+  static void searchAll(Node* root, STATUS *status, int location, int move);
+};
