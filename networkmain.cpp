@@ -34,7 +34,7 @@ int main() {
 
     while (! gameEnd){
       DisplayBoard board;
-      AI earthMover(10000, &board);
+      AI earthMover(10000);
       earthMover.think(&EMRow, &EMCol);
 
       board.getInput(&inputRow, &inputCol);

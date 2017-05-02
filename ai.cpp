@@ -2,9 +2,8 @@
 #include <assert.h>
 #include <iostream>
 
-AI::AI(int cycle, DisplayBoard *board) {
+AI::AI(int cycle) {
   this->cycle = cycle;
-  this->board = board;
   tree = new GameTree();
   backgroundThread = NULL;
 }
@@ -33,8 +32,8 @@ void AI::think(int *row, int *col) {
       tree->MCTSResult(*row, *col);
     }
     printf("============================================\n");
-  #elif
-    tree->MCTS(batchSize);
+  #else
+    tree->MCTS(cycle);
     tree->MCTSResult(*row, *col);
   #endif
 }
@@ -71,4 +70,8 @@ void AI::reset() {
 
 void AI::getCycle(int cycle) {
   this->cycle = cycle;
+}
+
+bool AI::whoTurn() {
+  return tree->getCurrentBoard()->whoTurn();
 }

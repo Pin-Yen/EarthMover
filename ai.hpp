@@ -10,7 +10,7 @@ class AI
  public:
 
   /* cycle: nubmer of MCTS cycles */
-  AI(int cycle, DisplayBoard *board);
+  AI(int cycle);
 
   ~AI();
 
@@ -25,13 +25,14 @@ class AI
    * triggerBackgroundThread: true: start bg thread */
   bool play(int row, int col, bool triggerBackgroundThread);
 
-  bool whoTurn() {return (bool)board->whoTurn();}
-
   /* stops background thread */
   void stopBGThread();
 
   /* resets AI for a new game */
   void reset();
+
+  /* returns true for black ,false for white. */
+  bool whoTurn();
 
   /* change number of MCTS cycle. */
   void getCycle(int cylce);
@@ -40,7 +41,6 @@ class AI
   /* this thread lets EM thinks in the background when it's the users turn */
   std::thread *backgroundThread;
   bool stopBackgroundThread;
-  DisplayBoard *board;
   GameTree *tree;
 
   /* the number of MCTS cycle*/
