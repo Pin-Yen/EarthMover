@@ -219,8 +219,8 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
               int transformation_index = i - (analyze_length / 2 - checkPoint);
 
               if (transformation_index < 0 || transformation_index >= analyze_length)
-                  /* if out of bound, see it as empty point */
-                newStatus[i] = EMPTY;
+                  /*  if out of bound, set it to Bound  */
+                newStatus[i] = BOUND;
               else
                 newStatus[i] = status[transformation_index];
             }

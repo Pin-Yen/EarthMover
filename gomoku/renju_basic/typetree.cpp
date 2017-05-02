@@ -23,10 +23,6 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
-
-  #ifdef DEBUG_TYPETREE
-  searchAll(root, status, analyze_length / 2, -1);
-  #endif
 }
 
 /* Depth First Search
@@ -228,8 +224,8 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               int transformation_index = i - (analyze_length / 2 - checkPoint);
 
               if (transformation_index < 0 || transformation_index >= analyze_length)
-                  /* if out of bound, see it as empty point */
-                newStatus[i] = EMPTY;
+                  /* if out of bound, set it to Bound */
+                newStatus[i] = BOUND;
               else
                 newStatus[i] = status[transformation_index];
             }
