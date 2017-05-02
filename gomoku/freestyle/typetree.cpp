@@ -23,10 +23,6 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
-
-  #ifdef DEBUG_TYPETREE
-  searchAll(root, status, analyze_length / 2, -1);
-  #endif
 }
 
 /* Depth First Search
@@ -202,8 +198,8 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               int transformation_index = i - (analyze_length / 2 - checkPoint);
 
               if (transformation_index < 0 || transformation_index >= analyze_length)
-                  /* if out of bound, see it as empty point */
-                newStatus[i] = EMPTY;
+                /* if out of bound, set it to bound */
+                newStatus[i] = BOUND;
               else
                 newStatus[i] = status[transformation_index];
             }
@@ -296,71 +292,3 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
     return returnType;
   }
 }
-
-#ifdef DEBUG_TYPETREE
-
-void VirtualBoard::Evaluator::TypeTree::print(STATUS *status, ChessType **type) {
-  std::cout << std::setw(5) << "(";
-  /* print status array*/
-  for (int i = 0; i < analyze_length; ++i) {
-    char c;
-    if (i == analyze_length / 2)
-      c = '*';
-    else
-      switch (status[i]) {
-        case 0:
-          c = 'X'; break;
-        case 1:
-          c = 'O'; break;
-        case 2:
-          c = ' '; break;
-        case 3:
-          c = '|';
-      }
-
-    std::cout << c;
-  }
-
-
-  std::cout << ") ";
-  for (int i = 0; i < 2; i++) {
-    std::cout << (i == 0 ? "B" : "W") << ":"
-              << (type[i]->life() == 1 ? " L" : " D") << type[i]->length()
-              << " level " << type[i]->level()
-              << ( i == 0 ? ", " : "   ");
-  }
-
-  std::cout << "\n";
-}
-
-void VirtualBoard::Evaluator::TypeTree::searchAll(Node* node, STATUS *status,
-                                                  int location, int move) {
-  if (node->type[0] != NULL) {
-    print(status, node->type);
-    return;
-  }
-
-  if (node->jump) {
-    move += 2;
-    location = analyze_length / 2;
-  }
-
-  location += move;
-
-  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
-
-  for (int i = 0; i < 4; i++)
-    if (node->childNode[i] != NULL) {
-      status[location] = s[i];
-      searchAll(node->childNode[i], status, location, move);
-    }
-
-  status[location] = EMPTY;
-}
-
-
-int main() {
-  TypeTree::initialize();
-}
-
-#endif
