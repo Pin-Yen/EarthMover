@@ -1,32 +1,24 @@
 #include "../chesstype.hpp"
 #include "../status.hpp"
-#include "virtualboard.hpp"
-#include "evaluator.hpp"
-#include "typetree.hpp"
+#include "typetree_test.hpp"
 
 #include <iostream>
 #include <iomanip>
 
-#ifdef DEBUG
-#include "../../objectcounter.hpp"
-#endif
-
 /* initialize root*/
-VirtualBoard::Evaluator::TypeTree::Node* VirtualBoard::Evaluator::TypeTree::root = new Node();
+TypeTree::Node* TypeTree::root = new Node();
 
-void VirtualBoard::Evaluator::TypeTree::initialize() {
+void TypeTree::initialize() {
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
     status[i] = EMPTY;
 
-  dfs(root, status, analyze_length / 2, -1, false, false);
+  dfs(root, status, analyze_length / 2, -1, 0, 0, false, false);
 
   cutSameResultChild(root);
 
-  #ifdef DEBUG_TYPETREE
   searchAll(root, status, analyze_length / 2, -1);
-  #endif
 }
 
 /* Depth First Search
@@ -36,9 +28,9 @@ void VirtualBoard::Evaluator::TypeTree::initialize() {
 /* connect is used to prevent already exist five while length == 11
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
-                                            int move,  int blackConnect, int whiteConnect,
-                                            bool blackBlock, bool whiteBlock) {
+void TypeTree::dfs(Node *root, STATUS *status, int location,
+                   int move,  int blackConnect, int whiteConnect,
+                   bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
     case BLACK:
@@ -112,7 +104,7 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
   status[location] = EMPTY;
 }
 
-ChessType** VirtualBoard::Evaluator::TypeTree::cutSameResultChild(Node *root) {
+ChessType** TypeTree::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
   if (root->type[0] != NULL) {
@@ -149,7 +141,7 @@ ChessType** VirtualBoard::Evaluator::TypeTree::cutSameResultChild(Node *root) {
   return currentType;
 }
 
-void VirtualBoard::Evaluator::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
+void TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
   /* switch root */
   Node* node = root;
 
@@ -174,8 +166,7 @@ void VirtualBoard::Evaluator::TypeTree::classify(const STATUS *status, ChessType
     }
 }
 
-ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
-                                                          bool checkLevel) {
+ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
 
   /* check the length of the connection around the analize point
@@ -321,4 +312,67 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
 
     return returnType;
   }
+}
+
+void TypeTree::print(STATUS *status, ChessType **type) {
+  std::cout << std::setw(5) << "(";
+  /* print status array*/
+  for (int i = 0; i < analyze_length; ++i) {
+    char c;
+    if (i == analyze_length / 2)
+      c = '*';
+    else
+      switch (status[i]) {
+        case 0:
+          c = 'X'; break;
+        case 1:
+          c = 'O'; break;
+        case 2:
+          c = ' '; break;
+        case 3:
+          c = '|';
+      }
+
+    std::cout << c;
+  }
+
+
+  std::cout << ") ";
+  for (int i = 0; i < 2; i++) {
+    std::cout << (i == 0 ? "B" : "W") << ":"
+              << (type[i]->life() == 1 ? " L" : " D") << type[i]->length()
+              << " level " << type[i]->level()
+              << ( i == 0 ? ", " : "   ");
+  }
+
+  std::cout << "\n";
+}
+
+void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
+  if (node->type[0] != NULL) {
+    print(status, node->type);
+    return;
+  }
+
+  if (node->jump) {
+    move += 2;
+    location = analyze_length / 2;
+  }
+
+  location += move;
+
+  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
+
+  for (int i = 0; i < 4; i++)
+    if (node->childNode[i] != NULL) {
+      status[location] = s[i];
+      searchAll(node->childNode[i], status, location, move);
+    }
+
+  status[location] = EMPTY;
+}
+
+
+int main() {
+  TypeTree::initialize();
 }
