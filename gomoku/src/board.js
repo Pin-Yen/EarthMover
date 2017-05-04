@@ -201,6 +201,8 @@ function post(params, path) {
       if (humanTurn()) {
         draw(mousePos);
         boardEnable = true;
+      } else {
+        post({ row: -1, col: -1, think: true});
       }
     }
   };
