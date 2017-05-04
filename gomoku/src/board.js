@@ -65,6 +65,7 @@ function cvsMouseMoveOrOver(event) {
     }
   }
 
+  // out of bound or at an occupyed position, clear and set position to (-1, -1)
   if (boardEnable) clear(mousePos);
   mousePos = [-1, -1];
 }
@@ -96,7 +97,7 @@ function cvsClick() {
   // if the position is empty, play and post
   if (!boardStatus[mousePos[0]][mousePos[1]]) {
     play(mousePos);
-    post({ row: mousePos[1], col: mousePos[0] }, 'play');
+    post({ row: mousePos[1], col: mousePos[0], think: !humanTurn() }, 'play');
     mousePos = [-1, -1];
   }
 }
@@ -168,9 +169,8 @@ function play(position) {
   // update last play
   lastPlay = position.slice(0);
 
-  // check board's enable
-  boardEnable = (((playNo & 1)== 0 && game.black == 'human') ||
-                 ((playNo & 1) == 1 && game.white == 'human'));
+  // lock board
+  boardEnable = false;
 }
 
 function notifyWinner(winnerColor) {
@@ -188,23 +188,30 @@ function post(params, path) {
     if (http.readyState == 4 && http.status == 200) {
       var response = JSON.parse(http.responseText);
 
-      // play EM's move only if user's previous move is not winning.
-      if (response.winner == 'none' ||
-          (response.winner == 'black' && game.black == 'computer') ||
-          (response.winner == 'white' && game.white == 'computer')) {
+      if (!humanTurn()) {
         // change JSON to array, and play
         play([response.col, response.row]);
-
-        if (boardEnable) draw(mousePos);
       }
 
-      if (response.winner != 'none')
+      if (response.winner != 'none') {
         notifyWinner(response.winner);
+        return;
+      }
+
+      if (humanTurn()) {
+        draw(mousePos);
+        boardEnable = true;
+      }
     }
   };
 
 
   http.send(JSON.stringify(params));
+}
+
+function humanTurn() {
+  return ((playNo & 1) == 0 && game.black == 'human') ||
+          ((playNo & 1) == 1 && game.white == 'human');
 }
 
 // initialize player
