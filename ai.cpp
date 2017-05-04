@@ -64,7 +64,6 @@ void AI::stopBGThread() {
 
 void AI::reset() {
   stopBGThread();
-  board->wipe();
   tree->reset();
 }
 
