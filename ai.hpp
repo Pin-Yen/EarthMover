@@ -25,9 +25,6 @@ class AI
    * triggerBackgroundThread: true: start bg thread */
   bool play(int row, int col, bool triggerBackgroundThread);
 
-  /* stops background thread */
-  void stopBGThread();
-
   /* resets AI for a new game */
   void reset();
 
@@ -42,6 +39,9 @@ class AI
   std::thread *backgroundThread;
   bool stopBackgroundThread;
   GameTree *tree;
+
+  /* stops background thread */
+  void stopBGThread();
 
   /* the number of MCTS cycle*/
   int cycle;

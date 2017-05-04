@@ -163,6 +163,9 @@ bool HttpServer::handlePlay(std::string requestBody) {
   else
     response.addJson("winner", "none");
 
+  std::cout << response.getHeaderString();
+  std::cout << response.getBody();
+
   // Sent response
   send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
   send(server, response.getBody(), response.getBodyLength(), 0);
@@ -227,7 +230,7 @@ bool HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
   /* play client's move if it is not the first move and not both players are ai */
   if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
     /* stop background thread */
-    earthMover->stopBGThread();
+    // earthMover->stopBGThread();
 
     /* play client's move */
     if( !board->play(clientRow, clientCol)) {

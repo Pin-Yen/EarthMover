@@ -39,6 +39,8 @@ void AI::think(int *row, int *col) {
 }
 
 bool AI::play(int row, int col, bool triggerBackgroundThread ) {
+  // stop background thinking to avoid memory corruption.
+  stopBGThread();
   bool hasSomeoneWin = tree->play(row, col);
 
   if (triggerBackgroundThread) {
