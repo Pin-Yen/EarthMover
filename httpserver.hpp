@@ -29,7 +29,6 @@ class HttpServer
   int client, server;
   struct sockaddr_in serverAddress;
 
-  // TODO: initialize earthmover
   AI *earthMover;
   DisplayBoard *board;
 

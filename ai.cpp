@@ -1,10 +1,9 @@
 #include "ai.hpp"
 #include <assert.h>
+#include <iostream>
 
-
-AI::AI(int cycle, DisplayBoard *board) {
+AI::AI(int cycle) {
   this->cycle = cycle;
-  this->board = board;
   tree = new GameTree();
   backgroundThread = NULL;
 }
@@ -22,9 +21,21 @@ void AI::think(int *row, int *col) {
     backgroundThread = NULL;
   }
 
-  tree->MCTS(cycle);
-  tree->MCTSResult(*row, *col);
+  #ifdef DEBUG_MCTS_PROCESS
+    int batch = 100;
+    int batchSize = cycle / batch;
+    int cycles = cycle / batch;
 
+    for (int c = 0; c < cycles; ++c) {
+      tree->MCTS(batchSize);
+      std::cout << "batch " << c << ":\n";
+      tree->MCTSResult(*row, *col);
+    }
+    printf("============================================\n");
+  #else
+    tree->MCTS(cycle);
+    tree->MCTSResult(*row, *col);
+  #endif
 }
 
 bool AI::play(int row, int col, bool triggerBackgroundThread ) {
@@ -53,10 +64,13 @@ void AI::stopBGThread() {
 
 void AI::reset() {
   stopBGThread();
-  board->wipe();
   tree->reset();
 }
 
 void AI::getCycle(int cycle) {
   this->cycle = cycle;
+}
+
+bool AI::whoTurn() {
+  return tree->getCurrentBoard()->whoTurn();
 }
