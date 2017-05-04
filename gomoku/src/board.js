@@ -18,9 +18,9 @@ chessImage[3].src = "gomoku/src/chess_white_transparent.png";
 chessImage[4].src = "gomoku/src/chess_white.png";
 chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
-var canvas = document.getElementById('cvs-board');
+var canvas = document.getElementById('cvs');
 var context = canvas.getContext("2d");
-$('#cvs-board').attr({ 'width': 565, 'height': 565 });
+$('#cvs').attr({ 'width': 565, 'height': 565 });
 
 var playNo = 0;
 
@@ -43,36 +43,33 @@ function initBoard() {
   context.clearRect(20, 20, 525, 525);
 }
 
-canvas.onmousemove = function(event) {
-  if (!boardEnable) return;
-
+function cvsMouseMoveOrOver(event) {
   // get the coordinate
   var position = getPosition(event);
 
-  // if out of bound
-  if (position[0] == -1) {
-    clear(mousePos);
-    mousePos = [-1, -1];
-  } else if (!boardStatus[position[0]][position[1]]) {
-    // if the position is empty
-    // draw only if mouse at the new coordinate
-    if (mousePos !== position) {
-      clear(mousePos);
-      draw(position);
+  // if at new position
+  if (mousePos === position) return;
 
+  // check if not out of bound
+  if (position[0] != -1) {
+    // check if the position is empty
+    if (!boardStatus[position[0]][position[1]]) {
+      if (boardEnable) {
+        clear(mousePos);
+        draw(position);
+      }
       // update mousePos
       mousePos = position.slice();
-    }
-  } else {
-    // if mouse at the exist chess, clear mose position
-    if (mousePos[0] != -1) {
-      clear(mousePos);
-      mousePos = [-1, -1];
+
+      return;
     }
   }
+
+  if (boardEnable) clear(mousePos);
+  mousePos = [-1, -1];
 }
 
-canvas.onmouseout = function() {
+function cvsMouseOut() {
   if (!boardEnable) return;
 
   // if mouse's previous position not has chess
@@ -85,7 +82,7 @@ canvas.onmouseout = function() {
   }
 }
 
-canvas.onclick = function(event) {
+function cvsClick() {
   // if the game does not started, show new game dialog
   if (!gameStarted) {
     $('#dialog-new-game').show();;
@@ -94,12 +91,13 @@ canvas.onclick = function(event) {
 
   if (!boardEnable) return;
 
-  var position = getPosition(event);
+  if (mousePos[0] == -1) return;
 
   // if the position is empty, play and post
-  if (!boardStatus[position[0]][position[1]]) {
-    play(position);
-    post({ row: position[1], col: position[0] }, 'play');
+  if (!boardStatus[mousePos[0]][mousePos[1]]) {
+    play(mousePos);
+    post({ row: mousePos[1], col: mousePos[0] }, 'play');
+    mousePos = [-1, -1];
   }
 }
 
@@ -160,8 +158,6 @@ function play(position) {
   ++playNo;
   boardStatus[position[0]][position[1]] = playNo;
 
-  mousePos = [-1, -1];
-
   // draw a marked chess
   draw(position);
 
@@ -198,6 +194,8 @@ function post(params, path) {
           (response.winner == 'white' && game.white == 'computer')) {
         // change JSON to array, and play
         play([response.col, response.row]);
+
+        if (boardEnable) draw(mousePos);
       }
 
       if (response.winner != 'none')

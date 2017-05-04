@@ -91,7 +91,11 @@
     </span>
     <!-- board image and canvas that used to draw chess on board -->
     <img src="gomoku/src/board.png" class="board img">
-    <canvas id="cvs-board" class="board cvs"></canvas>
+    <canvas id="cvs" class="board cvs"
+            onclick="cvsClick()"
+            onmousemove="cvsMouseMoveOrOver(event)"
+            onmouseout="cvsMouseOut()"
+            onmouseover="cvsMouseMoveOrOver(event)"></canvas>
 
     <!-- self player information
          NOTE: in this scope, player information is abridged as pi -->
