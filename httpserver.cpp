@@ -130,10 +130,49 @@ void HttpServer::handleStart(std::string requestBody) {
 
 bool HttpServer::handlePlay(std::string requestBody) {
   /* extract row & col from encoded request body */
-  int row = atoi(findAttributeInJson(requestBody, "row").c_str());
-  int col = atoi(findAttributeInJson(requestBody, "col").c_str());
+  int userRow = atoi(findAttributeInJson(requestBody, "row").c_str());
+  int userCol = atoi(findAttributeInJson(requestBody, "col").c_str());
+  bool shouldAiThink = (findAttributeInJson(requestBody, "think") == "true");
 
-  return requestAiPlay(row, col, false);
+
+  bool isWinning = false; // true: winning, false: not winning.
+  bool winnerColor; //true: black, false: white.
+
+  // If Ai should play the move specified in the request.
+  if (userRow != -1 && userCol != -1) {
+    // third param: Think in background if not requested to play by the client.
+    isWinning = earthMover->play(userRow, userCol, !shouldAiThink);
+  }
+
+  int AiRow, AiCol;
+
+  // EM think & play if user's move is not winning & EM's play is requested by the client.
+  if (shouldAiThink & !isWinning) {
+    earthMover->think(&AiRow, &AiCol);
+    isWinning = earthMover->play(AiRow, AiCol, true);
+  }
+
+  // Fill in the response data
+  HttpResponse response(200);
+  response.setContentType("application/json")
+          .addJson("row", AiRow)
+          .addJson("col", AiCol);
+
+  if (isWinning)
+    response.addJson("winner", (earthMover->whoTurn())? "white" : "black");
+  else
+    response.addJson("winner", "none");
+
+  std::cout << response.getHeaderString();
+  std::cout << response.getBody();
+
+  // Sent response
+  send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
+
+  // Returns true to stop gameloop if someone is winning.
+  return isWinning;
+
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {
@@ -191,7 +230,7 @@ bool HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
   /* play client's move if it is not the first move and not both players are ai */
   if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
     /* stop background thread */
-    earthMover->stopBGThread();
+    // earthMover->stopBGThread();
 
     /* play client's move */
     if( !board->play(clientRow, clientCol)) {
