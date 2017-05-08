@@ -18,6 +18,11 @@ class GameTree {
   void MCTS(int maxCycle);
 
   /* Monty Carlo Tree Search
+   * keep searching until total select times reach "minCycle"
+     and the point that select most times reach "minMostTimesCycle" */
+  void MCTS(int minCycle, int minMostTimesCycle);
+
+  /* Monty Carlo Tree Search
    * keep searching until reach the max cycle, or stop become true */
   void MCTS(int maxCycle, bool &stop);
 
