@@ -28,7 +28,7 @@ int main() {
     int row, col;
 
     DisplayBoard board;
-    AI earthMover(10000);
+    AI earthMover(1);
 
     while (true) {
       earthMover.think(&row, &col);

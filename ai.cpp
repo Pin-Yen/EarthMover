@@ -2,8 +2,8 @@
 #include <assert.h>
 #include <iostream>
 
-AI::AI(int cycle) {
-  this->cycle = cycle;
+AI::AI(int level) {
+  level_ = level;
   tree = new GameTree();
   backgroundThread = NULL;
 }
@@ -33,7 +33,13 @@ void AI::think(int *row, int *col) {
     }
     printf("============================================\n");
   #else
-    tree->MCTS(cycle);
+    switch (level) {
+      case 0:
+        tree->MCTS(2000); break;
+      case 1:
+        tree->MCTS(2000, 1200);
+    }
+
     tree->MCTSResult(*row, *col);
   #endif
 }
@@ -67,10 +73,6 @@ void AI::stopBGThread() {
 void AI::reset() {
   stopBGThread();
   tree->reset();
-}
-
-void AI::getCycle(int cycle) {
-  this->cycle = cycle;
 }
 
 bool AI::whoTurn() {

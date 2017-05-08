@@ -19,7 +19,7 @@
 
 HttpServer::HttpServer() {
   board = new DisplayBoard();
-  earthMover = new AI(10000);
+  earthMover = new AI(1);
   client = -1;
   server = -1;
 
