@@ -86,11 +86,10 @@ void VirtualBoard::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int loca
 
   root->type[0] = NULL; root->type[1] = NULL;
 
-  /* if connect == 4, stop playing same color at this point to prevent appearing five */
-
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
+    /* if connect == 4, stop playing same color at this point to prevent appearing five */
     if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4)) {
       root->childNode[i] = NULL;
       continue;
@@ -248,6 +247,7 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               if (*lType == *type) {
                 ++level;
               } else {
+                delete type;
                 break;
               }
               delete type;
@@ -269,6 +269,7 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               if ((*rType == *type) && (*rType >= *lType)) {
                 ++level;
               } else {
+                delete type;
                 break;
               }
               delete type;

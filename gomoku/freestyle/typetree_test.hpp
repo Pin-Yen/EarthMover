@@ -4,6 +4,9 @@ class TypeTree {
 
   static void initialize();
 
+  /* debugging purposes */
+  static int counter;
+
  private:
   struct Node {
     /* Next point occupied by:
@@ -16,11 +19,14 @@ class TypeTree {
 
     Node() {
       jump = false;
+
+      ObjectCounter::registerTypeTreeNode();
     }
 
     ~Node() {
-      for (int i = 0; i < 2; ++i)
-        delete type[i];
+      delete type[0]; delete type[1];
+
+      ObjectCounter::unregisterTypeTreeNode();
     }
   };
 

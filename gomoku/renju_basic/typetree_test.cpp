@@ -1,3 +1,6 @@
+#define DEBUG
+#include "../../objectcounter.cpp"
+
 #include "../chesstype.hpp"
 #include "../status.hpp"
 #include "typetree_test.hpp"
@@ -7,6 +10,8 @@
 
 /* initialize root*/
 TypeTree::Node* TypeTree::root = new Node();
+
+int TypeTree::counter = 0;
 
 void TypeTree::initialize() {
   /* initialize status*/
@@ -168,7 +173,6 @@ void TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
 
 ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
-
   /* check the length of the connection around the analize point
    * under the following, we call this chess group "center group" (CG)
    * for example: --X O*OOX-- ; OOOO* O X
@@ -243,6 +247,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
               if (*lType == *type) {
                 ++level;
               } else {
+                delete type;
                 break;
               }
               delete type;
@@ -264,6 +269,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
               if ((*rType == *type) && (*rType >= *lType)) {
                 ++level;
               } else {
+                delete type;
                 break;
               }
               delete type;
@@ -315,7 +321,7 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
 }
 
 void TypeTree::print(STATUS *status, ChessType **type) {
-  std::cout << std::setw(5) << "(";
+  std::cout << "(";
   /* print status array*/
   for (int i = 0; i < analyze_length; ++i) {
     char c;
@@ -350,6 +356,7 @@ void TypeTree::print(STATUS *status, ChessType **type) {
 
 void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
   if (node->type[0] != NULL) {
+    ++counter;
     print(status, node->type);
     return;
   }
@@ -375,4 +382,7 @@ void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
 
 int main() {
   TypeTree::initialize();
+
+  std::cout << "leaves: " << TypeTree::counter << "\n";
+  ObjectCounter::printInfo();
 }

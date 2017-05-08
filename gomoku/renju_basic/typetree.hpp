@@ -30,8 +30,7 @@ class VirtualBoard::Evaluator::TypeTree {
     }
 
     ~Node() {
-      for (int i = 0; i < 2; ++i)
-        delete type[i];
+      delete type[0]; delete type[1];
 
       #ifdef DEBUG
       ObjectCounter::unregisterTypeTreeNode();

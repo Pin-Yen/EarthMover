@@ -10,7 +10,7 @@ class AI
  public:
 
   /* cycle: nubmer of MCTS cycles */
-  AI(int cycle);
+  AI(int level);
 
   ~AI();
 
@@ -31,9 +31,6 @@ class AI
   /* returns true for black ,false for white. */
   bool whoTurn();
 
-  /* change number of MCTS cycle. */
-  void getCycle(int cylce);
-
  private:
   /* this thread lets EM thinks in the background when it's the users turn */
   std::thread *backgroundThread;
@@ -43,8 +40,8 @@ class AI
   /* stops background thread */
   void stopBGThread();
 
-  /* the number of MCTS cycle*/
-  int cycle;
+  /* the ai's level */
+  int level_;
 };
 
 #endif

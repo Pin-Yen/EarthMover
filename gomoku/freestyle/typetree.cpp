@@ -153,7 +153,6 @@ void VirtualBoard::Evaluator::TypeTree::classify(const STATUS *status, ChessType
 ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
                                                           bool checkLevel) {
   int connect = 1;
-
   /* check the length of the connection around the analize point
    * under the following, we call this chess group "center group" (CG)
    * for example: --X O*OOX-- ; OOOO* O X
@@ -222,6 +221,7 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               if (*lType == *type) {
                 ++level;
               } else {
+                delete type;
                 break;
               }
               delete type;
@@ -243,6 +243,7 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
               if ((*rType == *type) && (*rType >= *lType)) {
                 ++level;
               } else {
+                delete type;
                 break;
               }
               delete type;

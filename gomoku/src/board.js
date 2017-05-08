@@ -199,7 +199,11 @@ function post(params, path) {
       }
 
       if (humanTurn()) {
-        draw(mousePos);
+        if (response.col == mousePos[0] && response.row == mousePos[1]) {
+          mousePos = [-1, -1];
+        } else {
+          draw(mousePos);
+        }
         boardEnable = true;
       } else {
         post({ row: -1, col: -1, think: true});
