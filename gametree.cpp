@@ -53,6 +53,40 @@ void GameTree::MCTS(int maxCycle) {
   }
 }
 
+void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
+  Node* node;
+
+  int mostTimes = -1;
+
+  do {
+    for (int cycle = 0; cycle < minCycle; ++cycle) {
+      if (currentNode->winning() || currentNode->losing()) return;
+
+      VirtualBoard board(currentBoard);
+
+      int result = selection(&node, &board);
+
+      if (result == -2) {
+        /* simulate only if child is not winning */
+        result = simulation(&board);
+      }
+
+      if (result == -1)
+        backProp(node);
+      else
+        backProp(node, result);
+    }
+
+    /* get mostTimes */
+    for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+      for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+        if (currentNode->childNode[r][c] != NULL)
+          if (currentNode->childNode[r][c]->totalPlayout() > mostTimes)
+            mostTimes = currentNode->childNode[r][c]->totalPlayout();
+
+  } while (mostTimes < minMostTimesCycle);
+}
+
 void GameTree::MCTS(int maxCycle, bool &stop) {
   Node* node;
 
