@@ -76,7 +76,7 @@ void OpeningTree::initialize() {
       insert(tables[i]);
       rotate(tables[i]);
     }
-    mirror(tables[i])
+    mirror(tables[i]);
     for (int r = 0; r < 4; ++r) {
       insert(tables[i]);
       rotate(tables[i]);
@@ -145,7 +145,7 @@ void OpeningTree::insert(int table[7][7]) {
         if (currentNode->childNode[oriRow - curRow + 3][oriCol - curCol + 3][0] == NULL)
           currentNode->childNode[oriRow - curRow + 3][oriCol - curCol + 3][0] = new Node();
         else
-          assert(0);
+          continue;
         currentNode->childNode[oriRow - curRow + 3][oriCol - curCol + 3][0]->score =
           table[curRow][curCol];
       }
@@ -178,8 +178,8 @@ void OpeningTree::classify(int table[7][7]) {
 
     if (table[curRow][curCol] > 0 && table[curRow][curCol] < 3) {
       color = table[curRow][curCol] - 1;
-      if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL)
-        return;
+      if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return;
+
       currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
     }
   }
@@ -213,5 +213,13 @@ int main()
                     {0, 0, 0, 1, 0, 0, 0},  /*      X        */
                     {0, 0, 0, 0, 0, 0, 0}}; /*               */
 
-  OpeningTree::classify(test);
+  int tes2[7][7] = {{0, 0, 0, 0, 0, 0, 0},  /*               */
+                    {0, 0, 0, 0, 0, 0, 0},  /*               */
+                    {0, 0, 0, 0, 0, 0, 0},  /*               */
+                    {0, 2, 0, 1, 0, 0, 0},  /*  O   X        */
+                    {0, 0, 2, 0, 0, 0, 0},  /*    O          */
+                    {0, 1, 0, 0, 0, 0, 0},  /*  X            */
+                    {0, 0, 0, 0, 0, 0, 0}}; /*               */
+
+  OpeningTree::classify(tes2);
 }
