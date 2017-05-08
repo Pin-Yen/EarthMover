@@ -5,18 +5,24 @@ class OpeningTree {
  public:
   static void initialize();
 
+  static void classify(int table[7][7]);
+
  private:
   struct Node {
-    Node *childNode[7][7];
+    Node();
+
+    Node *childNode[7][7][2];
 
     int score;
   };
 
-  static void insert(int opening[7][7]);
+  static void rotate(int table[7][7]);
+
+  static void mirror(int table[7][7]);
+
+  static void insert(int table[7][7]);
 
   static Node* root;
-
-  static bool isInitialized;
 };
 
 #endif
