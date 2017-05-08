@@ -33,7 +33,7 @@ void AI::think(int *row, int *col) {
     }
     printf("============================================\n");
   #else
-    switch (level) {
+    switch (level_) {
       case 0:
         tree->MCTS(2000); break;
       case 1:
