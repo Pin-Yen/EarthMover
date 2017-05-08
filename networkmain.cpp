@@ -13,41 +13,33 @@ int main() {
     std::cout << "Please type N for server mode or L for local mode (N/L)\n";
     std::cin >> mode;
 
-    if(mode != 'N' && mode !='L')
-      std::cout << "Invalid input. ";
-    else
-      break;
+    if (mode == 'N' || mode == 'L') break;
+
+    std::cout << "Invalid input. ";
   }
 
 
   if (mode == 'N') {
     HttpServer server;
 
-    // TODO: determine who's black and who's white
-
     server.listenConnection();
 
   } else if (mode == 'L') {
-    int inputRow = -1, inputCol = -1;
-    int EMRow , EMCol;
-    bool gameEnd = false;
+    int row, col;
 
-    while (! gameEnd){
-      DisplayBoard board;
-      AI earthMover(10000);
-      earthMover.think(&EMRow, &EMCol);
+    DisplayBoard board;
+    AI earthMover(10000);
 
-      board.getInput(&inputRow, &inputCol);
-      board.play(inputRow, inputCol);
+    while (true) {
+      earthMover.think(&row, &col);
 
-      if (earthMover.play(inputRow, inputCol, true)) {
+      board.getInput(&row, &col);
+      board.play(row, col);
+
+      if (earthMover.play(row, col, true)) {
         /* someone wins */
-        gameEnd = true;
-
-        if (earthMover.whoTurn())
-          std::cout << "black wins";
-        else
-          std::cout << "white wins";
+        std::cout << (earthMover.whoTurn() ? "white wins" : "black wins");
+        break;
       }
     }
   }
