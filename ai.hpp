@@ -37,6 +37,9 @@ class AI
   bool stopBackgroundThread;
   GameTree *tree;
 
+  /* starts background thread */
+  void startBGThread();
+
   /* stops background thread */
   void stopBGThread();
 

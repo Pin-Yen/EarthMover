@@ -158,15 +158,13 @@ void GameTree::MCTSResult(int &row, int &col) {
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode->totalPlayout()
-            << "  best point: "
-            << (char)(col + 65) << row + 1
+            << "  best: " << (char)(col + 65) << row + 1
             << "  sim: " << currentNode->childNode[row][col]->totalPlayout()
             << "  WinR: " << currentNode->childNode[row][col]->winRate()
             << "  scoreP: "  << scorePer
             << "  UCB: " << ucbValue
-            << "  scoreP + UCB: " << (scorePer + ucbValue)
-            << "  winning: " << currentNode->winning()
-            << "  losing: " << currentNode->losing()
+            << "  W: " << currentNode->winning()
+            << "  L: " << currentNode->losing()
             << std::endl;
 }
 

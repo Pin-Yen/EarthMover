@@ -52,15 +52,19 @@ bool AI::play(int row, int col, bool triggerBackgroundThread ) {
   bool hasSomeoneWin = tree->play(row, col);
 
   if (triggerBackgroundThread) {
-    stopBackgroundThread = false;
-    GameTree* treeRef = tree;
-
-    backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
-                                        { treeRef->MCTS(maxCycle, stop); },
-                                        100000, std::ref(stopBackgroundThread));
+    startBGThread();
   }
 
   return hasSomeoneWin;
+}
+
+void AI::startBGThread() {
+  stopBackgroundThread = false;
+  GameTree* treeRef = tree;
+
+  backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
+                                     { treeRef->MCTS(maxCycle, stop); },
+                                     100000, std::ref(stopBackgroundThread));
 }
 
 void AI::stopBGThread() {
