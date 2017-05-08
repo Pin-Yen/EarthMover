@@ -9,7 +9,7 @@ int main() {
 
   char mode;
 
-  while (true){
+  while (true) {
     std::cout << "Please type N for server mode or L for local mode (N/L)\n";
     std::cin >> mode;
 
@@ -25,12 +25,22 @@ int main() {
     server.listenConnection();
 
   } else if (mode == 'L') {
-    int row, col;
+    int level;
+    while (true) {
+      std::cout << "enter level (0~2)\n";
+      std::cin >> level;
+
+      if (level >= 0 && level <= 2) break;
+
+      std::cout << "Invalid level. ";
+    }
 
     DisplayBoard board;
-    AI earthMover(1);
+    AI earthMover(level);
 
     while (true) {
+      int row, col;
+
       earthMover.think(&row, &col);
 
       board.getInput(&row, &col);

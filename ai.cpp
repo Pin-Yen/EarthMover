@@ -37,7 +37,9 @@ void AI::think(int *row, int *col) {
       case 0:
         tree->MCTS(2000); break;
       case 1:
-        tree->MCTS(2000, 1200);
+        tree->MCTS(2000, 1000);
+      case 2:
+        tree->MCTS(2000, 2000);
     }
 
     tree->MCTSResult(*row, *col);
