@@ -121,7 +121,24 @@ void HttpServer::handleStart(std::string requestBody) {
   earthMover->reset();
 
   if (isBlackAi){
-    requestAiPlay(-1, -1, true);
+    int row, col;
+    earthMover->think(&row, &col);
+
+    earthMover->play(row, col, true);
+
+    HttpResponse response(200);
+    response.setContentType("application/json")
+            .addJson("row", row)
+            .addJson("col", col)
+            .addJson("winner", "none");
+
+    std::cout << response.getHeaderString();
+    std::cout << response.getBody();
+
+    // Sent response
+    send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
+    send(server, response.getBody(), response.getBodyLength(), 0);
+
   } else {
     HttpResponse response(204);
     send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
@@ -223,65 +240,6 @@ std::string HttpServer::parseRequestBody(std::string request) {
 
   return request.substr(bodyStart);
 }
-
-bool HttpServer::requestAiPlay(int clientRow, int clientCol, bool isFirstMove) {
-  int gameStatus, winner = -1;
-
-  /* play client's move if it is not the first move and not both players are ai */
-  if (!isFirstMove && !(isBlackAi && isWhiteAi)) {
-    /* stop background thread */
-    // earthMover->stopBGThread();
-
-    /* play client's move */
-    if( !board->play(clientRow, clientCol)) {
-      /* invalid client play, either there's bug in client-side's chessboard script,
-       * or the user is manually posting wrong data */
-      responseHttpError(400, "Invalid play data");
-      return false;
-    }
-
-    gameStatus = earthMover->play(clientRow, clientCol, false);
-    if (gameStatus) {
-      //human won
-      winner = (earthMover->whoTurn() == 0)? 1:0;
-    }
-  }
-
-  int EMRow, EMCol, loser;
-  earthMover->think(&EMRow, &EMCol);
-
-  /* if at least one player is ai, play ai's move on the board */
-  if (isBlackAi || isWhiteAi) {
-    board->play(EMRow, EMCol);
-    gameStatus = earthMover->play(EMRow, EMCol, true);
-
-    if (gameStatus) {
-      //EM won
-      winner = (earthMover->whoTurn() == 0)? 1:0;
-    }
-  }
-
-  /* return EM's play to client */
-  HttpResponse response(200);
-  response.setContentType("application/json")
-  .addJson("row", EMRow)
-  .addJson("col", EMCol);
-
-  switch (winner) {
-    case -1: response.addJson("winner", "none"); break;
-    case 0: response.addJson("winner", "black"); break;
-    case 1: response.addJson("winner", "white"); break;
-    default: assert(0);
-  }
-
-  std::cout << response.getHeaderString();
-  std::cout << response.getBody();
-  send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
-  send(server, response.getBody(), response.getBodyLength(), 0);
-
-  return (gameStatus == 0) ? true : false;
-}
-
 
 void HttpServer::responseHttpError(int errorCode, const char *description = "") {
   char headerTemplate[] = "HTTP/1.1 %d %s\r\nContent-Type: text/html\r\n";
