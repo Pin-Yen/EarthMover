@@ -71,8 +71,39 @@ void OpeningTree::initialize() {
                           {0, 0, 0, 0, 0, 0, 0},  /*               */
                           {0, 0, 0, 0, 0, 0, 0}}};/*               8*/
 
-  insert(tables[0]);
+  for (int i = 0; i < 1; ++i) {
+    for (int r = 0; r < 4; ++r) {
+      insert(tables[i]);
+      rotate(tables[i]);
+    }
+    mirror(tables[i])
+    for (int r = 0; r < 4; ++r) {
+      insert(tables[i]);
+      rotate(tables[i]);
+    }
+  }
+}
 
+void OpeningTree::rotate(int table[7][7]) {
+  int temp[7][7];
+  for (int r = 0; r < 7; ++r)
+    for (int c = 0; c < 7; ++c)
+      temp[c][7 - r] = table[r][c];
+
+  for (int r = 0; r < 7; ++r)
+    for (int c = 0; c < 7; ++c)
+      table[r][c] = temp[r][c];
+}
+
+void OpeningTree::mirror(int table[7][7]) {
+  int temp[7][7];
+  for (int r = 0; r < 7; ++r)
+    for (int c = 0; c < 7; ++c)
+      temp[c][r] = table[r][c];
+
+  for (int r = 0; r < 7; ++r)
+    for (int c = 0; c < 7; ++c)
+      table[r][c] = temp[r][c];
 }
 
 void OpeningTree::insert(int table[7][7]) {

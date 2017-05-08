@@ -16,6 +16,10 @@ class OpeningTree {
     int score;
   };
 
+  static void rotate(int table[7][7]);
+
+  static void mirror(int table[7][7]);
+
   static void insert(int table[7][7]);
 
   static Node* root;
