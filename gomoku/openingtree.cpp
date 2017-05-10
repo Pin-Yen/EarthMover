@@ -2,104 +2,51 @@
 
 #include <assert.h>
 #include <iostream>
+#include <fstream>
 
 /* initialize root*/
 OpeningTree::Node* OpeningTree::root = new Node();
 
 void OpeningTree::initialize() {
-  int tables[8][7][7] = {{{0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 1, 0, 2, 0, 0, 0},  /*   X   O       */
-                          {0, 0, 2, 0, 0, 0, 0},  /*     O         */
-                          {0, 5, 0, 1, 0, 0, 0},  /*   C   X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               1*/
+  std::ifstream file("opening.txt");
 
-                         {{0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 1, 0, 0, 0, 0, 0},  /*   X           */
-                          {0, 5, 2, 2, 5, 0, 0},  /*   C O O C     */
-                          {0, 0, 5, 1, 0, 0, 0},  /*     C X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               2*/
+  int openingAmout;
+  while (file >> openingAmout) {
+    char table[7][7];
+    for (int r = 0; r < 7; ++r)
+      for (int c = 0; c < 7; ++c)
+        file >> table[r][c];
 
-                         {{0, 0, 2, 0, 0, 0, 0},  /*     O         */
-                          {0, 1, 0, 0, 0, 0, 0},  /*   X           */
-                          {0, 0, 2, 0, 0, 0, 0},  /*     O         */
-                          {0, 4, 4, 1, 0, 0, 0},  /*   B B X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               3*/
-
-                         {{0, 0, 0, 2, 0, 0, 0},  /*       O       */
-                          {0, 1, 0, 0, 0, 0, 0},  /*   X           */
-                          {0, 0, 2, 0, 0, 0, 0},  /*     O         */
-                          {0, 4, 4, 1, 0, 0, 0},  /*   B B X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               4*/
-
-                         {{0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 1, 0, 0, 0, 0},  /*     X         */
-                          {0, 0, 2, 2, 3, 0, 0},  /*     O O A     */
-                          {0, 4, 0, 1, 0, 0, 0},  /*   B   X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               5*/
-
-                         {{0, 0, 0, 0, 3, 0, 0},  /*         B     */
-                          {0, 0, 1, 2, 0, 0, 0},  /*     X O       */
-                          {0, 0, 2, 0, 0, 0, 0},  /*     O         */
-                          {0, 4, 0, 1, 0, 0, 0},  /*   A   X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               6*/
-
-                         {{0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 1, 3, 0, 0, 0},  /*     X A       */
-                          {0, 0, 2, 3, 0, 0, 0},  /*     O A       */
-                          {0, 2, 0, 1, 0, 0, 0},  /*   O   X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}, /*               7*/
-
-                         {{0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 1, 0, 0, 0, 0},  /*     X         */
-                          {0, 2, 2, 3, 0, 0, 0},  /*   O O A       */
-                          {0, 3, 0, 1, 0, 0, 0},  /*   A   X       */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0},  /*               */
-                          {0, 0, 0, 0, 0, 0, 0}}};/*               8*/
-
-
-  for (int i = 0; i < 8; ++i) {
-    // insert 8 direction
-    for (int r = 0; r < 4; ++r) {
-      insert(tables[i]);
-      rotate(tables[i]);
-    }
-    mirror(tables[i]);
-    for (int r = 0; r < 4; ++r) {
-      insert(tables[i]);
-      rotate(tables[i]);
+    /* insert 8 direction
+       rotate four times -> mirror -> rotate four times */
+    for (int m = 0; m < 2; ++m) {
+      for (int r = 0; r < 4; ++r) {
+        insert(table);
+        rotate(table);
+      }
+      mirror(table);
     }
   }
+
+  std::cout << "finished insert " << openingAmout << " opening table" << std::endl;
+
+  file.close();
 }
 
-void OpeningTree::rotate(int table[7][7]) {
-  int temp[7][7];
-  /* rotate 90 degrees clockwise (row -> col, col -> 7 - row) */
+void OpeningTree::rotate(char table[7][7]) {
+  char temp[7][7];
+  /* rotate 90 degrees clockwise (row -> col, col -> 6 - row) */
   for (int r = 0; r < 7; ++r)
     for (int c = 0; c < 7; ++c)
-      temp[c][7 - r] = table[r][c];
+      temp[c][6 - r] = table[r][c];
 
   for (int r = 0; r < 7; ++r)
     for (int c = 0; c < 7; ++c)
       table[r][c] = temp[r][c];
 }
 
-void OpeningTree::mirror(int table[7][7]) {
-  int temp[7][7];
+void OpeningTree::mirror(char table[7][7]) {
+  char temp[7][7];
   /* mirror (row -> col, col -> row) */
   for (int r = 0; r < 7; ++r)
     for (int c = 0; c < 7; ++c)
@@ -110,7 +57,7 @@ void OpeningTree::mirror(int table[7][7]) {
       table[r][c] = temp[r][c];
 }
 
-void OpeningTree::insert(int table[7][7]) {
+void OpeningTree::insert(char table[7][7]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0, curRow, curCol, color;
@@ -125,7 +72,7 @@ void OpeningTree::insert(int table[7][7]) {
           /*               */
   for (int r = 0; r < 7; ++r)
     for (int c = 0; c < 7; ++c)
-      if (table[r][c] > 0 && table[r][c] < 3) {
+      if (table[r][c] == 'X' || table[r][c] == 'O') {
         if (r > oriRow)
           oriRow = r;
         if (c > oriCol)
@@ -146,7 +93,7 @@ void OpeningTree::insert(int table[7][7]) {
     }
 
     /* if find a occupied point */
-    if (table[curRow][curCol] > 0 && table[curRow][curCol] < 3) {
+    if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
       color = table[curRow][curCol] - 1;
 
       /* using vector type to record (origin to current point) */
@@ -159,26 +106,23 @@ void OpeningTree::insert(int table[7][7]) {
   /* record the fifth move's score */
   for (curRow = 0; curRow < 7; ++curRow)
     for (curCol = 0; curCol < 7; ++curCol)
-      if (table[curRow][curCol] >= 3) {
+      if (table[curRow][curCol] == 'P') {
         /* using vector type to record
            to avoid out of bound (vector may be negative), all value += 3 */
         if (currentNode->childNode[oriRow - curRow + 3][oriCol - curCol + 3][0] == NULL)
           currentNode->childNode[oriRow - curRow + 3][oriCol - curCol + 3][0] = new Node();
-
-        currentNode->childNode[oriRow - curRow + 3][oriCol - curCol + 3][0]->score =
-          table[curRow][curCol];
       }
 }
 
 /* classify method please refer to insert */
-void OpeningTree::classify(int table[7][7]) {
+void OpeningTree::classify(char table[7][7]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0, curRow, curCol, color;
 
   for (int r = 0; r < 7; ++r)
     for (int c = 0; c < 7; ++c)
-      if (table[r][c] > 0 && table[r][c] < 3) {
+      if (table[r][c] == 'X' || table[r][c] == 'O') {
         if (r > oriRow)
           oriRow = r;
         if (c > oriCol)
@@ -196,7 +140,7 @@ void OpeningTree::classify(int table[7][7]) {
       curCol = 6;
     }
 
-    if (table[curRow][curCol] > 0 && table[curRow][curCol] < 3) {
+    if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
       color = table[curRow][curCol] - 1;
       if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return;
 
@@ -208,43 +152,30 @@ void OpeningTree::classify(int table[7][7]) {
     for (int curCol = 0; curCol < 7; ++curCol)
       if (currentNode->childNode[curRow][curCol][0] != NULL)
         // debug purpose, print result
-        std::cout << curCol - 3 << ", "
-                  << curRow - 3 << " :"
-                  << currentNode->childNode[curRow][curCol][0]->score
-                  << std::endl;
-}
-
-OpeningTree::Node::Node() {
-  for (int r = 0; r < 7; ++r)
-    for (int c = 0; c < 7; ++c) {
-      childNode[r][c][0] = NULL;
-      childNode[r][c][1] = NULL;
-    }
-
-  score = 0;
+        std::cout << curCol - 3 << ", " << curRow - 3 << std::endl;
 }
 
 int main()
 {
   OpeningTree::initialize();
 
-  int test1[7][7] = {{0, 0, 0, 0, 0, 0, 0},  /*               */
-                     {0, 0, 0, 0, 0, 0, 0},  /*               */
-                     {0, 0, 0, 0, 0, 0, 0},  /*               */
-                     {0, 0, 1, 0, 0, 0, 0},  /*    X          */
-                     {0, 0, 2, 0, 0, 0, 0},  /*    O          */
-                     {0, 1, 0, 2, 0, 0, 0},  /*  X   O        */
-                     {0, 0, 0, 0, 0, 0, 0}}; /*               */
+  std::ifstream file("openingtest.txt");
 
-  int test2[7][7] = {{0, 0, 0, 0, 0, 0, 0},  /*               */
-                     {0, 0, 0, 0, 0, 0, 0},  /*               */
-                     {0, 0, 0, 0, 0, 0, 0},  /*               */
-                     {0, 2, 0, 1, 0, 0, 0},  /*  O   X        */
-                     {0, 0, 2, 0, 0, 0, 0},  /*    O          */
-                     {0, 1, 0, 0, 0, 0, 0},  /*  X            */
-                     {0, 0, 0, 0, 0, 0, 0}}; /*               */
+  std::cout << "test:\n";
+  int testAmount;
+  while (file >> testAmount) {
+    char table[7][7];
+    for (int r = 0; r < 7; ++r) {
+      for (int c = 0; c < 7; ++c) {
+        file >> table[r][c];
+        std::cout << table[r][c];
+      }
+      std::cout << std::endl;
+    }
 
-  OpeningTree::classify(test1);
-  std::cout << std::endl;
-  OpeningTree::classify(test2);
+    OpeningTree::classify(table);
+    std::cout << std::endl;
+  }
+
+  file.close();
 }
