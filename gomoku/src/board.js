@@ -206,12 +206,12 @@ function post(params, path) {
         }
         boardEnable = true;
       } else {
-        post({ row: -1, col: -1, think: true});
+        post({ row: -1, col: -1, think: true}, 'play');
       }
     } else if (http.readyState == 4 && http.status == 204) {
       // receive server's respond to /start
       if (! humanTurn()) {
-        post({row: -1, col: -1, think = !humanTurn()},'/play');
+        post({row: -1, col: -1, think : !humanTurn()}, 'play');
       } else {
         if (response.col == mousePos[0] && response.row == mousePos[1]) {
           mousePos = [-1, -1];
