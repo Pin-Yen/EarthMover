@@ -64,12 +64,11 @@ void OpeningTree::insert(char table[5][5]) {
 
   /* set the origin in the lower right corner in the table
      e.g. the origin of the example below is "0"
-          /*   X           */
-          /*   C O O C     */
-          /*     C X 0     */
-          /*               */
-          /*               */
-          /*               */
+          /*   X        */
+          /*   C O O C  */
+          /*     C X 0  */
+          /*            */
+          /*            */
   for (int r = 0; r < 5; ++r)
     for (int c = 0; c < 5; ++c)
       if (table[r][c] == 'X' || table[r][c] == 'O') {
@@ -103,7 +102,7 @@ void OpeningTree::insert(char table[5][5]) {
     }
   }
 
-  /* record the fifth move's score */
+  /* record the fifth move */
   for (curRow = 0; curRow < 5; ++curRow)
     for (curCol = 0; curCol < 5; ++curCol)
       if (table[curRow][curCol] == 'P') {
