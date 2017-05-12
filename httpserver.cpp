@@ -114,35 +114,14 @@ void HttpServer::redirect(std::string *directory) {
 }
 
 void HttpServer::handleStart(std::string requestBody) {
-  isBlackAi = (findAttributeInJson(requestBody, "black") == "computer");
-  isWhiteAi = (findAttributeInJson(requestBody, "white") == "computer");
+  // isBlackAi = (findAttributeInJson(requestBody, "black") == "computer");
+  // isWhiteAi = (findAttributeInJson(requestBody, "white") == "computer");
   // future game settings go here (strength, rule, etc)
 
   earthMover->reset();
 
-  if (isBlackAi){
-    int row, col;
-    earthMover->think(&row, &col);
-
-    earthMover->play(row, col, true);
-
-    HttpResponse response(200);
-    response.setContentType("application/json")
-            .addJson("row", row)
-            .addJson("col", col)
-            .addJson("winner", "none");
-
-    std::cout << response.getHeaderString();
-    std::cout << response.getBody();
-
-    // Sent response
-    send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
-    send(server, response.getBody(), response.getBodyLength(), 0);
-
-  } else {
-    HttpResponse response(204);
-    send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
-  }
+  HttpResponse response(204);
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
 }
 
 bool HttpServer::handlePlay(std::string requestBody) {

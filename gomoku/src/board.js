@@ -208,6 +208,18 @@ function post(params, path) {
       } else {
         post({ row: -1, col: -1, think: true});
       }
+    } else if (http.readyState == 4 && http.status == 204) {
+      // receive server's respond to /start
+      if (! humanTurn()) {
+        post({row: -1, col: -1, think = !humanTurn()},'/play');
+      } else {
+        if (response.col == mousePos[0] && response.row == mousePos[1]) {
+          mousePos = [-1, -1];
+        } else {
+          draw(mousePos);
+        }
+        boardEnable = true;
+      }
     }
   };
 
@@ -271,7 +283,6 @@ $('#btn-dialog-ok').click(function() {
     // black == human, white == ai -> sel: black, human, opp: white, ai
     initPlayer('sel', 'black', true);
     initPlayer('opp', 'white', (game.white == 'human'));
-    boardEnable = true;
   } else {
     if (game.white == 'human') {
       // black == ai, white == human -> sel: white, human, opp: black, ai
