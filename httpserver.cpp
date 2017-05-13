@@ -140,7 +140,7 @@ bool HttpServer::handlePlay(std::string requestBody) {
     isWinning = earthMover->play(userRow, userCol, !shouldAiThink);
   }
 
-  int AiRow, AiCol;
+  int AiRow = -1, AiCol = -1;
 
   // EM think & play if user's move is not winning & EM's play is requested by the client.
   if (shouldAiThink & !isWinning) {

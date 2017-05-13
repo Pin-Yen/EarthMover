@@ -185,40 +185,33 @@ function post(params, path) {
   http.open('POST', path);
 
   http.onreadystatechange = function() {
-    if (http.readyState == 4 && http.status == 200) {
-      var response = JSON.parse(http.responseText);
+    if (http.readyState == 4 && (http.status == 200 || http.status == 204)) {
+      
+      if (http.status == 200){
+        var response = JSON.parse(http.responseText);
 
-      if (!humanTurn()) {
-        // change JSON to array, and play
-        play([response.col, response.row]);
+        if (!humanTurn() && response.row != -1 && response.col != -1) {
+          // change JSON to array, and play
+          play([response.col, response.row]);
+        }
+
+        if (response.winner != 'none') {
+          notifyWinner(response.winner);
+          return;
+        }
       }
 
-      if (response.winner != 'none') {
-        notifyWinner(response.winner);
-        return;
-      }
 
       if (humanTurn()) {
-        if (response.col == mousePos[0] && response.row == mousePos[1]) {
+        if (http.status == 200 && response.col == mousePos[0] && response.row == mousePos[1]) {
           mousePos = [-1, -1];
-        } else {
+        }
+       else {
           draw(mousePos);
         }
         boardEnable = true;
       } else {
         post({ row: -1, col: -1, think: true}, 'play');
-      }
-    } else if (http.readyState == 4 && http.status == 204) {
-      // receive server's respond to /start
-      if (! humanTurn()) {
-        post({row: -1, col: -1, think : !humanTurn()}, 'play');
-      } else {
-        if (response.col == mousePos[0] && response.row == mousePos[1]) {
-          mousePos = [-1, -1];
-        } else {
-          draw(mousePos);
-        }
-        boardEnable = true;
       }
     }
   };
