@@ -1,7 +1,10 @@
 #include "openingtree_test.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <array>
+#include <vector>
 
 /* initialize root*/
 OpeningTree::Node* OpeningTree::root = new Node();
@@ -106,10 +109,12 @@ void OpeningTree::insert(char table[5][5]) {
   for (curRow = 0; curRow < 5; ++curRow)
     for (curCol = 0; curCol < 5; ++curCol)
       if (table[curRow][curCol] == 'P') {
-        /* using vector type to record
-           to avoid out of bound (vector may be negative), all value ++ */
-        if (currentNode->childNode[oriRow - curRow + 1][oriCol - curCol + 1][0] == NULL)
-          currentNode->childNode[oriRow - curRow + 1][oriCol - curCol + 1][0] = new Node();
+        /* using vector type to record */
+        std::array<int, 2> result = {oriRow - curRow, oriCol - curCol};
+        /* if vector didnot contain this result, add this result into vector */
+        if (std::find(currentNode->result.begin(), currentNode->result.end(), result) ==
+            currentNode->result.end())
+          currentNode->result.push_back(result);
       }
 }
 
@@ -147,11 +152,10 @@ void OpeningTree::classify(char table[5][5]) {
     }
   }
 
-  for (int curRow = 0; curRow < 5; ++curRow)
-    for (int curCol = 0; curCol < 5; ++curCol)
-      if (currentNode->childNode[curRow][curCol][0] != NULL)
-        // debug purpose, print result
-        std::cout << curCol - 1 << ", " << curRow - 1 << std::endl;
+  // debug purpose, print result
+  for (std::vector<std::array<int, 2>>::iterator it = currentNode->result.begin();
+       it != currentNode->result.end(); ++it)
+    std::cout << (*it)[0] << ", " << (*it)[1] << std::endl;
 }
 
 int main()

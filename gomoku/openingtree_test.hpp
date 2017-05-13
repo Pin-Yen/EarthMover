@@ -2,6 +2,8 @@
 #define OPENING_TREE_H
 
 #include "stdlib.h"
+#include <vector>
+#include <array>
 
 class OpeningTree {
  public:
@@ -18,6 +20,8 @@ class OpeningTree {
           childNode[r][c][1] = NULL;
         }
     }
+
+    std::vector<std::array<int, 2>> result;
 
     Node *childNode[5][5][2];
   };

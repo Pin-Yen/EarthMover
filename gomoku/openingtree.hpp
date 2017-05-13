@@ -3,7 +3,7 @@
 
 #include "stdlib.h"
 
-class OpeningTree {
+class VirtualBoard::Evaluator::OpeningTree {
  public:
   static void initialize();
 

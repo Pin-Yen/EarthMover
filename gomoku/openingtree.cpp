@@ -14,8 +14,6 @@ void VirtualBoard::Evaluator::OpeningTree::initialize() {
 
   int openingAmout;
   while (file >> openingAmout) {
-    std::cout << "inserting opening " << openingAmout << std::endl;
-
     char table[5][5];
     for (int r = 0; r < 5; ++r)
       for (int c = 0; c < 5; ++c)
@@ -32,7 +30,6 @@ void VirtualBoard::Evaluator::OpeningTree::initialize() {
     }
   }
 
-  std::cout << "finished insert " << openingAmout << " opening table" << std::endl;
   file.close();
 }
 
