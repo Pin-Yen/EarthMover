@@ -1,19 +1,21 @@
-#include "virtualboard.hpp"
-#include "point.hpp"
-#include "evaluator.hpp"
-#include "openingtree.hpp"
+#include "openingtree_test.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <array>
+#include <vector>
 
 /* initialize root*/
-VirtualBoard::Evaluator::OpeningTree::Node* VirtualBoard::Evaluator::OpeningTree::root = new Node();
+OpeningTree::Node* OpeningTree::root = new Node();
 
-void VirtualBoard::Evaluator::OpeningTree::initialize() {
+void OpeningTree::initialize() {
   std::ifstream file("opening.txt");
 
   int openingAmout;
   while (file >> openingAmout) {
+    std::cout << "inserting opening " << openingAmout << std::endl;
+
     char table[5][5];
     for (int r = 0; r < 5; ++r)
       for (int c = 0; c < 5; ++c)
@@ -30,10 +32,11 @@ void VirtualBoard::Evaluator::OpeningTree::initialize() {
     }
   }
 
+  std::cout << "finished insert " << openingAmout << " opening table" << std::endl;
   file.close();
 }
 
-void VirtualBoard::Evaluator::OpeningTree::rotate(char table[5][5]) {
+void OpeningTree::rotate(char table[5][5]) {
   char temp[5][5];
   /* rotate 90 degrees clockwise (row -> col, col -> 4 - row) */
   for (int r = 0; r < 5; ++r)
@@ -45,7 +48,7 @@ void VirtualBoard::Evaluator::OpeningTree::rotate(char table[5][5]) {
       table[r][c] = temp[r][c];
 }
 
-void VirtualBoard::Evaluator::OpeningTree::mirror(char table[5][5]) {
+void OpeningTree::mirror(char table[5][5]) {
   char temp[5][5];
   /* mirror (row -> col, col -> row) */
   for (int r = 0; r < 5; ++r)
@@ -57,7 +60,7 @@ void VirtualBoard::Evaluator::OpeningTree::mirror(char table[5][5]) {
       table[r][c] = temp[r][c];
 }
 
-void VirtualBoard::Evaluator::OpeningTree::insert(char table[5][5]) {
+void OpeningTree::insert(char table[5][5]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0, curRow, curCol, color;
@@ -106,23 +109,24 @@ void VirtualBoard::Evaluator::OpeningTree::insert(char table[5][5]) {
   for (curRow = 0; curRow < 5; ++curRow)
     for (curCol = 0; curCol < 5; ++curCol)
       if (table[curRow][curCol] == 'P') {
-        /* using vector type to record
-           to avoid out of bound (vector may be negative), all value ++ */
-        if (currentNode->childNode[oriRow - curRow + 1][oriCol - curCol + 1][0] == NULL)
-          currentNode->childNode[oriRow - curRow + 1][oriCol - curCol + 1][0] = new Node();
+        /* using vector type to record */
+        std::array<int, 2> result = {oriRow - curRow, oriCol - curCol};
+        /* if vector didnot contain this result, add this result into vector */
+        if (std::find(currentNode->result.begin(), currentNode->result.end(), result) ==
+            currentNode->result.end())
+          currentNode->result.push_back(result);
       }
 }
 
 /* classify method please refer to insert */
-void VirtualBoard::Evaluator::OpeningTree::classify(VirtualBoard::Point* point[15][15],
-                                                    int *row, int *col) {
+void OpeningTree::classify(char table[5][5]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0, curRow, curCol, color;
 
   for (int r = 0; r < 5; ++r)
     for (int c = 0; c < 5; ++c)
-      if (table[r][c] >= 0) {
+      if (table[r][c] == 'X' || table[r][c] == 'O') {
         if (r > oriRow)
           oriRow = r;
         if (c > oriCol)
@@ -140,17 +144,39 @@ void VirtualBoard::Evaluator::OpeningTree::classify(VirtualBoard::Point* point[1
       curCol = 4;
     }
 
-    if (table[curRow][curCol] >= 0) {
-      color = table[curRow][curCol];
+    if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
+      color = table[curRow][curCol] == 'X' ? 0 : 1;
       if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return;
 
       currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
     }
   }
 
-  for (int curRow = 0; curRow < 5; ++curRow)
-    for (int curCol = 0; curCol < 5; ++curCol)
-      if (currentNode->childNode[curRow][curCol][0] != NULL)
-        // debug purpose, print result
-        std::cout << curCol - 1 << ", " << curRow - 1 << std::endl;
+  // debug purpose, print result
+  for (std::vector<std::array<int, 2>>::iterator it = currentNode->result.begin();
+       it != currentNode->result.end(); ++it)
+    std::cout << (*it)[0] << ", " << (*it)[1] << std::endl;
+}
+
+int main()
+{
+  OpeningTree::initialize();
+  std::ifstream file("openingtest.txt");
+
+  int testAmount;
+  while (file >> testAmount) {
+    char table[5][5];
+    for (int r = 0; r < 5; ++r) {
+      for (int c = 0; c < 5; ++c) {
+        file >> table[r][c];
+        std::cout << table[r][c];
+      }
+      std::cout << std::endl;
+    }
+
+    OpeningTree::classify(table);
+    std::cout << std::endl;
+  }
+
+  file.close();
 }
