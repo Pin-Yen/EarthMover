@@ -82,11 +82,11 @@ void start_AI() {
     ObjectCounter::printInfo();
     #endif
 
-    bool stop = false;
+    //bool stop = false;
 
-    std::thread backgroundThread([tree](int maxCycle, bool &stop)
-                                 { tree->MCTS(maxCycle, stop); },
-                                 100000, std::ref(stop));
+    //std::thread backgroundThread([tree](int maxCycle, bool &stop)
+    //                             { tree->MCTS(maxCycle, stop); },
+    //                             100000, std::ref(stop));
 
     bool validInput = false;
 
@@ -102,8 +102,8 @@ void start_AI() {
         std::cout << "Invalid move\n";
     }
 
-    stop = true;
-    backgroundThread.join();
+    //stop = true;
+    //backgroundThread.join();
 
     /* update tree and handle result */
     if (tree->play(row, col)) {

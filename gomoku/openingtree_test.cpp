@@ -12,7 +12,7 @@ OpeningTree::Node* OpeningTree::root = new Node();
 void OpeningTree::initialize() {
   std::ifstream file("opening.txt");
 
-  int openingAmout;
+  float openingAmout;
   while (file >> openingAmout) {
     std::cout << "inserting opening " << openingAmout << std::endl;
 
@@ -32,7 +32,6 @@ void OpeningTree::initialize() {
     }
   }
 
-  std::cout << "finished insert " << openingAmout << " opening table" << std::endl;
   file.close();
 }
 
@@ -85,15 +84,6 @@ void OpeningTree::insert(char table[5][5]) {
   curRow = oriRow; curCol = oriCol;
 
   while (true) {
-    /* the insert order is from right to left, from bottom to top */
-    --curCol;
-    if (curCol < 0) {
-      if (curRow == 0) break;
-      --curRow;
-
-      curCol = 4;
-    }
-
     /* if find a occupied point */
     if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
       color = table[curRow][curCol] == 'X' ? 0 : 1;
@@ -102,6 +92,15 @@ void OpeningTree::insert(char table[5][5]) {
       if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL)
         currentNode->childNode[oriRow - curRow][oriCol - curCol][color] = new Node();
       currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
+    }
+
+    /* the insert order is from right to left, from bottom to top */
+    --curCol;
+    if (curCol < 0) {
+      if (curRow == 0) break;
+      --curRow;
+
+      curCol = 4;
     }
   }
 
@@ -136,19 +135,19 @@ void OpeningTree::classify(char table[5][5]) {
   curRow = oriRow; curCol = oriCol;
 
   while (true) {
+    if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
+      color = table[curRow][curCol] == 'X' ? 0 : 1;
+      if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return;
+
+      currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
+    }
+
     --curCol;
     if (curCol < 0) {
       if (curRow == 0) break;
       --curRow;
 
       curCol = 4;
-    }
-
-    if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
-      color = table[curRow][curCol] == 'X' ? 0 : 1;
-      if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return;
-
-      currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
     }
   }
 

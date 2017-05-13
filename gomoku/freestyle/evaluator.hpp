@@ -19,6 +19,7 @@ class VirtualBoard::Evaluator {
 
  private:
   class TypeTree;
+  class OpeningTree;
 
   static bool isInitialized;
 };

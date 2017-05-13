@@ -2,12 +2,14 @@
 #define OPENING_TREE_H
 
 #include "stdlib.h"
+#include <array>
+#include <vector>
 
 class VirtualBoard::Evaluator::OpeningTree {
  public:
   static void initialize();
 
-  static void classify(char table[5][5]);
+  static void classify(VirtualBoard::Point* point[15][15], int *row, int *col);
 
  private:
   struct Node {
@@ -18,6 +20,8 @@ class VirtualBoard::Evaluator::OpeningTree {
           childNode[r][c][1] = NULL;
         }
     }
+
+    std::vector<std::array<int, 2>> result;
 
     Node *childNode[5][5][2];
   };

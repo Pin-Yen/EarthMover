@@ -4,6 +4,7 @@
 #include "point.hpp"
 #include "evaluator.hpp"
 #include "typetree.hpp"
+#include "../openingtree.hpp"
 
 bool VirtualBoard::Evaluator::isInitialized = false;
 
@@ -12,6 +13,7 @@ void VirtualBoard::Evaluator::initialize() {
   isInitialized = true;
 
   TypeTree::initialize();
+  OpeningTree::initialize();
 }
 
 void VirtualBoard::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
@@ -125,6 +127,23 @@ void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[1
     }
 
   } else {
+    if (playNo == 4) {
+      int row = -1, col = -1;
+      OpeningTree::classify(point, &row, &col);
+
+      if (row != -1) {
+        for (int r = 0; r < 15; ++r) {
+          for (int c = 0; c < 15; ++c) {
+            if (r == row && c == col)
+              point[r][c]->setRelScore(1);
+            else
+              point[r][c]->setRelScore(-1);
+          }
+        }
+        return;
+      }
+    }
+
     /* using absloute score */
 
     bool whoTurn = playNo & 1;
