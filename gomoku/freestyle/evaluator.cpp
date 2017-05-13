@@ -112,22 +112,15 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
 
 void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
                                                     int playNo) {
-  const int USING_OPEINIG = 0;
+  if (playNo == 0) {
+    for (int r = 0; r < 15; ++r)
+      for (int c = 0; c < 15; ++c)
+        point[r][c]->setRelScore(-1);
 
-  if (playNo <= USING_OPEINIG) {
-    /* using opening tree */
-    switch (playNo) {
-      case 0: /* first move(set center point to 1) */
-        for (int r = 0; r < 15; ++r)
-          for (int c = 0; c < 15; ++c)
-            point[r][c]->setRelScore(-1);
-
-        point[7][7]->setRelScore(1);
-        break;
-    }
-
+    point[7][7]->setRelScore(1);
   } else {
-    if (playNo == 4) {
+    /* using opening */
+    if (playNo <= 4) {
       int row = -1, col = -1;
       OpeningTree::classify(point, &row, &col);
 
