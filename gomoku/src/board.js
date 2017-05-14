@@ -186,7 +186,7 @@ function post(params, path) {
 
   http.onreadystatechange = function() {
     if (http.readyState == 4 && (http.status == 200 || http.status == 204)) {
-      
+
       if (http.status == 200){
         var response = JSON.parse(http.responseText);
 
@@ -322,12 +322,12 @@ $('#coordinate').click(function() {
     context.fillStyle = '#444';
     context.font = '12px Ubuntu';
     context.textAlign = 'center';
-    for (var i = 0; i < 15; ++i) {
-      var text = String.fromCharCode(65 + i);
-      context.fillText(text, i * 35 + 37, 15);
-      context.fillText(text, i * 35 + 37, 558);
-      context.fillText(i, 10, i * 35 + 42);
-      context.fillText(i, 552, i * 35 + 42);
+    for (var i = 1; i <= 15; ++i) {
+      var text = String.fromCharCode(64 + i);
+      context.fillText(text, i * 35 + 2, 15);
+      context.fillText(text, i * 35 + 2, 558);
+      context.fillText(i, 10, i * 35 + 7);
+      context.fillText(i, 552, i * 35 + 7);
     }
   } else {
     $('#coordinate-check').hide();
