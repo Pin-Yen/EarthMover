@@ -4,8 +4,11 @@
 #include "gametree.hpp"
 #include "node.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <tuple>
+#include <vector>
 
 #ifdef ANALYZE
 #include "log.hpp"
@@ -85,6 +88,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
             mostTimes = currentNode->childNode[r][c]->totalPlayout();
 
   } while (mostTimes < minMostTimesCycle);
+
 }
 
 void GameTree::MCTS(int maxCycle, bool &stop) {
@@ -166,6 +170,30 @@ void GameTree::MCTSResult(int &row, int &col) {
             << "  W: " << currentNode->winning()
             << "  L: " << currentNode->losing()
             << std::endl;
+
+  /* sort coordinates */
+  std::vector<std::tuple<int, int>> sortedList;
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->childNode[r][c] != NULL)
+        sortedList.push_back(std::make_tuple(r, c));
+
+  std::sort(sortedList.begin(), sortedList.end(), [this](const std::tuple<int, int> i, const std::tuple<int, int> k)->bool{
+    return currentNode->childNode[std::get<0>(i)][std::get<1>(i)]->totalPlayout()
+      > currentNode->childNode[std::get<0>(k)][std::get<1>(k)]->totalPlayout();
+  });
+
+  std::cout << "\n";
+  for (int i = 0; i < 10 && i < sortedList.size() ; ++i) {
+    int row = std::get<0>(sortedList[i]);
+    int col = std::get<1>(sortedList[i]);
+
+    std::cout << std::setw(2) << i + 1 << ". "
+              << (char)('A' + row) << std::setw(2) << col
+              << " totalPlayout: " << std::setw(5) << currentNode->childNode[row][col]->totalPlayout()
+              << " winRate: " << std::setw(8) << currentNode->childNode[row][col]->winRate()
+              <<" UCB:" << std::setw(8) << currentNode->getUCBValue(row, col) << "\n";
+  }
 }
 
 int GameTree::selection(Node** node, VirtualBoard* board) {
