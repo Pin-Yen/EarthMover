@@ -174,7 +174,7 @@ void GameTree::MCTSResult(int &row, int &col) {
   Log log;
   Log::precision(3);
   log << "           sim    winRate      score       UCB    score + UCB\n";
-  for (int i = 0; i < 10 && i < sortedList.size() ; ++i) {
+  for (int i = 0; i < sortedList.size() ; ++i) {
     int row = std::get<0>(sortedList[i]);
     int col = std::get<1>(sortedList[i]);
 
@@ -183,7 +183,7 @@ void GameTree::MCTSResult(int &row, int &col) {
            ucb = currentNode->getUCBValue(row, col);
 
     log << std::setw(2) << i + 1 << ". "
-        << (char)('A' + row) << std::setw(2) << col + 1
+        << (char)('A' + col) << std::setw(2) << row + 1
         << "  " << std::setw(5) << currentNode->childNode[row][col]->totalPlayout()
         << "      " << std::setw(5) << winRate
         << "     " << std::setw(6) << score
