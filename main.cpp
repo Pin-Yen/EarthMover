@@ -14,6 +14,9 @@
 
 #ifdef DEBUG
 #include "objectcounter.hpp"
+#endif
+
+#ifdef ANALYZE
 #include "log.hpp"
 #endif
 
@@ -29,13 +32,16 @@ int main() {
 
   #ifdef DEBUG
   ObjectCounter::printInfo();
+  #endif
+
+  #ifdef ANALYZE
   Log::init();
   #endif
 
   //start();
   start_AI();
 
-  #ifdef DEBUG
+  #ifdef ANALYZE
   Log::closeLog();
   #endif
 
@@ -50,7 +56,7 @@ void start_AI() {
   DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
 
-  #ifdef DEBUG
+  #ifdef ANALYZE
   Log log;
   #endif
 
@@ -59,7 +65,7 @@ void start_AI() {
 
     bool whoTurn = board->whoTurn();
 
-    #ifdef DEBUG
+    #ifdef ANALYZE
     log << "==== PLAY #" << board->getPlayNo() << " ====\n";
     #endif
 
@@ -82,11 +88,13 @@ void start_AI() {
     ObjectCounter::printInfo();
     #endif
 
-    //bool stop = false;
+    #ifndef ANALYZE
+    bool stop = false;
 
-    //std::thread backgroundThread([tree](int maxCycle, bool &stop)
-    //                             { tree->MCTS(maxCycle, stop); },
-    //                             100000, std::ref(stop));
+    std::thread backgroundThread([tree](int maxCycle, bool &stop)
+                                 { tree->MCTS(maxCycle, stop); },
+                                 100000, std::ref(stop));
+    #endif
 
     bool validInput = false;
 
@@ -102,8 +110,10 @@ void start_AI() {
         std::cout << "Invalid move\n";
     }
 
-    //stop = true;
-    //backgroundThread.join();
+    #ifndef ANALYZE
+    stop = true;
+    backgroundThread.join();
+    #endif
 
     /* update tree and handle result */
     if (tree->play(row, col)) {

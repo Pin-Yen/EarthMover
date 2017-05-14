@@ -139,12 +139,10 @@ double GameTree::Node::getUCBValue(int r, int c) {
   if (playout[2] == 0)
     return 0;
 
-  const int CON = 1;
-
   if (childNode[r][c] != NULL) {
     return (childNode[r][c]->winRate() +
-            sqrt(CON * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
+            sqrt(0.2 * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
   } else {
-    return (sqrt(CON * log10(playout[2]) / 1));
+    return (sqrt(0.2 * log10(playout[2]) / 1));
   }
 }

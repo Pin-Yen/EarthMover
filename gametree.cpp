@@ -7,7 +7,7 @@
 #include <iostream>
 #include <iomanip>
 
-#ifdef DEBUG
+#ifdef ANALYZE
 #include "log.hpp"
 #endif
 
@@ -121,7 +121,7 @@ void GameTree::MCTSResult(int &row, int &col) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
 
-        #ifdef DEBUG
+        #ifdef ANALYZE
         int playout = currentNode->childNode[r][c]->totalPlayout();
         double scorePer = (double)(currentBoard->getScore(r, c)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c);
