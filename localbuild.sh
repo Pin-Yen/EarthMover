@@ -8,4 +8,5 @@ g++ -c -std=c++11 gomoku/openingtree.cpp -o openingtree.o -O3
 g++ -c -std=c++11 gametree.cpp -o gametree.o -O3
 g++ -c -std=c++11 node.cpp -o node.o -O3
 
-g++ -std=c++11 -pthread displayboard.o virtualboard.o point.o evaluator.o typetree.o openingtree.o gametree.o node.o main.o -o LocalEM -O3
+g++ -std=c++11 -pthread displayboard.o virtualboard.o point.o evaluator.o typetree.o\
+                        openingtree.o gametree.o node.o main.o -o LocalEM -O3
