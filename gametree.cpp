@@ -125,22 +125,9 @@ void GameTree::MCTSResult(int &row, int &col) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       if (currentNode->childNode[r][c] != NULL) {
 
-        #ifdef ANALYZE
         int playout = currentNode->childNode[r][c]->totalPlayout();
         double scorePer = (double)(currentBoard->getScore(r, c)) / scoreSum;
         double ucbValue = currentNode->getUCBValue(r, c);
-
-        Log log;
-        Log::precision(3);
-        log << (char)(c + 65) << r + 1
-            << "  sim: " << playout
-            << "  WinR: " << currentNode->childNode[r][c]->winRate()
-            << "  scoreP: "  << scorePer
-            << "  UCB: " << ucbValue
-            << "  scoreP + UCB: "
-            << (scorePer + ucbValue)
-            << "\n";
-        #endif
 
         /* priority order: playout -> score */
         if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
@@ -171,6 +158,7 @@ void GameTree::MCTSResult(int &row, int &col) {
             << "  L: " << currentNode->losing()
             << std::endl;
 
+  #ifdef ANALYZE
   /* sort coordinates */
   std::vector<std::tuple<int, int>> sortedList;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -183,17 +171,26 @@ void GameTree::MCTSResult(int &row, int &col) {
       > currentNode->childNode[std::get<0>(k)][std::get<1>(k)]->totalPlayout();
   });
 
-  std::cout << "\n";
+  Log log;
+  Log::precision(3);
+  log << "           sim    winRate      score       UCB    score + UCB\n";
   for (int i = 0; i < 10 && i < sortedList.size() ; ++i) {
     int row = std::get<0>(sortedList[i]);
     int col = std::get<1>(sortedList[i]);
 
-    std::cout << std::setw(2) << i + 1 << ". "
-              << (char)('A' + row) << std::setw(2) << col
-              << " totalPlayout: " << std::setw(5) << currentNode->childNode[row][col]->totalPlayout()
-              << " winRate: " << std::setw(8) << currentNode->childNode[row][col]->winRate()
-              <<" UCB:" << std::setw(8) << currentNode->getUCBValue(row, col) << "\n";
+    double winRate = currentNode->childNode[row][col]->winRate(),
+           score = (double)(currentBoard->getScore(row, col)) / scoreSum,
+           ucb = currentNode->getUCBValue(row, col);
+
+    log << std::setw(2) << i + 1 << ". "
+        << (char)('A' + row) << std::setw(2) << col + 1
+        << "  " << std::setw(5) << currentNode->childNode[row][col]->totalPlayout()
+        << "      " << std::setw(5) << winRate
+        << "     " << std::setw(6) << score
+        << "     " << std::setw(5) << ucb
+        << "         " << std::setw(6) << score + ucb << "\n";
   }
+  #endif
 }
 
 int GameTree::selection(Node** node, VirtualBoard* board) {
