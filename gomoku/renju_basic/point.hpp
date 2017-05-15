@@ -22,7 +22,6 @@ class VirtualBoard::Point {
   STATUS status() { return status_; }
   STATUS* statusRef() { return &status_; }
 
-  //int relScore() { return relScore_; }
   int* absScore() { return absScore_; }
   int absScore(bool color) { return absScore_[color]; }
 

@@ -1,5 +1,5 @@
-#ifndef VIRTUAL_BOARD_H
-#define VIRTUAL_BOARD_H
+#ifndef GOMOKU_VIRTUAL_BOARD_H
+#define GOMOKU_VIRTUAL_BOARD_H
 
 class VirtualBoard {
  public:

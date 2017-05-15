@@ -22,8 +22,9 @@ class VirtualBoard {
   /* get the highest score's position, if every point is not empty, return false */
   bool getHSP(int &row, int &col);
 
-  /* puts a new chess if win after play then return true */
-  bool play(int row, int col);
+  /* puts a new chess at (row ,col),
+   * returns 1 if wins after play, -1 if lose */
+  int play(int row, int col);
  private:
   /* nested class */
   class Point;

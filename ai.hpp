@@ -5,8 +5,7 @@
 #include "gametree.hpp"
 #include <thread>
 
-class AI
-{
+class AI {
  public:
 
   /* cycle: nubmer of MCTS cycles */

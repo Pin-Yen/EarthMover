@@ -30,8 +30,8 @@ class GameTree {
   void MCTSResult(int &row, int &col);
 
   /* called when a REAL point is played, updates the currentRoot
-   * return true if win after play */
-  bool play(int row, int col);
+   * returns 1 if wins after play, -1 if lose */
+  int play(int row, int col);
 
   /* debugger */
   VirtualBoard* getCurrentBoard() { return currentBoard; }

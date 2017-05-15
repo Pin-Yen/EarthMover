@@ -1,16 +1,11 @@
 #ifndef HTTP_SERVER_H_
 #define HTTP_SERVER_H_
 
-#include "ai.hpp"
-#include "gomoku/displayboard.hpp"
-
 #include <string>
 #include <fstream>
 #include <netinet/in.h> /* sockaddr_in*/
 
-class HttpServer
-{
-
+class HttpServer {
  public:
   /* constructor
    * initialize serverAddress and establishes socket connection
@@ -30,7 +25,6 @@ class HttpServer
   struct sockaddr_in serverAddress;
 
   AI *earthMover;
-  DisplayBoard *board;
 
   bool isBlackAi, isWhiteAi;
 
@@ -97,8 +91,6 @@ class HttpServer::HttpResponse
   int getBodyLength();
 
  private:
-
-
   int statusCode;
   std::string contentType;
   std::string contentLength;

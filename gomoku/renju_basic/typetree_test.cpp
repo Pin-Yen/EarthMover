@@ -287,9 +287,13 @@ ChessType* TypeTree::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) 
     ChessType *returnType;
 
     if (lType->length() == 5 && rType->length() == 5) {
-      /* if left and right will both produce 5 after play at analize point
-       * it is a life four type */
-      returnType = new ChessType(4, 1, 0);
+      /* if left and right will both produce 5 after play at analize point */
+      if (connect == 4)
+        /* if connect == 4, it is a life four type */
+        returnType = new ChessType(4, 1, 0);
+      else
+        /* it is a forbidden (X X*X X) */
+        returnType = new ChessType(-1, 0, 0);
     } else if (lType->length() == 5) {
       /* if there is only one side produces 5 after play at analize point,
        * it is a dead four type */
@@ -346,12 +350,18 @@ void TypeTree::print(STATUS *status, ChessType **type) {
   std::cout << ") ";
   for (int i = 0; i < 2; i++) {
     std::cout << (i == 0 ? "B" : "W") << ":"
-              << (type[i]->life() == 1 ? " L" : " D") << type[i]->length()
-              << " level " << type[i]->level()
-              << ( i == 0 ? ", " : "   ");
+              << (type[i]->life() == 1 ? "L" : "D");
+    if (type[i]->length() >= 0)
+      std::cout << type[i]->length();
+    else
+      std::cout << 'F';
+
+    std::cout << " lv" << type[i]->level()
+              << (i == 0 ? ", " : "  ");
   }
 
-  std::cout << "\n";
+  if (counter % 4 == 0)
+    std::cout << "\n";
 }
 
 void TypeTree::searchAll(Node* node, STATUS *status, int location, int move) {
