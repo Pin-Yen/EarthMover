@@ -151,7 +151,7 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 int VirtualBoard::play(int row, int col) {
-  int absScore = point_[row][col]->getAbsScore();
+  int absScore = point_[row][col]->absScore(playNo_ & 1);
   if (absScore >= Evaluator::SCORE_WIN) return 1;
   if (absScore == Evaluator::SCORE_FORBIDDEN) return -1;
 

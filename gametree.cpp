@@ -261,7 +261,7 @@ int GameTree::play(int row, int col) {
   int whoWin = currentBoard->play(row, col);
 
   if (currentNode->childNode[row][col] == NULL)
-    currentNode->childNode[row][col] = new Node(currentNode, row, col, winning);
+    currentNode->childNode[row][col] = new Node(currentNode, row, col, whoWin);
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
