@@ -31,7 +31,7 @@ class GameTree {
 
   /* called when a REAL point is played, updates the currentRoot
    * returns 1 if wins after play, -1 if lose */
-  int play(int row, int col);
+  bool play(int row, int col);
 
   /* debugger */
   VirtualBoard* getCurrentBoard() { return currentBoard; }

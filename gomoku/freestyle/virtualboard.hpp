@@ -24,7 +24,7 @@ class VirtualBoard {
 
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
-  int play(int row, int col);
+  bool play(int row, int col);
  private:
   /* nested class */
   class Point;
