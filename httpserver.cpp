@@ -1,5 +1,5 @@
-#include "httpserver.hpp"
 #include "ai.hpp"
+#include "httpserver.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -13,12 +13,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define HTML_PAGE_PATH "test.html"
 #define BUFFER_SIZE 10000
 #define DEBUG_NETWORK
 
 HttpServer::HttpServer() {
-  board = new DisplayBoard();
   earthMover = new AI(1);
   client = -1;
   server = -1;
@@ -34,12 +32,10 @@ HttpServer::HttpServer() {
 
   if ((bind(client, (struct sockaddr*)&serverAddress, sizeof(serverAddress))) < 0)
     std::cout << "Error binding connection, the socket has already been established...\n" << std::endl;
-
 }
 
 HttpServer::~HttpServer() {
   delete earthMover;
-  delete board;
 }
 
 void HttpServer::listenConnection() {
@@ -114,10 +110,6 @@ void HttpServer::redirect(std::string *directory) {
 }
 
 void HttpServer::handleStart(std::string requestBody) {
-  // isBlackAi = (findAttributeInJson(requestBody, "black") == "computer");
-  // isWhiteAi = (findAttributeInJson(requestBody, "white") == "computer");
-  // future game settings go here (strength, rule, etc)
-
   earthMover->reset();
 
   HttpResponse response(204);
@@ -129,7 +121,6 @@ bool HttpServer::handlePlay(std::string requestBody) {
   int userRow = atoi(findAttributeInJson(requestBody, "row").c_str());
   int userCol = atoi(findAttributeInJson(requestBody, "col").c_str());
   bool shouldAiThink = (findAttributeInJson(requestBody, "think") == "true");
-
 
   bool isWinning = false; // true: winning, false: not winning.
   bool winnerColor; //true: black, false: white.
@@ -155,7 +146,7 @@ bool HttpServer::handlePlay(std::string requestBody) {
           .addJson("col", AiCol);
 
   if (isWinning)
-    response.addJson("winner", (earthMover->whoTurn())? "white" : "black");
+    response.addJson("winner", earthMover->whoTurn() ? "white" : "black");
   else
     response.addJson("winner", "none");
 
@@ -168,7 +159,6 @@ bool HttpServer::handlePlay(std::string requestBody) {
 
   // Returns true to stop gameloop if someone is winning.
   return isWinning;
-
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {
@@ -176,10 +166,9 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
   if (! sanitize(directory)) {
     responseHttpError(403, "Requesting resource from forbidden uri");
   } else {
-
-      // if access to this directory is permitted
+    // if access to this directory is permitted
     std::ifstream resourceFile;
-      /* use the sub-string from pos=1 to skip the first '/' in directory path */
+    /* use the sub-string from pos=1 to skip the first '/' in directory path */
     resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
 
     if( !resourceFile.is_open()) {
@@ -246,7 +235,7 @@ bool HttpServer::sanitize(std::string uri) {
   if(uri.find(allowedRoot) != 0)
     return false;
 
-    /* check if the uri contains .. */
+  /* check if the uri contains .. */
   if(uri.find("..") != std::string::npos)
     return false;
 
