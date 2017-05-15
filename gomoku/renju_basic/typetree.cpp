@@ -291,9 +291,13 @@ ChessType* VirtualBoard::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS
        * it is a life four type */
       returnType = new ChessType(4, 1, 0);
     } else if (lType->length() == 5) {
-      /* if there is only one side produces 5 after play at analize point,
-       * it is a dead four type */
-      returnType = new ChessType(4, 0, 0);
+      /* if left and right will both produce 5 after play at analize point */
+      if (connect == 4)
+        /* if connect == 4, it is a life four type */
+        returnType = new ChessType(4, 1, 0);
+      else
+        /* it is a forbidden (X X*X X) */
+        returnType = new ChessType(-1, 0, 0);
     } else if (lType->length() <= 0) {
       /* if the longer size produces 0 or forbidden point after play at analize point,
        * it is a useless point */
