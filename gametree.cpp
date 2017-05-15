@@ -116,44 +116,42 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
 }
 
 void GameTree::MCTSResult(int &row, int &col) {
-  int mostTimes = -1;
-  int score;
+  if (currentNode->winning()) {
+    for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+      for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+        if (currentNode->childNode[r][c] != NULL)
+          if (currentNode->childNode[r][c]->losing()) {
+            row = r; col = c;
+          }
+  } else {
+    int mostTimes = -1;
+    int score;
 
-  int scoreSum = currentBoard->getScoreSum();
+    for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+      for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+        if (currentNode->childNode[r][c] != NULL) {
 
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL) {
-
-        int playout = currentNode->childNode[r][c]->totalPlayout();
-        double scorePer = (double)(currentBoard->getScore(r, c)) / scoreSum;
-        double ucbValue = currentNode->getUCBValue(r, c);
-
-        /* priority order: playout -> score */
-        if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
-          row = r;
-          col = c;
-          mostTimes = currentNode->childNode[r][c]->totalPlayout();
-          score = currentBoard->getScore(r, c);
-        } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
-          if (currentBoard->getScore(r, c) > score) {
+          /* priority order: playout -> score */
+          if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
             row = r;
             col = c;
+            mostTimes = currentNode->childNode[r][c]->totalPlayout();
             score = currentBoard->getScore(r, c);
+          } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
+            if (currentBoard->getScore(r, c) > score) {
+              row = r;
+              col = c;
+              score = currentBoard->getScore(r, c);
+            }
           }
         }
-      }
-
-  double scorePer = (double)(currentBoard->getScore(row, col)) / scoreSum;
-  double ucbValue = currentNode->getUCBValue(row, col);
+  }
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode->totalPlayout()
             << "  best: " << (char)(col + 65) << row + 1
             << "  sim: " << currentNode->childNode[row][col]->totalPlayout()
             << "  WinR: " << currentNode->childNode[row][col]->winRate()
-            << "  scoreP: "  << scorePer
-            << "  UCB: " << ucbValue
             << "  W: " << currentNode->winning()
             << "  L: " << currentNode->losing()
             << std::endl;
@@ -179,7 +177,7 @@ void GameTree::MCTSResult(int &row, int &col) {
     int col = std::get<1>(sortedList[i]);
 
     double winRate = currentNode->childNode[row][col]->winRate(),
-           score = (double)(currentBoard->getScore(row, col)) / scoreSum,
+           score = (double)(currentBoard->getScore(row, col)) / currentBoard->getScoreSum(),
            ucb = currentNode->getUCBValue(row, col);
 
     log << std::setw(2) << i + 1 << ". "
