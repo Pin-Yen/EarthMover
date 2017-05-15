@@ -255,8 +255,8 @@ void GameTree::backProp(Node* node) {
   node->update();
 }
 
-bool GameTree::play(int row, int col) {
-  bool whoWin = currentBoard->play(row, col);
+int GameTree::play(int row, int col) {
+  int whoWin = currentBoard->play(row, col);
 
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] = new Node(currentNode, row, col, whoWin);

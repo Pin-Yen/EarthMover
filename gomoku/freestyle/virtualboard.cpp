@@ -150,8 +150,8 @@ bool VirtualBoard::getHSP(int &row, int &col) {
   return (max > 0);
 }
 
-bool VirtualBoard::play(int row, int col) {
-  if (point_[row][col]->getScore() >= Evaluator::SCORE_WIN) return true;
+int VirtualBoard::play(int row, int col) {
+  if (point_[row][col]->absScore(playNo_ & 1) >= Evaluator::SCORE_WIN) return 1;
 
   ++playNo_;
 
@@ -199,5 +199,5 @@ bool VirtualBoard::play(int row, int col) {
 
   Evaluator::evaluateRelativeScore(point_, playNo_);
 
-  return false;
+  return 0;
 }

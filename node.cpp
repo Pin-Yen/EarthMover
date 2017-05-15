@@ -32,7 +32,7 @@ GameTree::Node::Node() {
   #endif
 }
 
-GameTree::Node::Node(Node *parentNode, int row, int col, bool losing) {
+GameTree::Node::Node(Node *parentNode, int row, int col, int parentWinOrLose) {
   /* initialize all childNodes to NULL */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -45,11 +45,22 @@ GameTree::Node::Node(Node *parentNode, int row, int col, bool losing) {
   /* initiaize parent node */
   parent = parentNode;
 
-  winning_ = false;
-  losing_ = losing;
+  switch (parentWinOrLose) {
+    case 1:
+      winning_ = false;
+      losing_ = true;
+      break;
+    case -1:
+      winning_ = true;
+      losing_ = false;
+      break;
+    default:
+      winning_ = false;
+      losing_ = false;
+  }
 
   /* if is losing, set parent to winning */
-  if (losing)
+  if (losing_)
     parent->winning_ = true;
 
   #ifdef DEBUG
