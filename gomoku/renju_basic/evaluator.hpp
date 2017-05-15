@@ -15,7 +15,7 @@ class VirtualBoard::Evaluator {
 
   static void evaluateRelativeScore(VirtualBoard::Point* point[15][15], int playNo);
 
-  static const int SCORE_WIN = 10000000;
+  static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
 
  private:
   class TypeTree;

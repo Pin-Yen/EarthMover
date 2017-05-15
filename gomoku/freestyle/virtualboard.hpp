@@ -23,9 +23,8 @@ class VirtualBoard {
   bool getHSP(int &row, int &col);
 
   /* puts a new chess at (row ,col),
-   * returns true if wins after play */
-  bool play(int row, int col);
-
+   * returns 1 if wins after play, -1 if lose */
+  int play(int row, int col);
  private:
   /* nested class */
   class Point;

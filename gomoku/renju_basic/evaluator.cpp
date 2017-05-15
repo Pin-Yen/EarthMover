@@ -125,6 +125,9 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
         score[selfColor] += SCORE_DOUBLELIVE3[DEFENSE];
     }
   }
+
+  if (forbidden && !win)
+    score[BLACK] = SCORE_FORBIDDEN;
 }
 
 void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
