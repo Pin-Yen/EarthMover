@@ -110,7 +110,15 @@ void HttpServer::redirect(std::string *directory) {
 
 void HttpServer::handleStart(std::string requestBody) {
   int level = atoi(findAttributeInJson(requestBody, "level").c_str());
-  earthMover->reset(level);
+  std::string ruleString = findAttributeInJson(requestBody, "rule");
+
+  int rule;
+  if (ruleString == "renju_basic")
+    rule = AI::RENJU_BASIC;
+  else if (ruleString == "freestyle")
+    rule = AI::FREESTYLE;
+
+  earthMover->reset(level, rule);
 
   HttpResponse response(204);
   send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
