@@ -34,7 +34,7 @@ class VirtualBoardGomoku : public VirtualBoard {
   class Point;
 
   /* point array */
-  Point<StatusLength>* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+  Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
   /* the total number of plays */
   int playNo_;
