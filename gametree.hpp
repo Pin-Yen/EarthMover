@@ -1,7 +1,7 @@
 #ifndef GAME_TREE_H
 #define GAME_TREE_H
 
-#include "gomoku/freestyle/virtualboard.hpp"
+#include "virtualboard.hpp"
 
 class GameTree {
  public:
@@ -11,7 +11,7 @@ class GameTree {
   ~GameTree();
 
   /* clear the whole gametree */
-  void reset();
+  void reset(VirtualBoard* board);
 
   /* Monty Carlo Tree Search
    * keep searching until reach the max cycle */

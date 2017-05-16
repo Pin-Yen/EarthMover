@@ -1,11 +1,11 @@
-#ifndef VIRTUAL_BOARD_POINT_H
-#define VIRTUAL_BOARD_POINT_H
+#ifndef GOMOKU_POINT_H
+#define GOMOKU_POINT_H
 
 #include "status.hpp"
 #include "chesstype.hpp"
 
 template <int StatusLength>
-class VirtualBoard::Point {
+class VirtualBoardGomoku::Point {
  public:
   /* constructor */
   Point();

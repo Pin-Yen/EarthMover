@@ -1,5 +1,8 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
+#include "virtualboard.hpp"
+#include "gomoku/virtualboard.hpp"
+#include "gomoku/point.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gomoku/displayboard.hpp"
 #include "gametree.hpp"
@@ -54,7 +57,8 @@ void start_AI() {
   std::cin >> cycle;
 
   DisplayBoard* board = new DisplayBoard();
-  GameTree* tree = new GameTree();
+  VirtualBoardFreeStyle vb;
+  GameTree* tree = new GameTree(&vb);
   tree->reset();
 
   #ifdef ANALYZE
