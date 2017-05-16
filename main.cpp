@@ -58,8 +58,8 @@ void start_AI() {
 
   DisplayBoard* board = new DisplayBoard();
   VirtualBoardFreeStyle vb;
-  GameTree* tree = new GameTree(&vb);
-  tree->reset();
+  GameTree* tree = new GameTree();
+  tree->reset(&vb);
 
   #ifdef ANALYZE
   Log log;

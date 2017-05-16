@@ -4,8 +4,8 @@
 #include "status.hpp"
 #include "chesstype.hpp"
 
-template <int StatusLength>
-class VirtualBoardGomoku::Point {
+template <int StatusLength, class Evaluator>
+class VirtualBoardGomoku<StatusLength, Evaluator>::Point {
  public:
   /* constructor */
   Point();
