@@ -12,6 +12,7 @@
 #include "../../objectcounter.hpp"
 #endif
 
+template <int StatusLength>
 VirtualBoard::VirtualBoard() {
   Evaluator::initialize();
 
@@ -27,7 +28,7 @@ VirtualBoard::VirtualBoard() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       /* set each point's status array pointer */
       for (int d = 0; d < 4; ++d)
-        for (int offset = -4, index = 0; offset <= 4; ++offset) {
+        for (int offset = -OFFSET, index = 0; offset <= OFFSET; ++offset) {
           if (offset == 0) continue;
 
           int checkRow = r + dir[d][0] * offset,
@@ -50,7 +51,7 @@ VirtualBoard::VirtualBoard() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       for (int d = 0; d < 4; ++d) {
         /* get status array */
-        STATUS status[8]; point_[r][c]->getDirStatus(d, status);
+        STATUS status[StatusLength]; point_[r][c]->getDirStatus(d, status);
 
         Evaluator::evaluateType(status, point_[r][c]->type[d]);
       }
@@ -76,7 +77,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       /* set each point's status array pointer */
       for (int d = 0; d < 4; ++d)
-        for (int offset = -4, index = 0; offset <= 4; ++offset) {
+        for (int offset = -OFFSET, index = 0; offset <= OFFSET; ++offset) {
 
           if (offset == 0) continue;
 
@@ -108,6 +109,10 @@ VirtualBoard::~VirtualBoard() {
   #ifdef DEBUG
   ObjectCounter::unregisterVB();
   #endif
+}
+
+int VirtualBoard::getScore(int row, int col) {
+  return point_[row][col]->getScore();
 }
 
 int VirtualBoard::getScoreSum() {
@@ -150,6 +155,7 @@ bool VirtualBoard::getHSP(int &row, int &col) {
   return (max > 0);
 }
 
+template <int StatusLength>
 int VirtualBoard::play(int row, int col) {
   if (point_[row][col]->absScore(playNo_ & 1) >= Evaluator::SCORE_WIN) return 1;
 
@@ -169,7 +175,7 @@ int VirtualBoard::play(int row, int col) {
     for (int move = -1; move <= 1; move += 2) {
       bool block[2] = {false, false};
 
-      for (int offset = 1; offset <= 5; ++offset) {
+      for (int offset = 1; offset <= OFFSET + 1; ++offset) {
         int checkRow = row + dir[d][0] * move * offset,
           checkCol = col + dir[d][1] * move * offset;
 
@@ -188,7 +194,7 @@ int VirtualBoard::play(int row, int col) {
         }
 
         /* get status array */
-        STATUS status[8]; point_[checkRow][checkCol]->getDirStatus(d, status);
+        STATUS status[StatusLength]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
         Evaluator::evaluateType(status, point_[checkRow][checkCol]->type[d]);
 

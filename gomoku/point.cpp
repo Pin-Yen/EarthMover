@@ -1,12 +1,12 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
+#include "chesstype.hpp"
+#include "status.hpp"
 #include "virtualboard.hpp"
 #include "point.hpp"
 
 #include <cstddef>
 
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../objectcounter.hpp"
 #endif
 
 VirtualBoard::Point::Point() {
@@ -47,7 +47,8 @@ VirtualBoard::Point::~Point() {
   #endif
 }
 
+template <int StatusLength>
 void VirtualBoard::Point::getDirStatus(int dir, STATUS* dest) {
-  for (int i = 0; i < 10; ++i)
+  for (int i = 0; i < StatusLength; ++i)
     dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
 }

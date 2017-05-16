@@ -1,9 +1,11 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
 
+template <int StatusLength>
 class VirtualBoard {
  public:
-  static const int CHESSBOARD_DIMEN = 15;
+  static const int CHESSBOARD_DIMEN = 15,
+                   OFFSET = StatusLength / 2;
 
   VirtualBoard();
   /* copy the source board to consturct the board */
@@ -11,7 +13,7 @@ class VirtualBoard {
 
   ~VirtualBoard();
 
-  inline int getScore(int row, int col);
+  int getScore(int row, int col);
 
   /* get the sume of every point's score */
   int getScoreSum();
@@ -31,16 +33,10 @@ class VirtualBoard {
   class Evaluator;
 
   /* point array */
-  Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+  Point<StatusLength>* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
   /* the total number of plays */
   int playNo_;
 };
-
-#include "point.hpp"
-
-inline int VirtualBoard::getScore(int row, int col) {
-  return point_[row][col]->getScore();
-}
 
 #endif

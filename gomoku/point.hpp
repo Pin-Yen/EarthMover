@@ -1,6 +1,10 @@
 #ifndef VIRTUAL_BOARD_POINT_H
 #define VIRTUAL_BOARD_POINT_H
 
+#include "status.hpp"
+#include "chesstype.hpp"
+
+template <int StatusLength>
 class VirtualBoard::Point {
  public:
   /* constructor */
@@ -34,7 +38,7 @@ class VirtualBoard::Point {
  private:
   /* STATUS array pointer, this will point at other point's Status color */
   /* index: 0→ 1↓ 2↗ 3↘ */
-  STATUS* dirStatus_[4][10];
+  STATUS* dirStatus_[4][StatusLength];
 
   /* point's status, the target of the other point's STATUS array pointer*/
   STATUS status_;
