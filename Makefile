@@ -18,6 +18,12 @@ analyze : optimizeFlag = -O3
 analyze : mkdir $(objects) obj/log.o obj/main.o
 	g++ -o EM obj/log.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
+# Local-Debug build, based on analyze build. For debugging segfaults.
+localdebug : specificFlags = -DDEBUG -g
+localdebug : optimizeFlag = -O0 
+localdebug : mkdir $(objects) obj/main.o obj/objectcounter.o
+	g++ -o EM obj/objectcounter.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
+	
 # Makes 'obj' directory to put the object files in 
 mkdir : 
 	if ! [ -d "obj" ]; then mkdir obj;fi
@@ -41,17 +47,19 @@ obj/ai.o : gametree.hpp gomoku/displayboard.hpp ai.hpp
 obj/gametree.o : node.hpp gomoku/freestyle/virtualboard.hpp gametree.hpp gomoku/chesstype.hpp gomoku/status.hpp log.hpp
 	 g++ -c gametree.cpp -o obj/gametree.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
-obj/node.o : gomoku/chesstype.hpp gomoku/chesstype.hpp node.hpp gomoku/status.hpp gomoku/freestyle/virtualboard.hpp gametree.hpp
+obj/node.o : gomoku/chesstype.hpp gomoku/chesstype.hpp node.hpp gomoku/status.hpp gomoku/freestyle/virtualboard.hpp\
+             gametree.hpp objectcounter.hpp
 	 g++ -c node.cpp -o obj/node.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
 obj/displayboard.o : gomoku/displayboard.hpp
 	 g++ -c gomoku/displayboard.cpp -o obj/displayboard.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
 obj/virtualboard.o : gomoku/freestyle/virtualboard.hpp gomoku/chesstype.hpp gomoku/status.hpp\
-					 gomoku/freestyle/point.hpp gomoku/freestyle/evaluator.hpp
+					 gomoku/freestyle/point.hpp gomoku/freestyle/evaluator.hpp objectcounter.hpp
 	 g++ -c gomoku/freestyle/virtualboard.cpp -o obj/virtualboard.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
-obj/point.o : gomoku/freestyle/point.hpp gomoku/status.hpp gomoku/chesstype.hpp gomoku/freestyle/virtualboard.hpp
+obj/point.o : gomoku/freestyle/point.hpp gomoku/status.hpp gomoku/chesstype.hpp gomoku/freestyle/virtualboard.hpp\
+              objectcounter.hpp
 	 g++ -c gomoku/freestyle/point.cpp -o obj/point.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
 obj/evaluator.o : gomoku/chesstype.hpp gomoku/status.hpp gomoku/freestyle/virtualboard.hpp\
@@ -73,3 +81,5 @@ obj/log.o : log.hpp
 obj/main.o : gomoku/chesstype.hpp gomoku/status.hpp gomoku/freestyle/virtualboard.hpp gomoku/displayboard.hpp\
 			 gametree.hpp
 	g++ -c main.cpp -o obj/main.o $(generalFlags) $(optimizeFlag) $(specificFlags)
+obj/objectcounter.o : objectcounter.hpp
+	g++ -c objectcounter.cpp -o obj/objectcounter.o $(generalFlags) $(optimizeFlag) $(specificFlags)
