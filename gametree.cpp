@@ -17,22 +17,24 @@
 
 GameTree::GameTree() {
   /* create the grand root(e.g. a root representing a blank board) */
-  root = new Node();
-  currentNode = root;
-  currentBoard = new VirtualBoard();
+  root = NULL;
+  currentNode = NULL;
+  currentBoard = NULL;
 }
 
 GameTree::~GameTree() {
   delete root;
 }
 
-void GameTree::reset() {
-  delete root;
+void GameTree::reset(VirtualBoard* board) {
+  if (root == NULL)
+    delete root;
   root = new Node();
   currentNode = root;
 
-  delete currentBoard;
-  currentBoard = new VirtualBoard();
+  if (currentBoard == NULL)
+    delete currentBoard;
+  currentBoard = board->clone();
 }
 
 void GameTree::MCTS(int maxCycle) {
@@ -41,7 +43,7 @@ void GameTree::MCTS(int maxCycle) {
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
     if (currentNode->winning() || currentNode->losing()) return;
 
-    VirtualBoard board(currentBoard);
+    VirtualBoard* board = currentBoard->clone();
 
     int result = selection(&node, &board);
 
@@ -66,7 +68,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
     for (int cycle = 0; cycle < minCycle; ++cycle) {
       if (currentNode->winning() || currentNode->losing()) return;
 
-      VirtualBoard board(currentBoard);
+      VirtualBoard* board = currentBoard->clone();
 
       int result = selection(&node, &board);
 
@@ -98,7 +100,7 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
   for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
     if (currentNode->winning() || currentNode->losing()) return;
 
-    VirtualBoard board(currentBoard);
+    VirtualBoard* board = currentBoard->clone();
 
     int result = selection(&node, &board);
 
