@@ -248,15 +248,15 @@ function initPlayer(player, color, human) {
   $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));
 }
 
-$('#new-game').click(function() {
+function btnNewGameClick() {
   $('#dialog-new-game').show();
-});
+}
 
-$('#btn-dialog-cancel').click(function() {
+function btnDialogCancelClick() {
   $('#dialog-new-game').hide();
-});
+}
 
-$('#btn-dialog-ok').click(function() {
+function btnDialogOKClick() {
   // get the black/white player's radio buttons' result
   var black = $('input[name="black"]:checked').val(),
       white = $('input[name="white"]:checked').val();
@@ -297,9 +297,9 @@ $('#btn-dialog-ok').click(function() {
   initBoard();
 
   $('#dialog-new-game').hide();
-});
+}
 
-$('#play-number').click(function() {
+function btnPlayNumberClick() {
   playNumber = !playNumber;
 
   if (playNumber) {
@@ -314,9 +314,9 @@ $('#play-number').click(function() {
         clear([row, col]);
         draw([row, col]);
       }
-});
+}
 
-$('#coordinate').click(function() {
+function btnCoordinateClick() {
   coordinate = !coordinate;
 
   if (coordinate) {
@@ -338,4 +338,4 @@ $('#coordinate').click(function() {
     context.clearRect(20, 0, 525, 20);
     context.clearRect(20, 545, 525, 20);
   }
-});
+}
