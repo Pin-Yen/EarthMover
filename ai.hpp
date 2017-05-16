@@ -30,11 +30,15 @@ class AI {
   /* returns true for black ,false for white. */
   bool whoTurn();
 
+  static const int RENJU_BASIC = 1;
+  static const int FREESTYLE = 2;
+
  private:
   /* this thread lets EM thinks in the background when it's the users turn */
   std::thread *backgroundThread;
   bool stopBackgroundThread;
   GameTree *tree;
+  VirtualBoard *vb;
 
   /* starts background thread */
   void startBGThread();

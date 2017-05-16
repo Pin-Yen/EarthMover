@@ -5,11 +5,14 @@
 AI::AI() {
   tree = new GameTree();
   backgroundThread = NULL;
+  vb = NULL;
 }
 
 AI::~AI() {
   if (tree != NULL)
     delete tree;
+  if (vb != NULL)
+    delete vb;
 }
 
 void AI::think(int *row, int *col) {
@@ -75,9 +78,19 @@ void AI::stopBGThread() {
   }
 }
 
-void AI::reset(int level) {
+void AI::reset(int level, int rule) {
   stopBGThread();
-  tree->reset();
+
+  if (vb != NULL)
+    delete vb;
+
+  switch (rule) {
+    case RENJU_BASIC: vb = new VirtualBoardFreeStyle(); break;
+    case FREESTYLE: vb = new VirtualBoardRenjuBasic(); break;
+    default: assert(0);
+  }
+
+  tree->reset(vb);
   level_ = level;
 }
 
