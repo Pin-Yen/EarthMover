@@ -1,7 +1,7 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
 
-template <int StatusLength>
+template <int StatusLength, class Evaluator>
 class VirtualBoard {
  public:
   static const int CHESSBOARD_DIMEN = 15,

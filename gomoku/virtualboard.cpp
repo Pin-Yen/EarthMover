@@ -6,13 +6,11 @@
 #include <random>
 #include <iostream>
 
-#include "evaluator.hpp"
-
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../objectcounter.hpp"
 #endif
 
-template <int StatusLength>
+template <int StatusLength, class Evaluator>
 VirtualBoard::VirtualBoard() {
   Evaluator::initialize();
 
@@ -155,9 +153,10 @@ bool VirtualBoard::getHSP(int &row, int &col) {
   return (max > 0);
 }
 
-template <int StatusLength>
+template <int StatusLength, class Evaluator>
 int VirtualBoard::play(int row, int col) {
-  if (point_[row][col]->absScore(playNo_ & 1) >= Evaluator::SCORE_WIN) return 1;
+  int winOrLose = Evaluator::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
+  if (winOrLose != 0) return winOrLose;
 
   ++playNo_;
 

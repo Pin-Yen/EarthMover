@@ -1,9 +1,13 @@
-#ifndef EVALUATOR_H
-#define EVALUATOR_H
+#ifndef GOMOKU_FREESTYLE_EVALUATOR_H
+#define GOMOKU_FREESTYLE_EVALUATOR_H
 
 class VirtualBoard::Evaluator {
  public:
   static void initialize();
+
+  /* check win lor lose (call by virtualboard::play)
+   * -1 for lose, 0 for nothng, 1 for win */
+  static int checkWinOrLose(int score) { return score >= SCORE_WIN; }
 
   /* inputs status array in *status.
    * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
