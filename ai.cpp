@@ -2,8 +2,7 @@
 #include <assert.h>
 #include <iostream>
 
-AI::AI(int level) {
-  level_ = level;
+AI::AI() {
   tree = new GameTree();
   backgroundThread = NULL;
 }
@@ -76,9 +75,10 @@ void AI::stopBGThread() {
   }
 }
 
-void AI::reset() {
+void AI::reset(int level) {
   stopBGThread();
   tree->reset();
+  level_ = level;
 }
 
 bool AI::whoTurn() {

@@ -266,9 +266,11 @@ $('#btn-dialog-ok').click(function() {
   if ($('#dl-name-white').val().trim() == '')
     $('#dl-name-white').val('you');
 
-  game = { black: black, white: white};
+  game = {black: black, white: white};
 
-  post(game, 'start');
+  var level = $('#dl-select').val();
+
+  post({level: level}, 'start');
 
   // deside player's place
   if (game.black == 'human') {
