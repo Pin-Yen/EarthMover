@@ -1,6 +1,6 @@
 #include "chesstype.hpp"
 #include "status.hpp"
-#include "../virtualboard.h"
+#include "../virtualboard.hpp"
 #include "virtualboard.hpp"
 #include "point.hpp"
 
