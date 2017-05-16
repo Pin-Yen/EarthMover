@@ -1,6 +1,7 @@
 #include "status.hpp"
-#include "freestyle/virtualboard.hpp"
-#include "freestyle/point.hpp"
+#include "../virtualboard.hpp"
+#include "virtualboard.hpp"
+#include "point.hpp"
 #include "freestyle/evaluator.hpp"
 #include "openingtree.hpp"
 
@@ -119,7 +120,7 @@ void VirtualBoard::Evaluator::OpeningTree::insert(char table[5][5]) {
 }
 
 /* classify method please refer to insert */
-void VirtualBoard::Evaluator::OpeningTree::classify(VirtualBoard::Point* point[15][15],
+void VirtualBoard::Evaluator::OpeningTree::classify(VirtualBoardGomoku::Point* point[15][15],
                                                     int *row, int *col) {
   Node* currentNode = root;
 
