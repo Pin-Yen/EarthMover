@@ -9,7 +9,7 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   VirtualBoardGomoku();
   /* copy the source board to consturct the board */
-  VirtualBoardGomoku(VirtualBoard* source);
+  VirtualBoardGomoku(VirtualBoardGomoku* source);
 
   ~VirtualBoardGomoku();
 

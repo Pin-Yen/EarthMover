@@ -1,7 +1,7 @@
 #include "../chesstype.hpp"
 #include "../status.hpp"
 #include "../../virtualboard.hpp"
-#include "point.hpp"
+#include "../point.hpp"
 #include "evaluator.hpp"
 #include "typetree.hpp"
 #include "../openingtree.hpp"
@@ -110,7 +110,7 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   }
 }
 
-void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
+void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15],
                                                     int playNo) {
   if (playNo == 0) {
     for (int r = 0; r < 15; ++r)
