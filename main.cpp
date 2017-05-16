@@ -55,6 +55,7 @@ void start_AI() {
 
   DisplayBoard* board = new DisplayBoard();
   GameTree* tree = new GameTree();
+  tree->reset();
 
   #ifdef ANALYZE
   Log log;
