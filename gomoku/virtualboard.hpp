@@ -29,10 +29,10 @@ class VirtualBoardGomoku : public VirtualBoard {
   int play(int row, int col);
 
   virtual VirtualBoardGomoku* clone() override = 0;
- private:
+
   /* nested class */
   class Point;
-
+ private:
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 

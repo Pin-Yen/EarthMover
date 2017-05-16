@@ -9,7 +9,7 @@ class VirtualBoard::Evaluator::OpeningTree {
  public:
   static void initialize();
 
-  static void classify(VirtualBoard::Point* point[15][15], int *row, int *col);
+  static void classify(VirtualBoardGomoku::Point* point[15][15], int *row, int *col);
 
  private:
   struct Node {
