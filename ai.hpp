@@ -9,7 +9,7 @@ class AI {
  public:
 
   /* cycle: nubmer of MCTS cycles */
-  AI(int level);
+  AI();
 
   ~AI();
 
@@ -25,7 +25,7 @@ class AI {
   bool play(int row, int col, bool triggerBackgroundThread);
 
   /* resets AI for a new game */
-  void reset();
+  void reset(int level);
 
   /* returns true for black ,false for white. */
   bool whoTurn();

@@ -17,7 +17,7 @@
 #define DEBUG_NETWORK
 
 HttpServer::HttpServer() {
-  earthMover = new AI(1);
+  earthMover = new AI();
   client = -1;
   server = -1;
 
@@ -100,7 +100,6 @@ void HttpServer::listenConnection() {
 }
 
 void HttpServer::redirect(std::string *directory) {
-
   if (*directory == "/") {
     directory->append("board.html");
   } else if (*directory == "/favicon.ico") {
@@ -110,7 +109,8 @@ void HttpServer::redirect(std::string *directory) {
 }
 
 void HttpServer::handleStart(std::string requestBody) {
-  earthMover->reset();
+  int level = atoi(findAttributeInJson(requestBody, "level").c_str());
+  earthMover->reset(level);
 
   HttpResponse response(204);
   send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
