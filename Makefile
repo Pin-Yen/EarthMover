@@ -18,15 +18,21 @@ analyze : optimizeFlag = -O3
 analyze : mkdir $(objects) obj/log.o obj/main.o
 	g++ -o EM obj/log.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
-# Local-Debug build, based on analyze build. For debugging segfaults.
+# Local-Debug build. For debugging segfaults.
 localdebug : specificFlags = -DDEBUG -g
 localdebug : optimizeFlag = -O0 
 localdebug : mkdir $(objects) obj/main.o obj/objectcounter.o
 	g++ -o EM obj/objectcounter.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
-	
+
+#Local-Time build. For performance evaluation.
+localtime : specificFlags = -DTIME
+localtime : optimizeFlag = -O3
+localtime : mkdir $(objects) obj/main.o
+	g++ -o EM obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
+
 # Makes 'obj' directory to put the object files in 
 mkdir : 
-	if ! [ -d "obj" ]; then mkdir obj;fi
+	if ! [ -d "obj" ]; then mkdir obj; fi
 
 clean : 
 	if [ -d "obj" ]; then rm -r obj; fi
@@ -74,7 +80,7 @@ obj/typetree.o : gomoku/chesstype.hpp gomoku/status.hpp gomoku/freestyle/virtual
 				 gomoku/freestyle/evaluator.hpp gomoku/freestyle/typetree.hpp
 	 g++ -c gomoku/freestyle/typetree.cpp -o obj/typetree.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
-# The obj files below aren't required in every kind of build
+# The obj files below aren't required in every kind of build, so they aren't included in the 'objects' variable.
 obj/log.o : log.hpp
 	g++ -c log.cpp -o obj/log.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 
