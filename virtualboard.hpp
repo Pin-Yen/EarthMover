@@ -18,6 +18,8 @@ class VirtualBoard {
    * returns 1 if wins after play, -1 if lose */
   virtual int play(int row, int col) = 0;
 
+  virtual VirtualBoard* clone() = 0;
+
   class Evaluator;
 };
 

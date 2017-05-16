@@ -11,7 +11,7 @@
 #endif
 
 template <int StatusLength, class Evaluator>
-VirtualBoard::VirtualBoard() {
+VirtualBoardGomoku::VirtualBoardGomoku() {
   Evaluator::initialize();
 
   /* initialize point array */
@@ -62,7 +62,7 @@ VirtualBoard::VirtualBoard() {
   #endif
 }
 
-VirtualBoard::VirtualBoard(VirtualBoard* source) {
+VirtualBoardGomoku::VirtualBoardGomoku(VirtualBoardGomoku* source) {
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -99,7 +99,7 @@ VirtualBoard::VirtualBoard(VirtualBoard* source) {
   #endif
 }
 
-VirtualBoard::~VirtualBoard() {
+VirtualBoardGomoku::~VirtualBoardGomoku() {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       delete point_[r][c];
@@ -109,11 +109,11 @@ VirtualBoard::~VirtualBoard() {
   #endif
 }
 
-int VirtualBoard::getScore(int row, int col) {
+int VirtualBoardGomoku::getScore(int row, int col) {
   return point_[row][col]->getScore();
 }
 
-int VirtualBoard::getScoreSum() {
+int VirtualBoardGomoku::getScoreSum() {
   int sum = 0;
   int score;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -125,7 +125,7 @@ int VirtualBoard::getScoreSum() {
   return sum;
 }
 
-bool VirtualBoard::getHSP(int &row, int &col) {
+bool VirtualBoardGomoku::getHSP(int &row, int &col) {
   /* current max score, current same score amount */
   int max = 0, same = 0;
 
@@ -154,7 +154,7 @@ bool VirtualBoard::getHSP(int &row, int &col) {
 }
 
 template <int StatusLength, class Evaluator>
-int VirtualBoard::play(int row, int col) {
+int VirtualBoardGomoku::play(int row, int col) {
   int winOrLose = Evaluator::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
   if (winOrLose != 0) return winOrLose;
 

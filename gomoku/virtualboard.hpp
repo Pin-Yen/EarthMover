@@ -7,11 +7,11 @@ class VirtualBoardGomoku : public VirtualBoard {
   static const int CHESSBOARD_DIMEN = 15,
                    OFFSET = StatusLength / 2;
 
-  VirtualBoard();
+  VirtualBoardGomoku();
   /* copy the source board to consturct the board */
-  VirtualBoard(VirtualBoard* source);
+  VirtualBoardGomoku(VirtualBoard* source);
 
-  ~VirtualBoard();
+  ~VirtualBoardGomoku();
 
   int getScore(int row, int col);
 
@@ -27,6 +27,8 @@ class VirtualBoardGomoku : public VirtualBoard {
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
   int play(int row, int col);
+
+  virtual VirtualBoardGomoku* clone() override = 0;
  private:
   /* nested class */
   class Point;
