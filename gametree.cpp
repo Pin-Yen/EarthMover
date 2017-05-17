@@ -57,6 +57,8 @@ void GameTree::MCTS(int maxCycle) {
       backProp(node);
     else
       backProp(node, result);
+
+    delete board;
   }
 }
 
@@ -82,6 +84,8 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
         backProp(node);
       else
         backProp(node, result);
+
+      delete board;
     }
 
     /* get mostTimes */
@@ -114,6 +118,8 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
       backProp(node);
     else
       backProp(node, result);
+
+    delete board;
 
     if (cycle % 1000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
   }

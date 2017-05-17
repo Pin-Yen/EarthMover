@@ -1,7 +1,7 @@
 g++ -c -std=c++11 -pthread main.cpp -o main.o -g -DDEBUG
 g++ -c -std=c++11 gomoku/displayboard.cpp -o displayboard.o -g -DDEBUG
-g++ -c -std=c++11 gomoku/freestyle/virtualboard.cpp -o virtualboard.o -g -DDEBUG
-g++ -c -std=c++11 gomoku/freestyle/point.cpp -o point.o -g -DDEBUG
+g++ -c -std=c++11 gomoku/virtualboard.cpp -o virtualboard.o -g -DDEBUG
+g++ -c -std=c++11 gomoku/point.cpp -o point.o -g -DDEBUG
 g++ -c -std=c++11 gomoku/freestyle/evaluator.cpp -o evaluator.o -g -DDEBUG
 g++ -c -std=c++11 gomoku/freestyle/typetree.cpp -o typetree.o -g -DDEBUG
 g++ -c -std=c++11 gomoku/openingtree.cpp -o openingtree.o -g -DDEBUG

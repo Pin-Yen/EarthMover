@@ -3,6 +3,8 @@
 
 class VirtualBoard {
  public:
+  virtual ~VirtualBoard() {}
+
   virtual int getScore(int row, int col) = 0;
 
   /* get the sume of every point's score */

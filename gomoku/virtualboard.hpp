@@ -9,22 +9,22 @@ class VirtualBoardGomoku : public VirtualBoard {
   /* copy the source board to consturct the board */
   VirtualBoardGomoku(VirtualBoardGomoku* source);
 
-  ~VirtualBoardGomoku();
+  ~VirtualBoardGomoku() override;
 
-  int getScore(int row, int col);
+  int getScore(int row, int col) override;
 
   /* get the sume of every point's score */
-  int getScoreSum();
+  int getScoreSum() override;
 
   /* get who turn, black = 0, white = 1 */
-  bool whoTurn() { return (playNo_ & 1); }
+  bool whoTurn() override { return (playNo_ & 1); }
 
   /* get the highest score's position, if every point is not empty, return false */
-  bool getHSP(int &row, int &col);
+  bool getHSP(int &row, int &col) override;
 
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
-  int play(int row, int col);
+  int play(int row, int col) override;
 
  private:
   /* nested class */
