@@ -25,7 +25,7 @@ class AI {
   bool play(int row, int col, bool triggerBackgroundThread);
 
   /* resets AI for a new game */
-  void reset(int level);
+  void reset(int level, int rule);
 
   /* returns true for black ,false for white. */
   bool whoTurn();
