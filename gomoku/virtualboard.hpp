@@ -1,11 +1,9 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
 
-template <int StatusLength, class Evaluator>
 class VirtualBoardGomoku : public VirtualBoard {
  public:
-  static const int CHESSBOARD_DIMEN = 15,
-                   OFFSET = StatusLength / 2;
+  static const int CHESSBOARD_DIMEN = 15;
 
   VirtualBoardGomoku();
   /* copy the source board to consturct the board */
@@ -28,11 +26,11 @@ class VirtualBoardGomoku : public VirtualBoard {
    * returns 1 if wins after play, -1 if lose */
   int play(int row, int col);
 
-  virtual VirtualBoardGomoku* clone() override = 0;
-
-  /* nested class */
-  class Point;
  private:
+  /* nested class */
+  class Evaluator;
+  class Point;
+
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 

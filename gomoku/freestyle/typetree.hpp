@@ -5,7 +5,7 @@
 #include "../../objectcounter.hpp"
 #endif
 
-class VirtualBoard::Evaluator::TypeTree {
+class VirtualBoardGomoku::Evaluator::TypeTree {
  public:
   static void classify(const STATUS *status, ChessType *(type[2]));
 

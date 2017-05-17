@@ -1,7 +1,7 @@
 #ifndef GOMOKU_FREESTYLE_EVALUATOR_H
 #define GOMOKU_FREESTYLE_EVALUATOR_H
 
-class VirtualBoard::Evaluator {
+class VirtualBoardGomoku::Evaluator {
  public:
   static void initialize();
 
@@ -17,7 +17,7 @@ class VirtualBoard::Evaluator {
    * returns black's score in score[0], white's in score[1] */
   static void evaluateScore(ChessType* type[4][2], int *score);
 
-  static void evaluateRelativeScore(VirtualBoardGomoku<10, Evaluator>::Point* point[15][15], int playNo);
+  static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
   static const int SCORE_WIN = 10000000;
 

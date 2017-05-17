@@ -1,6 +1,7 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
 #include "virtualboard.hpp"
+#include "gomoku/virtualboard.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
@@ -45,11 +46,11 @@ void GameTree::MCTS(int maxCycle) {
 
     VirtualBoard* board = currentBoard->clone();
 
-    int result = selection(&node, &board);
+    int result = selection(&node, board);
 
     if (result == -2) {
       /* simulate only if child is not winning */
-      result = simulation(&board);
+      result = simulation(board);
     }
 
     if (result == -1)
@@ -70,11 +71,11 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
 
       VirtualBoard* board = currentBoard->clone();
 
-      int result = selection(&node, &board);
+      int result = selection(&node, board);
 
       if (result == -2) {
         /* simulate only if child is not winning */
-        result = simulation(&board);
+        result = simulation(board);
       }
 
       if (result == -1)
@@ -102,11 +103,11 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
 
     VirtualBoard* board = currentBoard->clone();
 
-    int result = selection(&node, &board);
+    int result = selection(&node, board);
 
     if (result == -2) {
       /* simulate only if child is not winning */
-      result = simulation(&board);
+      result = simulation(board);
     }
 
     if (result == -1)

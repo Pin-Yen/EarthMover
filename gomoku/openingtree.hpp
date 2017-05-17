@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 
-class VirtualBoard::Evaluator::OpeningTree {
+class VirtualBoardGomoku::Evaluator::OpeningTree {
  public:
   static void initialize();
 

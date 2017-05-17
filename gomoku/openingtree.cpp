@@ -12,9 +12,9 @@
 #include <vector>
 
 /* initialize root*/
-VirtualBoard::Evaluator::OpeningTree::Node* VirtualBoard::Evaluator::OpeningTree::root = new Node();
+VirtualBoardGomoku::Evaluator::OpeningTree::Node* VirtualBoardGomoku::Evaluator::OpeningTree::root = new Node();
 
-void VirtualBoard::Evaluator::OpeningTree::initialize() {
+void VirtualBoardGomoku::Evaluator::OpeningTree::initialize() {
   std::ifstream file("gomoku/opening.txt");
 
   float openingAmout;
@@ -38,7 +38,7 @@ void VirtualBoard::Evaluator::OpeningTree::initialize() {
   file.close();
 }
 
-void VirtualBoard::Evaluator::OpeningTree::rotate(char table[5][5]) {
+void VirtualBoardGomoku::Evaluator::OpeningTree::rotate(char table[5][5]) {
   char temp[5][5];
   /* rotate 90 degrees clockwise (row -> col, col -> 4 - row) */
   for (int r = 0; r < 5; ++r)
@@ -50,7 +50,7 @@ void VirtualBoard::Evaluator::OpeningTree::rotate(char table[5][5]) {
       table[r][c] = temp[r][c];
 }
 
-void VirtualBoard::Evaluator::OpeningTree::mirror(char table[5][5]) {
+void VirtualBoardGomoku::Evaluator::OpeningTree::mirror(char table[5][5]) {
   char temp[5][5];
   /* mirror (row -> col, col -> row) */
   for (int r = 0; r < 5; ++r)
@@ -62,7 +62,7 @@ void VirtualBoard::Evaluator::OpeningTree::mirror(char table[5][5]) {
       table[r][c] = temp[r][c];
 }
 
-void VirtualBoard::Evaluator::OpeningTree::insert(char table[5][5]) {
+void VirtualBoardGomoku::Evaluator::OpeningTree::insert(char table[5][5]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0, curRow, curCol;
@@ -120,7 +120,7 @@ void VirtualBoard::Evaluator::OpeningTree::insert(char table[5][5]) {
 }
 
 /* classify method please refer to insert */
-void VirtualBoard::Evaluator::OpeningTree::classify(VirtualBoardGomoku::Point* point[15][15],
+void VirtualBoardGomoku::Evaluator::OpeningTree::classify(VirtualBoardGomoku::Point* point[15][15],
                                                     int *row, int *col) {
   Node* currentNode = root;
 

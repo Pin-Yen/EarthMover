@@ -7,9 +7,9 @@
 #include "typetree.hpp"
 #include "../openingtree.hpp"
 
-bool VirtualBoard::Evaluator::isInitialized = false;
+bool VirtualBoardGomoku::Evaluator::isInitialized = false;
 
-void VirtualBoard::Evaluator::initialize() {
+void VirtualBoardGomoku::Evaluator::initialize() {
   if (isInitialized) return;
   isInitialized = true;
 
@@ -17,12 +17,12 @@ void VirtualBoard::Evaluator::initialize() {
   OpeningTree::initialize();
 }
 
-void VirtualBoard::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
+void VirtualBoardGomoku::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
   TypeTree::classify(status, type);
 }
 
 /* score[0]:black's total score,[1]:white's */
-void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
+void VirtualBoardGomoku::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   //len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},             /* 0 */
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},            /* X */
@@ -111,7 +111,7 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
   }
 }
 
-void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15],
+void VirtualBoardGomoku::Evaluator::evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15],
                                                     int playNo) {
   if (playNo == 0) {
     for (int r = 0; r < 15; ++r)
