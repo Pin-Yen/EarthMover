@@ -1,6 +1,7 @@
 #ifndef VIRTUAL_BOARD_H
 #define VIRTUAL_BOARD_H
 
+template <int StatusLength>
 class VirtualBoard {
  public:
   virtual ~VirtualBoard() {}

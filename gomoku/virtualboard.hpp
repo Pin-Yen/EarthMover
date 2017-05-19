@@ -1,7 +1,7 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
 
-class VirtualBoardGomoku : public VirtualBoard {
+class VirtualBoardGomoku : public VirtualBoard<8> {
  public:
   static const int CHESSBOARD_DIMEN = 15;
 

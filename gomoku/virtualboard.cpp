@@ -12,7 +12,8 @@
 #include "../objectcounter.hpp"
 #endif
 
-VirtualBoardGomoku::VirtualBoardGomoku() {
+template <int StatusLength>
+VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku() {
   Evaluator::initialize();
 
   /* initialize point array */
@@ -27,7 +28,7 @@ VirtualBoardGomoku::VirtualBoardGomoku() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       /* set each point's status array pointer */
       for (int d = 0; d < 4; ++d)
-        for (int offset = -4, index = 0; offset <= 4; ++offset) {
+        for (int offset = -(StatusLength / 2), index = 0; offset <= (StatusLength / 2); ++offset) {
           if (offset == 0) continue;
 
           int checkRow = r + dir[d][0] * offset,
@@ -63,8 +64,8 @@ VirtualBoardGomoku::VirtualBoardGomoku() {
   #endif
 }
 
-
-VirtualBoardGomoku::VirtualBoardGomoku(VirtualBoardGomoku* source) {
+template <int StatusLength>
+VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku* source) {
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -77,7 +78,7 @@ VirtualBoardGomoku::VirtualBoardGomoku(VirtualBoardGomoku* source) {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       /* set each point's status array pointer */
       for (int d = 0; d < 4; ++d)
-        for (int offset = -4, index = 0; offset <= 4; ++offset) {
+        for (int offset = -(StatusLength / 2), index = 0; offset <= (StatusLength / 2); ++offset) {
 
           if (offset == 0) continue;
 
@@ -101,8 +102,8 @@ VirtualBoardGomoku::VirtualBoardGomoku(VirtualBoardGomoku* source) {
   #endif
 }
 
-
-VirtualBoardGomoku::~VirtualBoardGomoku() {
+template <int StatusLength>
+VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       delete point_[r][c];
@@ -112,13 +113,13 @@ VirtualBoardGomoku::~VirtualBoardGomoku() {
   #endif
 }
 
-
-int VirtualBoardGomoku::getScore(int row, int col) {
+template <int StatusLength>
+int VirtualBoardGomoku<StatusLength>::getScore(int row, int col) {
   return point_[row][col]->getScore();
 }
 
-
-int VirtualBoardGomoku::getScoreSum() {
+template <int StatusLength>
+int VirtualBoardGomoku<StatusLength>::getScoreSum() {
   int sum = 0;
   int score;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -130,8 +131,8 @@ int VirtualBoardGomoku::getScoreSum() {
   return sum;
 }
 
-
-bool VirtualBoardGomoku::getHSP(int &row, int &col) {
+template <int StatusLength>
+bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) {
   /* current max score, current same score amount */
   int max = 0, same = 0;
 
@@ -159,8 +160,8 @@ bool VirtualBoardGomoku::getHSP(int &row, int &col) {
   return (max > 0);
 }
 
-
-int VirtualBoardGomoku::play(int row, int col) {
+template <int StatusLength>
+int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
   int winOrLose = Evaluator::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
   if (winOrLose != 0) return winOrLose;
 
@@ -180,7 +181,7 @@ int VirtualBoardGomoku::play(int row, int col) {
     for (int move = -1; move <= 1; move += 2) {
       bool block[2] = {false, false};
 
-      for (int offset = 1; offset <= 4 + 1; ++offset) {
+      for (int offset = 1; offset <= (StatusLength / 2) + 1; ++offset) {
         int checkRow = row + dir[d][0] * move * offset,
           checkCol = col + dir[d][1] * move * offset;
 
