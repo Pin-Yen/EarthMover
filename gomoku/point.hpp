@@ -4,7 +4,8 @@
 #include "status.hpp"
 #include "chesstype.hpp"
 
-class VirtualBoardGomoku::Point {
+template <int StatusLength>
+class VirtualBoardGomoku<StatusLength>::Point {
  public:
   /* constructor */
   Point();
@@ -37,7 +38,7 @@ class VirtualBoardGomoku::Point {
  private:
   /* STATUS array pointer, this will point at other point's Status color */
   /* index: 0→ 1↓ 2↗ 3↘ */
-  STATUS* dirStatus_[4][8];
+  STATUS* dirStatus_[4][StatusLength];
 
   /* point's status, the target of the other point's STATUS array pointer*/
   STATUS status_;

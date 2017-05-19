@@ -1,7 +1,6 @@
 #ifndef VIRTUAL_BOARD_H
 #define VIRTUAL_BOARD_H
 
-template <int StatusLength>
 class VirtualBoard {
  public:
   virtual ~VirtualBoard() {}
@@ -22,8 +21,6 @@ class VirtualBoard {
   virtual int play(int row, int col) = 0;
 
   virtual VirtualBoard* clone() = 0;
-
-  class Evaluator;
 };
 
 #endif

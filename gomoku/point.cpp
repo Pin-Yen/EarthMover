@@ -10,7 +10,8 @@
 #include "../objectcounter.hpp"
 #endif
 
-VirtualBoardGomoku::Point::Point() {
+template <int StatusLength>
+VirtualBoardGomoku<StatusLength>::Point::Point() {
   status_ = EMPTY;
 
   for (int dir = 0; dir < 4; ++dir)
@@ -22,7 +23,8 @@ VirtualBoardGomoku::Point::Point() {
   #endif
 }
 
-VirtualBoardGomoku::Point::Point(Point* source) {
+template <int StatusLength>
+VirtualBoardGomoku<StatusLength>::Point::Point(Point* source) {
   status_ = source->status_;
 
   absScore_[0] = source->absScore_[0]; absScore_[1] = source->absScore_[1];
@@ -37,7 +39,8 @@ VirtualBoardGomoku::Point::Point(Point* source) {
   #endif
 }
 
-VirtualBoardGomoku::Point::~Point() {
+template <int StatusLength>
+VirtualBoardGomoku<StatusLength>::Point::~Point() {
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)
       if (type[dir][i] != NULL)
@@ -48,7 +51,8 @@ VirtualBoardGomoku::Point::~Point() {
   #endif
 }
 
-void VirtualBoardGomoku::Point::getDirStatus(int dir, STATUS* dest) {
-  for (int i = 0; i < 8; ++i)
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Point::getDirStatus(int dir, STATUS* dest) {
+  for (int i = 0; i < StatusLength; ++i)
     dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
 }
