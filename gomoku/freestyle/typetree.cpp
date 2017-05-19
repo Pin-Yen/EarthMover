@@ -13,9 +13,12 @@
 #endif
 
 /* initialize root*/
-VirtualBoardGomoku::Evaluator::TypeTree::Node* VirtualBoardGomoku::Evaluator::TypeTree::root = new Node();
+template <int StatusLength>
+typename VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::Node*
+  VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::root = new Node();
 
-void VirtualBoardGomoku::Evaluator::TypeTree::initialize() {
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::initialize() {
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
@@ -33,7 +36,9 @@ void VirtualBoardGomoku::Evaluator::TypeTree::initialize() {
 /* connect is used to prevent already exist five while length == 11
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void VirtualBoardGomoku::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
+
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
                                             int move, bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
@@ -89,7 +94,8 @@ void VirtualBoardGomoku::Evaluator::TypeTree::dfs(Node *root, STATUS *status, in
   status[location] = EMPTY;
 }
 
-ChessType** VirtualBoardGomoku::Evaluator::TypeTree::cutSameResultChild(Node *root) {
+template <int StatusLength>
+ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
   if (root->type[0] != NULL) {
@@ -126,7 +132,8 @@ ChessType** VirtualBoardGomoku::Evaluator::TypeTree::cutSameResultChild(Node *ro
   return currentType;
 }
 
-void VirtualBoardGomoku::Evaluator::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
   /* switch root */
   Node* node = root;
 
@@ -151,7 +158,8 @@ void VirtualBoardGomoku::Evaluator::TypeTree::classify(const STATUS *status, Che
     }
 }
 
-ChessType* VirtualBoardGomoku::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
+template <int StatusLength>
+ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
                                                           bool checkLevel) {
   int connect = 1;
   /* check the length of the connection around the analize point

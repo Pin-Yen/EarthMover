@@ -12,9 +12,12 @@
 #include <vector>
 
 /* initialize root*/
-VirtualBoardGomoku::Evaluator::OpeningTree::Node* VirtualBoardGomoku::Evaluator::OpeningTree::root = new Node();
+template <int StatusLength>
+typename VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::Node*
+  VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::root = new Node();
 
-void VirtualBoardGomoku::Evaluator::OpeningTree::initialize() {
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::initialize() {
   std::ifstream file("gomoku/opening.txt");
 
   float openingAmout;
@@ -38,7 +41,8 @@ void VirtualBoardGomoku::Evaluator::OpeningTree::initialize() {
   file.close();
 }
 
-void VirtualBoardGomoku::Evaluator::OpeningTree::rotate(char table[5][5]) {
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::rotate(char table[5][5]) {
   char temp[5][5];
   /* rotate 90 degrees clockwise (row -> col, col -> 4 - row) */
   for (int r = 0; r < 5; ++r)
@@ -50,7 +54,8 @@ void VirtualBoardGomoku::Evaluator::OpeningTree::rotate(char table[5][5]) {
       table[r][c] = temp[r][c];
 }
 
-void VirtualBoardGomoku::Evaluator::OpeningTree::mirror(char table[5][5]) {
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::mirror(char table[5][5]) {
   char temp[5][5];
   /* mirror (row -> col, col -> row) */
   for (int r = 0; r < 5; ++r)
@@ -62,7 +67,8 @@ void VirtualBoardGomoku::Evaluator::OpeningTree::mirror(char table[5][5]) {
       table[r][c] = temp[r][c];
 }
 
-void VirtualBoardGomoku::Evaluator::OpeningTree::insert(char table[5][5]) {
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::insert(char table[5][5]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0, curRow, curCol;
@@ -120,7 +126,8 @@ void VirtualBoardGomoku::Evaluator::OpeningTree::insert(char table[5][5]) {
 }
 
 /* classify method please refer to insert */
-void VirtualBoardGomoku::Evaluator::OpeningTree::classify(VirtualBoardGomoku::Point* point[15][15],
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(VirtualBoardGomoku<StatusLength>::Point* point[15][15],
                                                     int *row, int *col) {
   Node* currentNode = root;
 
