@@ -6,7 +6,7 @@ class VirtualBoardFreeStyle : public VirtualBoardGomoku<8> {
   VirtualBoardFreeStyle() : VirtualBoardGomoku() {}
   VirtualBoardFreeStyle(VirtualBoardFreeStyle* board) : VirtualBoardGomoku(board) {}
 
-  inline VirtualBoardFreeStyle* create();
+  inline VirtualBoardFreeStyle* create() override;
 
   VirtualBoardFreeStyle* clone() override {
     return new VirtualBoardFreeStyle(this);
@@ -26,7 +26,7 @@ VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
 }
 
 int VirtualBoardFreeStyle::play(int row, int col) {
-  VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(row, col);
+  return = VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(row, col);
 }
 
 #endif
