@@ -5,6 +5,8 @@ class VirtualBoardRenjuBasic : public VirtualBoardGomoku<10> {
   VirtualBoardRenjuBasic* clone() override {
     return new VirtualBoardRenjuBasic(this);
   }
+ protected:
+  class EvaluatorRenjuBasic : public VirtualBoard::Evaluator;
 };
 
 #endif

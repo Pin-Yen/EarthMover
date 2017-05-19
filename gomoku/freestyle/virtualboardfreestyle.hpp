@@ -9,6 +9,9 @@ class VirtualBoardFreeStyle : public VirtualBoardGomoku<8> {
   VirtualBoardFreeStyle* clone() override {
     return new VirtualBoardFreeStyle(this);
   }
+
+ protected:
+  class EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator;
 };
 
 #endif

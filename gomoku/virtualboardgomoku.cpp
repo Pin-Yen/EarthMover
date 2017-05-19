@@ -12,9 +12,9 @@
 #include "../objectcounter.hpp"
 #endif
 
-template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku() {
-  Evaluator::initialize();
+template <int StatusLength, class Eval>
+VirtualBoardGomoku<StatusLength, Eval>::VirtualBoardGomoku() {
+  Eval::initialize();
 
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -53,19 +53,19 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku() {
         /* get status array */
         STATUS status[8]; point_[r][c]->getDirStatus(d, status);
 
-        Evaluator::evaluateType(status, point_[r][c]->type[d]);
+        Eval::evaluateType(status, point_[r][c]->type[d]);
       }
-      Evaluator::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
+      Eval::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
     }
-  Evaluator::evaluateRelativeScore(point_, playNo_);
+  Eval::evaluateRelativeScore(point_, playNo_);
 
   #ifdef DEBUG
   ObjectCounter::registerVB();
   #endif
 }
 
-template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku* source) {
+template <int StatusLength, class Eval>
+VirtualBoardGomoku<StatusLength, Eval>::VirtualBoardGomoku(VirtualBoardGomoku* source) {
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -102,8 +102,8 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku* source)
   #endif
 }
 
-template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
+template <int StatusLength, class Eval>
+VirtualBoardGomoku<StatusLength, Eval>::~VirtualBoardGomoku() {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       delete point_[r][c];
@@ -113,13 +113,13 @@ VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
   #endif
 }
 
-template <int StatusLength>
-int VirtualBoardGomoku<StatusLength>::getScore(int row, int col) {
+template <int StatusLength, class Eval>
+int VirtualBoardGomoku<StatusLength, Eval>::getScore(int row, int col) {
   return point_[row][col]->getScore();
 }
 
 template <int StatusLength>
-int VirtualBoardGomoku<StatusLength>::getScoreSum() {
+int VirtualBoardGomoku<StatusLength, Eval>::getScoreSum() {
   int sum = 0;
   int score;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -131,8 +131,8 @@ int VirtualBoardGomoku<StatusLength>::getScoreSum() {
   return sum;
 }
 
-template <int StatusLength>
-bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) {
+template <int StatusLength, class Eval>
+bool VirtualBoardGomoku<StatusLength, Eval>::getHSP(int &row, int &col) {
   /* current max score, current same score amount */
   int max = 0, same = 0;
 
@@ -160,9 +160,9 @@ bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) {
   return (max > 0);
 }
 
-template <int StatusLength>
-int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
-  int winOrLose = Evaluator::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
+template <int StatusLength, class Eval>
+int VirtualBoardGomoku<StatusLength, Eval>::play(int row, int col) {
+  int winOrLose = Eval::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
   if (winOrLose != 0) return winOrLose;
 
   ++playNo_;
@@ -202,14 +202,14 @@ int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
         /* get status array */
         STATUS status[8]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
-        Evaluator::evaluateType(status, point_[checkRow][checkCol]->type[d]);
+        Eval::evaluateType(status, point_[checkRow][checkCol]->type[d]);
 
-        Evaluator::evaluateScore(point_[checkRow][checkCol]->type,
+        Eval::evaluateScore(point_[checkRow][checkCol]->type,
                                  point_[checkRow][checkCol]->absScore());
       }
     }
 
-  Evaluator::evaluateRelativeScore(point_, playNo_);
+  Eval::evaluateRelativeScore(point_, playNo_);
 
   return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
 
-template <int StatusLength>
+template <int StatusLength, class Eval>
 class VirtualBoardGomoku : public VirtualBoard {
  public:
   static const int CHESSBOARD_DIMEN = 15;
@@ -27,11 +27,11 @@ class VirtualBoardGomoku : public VirtualBoard {
    * returns 1 if wins after play, -1 if lose */
   int play(int row, int col) override;
 
- private:
+ protected:
   /* nested class */
   class Evaluator;
   class Point;
-
+ private:
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 

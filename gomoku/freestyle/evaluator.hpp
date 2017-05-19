@@ -1,6 +1,6 @@
 #ifndef GOMOKU_FREESTYLE_EVALUATOR_H
 #define GOMOKU_FREESTYLE_EVALUATOR_H
-
+// ############ DEPRECATED #############
 class VirtualBoardGomoku::Evaluator {
  public:
   static void initialize();

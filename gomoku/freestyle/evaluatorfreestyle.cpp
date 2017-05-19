@@ -1,30 +1,20 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
-#include "../../virtualboard.hpp"
-#include "../virtualboard.hpp"
-#include "../point.hpp"
-#include "evaluator.hpp"
-#include "typetree.hpp"
-#include "../openingtree.hpp"
+#include "evaluatorfreestyle.hpp"
 
-// ############ DEPRECATED #############
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
 
-bool VirtualBoardGomoku::Evaluator::isInitialized = false;
-
-void VirtualBoardGomoku::Evaluator::initialize() {
   if (isInitialized) return;
+
   isInitialized = true;
 
   TypeTree::initialize();
   OpeningTree::initialize();
 }
 
-void VirtualBoardGomoku::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(STATUS *status, ChessType* type[2]) {
   TypeTree::classify(status, type);
 }
 
-/* score[0]:black's total score,[1]:white's */
-void VirtualBoardGomoku::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType* type[4][2], int *score) {
   //len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},             /* 0 */
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},            /* X */
@@ -110,54 +100,5 @@ void VirtualBoardGomoku::Evaluator::evaluateScore(ChessType* type[4][2], int *sc
       /* opponent multi-3 */
       score[selfColor] += SCORE_DOUBLELIVE3[DEFENSE];
     }
-  }
-}
-
-void VirtualBoardGomoku::Evaluator::evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15],
-                                                    int playNo) {
-  if (playNo == 0) {
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c)
-        point[r][c]->setRelScore(-1);
-
-    point[7][7]->setRelScore(1);
-  } else {
-    /* using opening */
-    if (playNo <= 4) {
-      int row = -1, col = -1;
-      OpeningTree::classify(point, &row, &col);
-
-      if (row != -1) {
-        for (int r = 0; r < 15; ++r) {
-          for (int c = 0; c < 15; ++c) {
-            if (r == row && c == col)
-              point[r][c]->setRelScore(1);
-            else
-              point[r][c]->setRelScore(-1);
-          }
-        }
-        return;
-      }
-    }
-
-    /* using absloute score */
-
-    bool whoTurn = playNo & 1;
-
-    /* get highest score */
-    int highestScore = -1;
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c)
-        if (point[r][c]->absScore(whoTurn) > highestScore)
-          highestScore = point[r][c]->absScore(whoTurn);
-
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c) {
-        int score = point[r][c]->absScore(whoTurn);
-        if (score * 8 < highestScore || (playNo < 10 && score < 140))
-          point[r][c]->setRelScore(-1);
-        else
-          point[r][c]->setRelScore(score);
-      }
   }
 }
