@@ -6,13 +6,13 @@ class VirtualBoardFreeStyle : public VirtualBoardGomoku<8> {
   VirtualBoardFreeStyle() : VirtualBoardGomoku() {}
   VirtualBoardFreeStyle(VirtualBoardFreeStyle* board) : VirtualBoardGomoku(board) {}
 
-  VirtualBoardFreeStyle* create();
+  inline VirtualBoardFreeStyle* create();
 
   VirtualBoardFreeStyle* clone() override {
     return new VirtualBoardFreeStyle(this);
   }
 
-  int play(int row, int col) override;
+  inline int play(int row, int col) override;
  private:
   class EvaluatorFreeStyle;
 };
