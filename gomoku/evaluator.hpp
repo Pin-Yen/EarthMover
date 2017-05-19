@@ -1,40 +1,100 @@
-#ifndef EVALUATOR_H_
-#define EVALUATOR_H_
+#ifndef GOMOKU_EVALUATOR_H
+#define GOMOKU_EVALUATOR_H
 
-#include "chesstype.hpp"
-#include "openingtree.hpp"
-#include "status.hpp"
-#include "virtualboardgomoku.hpp"
+template <int StatusLength>
+class VirtualBoardGomoku<StatusLength>::Evaluator {
 
-class VirtualBoard::Evaluator
-{
-public:
-
-  /* initialize Evaluator */
-  static virtual void initialize() = 0;
-
-  /* check win lor lose
-   * -1 for lose, 0 for nothng, 1 for win */
-  static int checkWinOrLose(int score) {return score >= SCORE_WIN }
+ public:
+  static void initialize();
 
   /* inputs status array in *status.
    * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
-  static virtual void evaluateType(STATUS *status, ChessType* type[2]) = 0;
+  static void evaluateType(STATUS *status, ChessType* type[2]);
 
-  /* inputs an array of ChessTypes of both players in type[4][2],
-   * returns black's score in score[0], white's in score[1] */
-  static virtual evaluateScore(ChessType* type[4][2], int *score) = 0;
+  static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
-
-  static evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
-
- protected:
-  class OpeningTree;
+  static const int SCORE_WIN = 10000000;
 
  private:
-  static const int SCORE_WIN = 10000000;
-  static bool isInitialized;
+  class TypeTree;
+  class OpeningTree;
 
+  static bool isInitialized;
 };
+
+#include "chesstype.hpp"
+#include "status.hpp"
+#include "../virtualboard.hpp"
+#include "virtualboardgomoku.hpp"
+#include "point.hpp"
+#include "freestyle/typetree.hpp"
+#include "openingtree.hpp"
+
+template <int StatusLength>
+bool VirtualBoardGomoku<StatusLength>::Evaluator::isInitialized = false;
+
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::initialize() {
+  if (isInitialized) return;
+  isInitialized = true;
+
+  TypeTree::initialize();
+  OpeningTree::initialize();
+}
+
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
+  TypeTree::classify(status, type);
+}
+
+template <int StatusLength>
+void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
+    VirtualBoardGomoku<StatusLength>::Point* point[15][15], int playNo) {
+  if (playNo == 0) {
+    for (int r = 0; r < 15; ++r)
+      for (int c = 0; c < 15; ++c)
+        point[r][c]->setRelScore(-1);
+
+    point[7][7]->setRelScore(1);
+  } else {
+    /* using opening */
+    if (playNo <= 4) {
+      int row = -1, col = -1;
+      OpeningTree::classify(point, &row, &col);
+
+      if (row != -1) {
+        for (int r = 0; r < 15; ++r) {
+          for (int c = 0; c < 15; ++c) {
+            if (r == row && c == col)
+              point[r][c]->setRelScore(1);
+            else
+              point[r][c]->setRelScore(-1);
+          }
+        }
+        return;
+      }
+    }
+
+    /* using absloute score */
+
+    bool whoTurn = playNo & 1;
+
+    /* get highest score */
+    int highestScore = -1;
+    for (int r = 0; r < 15; ++r)
+      for (int c = 0; c < 15; ++c)
+        if (point[r][c]->absScore(whoTurn) > highestScore)
+          highestScore = point[r][c]->absScore(whoTurn);
+
+    for (int r = 0; r < 15; ++r)
+      for (int c = 0; c < 15; ++c) {
+        int score = point[r][c]->absScore(whoTurn);
+        if (score * 8 < highestScore || (playNo < 10 && score < 140))
+          point[r][c]->setRelScore(-1);
+        else
+          point[r][c]->setRelScore(score);
+      }
+  }
+}
 
 #endif

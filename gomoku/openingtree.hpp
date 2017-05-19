@@ -38,10 +38,9 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
 
 #include "status.hpp"
 #include "../virtualboard.hpp"
-#include "virtualboard.hpp"
+#include "virtualboardgomoku.hpp"
 #include "point.hpp"
-#include "freestyle/evaluator.hpp"
-#include "openingtree.hpp"
+#include "evaluator.hpp"
 
 #include <algorithm>
 #include <array>

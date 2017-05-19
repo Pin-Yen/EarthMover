@@ -25,15 +25,16 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
-  int play(int row, int col) override;
+  template <class Eva>
+  int play(int row, int col);
 
  protected:
+  class Evaluator;
+
+  template <class Eva>
   void init();
 
  private:
-
-  /* nested class */
-  class Evaluator;
   class Point;
 
   /* point array */
@@ -46,8 +47,7 @@ class VirtualBoardGomoku : public VirtualBoard {
 #include "chesstype.hpp"
 #include "status.hpp"
 #include "../virtualboard.hpp"
-#include "virtualboardgomoku.hpp"
-#include "freestyle/evaluator.hpp"
+#include "evaluator.hpp"
 #include "point.hpp"
 
 #include <random>
@@ -58,6 +58,7 @@ class VirtualBoardGomoku : public VirtualBoard {
 #endif
 
 template <int StatusLength>
+template <class Eva>
 void VirtualBoardGomoku<StatusLength>::init() {
   Evaluator::initialize();
 
@@ -98,11 +99,11 @@ void VirtualBoardGomoku<StatusLength>::init() {
         /* get status array */
         STATUS status[8]; point_[r][c]->getDirStatus(d, status);
 
-        Evaluator::evaluateType(status, point_[r][c]->type[d]);
+        Eva::evaluateType(status, point_[r][c]->type[d]);
       }
-      Evaluator::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
+      Eva::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
     }
-  Evaluator::evaluateRelativeScore(point_, playNo_);
+  Eva::evaluateRelativeScore(point_, playNo_);
 
   #ifdef DEBUG
   ObjectCounter::registerVB();
@@ -206,8 +207,9 @@ bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) {
 }
 
 template <int StatusLength>
+template <class Eva>
 int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
-  int winOrLose = Evaluator::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
+  int winOrLose = Eva::checkWinOrLose(point_[row][col]->absScore(playNo_ & 1));
   if (winOrLose != 0) return winOrLose;
 
   ++playNo_;
@@ -247,14 +249,14 @@ int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
         /* get status array */
         STATUS status[8]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
-        Evaluator::evaluateType(status, point_[checkRow][checkCol]->type[d]);
+        Eva::evaluateType(status, point_[checkRow][checkCol]->type[d]);
 
-        Evaluator::evaluateScore(point_[checkRow][checkCol]->type,
+        Eva::evaluateScore(point_[checkRow][checkCol]->type,
                                  point_[checkRow][checkCol]->absScore());
       }
     }
 
-  Evaluator::evaluateRelativeScore(point_, playNo_);
+  Eva::evaluateRelativeScore(point_, playNo_);
 
   return 0;
 }

@@ -59,8 +59,8 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
 #include "../chesstype.hpp"
 #include "../status.hpp"
 #include "../../virtualboard.hpp"
-#include "../virtualboard.hpp"
-#include "evaluator.hpp"
+#include "../virtualboardgomoku.hpp"
+#include "../evaluator.hpp"
 #include "typetree.hpp"
 
 #include <iostream>
