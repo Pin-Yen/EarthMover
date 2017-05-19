@@ -6,12 +6,15 @@ class VirtualBoardFreeStyle : public VirtualBoardGomoku<8> {
   VirtualBoardFreeStyle() : VirtualBoardGomoku() {}
   VirtualBoardFreeStyle(VirtualBoardFreeStyle* board) : VirtualBoardGomoku(board) {}
 
+  VirtualBoardFreeStyle* create() {
+    VirtualBoardFreeStyle* temp = new VirtualBoardFreeStyle();
+    temp->init();
+    return temp;
+  }
+
   VirtualBoardFreeStyle* clone() override {
     return new VirtualBoardFreeStyle(this);
   }
-
- protected:
-  class EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator;
 };
 
 #endif

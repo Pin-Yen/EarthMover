@@ -1,8 +1,8 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
 #include "virtualboard.hpp"
-#include "gomoku/virtualboard.hpp"
-#include "gomoku/freestyle/virtualboard.hpp"
+#include "gomoku/virtualboardgomoku.hpp"
+#include "gomoku/freestyle/virtualboardfreestyle.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
 
@@ -35,7 +35,7 @@ void GameTree::reset(VirtualBoard* board) {
 
   if (currentBoard == NULL)
     delete currentBoard;
-  currentBoard = board->clone();
+  currentBoard = board->create();
 }
 
 void GameTree::MCTS(int maxCycle) {

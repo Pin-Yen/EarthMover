@@ -5,6 +5,10 @@ class VirtualBoard {
  public:
   virtual ~VirtualBoard() {}
 
+  virtual VirtualBoard* create() = 0;
+
+  virtual VirtualBoard* clone() = 0;
+
   virtual int getScore(int row, int col) = 0;
 
   /* get the sume of every point's score */
@@ -19,8 +23,6 @@ class VirtualBoard {
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
   virtual int play(int row, int col) = 0;
-
-  virtual VirtualBoard* clone() = 0;
 };
 
 #endif

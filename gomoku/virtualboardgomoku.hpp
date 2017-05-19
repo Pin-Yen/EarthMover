@@ -1,12 +1,12 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
 
-template <int StatusLength, class Eval>
+template <int StatusLength>
 class VirtualBoardGomoku : public VirtualBoard {
  public:
   static const int CHESSBOARD_DIMEN = 15;
 
-  VirtualBoardGomoku();
+  VirtualBoardGomoku() {}
   /* copy the source board to consturct the board */
   VirtualBoardGomoku(VirtualBoardGomoku* source);
 
@@ -28,10 +28,14 @@ class VirtualBoardGomoku : public VirtualBoard {
   int play(int row, int col) override;
 
  protected:
+  void init();
+
+ private:
+
   /* nested class */
   class Evaluator;
   class Point;
- private:
+
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
@@ -42,7 +46,7 @@ class VirtualBoardGomoku : public VirtualBoard {
 #include "chesstype.hpp"
 #include "status.hpp"
 #include "../virtualboard.hpp"
-#include "virtualboard.hpp"
+#include "virtualboardgomoku.hpp"
 #include "freestyle/evaluator.hpp"
 #include "point.hpp"
 
@@ -54,7 +58,7 @@ class VirtualBoardGomoku : public VirtualBoard {
 #endif
 
 template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku() {
+void VirtualBoardGomoku<StatusLength>::init() {
   Evaluator::initialize();
 
   /* initialize point array */
@@ -106,7 +110,7 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku() {
 }
 
 template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLength>* source) {
+ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLength>* source) {
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
