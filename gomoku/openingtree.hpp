@@ -8,7 +8,7 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
  public:
-  static void initialize();
+  static void init();
 
   static void classify(VirtualBoardGomoku::Point* point[15][15], int *row, int *col);
 
@@ -54,7 +54,7 @@ typename VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::Node*
   VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::root = new Node();
 
 template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::initialize() {
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::init() {
   std::ifstream file("gomoku/opening.txt");
 
   float openingAmout;
