@@ -27,7 +27,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
 #include "../virtualboard.hpp"
 #include "virtualboardgomoku.hpp"
 #include "point.hpp"
-#include "freestyle/typetree.hpp"
 #include "openingtree.hpp"
 
 template <int StatusLength>

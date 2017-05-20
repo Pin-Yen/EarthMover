@@ -14,6 +14,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
    * returns black's score in score[0], white's in score[1] */
   static void evaluateScore(ChessType* type[4][2], int *score);
 
+ private:
   class TypeTree;
 };
 
