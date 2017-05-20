@@ -20,6 +20,7 @@ class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
 #include "evaluatorfreestyle.hpp"
 
 VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
+  EvaluatorFreeStyle::init();
   VirtualBoardFreeStyle* temp = new VirtualBoardFreeStyle();
   temp->init<VirtualBoardFreeStyle::EvaluatorFreeStyle>();
   return temp;

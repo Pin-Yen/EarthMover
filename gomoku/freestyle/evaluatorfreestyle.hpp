@@ -2,8 +2,9 @@
 #define GOMOKU_FREESTYLE_EVALUATOR_H
 
 class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator {
-
  public:
+  static inline void init();
+
   /* check win lor lose (call by virtualboard::play)
    * -1 for lose, 0 for nothng, 1 for win */
   static int checkWinOrLose(int score) { return score >= SCORE_WIN; }
@@ -17,5 +18,11 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
  private:
   class TypeTree;
 };
+
+#include "typetree.hpp"
+
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
+  TypeTree::init();
+}
 
 #endif

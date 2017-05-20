@@ -3,7 +3,7 @@
 
 class VirtualBoard {
  public:
-  virtual ~VirtualBoard() = 0;
+  virtual inline ~VirtualBoard() = 0;
 
   virtual VirtualBoard* create() = 0;
 
@@ -24,5 +24,7 @@ class VirtualBoard {
    * returns 1 if wins after play, -1 if lose */
   virtual int play(int row, int col) = 0;
 };
+
+VirtualBoard::~VirtualBoard() {}
 
 #endif
