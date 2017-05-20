@@ -154,8 +154,8 @@ double GameTree::Node::getUCBValue(int r, int c) {
 
   if (childNode[r][c] != NULL) {
     return (childNode[r][c]->winRate() +
-            sqrt(0.2 * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
+            sqrt(0.4 * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
   } else {
-    return (sqrt(0.2 * log10(playout[2]) / 1));
+    return (sqrt(0.4 * log10(playout[2]) / 1));
   }
 }
