@@ -13,6 +13,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree {
 
  private:
   static bool isInit;
+
   struct Node {
     /* Next point occupied by:
      * 0: black, 1: white, 2:empty 3: bound */

@@ -13,7 +13,6 @@
 #include "../../objectcounter.hpp"
 #endif
 
-
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::isInit = false;
 
 /* initialize root*/
@@ -32,7 +31,6 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::init() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
-
 }
 
 /* Depth First Search

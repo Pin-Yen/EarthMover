@@ -60,8 +60,6 @@ class VirtualBoardGomoku : public VirtualBoard {
 template <int StatusLength>
 template <class Eva>
 void VirtualBoardGomoku<StatusLength>::init() {
-  Evaluator::init(); // initializes openingTree
-
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)

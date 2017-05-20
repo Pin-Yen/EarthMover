@@ -22,6 +22,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
 #include "typetree.hpp"
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
+  Evaluator::init();
   TypeTree::init();
 }
 

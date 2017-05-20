@@ -34,6 +34,8 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
   static void insert(char table[5][5]);
 
   static Node* root;
+ private:
+  static bool isInit;
 };
 
 #include "status.hpp"
@@ -48,6 +50,9 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
 #include <iostream>
 #include <vector>
 
+template <int StatusLength>
+bool VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::isInit = false;
+
 /* initialize root*/
 template <int StatusLength>
 typename VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::Node*
@@ -55,6 +60,9 @@ typename VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::Node*
 
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::init() {
+  if (isInit) return;
+  isInit = true;
+
   std::ifstream file("gomoku/opening.txt");
 
   float openingAmout;
