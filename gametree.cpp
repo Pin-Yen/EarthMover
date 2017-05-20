@@ -25,15 +25,16 @@ GameTree::GameTree() {
 
 GameTree::~GameTree() {
   delete root;
+  delete currentBoard;
 }
 
 void GameTree::reset(VirtualBoard* board) {
-  if (root == NULL)
+  if (root != NULL)
     delete root;
   root = new Node();
   currentNode = root;
 
-  if (currentBoard == NULL)
+  if (currentBoard != NULL)
     delete currentBoard;
   currentBoard = board->create();
 }
