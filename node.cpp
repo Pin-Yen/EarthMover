@@ -1,8 +1,6 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
 #include "virtualboard.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
 

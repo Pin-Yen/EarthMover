@@ -27,7 +27,7 @@ class GameTree {
   void MCTS(int maxCycle, bool &stop);
 
   /* get the child that has highest playout from current node */
-  void MCTSResult(int &row, int &col);
+  void MCTSResult(int &row, int &col) const;
 
   /* called when a REAL point is played, updates the currentRoot
    * returns 1 if wins after play, -1 if lose */

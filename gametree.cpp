@@ -1,8 +1,6 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
 #include "virtualboard.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
 
@@ -125,7 +123,7 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
   }
 }
 
-void GameTree::MCTSResult(int &row, int &col) {
+void GameTree::MCTSResult(int &row, int &col) const {
   if (currentNode->winning()) {
     for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
       for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
