@@ -17,7 +17,6 @@
 #endif
 
 GameTree::GameTree() {
-  /* create the grand root(e.g. a root representing a blank board) */
   root = NULL;
   currentNode = NULL;
   currentBoard = NULL;
@@ -28,12 +27,12 @@ GameTree::~GameTree() {
 }
 
 void GameTree::reset(VirtualBoard* board) {
-  if (root == NULL)
+  if (root != NULL)
     delete root;
   root = new Node();
   currentNode = root;
 
-  if (currentBoard == NULL)
+  if (currentBoard != NULL)
     delete currentBoard;
   currentBoard = board->create();
 }
@@ -250,7 +249,7 @@ void GameTree::backProp(Node* node, bool result) {
   // note: cannot use do-while here
   while (node != currentNode) {
     node->update(result);
-    node = node->getParent();
+    node = node->parent();
     result = !result;
   }
   node->update(result);
@@ -260,7 +259,7 @@ void GameTree::backProp(Node* node) {
   // note: cannot use do-while here
   while (node != currentNode) {
     node->update();
-    node = node->getParent();
+    node = node->parent();
   }
   node->update();
 }

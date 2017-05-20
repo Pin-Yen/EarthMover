@@ -24,7 +24,7 @@ GameTree::Node::Node() {
     playout[i] = 0;
 
   /* initiaize parent node */
-  parent = NULL;
+  parent_ = NULL;
 
   winning_ = false;
   losing_ = false;
@@ -34,7 +34,7 @@ GameTree::Node::Node() {
   #endif
 }
 
-GameTree::Node::Node(Node *parentNode, int row, int col, int parentWinOrLose) {
+GameTree::Node::Node(Node *parent_Node, int row, int col, int parent_WinOrLose) {
   /* initialize all childNodes to NULL */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -45,9 +45,9 @@ GameTree::Node::Node(Node *parentNode, int row, int col, int parentWinOrLose) {
     playout[i] = 0;
 
   /* initiaize parent node */
-  parent = parentNode;
+  parent_ = parent_Node;
 
-  switch (parentWinOrLose) {
+  switch (parent_WinOrLose) {
     case 1:
       winning_ = false;
       losing_ = true;
@@ -61,9 +61,9 @@ GameTree::Node::Node(Node *parentNode, int row, int col, int parentWinOrLose) {
       losing_ = false;
   }
 
-  /* if is losing, set parent to winning */
+  /* if is losing, set parent_ to winning */
   if (losing_)
-    parent->winning_ = true;
+    parent_->winning_ = true;
 
   #ifdef DEBUG
   ObjectCounter::registerNode();
@@ -136,7 +136,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
     /* if every child wins, mark this point as a losing point */
     if (childWinning) {
       losing_ = true;
-      parent->winning_ = true;
+      parent_->winning_ = true;
 
       return 0;
     }
@@ -148,7 +148,7 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   return -2;
 }
 
-double GameTree::Node::getUCBValue(int r, int c) {
+double GameTree::Node::getUCBValue(int r, int c) const {
   if (playout[2] == 0)
     return 0;
 

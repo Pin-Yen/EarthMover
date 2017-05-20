@@ -22,22 +22,22 @@ class GameTree::Node {
   int selection(int &row, int &col, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */
-  double getUCBValue(int r, int c);
+  double getUCBValue(int r, int c) const;
 
   /* get winRate
    * NOTE: the win rate is for the upper layer(parent node)
    * and, in normal circumstances, only the upper layer will call this function*/
-  double winRate() {
+  double winRate() const {
     return ((playout[0] + (playout[2] - playout[0] - playout[1]) / 2.0) / (double)playout[2]);
   }
 
-  int totalPlayout() { return playout[2]; }
+  int totalPlayout() const { return playout[2]; }
 
-  Node* getParent() { return parent; }
+  Node* parent() const { return parent_; }
 
-  bool winning() { return winning_; }
+  bool winning() const { return winning_; }
 
-  bool losing() { return losing_; }
+  bool losing() const { return losing_; }
 
   void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0; }
 
@@ -51,7 +51,7 @@ class GameTree::Node {
   /* represent is current player winning or losing */
   bool winning_, losing_;
 
-  Node *parent;
+  Node *parent_;
 };
 
 #endif
