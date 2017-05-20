@@ -1,8 +1,10 @@
 #ifndef GOMOKU_POINT_H
 #define GOMOKU_POINT_H
 
-#include "status.hpp"
 #include "chesstype.hpp"
+#include "status.hpp"
+
+#include <cstddef>
 
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Point {
@@ -21,15 +23,18 @@ class VirtualBoardGomoku<StatusLength>::Point {
   void setDirStatus(int dir, int index, STATUS* status) { dirStatus_[dir][index] = status; }
 
   /* get the status by diraction, copy the pointer's value to dest */
-  void getDirStatus(int dir, STATUS* dest);
+  void getDirStatus(int dir, STATUS* dest) const {
+    for (int i = 0; i < StatusLength; ++i)
+      dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
+  }
 
-  STATUS status() { return status_; }
+  STATUS status() const { return status_; }
   STATUS* statusRef() { return &status_; }
 
   int* absScore() { return absScore_; }
-  int absScore(bool color) { return absScore_[color]; }
+  int absScore(bool color) const { return absScore_[color]; }
 
-  int getScore() { return relScore_; }
+  int getScore() const { return relScore_; }
   void setScore(int black, int white) { absScore_[0] = black; absScore_[1] = white; }
 
   void setRelScore(int score) { relScore_ = score; }
@@ -47,12 +52,8 @@ class VirtualBoardGomoku<StatusLength>::Point {
   int relScore_;
 };
 
-#include "chesstype.hpp"
-#include "status.hpp"
 #include "../virtualboard.hpp"
 #include "virtualboardgomoku.hpp"
-
-#include <cstddef>
 
 #ifdef DEBUG
 #include "../objectcounter.hpp"
@@ -97,12 +98,6 @@ VirtualBoardGomoku<StatusLength>::Point::~Point() {
   #ifdef DEBUG
   ObjectCounter::unregisterPoint();
   #endif
-}
-
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Point::getDirStatus(int dir, STATUS* dest) {
-  for (int i = 0; i < StatusLength; ++i)
-    dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
 }
 
 #endif

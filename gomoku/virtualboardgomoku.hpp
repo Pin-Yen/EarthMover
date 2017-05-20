@@ -76,7 +76,7 @@ void VirtualBoardGomoku<StatusLength>::init() {
         for (int offset = -(StatusLength / 2), index = 0; offset <= (StatusLength / 2); ++offset) {
           if (offset == 0) continue;
 
-          int checkRow = r + dir[d][0] * offset,
+          const int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
@@ -127,7 +127,7 @@ template <int StatusLength>
 
           if (offset == 0) continue;
 
-          int checkRow = r + dir[d][0] * offset,
+          const int checkRow = r + dir[d][0] * offset,
             checkCol = c + dir[d][1] * offset;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
@@ -228,7 +228,7 @@ int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
       bool block[2] = {false, false};
 
       for (int offset = 1; offset <= (StatusLength / 2) + 1; ++offset) {
-        int checkRow = row + dir[d][0] * move * offset,
+        const int checkRow = row + dir[d][0] * move * offset,
           checkCol = col + dir[d][1] * move * offset;
 
         /* check if out the bound */
