@@ -24,6 +24,7 @@ GameTree::GameTree() {
 
 GameTree::~GameTree() {
   delete root;
+  delete currentBoard;
 }
 
 void GameTree::reset(VirtualBoard* board) {
