@@ -26,7 +26,7 @@ VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
 }
 
 int VirtualBoardFreeStyle::play(int row, int col) {
-  return = VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(row, col);
+  return VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(row, col);
 }
 
 #endif
