@@ -5,7 +5,7 @@ template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
 
  public:
-  static void initialize();
+  static void init();
 
   /* inputs status array in *status.
    * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
@@ -16,10 +16,10 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
   static const int SCORE_WIN = 10000000;
 
  private:
-  class TypeTree;
+  // class TypeTree;
   class OpeningTree;
 
-  static bool isInitialized;
+  static bool isInit;
 };
 
 #include "chesstype.hpp"
@@ -31,21 +31,20 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
 #include "openingtree.hpp"
 
 template <int StatusLength>
-bool VirtualBoardGomoku<StatusLength>::Evaluator::isInitialized = false;
+bool VirtualBoardGomoku<StatusLength>::Evaluator::isInit = false;
 
 template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::initialize() {
-  if (isInitialized) return;
-  isInitialized = true;
+void VirtualBoardGomoku<StatusLength>::Evaluator::init() {
+  if (isInit) return;
+  isInit = true;
 
-  TypeTree::initialize();
-  OpeningTree::initialize();
+  OpeningTree::init();
 }
 
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
-  TypeTree::classify(status, type);
-}
+// template <int StatusLength>
+// void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
+//   TypeTree::classify(status, type);
+// }
 
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(

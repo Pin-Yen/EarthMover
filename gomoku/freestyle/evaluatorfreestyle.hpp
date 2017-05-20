@@ -8,9 +8,13 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
    * -1 for lose, 0 for nothng, 1 for win */
   static int checkWinOrLose(int score) { return score >= SCORE_WIN; }
 
+  static void evaluateType(STATUS *status, ChessType* type[2]);
+
   /* inputs an array of ChessTypes of both players in type[4][2],
    * returns black's score in score[0], white's in score[1] */
   static void evaluateScore(ChessType* type[4][2], int *score);
+
+  class TypeTree;
 };
 
 #endif

@@ -5,14 +5,16 @@
 #include "../../objectcounter.hpp"
 #endif
 
-template <int StatusLength>
-class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
+#include "virtualboardfreestyle.hpp"
+
+class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree {
  public:
   static void classify(const STATUS *status, ChessType *(type[2]));
 
-  static void initialize();
+  static void init();
 
  private:
+  static bool isInit;
   struct Node {
     /* Next point occupied by:
      * 0: black, 1: white, 2:empty 3: bound */
@@ -70,13 +72,17 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
 #include "../../objectcounter.hpp"
 #endif
 
-/* initialize root*/
-template <int StatusLength>
-typename VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::Node*
-  VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::root = new Node();
 
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::initialize() {
+bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::isInit = false;
+
+/* initialize root*/
+typename VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::Node*
+  VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::root = new Node();
+
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::init() {
+  if (isInit) return;
+  isInit = true;
+
   /* initialize status*/
   STATUS status[analyze_length];
   for (int i = 0; i < analyze_length; ++i)
@@ -85,6 +91,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::initialize() {
   dfs(root, status, analyze_length / 2, -1, false, false);
 
   cutSameResultChild(root);
+
 }
 
 /* Depth First Search
@@ -95,8 +102,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::initialize() {
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
 
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::dfs(Node *root, STATUS *status, int location,
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::dfs(Node *root, STATUS *status, int location,
                                             int move, bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
@@ -152,8 +158,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::dfs(Node *root, STAT
   status[location] = EMPTY;
 }
 
-template <int StatusLength>
-ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::cutSameResultChild(Node *root) {
+ChessType** VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
   if (root->type[0] != NULL) {
@@ -190,8 +195,7 @@ ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::cutSameResult
   return currentType;
 }
 
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
   /* switch root */
   Node* node = root;
 
@@ -216,8 +220,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::classify(const STATU
     }
 }
 
-template <int StatusLength>
-ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree::typeAnalyze(STATUS *status, STATUS color,
+ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STATUS *status, STATUS color,
                                                           bool checkLevel) {
   int connect = 1;
   /* check the length of the connection around the analize point

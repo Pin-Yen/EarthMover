@@ -3,7 +3,7 @@
 
 class VirtualBoard {
  public:
-  virtual ~VirtualBoard() {}
+  virtual ~VirtualBoard() = 0;
 
   virtual VirtualBoard* create() = 0;
 

@@ -98,3 +98,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType* type[4]
     }
   }
 }
+
+void evaluateType(STATUS *status, ChessType* type[2]) {
+  TypeTree::classify(status, type);
+}
