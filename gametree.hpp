@@ -43,12 +43,12 @@ class GameTree {
    * keep select the child node from the current node, until reach the leaf or a winning node
    * puts the result to node,
    * returns -2 for a no result leaf node, -1 for FULL chessboard, 0 for losing, 1 for winning */
-  int selection(Node** node, VirtualBoard* board);
+  int selection(Node** node, VirtualBoard* board) const;
 
   /* MCTS function
    * simulate the game at most maxDepth move,
    * and return who win (black = 0, white = 1, tie = -1) */
-  int simulation(VirtualBoard* board);
+  int simulation(VirtualBoard* board) const;
 
   /* MCTS function
    * back propagation form node, until reach the current node */

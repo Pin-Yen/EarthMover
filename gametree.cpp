@@ -199,7 +199,7 @@ void GameTree::MCTSResult(int &row, int &col) const {
   #endif
 }
 
-int GameTree::selection(Node** node, VirtualBoard* board) {
+int GameTree::selection(Node** node, VirtualBoard* board) const {
   *node = currentNode;
 
   while (true) {
@@ -227,7 +227,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
   }
 }
 
-int GameTree::simulation(VirtualBoard* board) {
+int GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
   /* simulate until reach max depth */
   for (int d = 1; d <= MAX_DEPTH; ++d) {

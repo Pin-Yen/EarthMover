@@ -9,7 +9,7 @@ DisplayBoard::DisplayBoard() {
 }
 
 /* prints the current chesssboard */
-void DisplayBoard::invalidate() {
+void DisplayBoard::invalidate() const {
   for (int r = 0; r < CHESSBOARD_DIMEN + 2; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN + 2; ++c) {
       if (r > 0 && r < CHESSBOARD_DIMEN + 1 && c > 0 && c < CHESSBOARD_DIMEN + 1)
@@ -19,7 +19,7 @@ void DisplayBoard::invalidate() {
     }
 }
 
-void DisplayBoard::getInput(int *row, int *col) {
+void DisplayBoard::getInput(int *row, int *col) const {
   while (true) {
     std::cout << "enter the coordinate of next move (A1 ~ "
               << (char)('A' + CHESSBOARD_DIMEN - 1)
@@ -68,7 +68,7 @@ void DisplayBoard::getInput(int *row, int *col) {
 }
 
 /* print a part of the board*/
-void DisplayBoard::printBoard(int row, int col, int color) {
+void DisplayBoard::printBoard(int row, int col, int color) const {
   if (row == 0 || row == CHESSBOARD_DIMEN + 1)
     /* if at the first or the last row, print the coordinate with letter */
     std::cout << std::setw(4)
@@ -160,13 +160,12 @@ void DisplayBoard::printBoard(int row, int col, int color) {
 
 /* puts a new chess, if the point is not empty then return false */
 bool DisplayBoard::play(int row, int col) {
-
   if (row >= 15 || row < 0 || col >= 15 || col < 0) return false;
   if (point[row][col] != 0) return false;
 
-  ++playNo;
+  ++playNo_;
 
-  point[row][col] = playNo;
+  point[row][col] = playNo_;
 
   invalidate();
 
@@ -179,40 +178,7 @@ void DisplayBoard::wipe() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       point[r][c] = 0;
 
-  playNo = 0;
+  playNo_ = 0;
 
   invalidate();
-}
-
-/* search the area surrounding (row, col) for winning conditions */
-bool DisplayBoard::judge(int row, int col) {
-  /* index: 0→ 1↓ 2↗ 3↘ */
-  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
-
-  for (int d = 0; d < 4; ++d) {
-    int length = 1;
-
-    /* from (row, col), move backward and then forward along the chosen direction */
-    /* check if the same color appears consecutively */
-    for (int move = -1; move <= 1; move += 2)
-      for (int offset = 1; offset <= 4; ++offset) {
-        int checkRow = row + dir[d][0] * move * offset,
-          checkCol = col + dir[d][1] * move * offset;
-
-        /* check if out the bound */
-        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
-          checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
-          break;
-
-        int checkPoint = point[checkRow][checkCol];
-
-        if (checkPoint == 0 || checkPoint & 1 == playNo & 1)
-          break;
-
-        ++length;
-        if (length == 5) return true;
-      }
-  }
-
-  return false;
 }

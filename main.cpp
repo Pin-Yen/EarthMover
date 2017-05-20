@@ -71,7 +71,7 @@ void start_AI() {
     bool whoTurn = board->whoTurn();
 
     #ifdef ANALYZE
-    log << "==== PLAY #" << board->getPlayNo() << " ====\n";
+    log << "==== PLAY #" << board->playNo() << " ====\n";
     #endif
 
     std::cout << "AI searching..." << std::endl;

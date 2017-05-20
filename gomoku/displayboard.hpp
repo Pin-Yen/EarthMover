@@ -6,7 +6,7 @@ class DisplayBoard {
   DisplayBoard();
 
   /* get user's input */
-  void getInput(int *row, int *col);
+  void getInput(int *row, int *col) const;
 
   /* puts a new chess, if the point is not empty or outofbound then return false */
   bool play(int row, int col);
@@ -15,12 +15,9 @@ class DisplayBoard {
   void wipe();
 
   /* get who turn, 0 = black, 1 = white */
-  bool whoTurn() { return (playNo & 1); }
+  bool whoTurn() const { return (playNo_ & 1); }
 
-  /* search the area surrounding (row, col) for winning conditions */
-  bool judge(int row, int col);
-
-  int getPlayNo() { return playNo; }
+  int playNo() const { return playNo_; }
 
  private:
   static const int CHESSBOARD_DIMEN = 15;
@@ -30,13 +27,13 @@ class DisplayBoard {
   int point[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
   /* the total number of plays */
-  int playNo;
+  int playNo_;
 
   /* print the current chesssboard */
-  void invalidate();
+  void invalidate() const;
 
   /* print a part of the board */
-  void printBoard(int row, int col, int color);
+  void printBoard(int row, int col, int color) const;
 };
 
 #endif
