@@ -1,18 +1,18 @@
 #ifndef GOMOKU_FREESTYLE_VIRTUAL_BOARD_H
 #define GOMOKU_FREESTYLE_VIRTUAL_BOARD_H
 
-class VirtualBoardFreeStyle : public VirtualBoardGomoku<8> {
+class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
  public:
   VirtualBoardFreeStyle() : VirtualBoardGomoku() {}
   VirtualBoardFreeStyle(VirtualBoardFreeStyle* board) : VirtualBoardGomoku(board) {}
 
-  inline VirtualBoardFreeStyle* create() override;
+  inline VirtualBoardFreeStyle* create() final override;
 
-  VirtualBoardFreeStyle* clone() override {
+  VirtualBoardFreeStyle* clone() final override {
     return new VirtualBoardFreeStyle(this);
   }
 
-  inline int play(int row, int col) override;
+  inline int play(int row, int col) final override;
  private:
   class EvaluatorFreeStyle;
 };

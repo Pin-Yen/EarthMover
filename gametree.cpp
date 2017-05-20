@@ -1,8 +1,6 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
 #include "virtualboard.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
 
@@ -17,7 +15,6 @@
 #endif
 
 GameTree::GameTree() {
-  /* create the grand root(e.g. a root representing a blank board) */
   root = NULL;
   currentNode = NULL;
   currentBoard = NULL;
@@ -126,7 +123,7 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
   }
 }
 
-void GameTree::MCTSResult(int &row, int &col) {
+void GameTree::MCTSResult(int &row, int &col) const {
   if (currentNode->winning()) {
     for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
       for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -202,7 +199,7 @@ void GameTree::MCTSResult(int &row, int &col) {
   #endif
 }
 
-int GameTree::selection(Node** node, VirtualBoard* board) {
+int GameTree::selection(Node** node, VirtualBoard* board) const {
   *node = currentNode;
 
   while (true) {
@@ -230,7 +227,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) {
   }
 }
 
-int GameTree::simulation(VirtualBoard* board) {
+int GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
   /* simulate until reach max depth */
   for (int d = 1; d <= MAX_DEPTH; ++d) {
@@ -251,7 +248,7 @@ void GameTree::backProp(Node* node, bool result) {
   // note: cannot use do-while here
   while (node != currentNode) {
     node->update(result);
-    node = node->getParent();
+    node = node->parent();
     result = !result;
   }
   node->update(result);
@@ -261,7 +258,7 @@ void GameTree::backProp(Node* node) {
   // note: cannot use do-while here
   while (node != currentNode) {
     node->update();
-    node = node->getParent();
+    node = node->parent();
   }
   node->update();
 }

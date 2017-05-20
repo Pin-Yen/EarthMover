@@ -12,16 +12,16 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   ~VirtualBoardGomoku() override;
 
-  int getScore(int row, int col) override;
+  int getScore(int row, int col) const final override;
 
   /* get the sume of every point's score */
-  int getScoreSum() override;
-
-  /* get who turn, black = 0, white = 1 */
-  bool whoTurn() override { return (playNo_ & 1); }
+  int getScoreSum() const final override;
 
   /* get the highest score's position, if every point is not empty, return false */
-  bool getHSP(int &row, int &col) override;
+  bool getHSP(int &row, int &col) const final override;
+
+  /* get who turn, black = 0, white = 1 */
+  bool whoTurn() const final override { return (playNo_ & 1); }
 
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
@@ -33,9 +33,6 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   template <class Eva>
   void init();
-
-  template <class Eva>
-  void destroy();
 
  private:
   class Point;
@@ -163,12 +160,12 @@ VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
 }
 
 template <int StatusLength>
-int VirtualBoardGomoku<StatusLength>::getScore(int row, int col) {
+int VirtualBoardGomoku<StatusLength>::getScore(int row, int col) const {
   return point_[row][col]->getScore();
 }
 
 template <int StatusLength>
-int VirtualBoardGomoku<StatusLength>::getScoreSum() {
+int VirtualBoardGomoku<StatusLength>::getScoreSum() const {
   int sum = 0;
   int score;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -181,7 +178,7 @@ int VirtualBoardGomoku<StatusLength>::getScoreSum() {
 }
 
 template <int StatusLength>
-bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) {
+bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) const {
   /* current max score, current same score amount */
   int max = 0, same = 0;
 
