@@ -1,144 +1,87 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
-#include "../../virtualboard.hpp"
-#include "../virtualboardgomoku.hpp"
-#include "virtualboardfreestyle.hpp"
-#include "../evaluator.hpp"
-#include "typetree.hpp"
+#ifndef TYPE_TREE_H
+#define TYPE_TREE_H
+
+#ifdef DEBUG
+#include "../objectcounter.hpp"
+#endif
+template <int StatusLength>
+template <class DerivedTypeTree>
+class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
+ public:
+
+  // Given a status array, classify its chesstype and returns black's type in type[0], white's type in type[1].
+  static void classify(const STATUS *status, ChessType *(type[2])) final;
+
+  static void init();
+
+ protected:
+  struct Node {
+    /* Next point occupied by:
+     * 0: black, 1: white, 2:empty 3: bound */
+    Node *childNode[4];
+
+    struct ChessType *type[2];
+
+    bool jump;
+
+    Node() {
+      jump = false;
+
+      #ifdef DEBUG
+      ObjectCounter::registerTypeTreeNode();
+      #endif
+    }
+
+    ~Node() {
+      delete type[0]; delete type[1];
+
+      #ifdef DEBUG
+      ObjectCounter::unregisterTypeTreeNode();
+      #endif
+    }
+  };
+
+ private:
+
+  /* cut the tree node that all child has same result */
+  static ChessType** cutSameResultChild() final;
+
+  /* Analyze chesstype when reaching leaf in typetree */
+  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel) final;
+};
+
+#include "chesstype.hpp"
+#include "status.hpp"
+#include "../virtualboard.hpp"
+#include "virtualboardgomoku.hpp"
 
 #include <iostream>
 #include <iomanip>
 
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../objectcounter.hpp"
 #endif
 
-bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::isInit = false;
+template <int StatusLength>
+template <class DerivedTypeTree>
+void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::init() {
+  // check if tree exists
+  if (DerivedTypeTree::isInit) return;
+  DerivedTypeTree::isInit = true;
 
-/* initialize root*/
-typename VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::Node*
-  VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::root = new Node();
+  DerivedTypeTree::root = new Node();
 
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::init() {
-  if (isInit) return;
-  isInit = true;
+  DerivedTypeTree::plantTree();
 
-  /* initialize status*/
-  STATUS status[analyze_length];
-  for (int i = 0; i < analyze_length; ++i)
-    status[i] = EMPTY;
-
-  dfs(root, status, analyze_length / 2, -1, false, false);
-
-  cutSameResultChild(root);
+  DerivedTypeTree::cutSameResultChild();
 }
 
-/* Depth First Search
- * parameters of the initial call should be:
- * location: length / 2, move = -1, connect = 0 */
+template <int StatusLength>
+template <class DerivedTypeTree>
+void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::classify(const STATUS *status, ChessType *(type[2])) {
+  Node* node = DerivedTypeTree::root;
 
-/* connect is used to prevent already exist five while length == 11
- * for example : OOOOO*OOX-- ; --X  *OOOOO
- *               ^^^^^               ^^^^^ */
-
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::dfs(Node *root, STATUS *status, int location,
-                                            int move, bool blackBlock, bool whiteBlock) {
-  /* if status == black or white, set block == true*/
-  switch (status[location]) {
-    case BLACK:
-      blackBlock = true; break;
-    case WHITE:
-      whiteBlock = true;
-  }
-
-  if ((blackBlock && whiteBlock) || status[location] == BOUND ||
-      location <= 0 || location >= analyze_length - 1) {
-    if (move == 1) {
-      /* reached leaf */
-
-      /* set type */
-      root->type[0] = typeAnalyze(status, BLACK, true);
-      root->type[1] = typeAnalyze(status, WHITE, true);
-
-      /* set child node to NULL*/
-      for (int i = 0; i < 4; ++i)
-        root->childNode[i] = NULL;
-
-      return;
-    } else {
-      /* set this node to jump node */
-      root->jump = true;
-
-      /* jump to middle of the status */
-      move += 2;
-      location = analyze_length / 2;
-
-      /* reset block */
-      blackBlock = false; whiteBlock = false;
-    }
-  }
-
-  /* move location */
-  location += move;
-
-  root->type[0] = NULL; root->type[1] = NULL;
-
-  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
-
-  for (int i = 0; i < 4; ++i) {
-    root->childNode[i] = new Node();
-    status[location] = s[i];
-    dfs(root->childNode[i], status, location, move, blackBlock, whiteBlock);
-  }
-
-  /* restore current location to EMPTY
-   * note: without this line, the classification process should still work fine,
-   * but will result in printing out garbage values on EMPTY points */
-  status[location] = EMPTY;
-}
-
-ChessType** VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::cutSameResultChild(Node *root) {
-  ChessType **currentType = NULL;
-
-  if (root->type[0] != NULL) {
-    currentType = root->type;
-    return currentType;
-  }
-
-  bool canCut = true;
-
-  for (int i = 0; i < 4; ++i)
-    if (root->childNode[i] != NULL) {
-      /* if this child node is not NULL, recursion and get return */
-      ChessType** returnType = cutSameResultChild(root->childNode[i]);
-
-      if (returnType == NULL)
-        /* if children cannot be cut, then this node also cannot be cut */
-        canCut = false;
-      else if (currentType == NULL)
-        currentType = returnType;
-      else if (*currentType[0] != *returnType[0] || *currentType[1] != *returnType[1])
-        /* if different child has different result, cannot cut this node*/
-        canCut = false;
-    }
-
-  if (!canCut) return NULL;
-  /* cut this node, free all children and set this node's type */
-  root->type[0] = new ChessType(currentType[0]);
-  root->type[1] = new ChessType(currentType[1]);
-
-  for (int i = 0; i < 4; ++i)
-    if (root->childNode[i] != NULL)
-      delete root->childNode[i];
-
-  return currentType;
-}
-
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::classify(const STATUS *status, ChessType *(type[2])) {
-  /* switch root */
-  Node* node = root;
-
-  for (int move = -1, start = classify_length / 2 - 1; ; move = 1, ++start)
+  for (int move = -1, start = DerivedTypeTree::classify_length / 2 - 1; ; move = 1, ++start)
     for (int checkPoint = start; ; checkPoint += move) {
       /* according to the status to enter the child node */
       node = node->childNode[status[checkPoint]];
@@ -159,14 +102,54 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::classify(const STATUS 
     }
 }
 
-ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STATUS *status, STATUS color,
-                                                          bool checkLevel) {
+template <int StatusLength>
+template <class DerivedTypeTree>
+ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild() {
+  ChessType **currentType = NULL;
+
+  if (DerivedTypeTree::root->type[0] != NULL) {
+    currentType = DerivedTypeTree::root->type;
+    return currentType;
+  }
+
+  bool canCut = true;
+
+  for (int i = 0; i < 4; ++i)
+    if (DerivedTypeTree::root->childNode[i] != NULL) {
+      /* if this child node is not NULL, recursion and get return */
+      ChessType** returnType = cutSameResultChild(DerivedTypeTree::root->childNode[i]);
+
+      if (returnType == NULL)
+        /* if children cannot be cut, then this node also cannot be cut */
+        canCut = false;
+      else if (currentType == NULL)
+        currentType = returnType;
+      else if (*currentType[0] != *returnType[0] || *currentType[1] != *returnType[1])
+        /* if different child has different result, cannot cut this node*/
+        canCut = false;
+    }
+
+  if (!canCut) return NULL;
+  /* cut this node, free all children and set this node's type */
+  DerivedTypeTree::root->type[0] = new ChessType(currentType[0]);
+  DerivedTypeTree::root->type[1] = new ChessType(currentType[1]);
+
+  for (int i = 0; i < 4; ++i)
+    if (DerivedTypeTree::root->childNode[i] != NULL)
+      delete DerivedTypeTree::root->childNode[i];
+
+  return currentType;
+}
+
+template <int StatusLength>
+template <class DerivedTypeTree>
+ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::typeAnalyze(STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
   /* check the length of the connection around the analize point
    * under the following, we call this chess group "center group" (CG)
    * for example: --X O*OOX-- ; OOOO* O X
    *                   ^^^^      ^^^^^     */
-  for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
+  for (int move = -1, start = DerivedTypeTree::analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
       if (status[checkPoint] != color) break;
 
@@ -180,7 +163,7 @@ ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STAT
     /* CG's length < 5 */
 
     /* play at the analize point */
-    status[analyze_length / 2] = color;
+    status[DerivedTypeTree::analyze_length / 2] = color;
 
     /* try to find the left and right bound of CG
      * if it's empty, see this point as new analize point
@@ -188,7 +171,7 @@ ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STAT
     ChessType *lType = NULL, *rType = NULL;
     int level = 0;
 
-    for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
+    for (int move = -1, start = DerivedTypeTree::analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
         /* if reach CG's bound */
         if (status[checkPoint] != color) {
@@ -199,13 +182,13 @@ ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STAT
           if (status[checkPoint] == EMPTY) {
             /* make a new status array */
 
-            STATUS newStatus[analyze_length];
+            STATUS newStatus[DerivedTypeTree::analyze_length];
 
             /* transform from origin status */
-            for (int i = 0; i < analyze_length; ++i) {
-              int transformation_index = i - (analyze_length / 2 - checkPoint);
+            for (int i = 0; i < DerivedTypeTree::analyze_length; ++i) {
+              int transformation_index = i - (DerivedTypeTree::analyze_length / 2 - checkPoint);
 
-              if (transformation_index < 0 || transformation_index >= analyze_length)
+              if (transformation_index < 0 || transformation_index >= DerivedTypeTree::analyze_length)
                 /* if out of bound, set it to bound */
                 newStatus[i] = BOUND;
               else
@@ -261,7 +244,7 @@ ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STAT
         }
 
     /* restore the analize point to empty */
-    status[analyze_length / 2] = EMPTY;
+    status[DerivedTypeTree::analyze_length / 2] = EMPTY;
 
     /* keep lType > rType */
     if (*lType < *rType)
@@ -302,3 +285,4 @@ ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::typeAnalyze(STAT
     return returnType;
   }
 }
+#endif

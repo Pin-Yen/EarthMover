@@ -15,6 +15,9 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
  protected:
   static void init();
 
+  template <class derivedTypeTree>
+  class TypeTree;
+
  private:
   class OpeningTree;
 };
