@@ -13,12 +13,10 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
   static const int SCORE_WIN = 10000000;
 
  protected:
-  static void init();
 
   template <class derivedTypeTree>
   class TypeTree;
 
- private:
   class OpeningTree;
 };
 
@@ -28,11 +26,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
 #include "virtualboardgomoku.hpp"
 #include "point.hpp"
 #include "openingtree.hpp"
-
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::init() {
-  OpeningTree::init();
-}
 
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(

@@ -40,14 +40,15 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
       #endif
     }
   };
+ protected:
+  /* Analyze chesstype when reaching leaf in typetree */
+  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 
  private:
 
   /* cut the tree node that all child has same result */
-  static ChessType** cutSameResultChild();
+  static ChessType** cutSameResultChild(Node *root);
 
-  /* Analyze chesstype when reaching leaf in typetree */
-  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 };
 
 #include "chesstype.hpp"
@@ -73,7 +74,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::ini
 
   DerivedTypeTree::plantTree();
 
-  DerivedTypeTree::cutSameResultChild();
+  DerivedTypeTree::cutSameResultChild(DerivedTypeTree::root);
 }
 
 template <int StatusLength>
@@ -104,20 +105,20 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cla
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild() {
+ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *root) {
   ChessType **currentType = NULL;
 
-  if (DerivedTypeTree::root->type[0] != NULL) {
-    currentType = DerivedTypeTree::root->type;
+  if (root->type[0] != NULL) {
+    currentType = root->type;
     return currentType;
   }
 
   bool canCut = true;
 
   for (int i = 0; i < 4; ++i)
-    if (DerivedTypeTree::root->childNode[i] != NULL) {
+    if (root->childNode[i] != NULL) {
       /* if this child node is not NULL, recursion and get return */
-      ChessType** returnType = cutSameResultChild(DerivedTypeTree::root->childNode[i]);
+      ChessType** returnType = cutSameResultChild(root->childNode[i]);
 
       if (returnType == NULL)
         /* if children cannot be cut, then this node also cannot be cut */
@@ -131,12 +132,12 @@ ChessType** VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTre
 
   if (!canCut) return NULL;
   /* cut this node, free all children and set this node's type */
-  DerivedTypeTree::root->type[0] = new ChessType(currentType[0]);
-  DerivedTypeTree::root->type[1] = new ChessType(currentType[1]);
+  root->type[0] = new ChessType(currentType[0]);
+  root->type[1] = new ChessType(currentType[1]);
 
   for (int i = 0; i < 4; ++i)
-    if (DerivedTypeTree::root->childNode[i] != NULL)
-      delete DerivedTypeTree::root->childNode[i];
+    if (root->childNode[i] != NULL)
+      delete root->childNode[i];
 
   return currentType;
 }

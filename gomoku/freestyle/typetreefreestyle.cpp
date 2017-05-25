@@ -16,8 +16,8 @@
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::isInit = false;
 
 /* initialize root*/
-typename VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::Node*
-  VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::root = new Node();
+typename VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*
+  VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::root = new Node();
 
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
@@ -39,7 +39,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
 /* connect is used to prevent already exist five while length == 11
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTree::dfs(Node *root, STATUS *status, int location,
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *root, STATUS *status, int location,
                                             int move, bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
