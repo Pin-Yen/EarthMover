@@ -5,7 +5,7 @@
 class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator {
 
  public:
-  static void init();
+  static inline void init();
 
   /* check win lor lose (call by virtualboard::play)
    * -1 for lose, 0 for nothng, 1 for win */
