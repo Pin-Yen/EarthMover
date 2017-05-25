@@ -7,14 +7,17 @@
 #endif
 
 class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public VirtualBoardGomoku<8>::Evaluator::TypeTree<VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle>{
+ // Declare base class as friend to use CRTP
+ friend class VirtualBoardGomoku<8>::Evaluator::TypeTree< VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle >;
  public:
 
  private:
+
   static bool isInit;
 
   static Node* root;
 
-  /* Constructs a ??? typetree (by calling dfs). Should be trimmed before use. */
+  /* Constructs a untrimmed typetree (by calling dfs). Should be trimmed before use. */
   static void plantTree();
 
   /* Depth First Search, given a root and status seed. Grows the tree.
