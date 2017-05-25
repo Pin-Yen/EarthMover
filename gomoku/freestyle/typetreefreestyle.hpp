@@ -1,12 +1,12 @@
-#ifndef TYPE_TREE_H
-#define TYPE_TREE_H
+#ifndef TYPE_TREE_FREESTYLE_H
+#define TYPE_TREE_FREESTYLE_H
 
-// #include "../typetree.hpp"
+#include "../typetree.hpp"
 #ifdef DEBUG
 #include "../../objectcounter.hpp"
 #endif
 
-class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public VirtualBoardGomoku<8>::Evaluator::TypeTree<TypeTreeFreeStyle>{
+class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public VirtualBoardGomoku<8>::Evaluator::TypeTree<VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle>{
  public:
 
  private:
