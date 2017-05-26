@@ -108,6 +108,8 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType* type[
       /* opponent multi-3 */
       if (selfColor = BLACK)
         score[selfColor] += SCORE_DOUBLELIVE3[DEFENSE];
+      else
+        score[selfColor] -= SCORE[3][1][0][0];
     }
   }
 
