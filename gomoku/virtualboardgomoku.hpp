@@ -1,6 +1,6 @@
 #ifndef GOMOKU_VIRTUAL_BOARD_H
 #define GOMOKU_VIRTUAL_BOARD_H
-
+#include "../virtualboard.hpp"
 template <int StatusLength>
 class VirtualBoardGomoku : public VirtualBoard {
  public:

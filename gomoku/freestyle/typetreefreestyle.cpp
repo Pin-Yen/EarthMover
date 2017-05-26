@@ -13,6 +13,10 @@
 #include "../../objectcounter.hpp"
 #endif
 
+VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*
+ VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::root = NULL;
+
+
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::isInit = false;
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {

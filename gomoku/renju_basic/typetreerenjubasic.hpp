@@ -3,7 +3,7 @@
 #ifdef DEBUG
 #include "../../objectcounter.hpp"
 #endif
-
+#include "../typetree.hpp"
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public VirtualBoardGomoku<10>::Evaluator::TypeTree<VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic> {
  // Declare base class as friend to use CRTP
  friend class VirtualBoardGomoku<10>::Evaluator::TypeTree< VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic >;

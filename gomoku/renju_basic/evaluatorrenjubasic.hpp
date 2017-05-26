@@ -1,6 +1,5 @@
 #ifndef GOMOKU_RENJU_BASIC_EVALUATOR_RENJU_BASIC_H
 #define GOMOKU_RENJU_BASIC_EVALUATOR_RENJU_BASIC_H
-
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::Evaluator {
  public:
   static inline void init();

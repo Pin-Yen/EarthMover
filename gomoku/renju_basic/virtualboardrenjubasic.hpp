@@ -1,6 +1,6 @@
 #ifndef GOMOKU_RENJU_BASIC_VIRTUAL_BOARD_H
 #define GOMOKU_RENJU_BASIC_VIRTUAL_BOARD_H
-
+#include "../virtualboardgomoku.hpp"
 class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
  public:
   VirtualBoardRenjuBasic() : VirtualBoardGomoku() {}

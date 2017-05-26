@@ -6,7 +6,7 @@
 #include "typetreerenjubasic.hpp"
 
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(STATUS *status, ChessType* type[2]) {
-  TypeTree::classify(status, type);
+  TypeTree<VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic>::classify(status, type);
 }
 
 /* score[0]:black's total score,[1]:white's */

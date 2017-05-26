@@ -14,6 +14,20 @@
 
 bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::isInit = false;
 
+VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::Node*
+ VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::root = NULL;
+
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::plantTree() {
+
+  // create tree seed
+  STATUS status[analyze_length];
+  for (int i = 0; i < analyze_length; ++i)
+    status[i] = EMPTY;
+
+  // grow tree
+  dfs(root, status, analyze_length / 2, -1, 0, 0, false, false);
+}
+
 /* Depth First Search
  * parameters of the initial call should be:
  * location: length / 2, move = -1, connect = 0 */
