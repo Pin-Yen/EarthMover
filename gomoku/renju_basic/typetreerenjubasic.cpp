@@ -1,10 +1,8 @@
 #include "../chesstype.hpp"
 #include "../status.hpp"
-#include "../../virtualboard.hpp"
-#include "../virtualboardgomoku.hpp"
-#include "virtualboardfreestyle.hpp"
-#include "../evaluator.hpp"
-#include "typetreefreestyle.hpp"
+#include "virtualboardrenjubasic.hpp"
+#include "evaluatorrenjubasic.hpp"
+#include "typetreerenjubasic.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -13,19 +11,8 @@
 #include "../../objectcounter.hpp"
 #endif
 
-bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::isInit = false;
 
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
-
-  // create tree seed
-  STATUS status[analyze_length];
-  for (int i = 0; i < analyze_length; ++i)
-    status[i] = EMPTY;
-
-  // grow tree
-  dfs(root, status, analyze_length / 2, -1, false, false);
-}
-
+bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::isInit = false;
 
 /* Depth First Search
  * parameters of the initial call should be:
@@ -34,8 +21,9 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
 /* connect is used to prevent already exist five while length == 11
  * for example : OOOOO*OOX-- ; --X  *OOOOO
  *               ^^^^^               ^^^^^ */
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *root, STATUS *status, int location,
-                                            int move, bool blackBlock, bool whiteBlock) {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *root, STATUS *status, int location,
+                                            int move,  int blackConnect, int whiteConnect,
+                                            bool blackBlock, bool whiteBlock) {
   /* if status == black or white, set block == true*/
   switch (status[location]) {
     case BLACK:
@@ -68,6 +56,17 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
 
       /* reset block */
       blackBlock = false; whiteBlock = false;
+
+      /* reset connect */
+      blackConnect = 0; whiteConnect = 0;
+    }
+  } else {
+    /* if status == black or white, increase connect */
+    switch (status[location]) {
+      case BLACK:
+        ++blackConnect; break;
+      case WHITE:
+        ++whiteConnect;
     }
   }
 
@@ -79,9 +78,16 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
+    /* if connect == 4, stop playing same color at this point to prevent appearing five */
+    if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4)) {
+      root->childNode[i] = NULL;
+      continue;
+    }
+
     root->childNode[i] = new Node();
     status[location] = s[i];
-    dfs(root->childNode[i], status, location, move, blackBlock, whiteBlock);
+    dfs(root->childNode[i], status, location, move,
+        blackConnect, whiteConnect, blackBlock, whiteBlock);
   }
 
   /* restore current location to EMPTY

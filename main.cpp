@@ -1,11 +1,18 @@
-#include "gomoku/chesstype.hpp"
-#include "gomoku/status.hpp"
-#include "virtualboard.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-#include "gomoku/point.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
-#include "gomoku/displayboard.hpp"
+// mutual dependencies
 #include "gametree.hpp"
+#include "virtualboard.hpp"
+
+#include "gomoku/chesstype.hpp"
+#include "gomoku/displayboard.hpp"
+#include "gomoku/point.hpp"
+#include "gomoku/status.hpp"
+#include "gomoku/virtualboardgomoku.hpp"
+// freestyle dependencies
+#include "gomoku/freestyle/virtualboardfreestyle.hpp"
+// renju_basic dependencies
+#include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
+
+
 
 #include <time.h>
 #include <assert.h>
@@ -57,9 +64,19 @@ void start_AI() {
   std::cin >> cycle;
 
   DisplayBoard* board = new DisplayBoard();
-  VirtualBoardFreeStyle vb;
   GameTree* tree = new GameTree();
-  tree->reset(&vb);
+
+  int rule;
+  std::cout << "freestyle (1), renju-basic (2)\n";
+  std::cin >> rule;
+
+  VirtualBoard *vb;
+  switch (rule) {
+    case 1: vb = new VirtualBoardFreeStyle(); break;
+    case 2: vb = new VirtualBoardRenjuBasic(); break;
+  }
+  tree->reset(vb);
+
 
   #ifdef ANALYZE
   Log log;
@@ -121,11 +138,17 @@ void start_AI() {
     #endif
 
     /* update tree and handle result */
-    if (tree->play(row, col)) {
-      /* somebody wins */
-      std::cout << (!whoTurn ? "black" : "white") << " wins\n";
-      break;
+    int result = tree->play(row, col);
+    switch (result) {
+      case 1 :
+        std::cout << "Five in a row !\n"
+                  << (!whoTurn ? "black" : "white") << " wins\n";
+        break;
+      case -1 :
+        std::cout << "Black played on a forbidden point !\n"
+                  << (!whoTurn ? "white" : "black") << " wins\n";
     }
+
   }
 }
 

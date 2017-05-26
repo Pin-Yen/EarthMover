@@ -1,6 +1,8 @@
 #ifndef GOMOKU_EVALUATOR_H
 #define GOMOKU_EVALUATOR_H
 
+#include "virtualboardgomoku.hpp"
+
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
@@ -10,7 +12,7 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
 
   static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
-  static const int SCORE_WIN = 10000000;
+  static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
 
  protected:
 

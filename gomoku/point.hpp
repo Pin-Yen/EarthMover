@@ -3,6 +3,7 @@
 
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "virtualboardgomoku.hpp"
 
 #include <cstddef>
 
