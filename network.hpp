@@ -1,3 +1,6 @@
+#include <vector>
+#include <iostream>
+
 class Network {
  public:
   Network();
@@ -9,6 +12,7 @@ class Network {
     Neuron();
     ~Neuron();
 
+    struct Output;
     struct Synapse {
       Synapse() { value = rand() / RAND_MAX - 0.5; }
 
@@ -36,24 +40,22 @@ class Network {
 
   class HiddenNeuron : public Neuron {
    public:
-    Neuron(int upperSize) {
-      for (int i = 0; i < upperSize; ++i)
-        synapse_[i] = new Synapse();
-
+    HiddenNeuron(int upperSize) {
+      synapses_.reserve(upperSize);
+      for (Synapse* synapse : synapses_) synapse = new Synapse();
       gate_ = new Gate();
-
       output_ = new Output();
     }
 
-    ~Neuron() {
-      delete [] synapse_;
+    ~HiddenNeuron() {
+      for (Synapse* synapse : synapses_) delete synapse;
       delete gate_;
       delete output_;
     }
 
    private:
-    Synapse* synapse_[];
+    std::vector<Synapse*> synapses_;
     Gate* gate_;
     Output* output_;
-  }
+  };
 };
