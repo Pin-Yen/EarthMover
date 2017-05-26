@@ -23,8 +23,9 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public Virt
   /* Depth First Search, given a root and status seed. Grows the tree.
    * parameters of the initial call should be:
    * currentLocation: length/2, move = -1 */
-  static void dfs(Node *root, STATUS *status, int location, int move,
-                  bool blackBlock, bool whiteBlock);
+  static void dfs(Node *root, STATUS *status, int location, int move, bool blackBlock, bool whiteBlock);
+
+  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 
   static const int analyze_length = 9, classify_length = 8;
 };

@@ -145,10 +145,9 @@ void start_AI() {
                   << (!whoTurn ? "black" : "white") << " wins\n";
         break;
       case -1 :
-        std::cout << "Black played on a forbidden point !\n"
-                  << (!whoTurn ? "white" : "black") << " wins\n";
+        std::cout << "Black played on a forbidden point !\nwhite wins\n";
     }
-
+    if (result != 0) break;
   }
 }
 

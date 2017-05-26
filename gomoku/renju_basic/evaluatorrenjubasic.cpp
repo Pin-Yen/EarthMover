@@ -75,6 +75,8 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType* type[
     }
   }
 
+  if (count[BLACK][4][LIVE] + count[BLACK][4][DEAD] >= 2 || count[BLACK][3][LIVE] >= 2) forbidden = true;
+
   /* [0] attack, [1] defense */
 
   /* calculate score */
@@ -86,10 +88,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType* type[
       continue;
     } else if (count[selfColor][4][DEAD] >= 2) {
       /* self muliy-4 */
-      if (selfColor = BLACK)
-        forbidden = true;
-      else
-        score[selfColor] += SCORE_DOUBLE4[ATTACK];
+      score[selfColor] += SCORE_DOUBLE4[ATTACK];
     } else if (count[selfColor][4][DEAD] > 0 &&
                count[selfColor][3][LIVE] > 0) {
       /* self d4-l3 */
@@ -104,10 +103,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType* type[
       score[selfColor] += SCORE_DEAD4LIVE3[DEFENSE];
     } else if (count[selfColor][3][LIVE] >= 2) {
       /* self multi-3 */
-      if (selfColor = BLACK)
-        forbidden = true;
-      else
-        score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
+      score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
     } else if (count[opponentColor][3][LIVE] >= 2) {
       /* opponent multi-3 */
       if (selfColor = BLACK)
