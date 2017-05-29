@@ -6,9 +6,6 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
-  /* inputs status array in *status.
-   * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
-  static void evaluateType(STATUS *status, ChessType* type[2]);
 
   static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
