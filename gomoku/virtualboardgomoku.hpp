@@ -76,10 +76,10 @@ void VirtualBoardGomoku<StatusLength>::init() {
           if (offset == 0) continue;
 
           const int checkRow = r + dir[d][0] * offset,
-            checkCol = c + dir[d][1] * offset;
+                    checkCol = c + dir[d][1] * offset;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
-            checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
+              checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer to NULL */
             point_[r][c]->setDirStatus(d, index, NULL);
           else
@@ -95,7 +95,7 @@ void VirtualBoardGomoku<StatusLength>::init() {
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
       for (int d = 0; d < 4; ++d) {
         /* get status array */
-        STATUS status[8]; point_[r][c]->getDirStatus(d, status);
+        STATUS status[StatusLength]; point_[r][c]->getDirStatus(d, status);
 
         Eva::evaluateType(status, point_[r][c]->type[d]);
       }
@@ -127,10 +127,10 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLe
           if (offset == 0) continue;
 
           const int checkRow = r + dir[d][0] * offset,
-            checkCol = c + dir[d][1] * offset;
+                    checkCol = c + dir[d][1] * offset;
 
           if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
-            checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
+              checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
             /* if out of bound, set pointer to NULL */
             point_[r][c]->setDirStatus(d, index, NULL);
           else
@@ -245,7 +245,7 @@ int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
         }
 
         /* get status array */
-        STATUS status[8]; point_[checkRow][checkCol]->getDirStatus(d, status);
+        STATUS status[StatusLength]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
         Eva::evaluateType(status, point_[checkRow][checkCol]->type[d]);
 
