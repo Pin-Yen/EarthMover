@@ -6,9 +6,33 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
-  /* inputs status array in *status.
-   * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
+
+  /*** MUST be implemented in derived class ***
+   * initializes Evaluator */
+  static void init();
+
+  /*** MUST be implemented in derived class ***
+   * analyzes both player's chesstype
+   * params:
+   *        status  : status array
+   *        type[2] : pointer to a 2d array, storing result type. [0] for black's and [1] for white's
+   */
   static void evaluateType(STATUS *status, ChessType* type[2]);
+
+  /*** MUST be implemented in derived class ***
+   * evaluate score of the given type
+   * params:
+            type[d][p]: typeArray in direction d, player p
+   *        score     : a pointer to an array of size 2 to store results, [0] for black's and [1] for white's
+   */
+  static void evaluateScore(ChessType* type[4][2], int *score);
+
+  /*** MUST be implemented in derived class ***
+   * params:
+   *        score: the score of the point to be checked
+   * return value: -1 : lose.  0 : nothing. 1 : win.
+   */
+  static int checkWinOrLose(int score);
 
   static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
