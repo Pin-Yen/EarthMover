@@ -1,0 +1,82 @@
+body {
+  padding: 20px;
+  width: 140px;
+  margin: 50px auto;
+  background: #EEEEEE;
+}
+
+* {
+  font-family: 'Ubuntu', sans-serif;
+  box-sizing: border-box;
+}
+
+.flip-wrapper {
+  position: relative;
+  margin: auto;
+}
+
+.flip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid black;
+  height: 100%;
+  margin: 0;
+  padding: 0 8px;
+  color: #FAFAFA;
+  border-radius: 6px;
+  background: #444444;
+  font-size: 100px;
+  text-shadow: 0 -1px  black;
+  box-shadow: 0 1px 0 rgba(255,255,255,.3) inset,
+              0 0 1px rgba(255,255,255,.3) inset;
+}
+
+.top, .back, .next, .bottom {
+  height: 60px;
+  overflow: hidden;
+}
+
+.top, .next {
+  line-height: 120px;
+  transform: rotateX(0deg);
+  border-radius: 6px 6px 0 0;
+}
+
+.top {
+  animation: fliptop 1000ms ease-in-out infinite;
+  transform-origin: bottom;
+  z-index: 2;
+  backface-visibility: hidden;
+}
+
+.bottom, .back {
+  line-height: 0;
+  margin-top: 60px;
+  border-radius: 0 0 6px 6px;
+}
+
+.back {
+  animation: flipback 1000ms ease-in-out infinite;
+  transform-origin: top;
+  backface-visibility: hidden;
+  transform: rotateX(180deg);
+  z-index: 2;
+}
+
+.bottom {
+  transform: rotateX(0deg);
+  z-index: 1
+}
+
+@-webkit-keyframes fliptop {
+  to {
+    transform: rotateX(180deg);
+  }
+}
+
+@-webkit-keyframes flipback {
+  to {
+    transform: rotateX(0deg);
+  }
+}
