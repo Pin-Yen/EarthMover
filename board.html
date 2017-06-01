@@ -11,6 +11,9 @@
   <link rel="stylesheet" type="text/css" href="gomoku/src/toolbar.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
+
+  <link rel="stylesheet" type="text/css" href="gomoku/src/clock.css">
+
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game'
@@ -85,7 +88,32 @@
 
       <div id="pi-background-opp" class="pi-background opp white">
         <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
-        <span id="pi-timer-opp" class="pi-timer opp white">00:00</span>
+        <span id="pi-timer-opp" class="pi-timer opp white">:
+          <div class="flip-wrapper min-ten">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper min-one">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-ten">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-one">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+        </span>
       </div>
       <span id="pi-name-opp" class="pi-name opp">EarthMover</span>
     </span>
@@ -105,7 +133,32 @@
 
       <div id="pi-background-sel" class="pi-background sel black">
         <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
-        <span id="pi-timer-sel" class="pi-timer sel black">00:00</span>
+        <span id="pi-timer-sel" class="pi-timer sel black">:
+          <div class="flip-wrapper min-ten">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper min-one">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-ten">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-one">
+            <div class="flip-next">0</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">0</div>
+            <div class="flip-bottom">0</div>
+          </div>
+        </span>
       </div>
       <span id="pi-name-sel" class="pi-name sel">You</span>
     </span>

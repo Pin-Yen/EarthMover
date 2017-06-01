@@ -1,18 +1,12 @@
-body {
-  padding: 20px;
-  width: 140px;
-  margin: 50px auto;
-  background: #EEEEEE;
-}
-
 * {
   font-family: 'Ubuntu', sans-serif;
   box-sizing: border-box;
 }
 
 .flip-wrapper {
+  height: 120px;
   position: relative;
-  margin: auto;
+  margin: 100px;
 }
 
 .flip {
@@ -20,8 +14,9 @@ body {
   top: 0;
   left: 0;
   border: 1px solid black;
-  height: 100%;
+  height: 60px;
   margin: 0;
+  overflow: hidden;
   padding: 0 8px;
   color: #FAFAFA;
   border-radius: 6px;
@@ -32,11 +27,6 @@ body {
               0 0 1px rgba(255,255,255,.3) inset;
 }
 
-.top, .back, .next, .bottom {
-  height: 60px;
-  overflow: hidden;
-}
-
 .top, .next {
   line-height: 120px;
   transform: rotateX(0deg);
@@ -44,10 +34,7 @@ body {
 }
 
 .top {
-  animation: fliptop 1000ms ease-in-out infinite;
   transform-origin: bottom;
-  z-index: 2;
-  backface-visibility: hidden;
 }
 
 .bottom, .back {
@@ -56,12 +43,14 @@ body {
   border-radius: 0 0 6px 6px;
 }
 
-.back {
-  animation: flipback 1000ms ease-in-out infinite;
-  transform-origin: top;
+.top, .back {
   backface-visibility: hidden;
-  transform: rotateX(180deg);
   z-index: 2;
+}
+
+.back {
+  transform-origin: top;
+  transform: rotateX(180deg);
 }
 
 .bottom {
@@ -69,13 +58,73 @@ body {
   z-index: 1
 }
 
+.top-ani {
+  -webkit-animation: fliptop 400ms ease-in-out;
+  -moz-animation: fliptop 400ms ease-in-out;
+  animation: fliptop 400ms ease-in-out;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+.back-ani {
+  -webkit-animation: flipback 400ms ease-in-out;
+  -moz-animation: flipback 400ms ease-in-out;
+  animation: flipback 400ms ease-in-out;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
 @-webkit-keyframes fliptop {
+  from {
+    -webkit-transform: rotateX(0deg);
+  }
+  to {
+    -webkit-transform: rotateX(180deg);
+  }
+}
+
+@-moz-keyframes fliptop {
+  from {
+    -moz-transform: rotateX(0deg);
+  }
+  to {
+    -moz-transform: rotateX(180deg);
+  }
+}
+
+@keyframes fliptop {
+  from {
+    transform: rotateX(0deg);
+  }
   to {
     transform: rotateX(180deg);
   }
 }
 
 @-webkit-keyframes flipback {
+  from {
+    -webkit-transform: rotateX(180deg);
+  }
+  to {
+    -webkit-transform: rotateX(0deg);
+  }
+}
+
+@-moz-keyframes flipback {
+  from {
+    -moz-transform: rotateX(180deg);
+  }
+  to {
+    -moz-transform: rotateX(0deg);
+  }
+}
+
+@keyframes flipback {
+  from {
+    transform: rotateX(180deg);
+  }
   to {
     transform: rotateX(0deg);
   }
