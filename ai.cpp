@@ -2,6 +2,8 @@
 #include "virtualboard.hpp"
 #include "gomoku/virtualboard.hpp"
 #include "gomoku/freestyle/virtualboard.hpp"
+#include "const.hpp"
+
 #include <assert.h>
 #include <iostream>
 
@@ -88,8 +90,8 @@ void AI::reset(int level, int rule) {
     delete vb;
 
   switch (rule) {
-    case FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
-    //case RENJU_BASIC: vb = new VirtualBoardRenjuBasic(); break;
+    case GOMOKU_FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
+    case GOMIKU_RENJU_BASIC: vb = new VirtualBoardRenjuBasic(); break;
     default: assert(0);
   }
 

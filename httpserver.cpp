@@ -1,4 +1,5 @@
 #include "ai.hpp"
+#include "const.hpp"
 #include "httpserver.hpp"
 
 #include <algorithm>
@@ -114,9 +115,9 @@ void HttpServer::handleStart(std::string requestBody) {
 
   int rule;
   if (ruleString == "renju_basic")
-    rule = AI::RENJU_BASIC;
+    rule = GOMOKU_RENJU_BASIC;
   else if (ruleString == "freestyle")
-    rule = AI::FREESTYLE;
+    rule = GOMOKU_FREESTYLE;
 
   earthMover->reset(level, rule);
 
