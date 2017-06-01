@@ -30,28 +30,21 @@
 }
 
 .pi-timer {
+  background: #222;
   margin: auto;
   text-align: center;
+  color: white;
   padding: 0;
   position: absolute;
-  width: 65%;
-  bottom: 0;
+  width: 55%;
 }
 
 .pi-timer.opp {
-  right: 5%;
+  left: 30%;
 }
 
 .pi-timer.sel {
-  left: 5%;
-}
-
-.pi-timer.black {
-  color: white;
-}
-
-.pi-timer.white {
-  color: black;
+  right: 30%;
 }
 
 .pi-name {
@@ -112,9 +105,9 @@
   .pi-background {
     border-radius: 3vw;
     height: 4vw;
-    left: 10%;
+    left: .5vw;
     position: absolute;
-    width: 80%;
+    width: 12vw;
   }
 
   .pi-background.opp {
@@ -126,9 +119,11 @@
   }
 
   .pi-timer {
-    font-size: 2.4vw;
-    height: 4vw;
-    line-height: 4vw;
+    border-radius: .4vw;
+    font-size: 2vw;
+    height: 2.8vw;
+    line-height: 2.8vw;
+    top: .6vw;
   }
 
   .pi-name {
@@ -200,8 +195,9 @@
 
   .pi-timer {
     font-size: 3.2vh;
-    height: 6vh;
-    line-height: 6vh;
+    height: 4.4vh;
+    top: 0.8vh;
+    line-height: 4.4vh;
   }
 
   .pi-name {
