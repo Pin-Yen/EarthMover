@@ -59,12 +59,20 @@
 }
 
 .top-ani {
+  -webkit-animation: fliptop 400ms ease-in-out;
+  -moz-animation: fliptop 400ms ease-in-out;
   animation: fliptop 400ms ease-in-out;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 }
 
 .back-ani {
+  -webkit-animation: flipback 400ms ease-in-out;
+  -moz-animation: flipback 400ms ease-in-out;
   animation: flipback 400ms ease-in-out;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 }
 
@@ -77,7 +85,43 @@
   }
 }
 
+@-moz-keyframes fliptop {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(180deg);
+  }
+}
+
+@keyframes fliptop {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(180deg);
+  }
+}
+
 @-webkit-keyframes flipback {
+  from {
+    transform: rotateX(180deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@-moz-keyframes flipback {
+  from {
+    transform: rotateX(180deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes flipback {
   from {
     transform: rotateX(180deg);
   }
