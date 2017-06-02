@@ -91,8 +91,8 @@ void AI::reset(int level, int rule) {
     delete vb;
 
   switch (rule) {
-    case GOMOKU_FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
-    case GOMOKU_RENJU_BASIC: vb = new VirtualBoardRenjuBasic(); break;
+    case (int)Rules::GOMOKU_FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
+    case (int)Rules::GOMOKU_RENJU_BASIC: vb = new VirtualBoardRenjuBasic(); break;
     default: assert(0);
   }
 

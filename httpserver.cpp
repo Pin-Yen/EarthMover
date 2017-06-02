@@ -123,7 +123,7 @@ void HttpServer::handleStart(std::string requestBody) {
   try {
     rule = parsedBody.at("rule");
     level = parsedBody.at("level");
-  } catch (std::exception e) {
+  } catch (std::exception& e) {
     std::cerr << "failed to parse requestBody:\n"<< e.what();
     HttpResponse response(400);
     return;
@@ -146,7 +146,7 @@ bool HttpServer::handlePlay(std::string requestBody) {
     userRow = parsedBody.at("row");
     userCol = parsedBody.at("col");
     shouldAiThink = parsedBody.at("think");
-  } catch (std::exception e) {
+  } catch (std::exception& e) {
     std::cerr << "failed to parse requestBody:\n"<< e.what();
     HttpResponse response(400);
     return false;

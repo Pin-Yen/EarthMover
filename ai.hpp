@@ -1,7 +1,7 @@
 #ifndef AI_H_
 #define AI_H_
 
-#include "gomoku/displayboard.hpp"
+#include "virtualboard.hpp"
 #include "gametree.hpp"
 #include <thread>
 

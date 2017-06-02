@@ -2,6 +2,5 @@
 #define CONST_HPP_
 
 // game rule ids
-const int GOMOKU_FREESTYLE = 1;
-const int GOMOKU_RENJU_BASIC = 2;
+enum class Rules {GOMOKU_FREESTYLE, GOMOKU_RENJU_BASIC};
 #endif
