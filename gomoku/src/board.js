@@ -265,9 +265,9 @@ function notifyWinner(winnerColor) {
   alert(winnerColor + " wins !");
 }
 
-// post rchildren().equest, params should be json type
+// post request, params should be json type
 function post(params, path) {
-  var http = new XMLHttpRchildren().equest();
+  var http = new XMLHttpRequest();
   http.open('POST', path);
 
   http.onreadystatechange = function() {
