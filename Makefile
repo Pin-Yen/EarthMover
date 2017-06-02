@@ -141,7 +141,8 @@ obj/httpserver.o: httpserver.cpp ai.hpp gomoku/displayboard.hpp gametree.hpp \
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/networkmain.o: networkmain.cpp httpserver.hpp ai.hpp \
- gomoku/displayboard.hpp gametree.hpp virtualboard.hpp
+ gomoku/displayboard.hpp gametree.hpp virtualboard.hpp\
+ lib/json.hpp
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/log.o : log.hpp
