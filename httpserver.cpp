@@ -2,6 +2,8 @@
 #include "const.hpp"
 #include "httpserver.hpp"
 
+#include "lib/json.hpp"
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -13,9 +15,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <exception>
 
 #define BUFFER_SIZE 10000
 #define DEBUG_NETWORK
+
+using json = nlohmann::json;
 
 HttpServer::HttpServer() {
   earthMover = new AI();
@@ -110,14 +115,19 @@ void HttpServer::redirect(std::string *directory) {
 }
 
 void HttpServer::handleStart(std::string requestBody) {
-  int level = atoi(findAttributeInJson(requestBody, "level").c_str());
-  std::string ruleString = findAttributeInJson(requestBody, "rule");
+  json parsedBody = json::parse(requestBody);
 
-  int rule;
-  if (ruleString == "renju_basic")
-    rule = GOMOKU_RENJU_BASIC;
-  else if (ruleString == "freestyle")
-    rule = GOMOKU_FREESTYLE;
+  int rule, level;
+
+  // extracts game parameters from request
+  try {
+    rule = parsedBody.at("rule");
+    level = parsedBody.at("level");
+  } catch (std::exception e) {
+    std::cerr << "failed to parse requestBody:\n"<< e.what();
+    HttpResponse response(400);
+    return;
+  }
 
   earthMover->reset(level, rule);
 
@@ -126,10 +136,21 @@ void HttpServer::handleStart(std::string requestBody) {
 }
 
 bool HttpServer::handlePlay(std::string requestBody) {
-  /* extract row & col from encoded request body */
-  int userRow = atoi(findAttributeInJson(requestBody, "row").c_str());
-  int userCol = atoi(findAttributeInJson(requestBody, "col").c_str());
-  bool shouldAiThink = (findAttributeInJson(requestBody, "think") == "true");
+  json parsedBody = json::parse(requestBody);
+
+  int userRow, userCol;
+  bool shouldAiThink;
+
+  // extract row & col from request body
+  try{
+    userRow = parsedBody.at("row");
+    userCol = parsedBody.at("col");
+    shouldAiThink = parsedBody.at("think");
+  } catch (std::exception e) {
+    std::cerr << "failed to parse requestBody:\n"<< e.what();
+    HttpResponse response(400);
+    return false;
+  }
 
   bool isWinning = false; // true: winning, false: not winning.
   bool winnerColor; //true: black, false: white.
