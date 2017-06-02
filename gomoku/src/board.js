@@ -354,9 +354,9 @@ function btnDialogOKClick() {
 
   game = {black: black, white: white};
 
-  var level = $('#dl-select').val();
+  var rule = $('input[name="rule"]:checked').val(), level = $('#dl-select').val();
 
-  post({level: level}, 'start');
+  post({rule: rule, level: level}, 'start');
 
   // deside player's place
   if (game.black == 'human') {
