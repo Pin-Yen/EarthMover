@@ -1,6 +1,6 @@
 #ifndef GOMOKU_FREESTYLE_VIRTUAL_BOARD_H
 #define GOMOKU_FREESTYLE_VIRTUAL_BOARD_H
-
+#include "../virtualboardgomoku.hpp"
 class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
  public:
   VirtualBoardFreeStyle() : VirtualBoardGomoku() {}

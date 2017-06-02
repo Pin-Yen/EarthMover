@@ -1,6 +1,7 @@
 #ifndef HTTP_SERVER_H_
 #define HTTP_SERVER_H_
 
+#include "ai.hpp"
 #include <string>
 #include <fstream>
 #include <netinet/in.h> /* sockaddr_in*/

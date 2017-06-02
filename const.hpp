@@ -1,4 +1,4 @@
-#ifdef CONST_HPP_
+#ifndef CONST_HPP_
 #define CONST_HPP_
 
 // game rule ids
