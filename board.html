@@ -20,19 +20,24 @@
        NOTE: in this scope, dialog is abridged as dl -->
   <div id="dialog-new-game">
     <div class="dl-body">
-      <span class="dl-block left">
+      <span class="dl-block rule">
+        Rule:<br>
+        <input type="radio" name="rule" value="0" checked="true">freestyle
+        <input type="radio" name="rule" value="1">renju-basic
+      </span>
+      <span class="dl-block player-black">
         Black:<br>
         <input type="radio" name="black" value="human" checked="true">human<br>
         <input id="dl-name-black" class="dl-name" type="text" value="you"><br>
-        <input type="radio" name="black" value="computer">computer<br>
+        <input type="radio" name="black" value="computer">computer
       </span>
-      <span class="dl-block right">
+      <span class="dl-block player-white">
         White:<br>
         <input type="radio" name="white" value="human" checked="true">human<br>
         <input id="dl-name-white" class="dl-name" type="text" value="you"><br>
-        <input type="radio" name="white" value="computer">computer<br>
+        <input type="radio" name="white" value="computer">computer
       </span>
-      <span class="dl-block bottom">
+      <span class="dl-block level">
         Computer Level
         <select id="dl-select">
           <option value="0">NORMAL</option>
@@ -88,7 +93,7 @@
 
       <div id="pi-background-opp" class="pi-background opp white">
         <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
-        <span id="pi-timer-opp" class="pi-timer opp white">:
+        <span id="pi-timer-opp" class="pi-timer opp">:
           <div class="flip-wrapper min-ten">
             <div class="flip-next">0</div>
             <div class="flip-top">0</div>
@@ -133,7 +138,7 @@
 
       <div id="pi-background-sel" class="pi-background sel black">
         <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
-        <span id="pi-timer-sel" class="pi-timer sel black">:
+        <span id="pi-timer-sel" class="pi-timer sel">:
           <div class="flip-wrapper min-ten">
             <div class="flip-next">0</div>
             <div class="flip-top">0</div>
