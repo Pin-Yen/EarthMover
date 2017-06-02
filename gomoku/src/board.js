@@ -354,7 +354,7 @@ function btnDialogOKClick() {
 
   game = {black: black, white: white};
 
-  var rule = $('input[name="rule"]:checked').val(), level = $('#dl-select').val();
+  var rule = parseInt($('input[name="rule"]:checked').val()), level = parseInt($('#dl-select').val());
 
   post({rule: rule, level: level}, 'start');
 
