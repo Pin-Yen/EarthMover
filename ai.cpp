@@ -15,19 +15,12 @@ AI::AI() {
 }
 
 AI::~AI() {
-  if (tree != NULL)
-    delete tree;
-  if (vb != NULL)
-    delete vb;
+  if (tree != NULL) delete tree;
+  if (vb != NULL) delete vb;
 }
 
 void AI::think(int *row, int *col) {
-  if (backgroundThread != NULL) {
-    stopBackgroundThread = true;
-    backgroundThread->join();
-    delete backgroundThread;
-    backgroundThread = NULL;
-  }
+  stopBGThread();
 
   #ifdef DEBUG_MCTS_PROCESS
     int batch = 100;
@@ -54,16 +47,15 @@ void AI::think(int *row, int *col) {
   #endif
 }
 
-bool AI::play(int row, int col, bool triggerBackgroundThread ) {
+int AI::play(int row, int col, bool triggerBackgroundThread ) {
   // stop background thinking to avoid memory corruption.
   stopBGThread();
-  bool hasSomeoneWin = tree->play(row, col);
+  int result = tree->play(row, col);
 
-  if (triggerBackgroundThread) {
+  if (triggerBackgroundThread)
     startBGThread();
-  }
 
-  return hasSomeoneWin;
+  return result;
 }
 
 void AI::startBGThread() {

@@ -20,9 +20,10 @@ class AI {
   /* think of a play, and return it. */
   void think(int *Row, int *Col);
 
-  /* plays a new point, returns true if someone wins after this move.
+  /* plays a new point
+   * return value: 1: self-winning, -1: opp-winning, 0 no winning
    * triggerBackgroundThread: true: start bg thread */
-  bool play(int row, int col, bool triggerBackgroundThread);
+  int play(int row, int col, bool triggerBackgroundThread);
 
   /* resets AI for a new game */
   void reset(int level, int rule);
