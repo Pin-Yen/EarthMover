@@ -17,6 +17,11 @@ EM : mkdir $(objects) $(objects_network)
 	 g++ -o EM $(objects) $(objects_network) $(generalFlags) -pthread -O3
 EM : optimizeFlag = -O3
 
+# Network Debug
+NetworkDebug : mkdir $(objects) $(objects_network)
+	 g++ -o EM $(objects) $(objects_network) $(generalFlags) -pthread -O0 -g
+NetworkDebug : optimizeFlag = -O0 -g
+
 # Analyze build
 analyze : specificFlags = -DANALYZE
 analyze : optimizeFlag = -O3
