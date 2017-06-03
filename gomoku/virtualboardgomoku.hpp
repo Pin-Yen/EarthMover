@@ -60,6 +60,8 @@ class VirtualBoardGomoku : public VirtualBoard {
 template <int StatusLength>
 template <class Eva>
 void VirtualBoardGomoku<StatusLength>::init() {
+  isInit = true;
+
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -110,6 +112,8 @@ void VirtualBoardGomoku<StatusLength>::init() {
 
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLength>* source) {
+  isInit = true;
+
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
@@ -148,6 +152,8 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLe
 
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
+  if (!isInit) return;
+
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       delete point_[r][c];

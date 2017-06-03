@@ -275,38 +275,37 @@ function post(params, path) {
   http.open('POST', path);
 
   http.onreadystatechange = function() {
-    if (http.readyState == 4 && (http.status == 200 || http.status == 204)) {
+    if (!(http.readyState == 4 && (http.status == 200 || http.status == 204))) return;
 
-      if (http.status == 200){
-        var response = JSON.parse(http.responseText);
+    if (path != 'start') {
+      var response = JSON.parse(http.responseText);
 
-        if (!humanTurn() && response.row != -1 && response.col != -1) {
-          // change JSON to array, and play
-          play([response.col, response.row]);
-        }
+      if (path == 'think') {
+        // play at ai's respond point
+        play([response.col, response.row]);
 
-        if (response.winner != 'none') {
-          notifyWinner(response.winner);
-          return;
-        }
-      }
-
-      if (humanTurn()) {
-        if (http.status == 200 && response.col == mousePos[0] && response.row == mousePos[1]) {
+        if (response.col == mousePos[0] && response.row == mousePos[1])
           mousePos = [-1, -1];
-        } else {
-          draw(mousePos);
-        }
-        boardEnable = true;
-      } else {
-        post({ row: -1, col: -1, think: true}, 'play');
       }
 
-      if (playNo & 1)
-        timer.white.start();
-      else
-        timer.black.start();
+      // check if someone win
+      if (response.winner != -1) {
+        notifyWinner(response.winner == 0 ? 'Black' : 'White');
+        return;
+      }
     }
+
+    if (humanTurn()) {
+      draw(mousePos);
+      boardEnable = true;
+    } else {
+      post(null, 'think');
+    }
+
+    if (playNo & 1)
+      timer.white.start();
+    else
+      timer.black.start();
   };
 
 
@@ -389,6 +388,8 @@ function btnDialogOKClick() {
   initBoard();
 
   // initialize timer
+  if (timer.black != null) timer.black.stop();
+  if (timer.white != null) timer.white.stop();
   timer = {black: new Timer($('.pi-timer.black')), white: new Timer($('.pi-timer.white'))};
 
   $('#dialog-new-game').hide();

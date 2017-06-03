@@ -93,13 +93,15 @@ void HttpServer::listenConnection() {
       redirect(&directory);
 
       // handle requests according to their directory path
-      if (directory == "/start") {
-        handleStart(requestBody);
-      } else if(directory == "/play") {
+      if (directory == "/play")
         stopGame = handlePlay(requestBody);
-      } else {
+      else if (directory == "/think")
+        stopGame = handleThink();
+      else if (directory == "/start")
+        handleStart(requestBody);
+      else
         handleResourceRequest(requestBody, directory);
-      }
+
       close(server);
     }
   }
@@ -138,57 +140,80 @@ void HttpServer::handleStart(std::string requestBody) {
 bool HttpServer::handlePlay(std::string requestBody) {
   json parsedBody = json::parse(requestBody);
 
-  int userRow, userCol;
-  bool shouldAiThink;
+  int row, col;
 
   // extract row & col from request body
-  try{
-    userRow = parsedBody.at("row");
-    userCol = parsedBody.at("col");
-    shouldAiThink = parsedBody.at("think");
+  try {
+    row = parsedBody.at("row");
+    col = parsedBody.at("col");
+    //shouldAiThink = parsedBody.at("think");
   } catch (std::exception& e) {
     std::cerr << "failed to parse requestBody:\n"<< e.what();
     HttpResponse response(400);
     return false;
   }
 
-  bool isWinning = false; // true: winning, false: not winning.
-  bool winnerColor; //true: black, false: white.
-
-  // If Ai should play the move specified in the request.
-  if (userRow != -1 && userCol != -1) {
-    // third param: Think in background if not requested to play by the client.
-    isWinning = earthMover->play(userRow, userCol, !shouldAiThink);
-  }
-
-  int AiRow = -1, AiCol = -1;
-
-  // EM think & play if user's move is not winning & EM's play is requested by the client.
-  if (shouldAiThink & !isWinning) {
-    earthMover->think(&AiRow, &AiCol);
-    isWinning = earthMover->play(AiRow, AiCol, true);
-  }
+  // 1: self winning, -1: opp winning, 0: not winning.
+  // third param: Donot think in background.
+  int result = earthMover->play(row, col, false);
 
   // Fill in the response data
   HttpResponse response(200);
-  response.setContentType("application/json")
-          .addJson("row", AiRow)
-          .addJson("col", AiCol);
+  response.setContentType("application/json");
 
-  if (isWinning)
-    response.addJson("winner", earthMover->whoTurn() ? "white" : "black");
-  else
-    response.addJson("winner", "none");
+  /* result   whoTurn   winner
+   *    0                 -1
+   *    0                 -1
+   *   -1        0         1
+   *   -1        1         0
+   *    1        0         0
+   *    1        1         1 */
+  response.addJson("winner", result == 0 ? -1 : ((result == -1) ^ earthMover->whoTurn()));
 
-  std::cout << response.getHeaderString();
-  std::cout << response.getBody();
+  std::cout << response.getHeaderString()
+            << response.getBody();
 
   // Sent response
   send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
   send(server, response.getBody(), response.getBodyLength(), 0);
 
   // Returns true to stop gameloop if someone is winning.
-  return isWinning;
+  return result != 0;
+}
+
+bool HttpServer::handleThink() {
+  // EM think.
+  int row, col;
+  earthMover->think(&row, &col);
+
+  // 1: self winning, -1: opp winning, 0: not winning.
+  // third param: Donot think in background.
+  int result = earthMover->play(row, col, true);
+
+  // Fill in the response data
+  HttpResponse response(200);
+  response.setContentType("application/json")
+          .addJson("row", row)
+          .addJson("col", col);
+
+  /* result   whoTurn   winner
+   *    0                 -1
+   *    0                 -1
+   *   -1        0         1
+   *   -1        1         0
+   *    1        0         0
+   *    1        1         1 */
+  response.addJson("winner", result == 0 ? -1 : ((result == -1) ^ earthMover->whoTurn()));
+
+  std::cout << response.getHeaderString()
+            << response.getBody();
+
+  // Sent response
+  send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
+
+  // Returns true to stop gameloop if someone is winning.
+  return result != 0;
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {

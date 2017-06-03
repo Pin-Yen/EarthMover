@@ -39,6 +39,9 @@ class HttpServer {
   /* Plays a point specified in request. */
   bool handlePlay(std::string requestBody);
 
+  /* request AI think */
+  bool handleThink();
+
   /* response a resource specified by "directory" to client, or some http error. */
   void handleResourceRequest(std::string requestBody, std::string directory);
 

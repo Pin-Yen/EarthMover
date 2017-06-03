@@ -23,6 +23,9 @@ class VirtualBoard {
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
   virtual int play(int row, int col) = 0;
+
+ protected:
+  bool isInit = false;
 };
 
 VirtualBoard::~VirtualBoard() {}
