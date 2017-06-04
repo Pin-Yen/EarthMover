@@ -18,7 +18,7 @@ class VirtualBoardGomoku : public VirtualBoard {
   int getScoreSum() const final override;
 
   /* get the highest score's position, if every point is not empty, return false */
-  bool getHSP(int &row, int &col) const final override;
+  bool getHSP(int* row, int* col) const final override;
 
   /* get who turn, black = 0, white = 1 */
   bool whoTurn() const final override { return (playNo_ & 1); }
@@ -182,7 +182,7 @@ int VirtualBoardGomoku<StatusLength>::getScoreSum() const {
 }
 
 template <int StatusLength>
-bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) const {
+bool VirtualBoardGomoku<StatusLength>::getHSP(int* row, int* col) const {
   /* current max score, current same score amount */
   int max = 0, same = 0;
 
@@ -196,11 +196,11 @@ bool VirtualBoardGomoku<StatusLength>::getHSP(int &row, int &col) const {
         same = 1;
 
         max = score;
-        row = r; col = c;
+        *row = r; *col = c;
       } else if (score == max) {
         ++same;
         if (((double)rand() / RAND_MAX) <= (1. / same)) {
-          row = r; col = c;
+          *row = r; *col = c;
         }
       }
     }

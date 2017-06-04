@@ -43,7 +43,7 @@ void AI::think(int *row, int *col) {
         tree->MCTS(2000, 2000);
     }
 
-    tree->MCTSResult(*row, *col);
+    tree->MCTSResult(row, col);
   #endif
 }
 

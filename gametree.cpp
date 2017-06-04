@@ -97,7 +97,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
 
 }
 
-void GameTree::MCTS(int maxCycle, bool &stop) {
+void GameTree::MCTS(int maxCycle, const bool &stop) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
@@ -123,13 +123,13 @@ void GameTree::MCTS(int maxCycle, bool &stop) {
   }
 }
 
-void GameTree::MCTSResult(int &row, int &col) const {
+void GameTree::MCTSResult(int* row, int* col) const {
   if (currentNode->winning()) {
     for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
       for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
         if (currentNode->childNode[r][c] != NULL)
           if (currentNode->childNode[r][c]->losing()) {
-            row = r; col = c;
+            *row = r; *col = c;
           }
   } else {
     int mostTimes = -1;
@@ -141,14 +141,14 @@ void GameTree::MCTSResult(int &row, int &col) const {
 
           /* priority order: playout -> score */
           if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
-            row = r;
-            col = c;
+            *row = r;
+            *col = c;
             mostTimes = currentNode->childNode[r][c]->totalPlayout();
             score = currentBoard->getScore(r, c);
           } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
             if (currentBoard->getScore(r, c) > score) {
-              row = r;
-              col = c;
+              *row = r;
+              *col = c;
               score = currentBoard->getScore(r, c);
             }
           }
@@ -157,9 +157,9 @@ void GameTree::MCTSResult(int &row, int &col) const {
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode->totalPlayout()
-            << "  best: " << (char)(col + 65) << row + 1
-            << "  sim: " << currentNode->childNode[row][col]->totalPlayout()
-            << "  WinR: " << currentNode->childNode[row][col]->winRate()
+            << "  best: " << (char)(*col + 65) << *row + 1
+            << "  sim: " << currentNode->childNode[*row][*col]->totalPlayout()
+            << "  WinR: " << currentNode->childNode[*row][*col]->winRate()
             << "  W: " << currentNode->winning()
             << "  L: " << currentNode->losing()
             << std::endl;
@@ -181,16 +181,16 @@ void GameTree::MCTSResult(int &row, int &col) const {
   Log::precision(3);
   log << "           sim    winRate      score       UCB    score + UCB\n";
   for (int i = 0; i < sortedList.size() ; ++i) {
-    int row = std::get<0>(sortedList[i]);
-    int col = std::get<1>(sortedList[i]);
+    int *row = std::get<0>(sortedList[i]);
+    int *col = std::get<1>(sortedList[i]);
 
-    double winRate = currentNode->childNode[row][col]->winRate(),
-           score = (double)(currentBoard->getScore(row, col)) / currentBoard->getScoreSum(),
-           ucb = currentNode->getUCBValue(row, col);
+    double winRate = currentNode->childNode[*row][*col]->winRate(),
+           score = (double)(currentBoard->getScore(*row, *col)) / currentBoard->getScoreSum(),
+           ucb = currentNode->getUCBValue(*row, *col);
 
     log << std::setw(2) << i + 1 << ". "
-        << (char)('A' + col) << std::setw(2) << row + 1
-        << "  " << std::setw(5) << currentNode->childNode[row][col]->totalPlayout()
+        << (char)('A' + *col) << std::setw(2) << *row + 1
+        << "  " << std::setw(5) << currentNode->childNode[*row][*col]->totalPlayout()
         << "      " << std::setw(5) << winRate
         << "     " << std::setw(6) << score
         << "     " << std::setw(5) << ucb
@@ -233,7 +233,7 @@ int GameTree::simulation(VirtualBoard* board) const {
   for (int d = 1; d <= MAX_DEPTH; ++d) {
     int r, c;
     /* return tie(-1) if every point is not empty point */
-    if (!board->getHSP(r, c))
+    if (!board->getHSP(&r, &c))
       return -1;
 
     /* if win, return */

@@ -18,7 +18,7 @@ class VirtualBoard {
   virtual bool whoTurn() const = 0;
 
   /* get the highest score's position, if every point is not empty, return false */
-  virtual bool getHSP(int &row, int &col) const = 0;
+  virtual bool getHSP(int* row, int* col) const = 0;
 
   /* puts a new chess at (row ,col),
    * returns 1 if wins after play, -1 if lose */
