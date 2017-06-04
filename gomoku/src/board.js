@@ -241,13 +241,13 @@ function humanTurn() {
 function initPlayer(player, color, human) {
   var oppColor = (color == 'black' ? 'white' : 'black');
 
-  // set png
+  // set chess
   $('#pi-chess-' + player).attr('src', 'gomoku/src/chess_' + color + '.png');
   $('#pi-icon-' + player).attr('src', 'gomoku/src/' + (human ? 'human' : 'icon') + '.png');
 
-  // set background
-  $('#pi-background-' + player).removeClass(oppColor);
-  $('#pi-background-' + player).addClass(color);
+  // set timer chess background
+  $('#pi-timer-chess-background-' + player).removeClass(oppColor);
+  $('#pi-timer-chess-background-' + player).addClass(color);
 
   // set timer
   $('#pi-timer-' + player).removeClass(oppColor);

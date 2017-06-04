@@ -9,14 +9,14 @@
   z-index: 1;
 }
 
-.pi-background.black {
+.pi-timer-chess-background.black {
   background: linear-gradient(to bottom, #888, #555, #666, #777, #888, #999);
   background: -moz-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
   background: -o-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
   background: -webkit-linear-gradient(top, #888, #555, #666, #777, #888, #999);
 }
 
-.pi-background.white {
+.pi-timer-chess-background.white {
   background: linear-gradient(to bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
   background: -moz-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
   background: -o-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
@@ -36,15 +36,15 @@
   color: white;
   padding: 0;
   position: absolute;
-  width: 55%;
+  width: 59%;
 }
 
 .pi-timer.opp {
-  left: 30%;
+  left: 28%;
 }
 
 .pi-timer.sel {
-  right: 30%;
+  right: 28%;
 }
 
 .pi-name {
@@ -63,11 +63,11 @@
 }
 
 .pi-chess.opp {
-  left: 5%;
+  left: 4%;
 }
 
 .pi-chess.sel {
-  right: 5%;
+  right: 4%;
 }
 
 @media screen and (orientation: landscape) {
@@ -102,19 +102,19 @@
     bottom: 2.5vw;
   }
 
-  .pi-background {
+  .pi-timer-chess-background {
     border-radius: 3vw;
-    height: 4vw;
+    height: 3.6vw;
     left: .5vw;
     position: absolute;
     width: 12vw;
   }
 
-  .pi-background.opp {
+  .pi-timer-chess-background.opp {
     top: 14vw;
   }
 
-  .pi-background.sel {
+  .pi-timer-chess-background.sel {
     bottom: 14vw;
   }
 
@@ -123,25 +123,25 @@
     font-size: 2vw;
     height: 2.8vw;
     line-height: 2.8vw;
-    top: .6vw;
+    top: .4vw;
   }
 
   .pi-name {
     border-width: .4vw;
     font-size: 2vw;
-    left: 5%;
+    left: .5vw;
     line-height: 3.2vw;
     position: absolute;
     text-align: center;
-    width: 92%;
+    width: 12vw;
   }
 
   .pi-name.opp {
-    top: 20vw;
+    top: 19.6vw;
   }
 
   .pi-name.sel {
-    bottom: 20vw;
+    bottom: 19.6vw;
   }
 }
 
@@ -177,7 +177,7 @@
     right: 1vh;
   }
 
-  .pi-background {
+  .pi-timer-chess-background {
     border-radius: 3vh;
     height: 6vh;
     position: absolute;
@@ -185,12 +185,12 @@
     width: 20vh;
   }
 
-  .pi-background.opp {
-    left: 8.5vh;
+  .pi-timer-chess-background.opp {
+    left: 9vh;
   }
 
-  .pi-background.sel {
-    right: 8.5vh;
+  .pi-timer-chess-background.sel {
+    right: 9vh;
   }
 
   .pi-timer {
