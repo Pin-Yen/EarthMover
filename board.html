@@ -2,18 +2,16 @@
 
 <html>
 <head>
-  <script type="text/javascript"
-          src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Ubuntu">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
+
   <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/dialog.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/toolbar.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
-
-  <link rel="stylesheet" type="text/css" href="gomoku/src/clock.css">
-
+  <link rel="stylesheet" type="text/css" href="gomoku/src/timer.css">
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game'
@@ -91,7 +89,7 @@
       <!-- icon -->
       <img id="pi-icon-opp" src="gomoku/src/icon.png" class="pi-icon opp">
 
-      <div id="pi-background-opp" class="pi-background opp white">
+      <div id="pi-timer-chess-background-opp" class="pi-timer-chess-background opp white">
         <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
         <span id="pi-timer-opp" class="pi-timer opp white">:
           <div class="flip-wrapper min-ten">
@@ -136,7 +134,7 @@
       <!-- icon -->
       <img id="pi-icon-sel" src="gomoku/src/human.png" class="pi-icon sel">
 
-      <div id="pi-background-sel" class="pi-background sel black">
+      <div id="pi-timer-chess-background-sel" class="pi-timer-chess-background sel black">
         <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
         <span id="pi-timer-sel" class="pi-timer sel black">:
           <div class="flip-wrapper min-ten">
@@ -174,5 +172,6 @@
   <img src="gomoku/src/chess_white_transparent.png" style="display: none;">
   <img src="gomoku/src/chess_white_marked.png" style="display: none;">
 </body>
+<script type="text/javascript" src="gomoku/src/timer.js"></script>
 <script type="text/javascript" src="gomoku/src/board.js"></script>
 </html>

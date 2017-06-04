@@ -112,7 +112,7 @@
     height: 2.8vw;
     position: absolute;
     top: 0;
-    width: 1.56vw;
+    width: 1.68vw;
   }
 
   .min-ten {
@@ -120,20 +120,20 @@
   }
 
   .min-one {
-    left: 1.56vw;
+    left: 1.68vw;
   }
 
   .sec-ten {
-    left: 3.48vw;
+    left: 3.72vw;
   }
 
   .sec-one {
-    left: 5.04vw;
+    left: 5.4vw;
   }
 
   .flip-top, .flip-bottom, .flip-next, .flip-back {
     border: 0.04vw solid black;
-    font-size: 2.4vw;
+    font-size: 2.52vw;
     text-shadow: 0 -0.04vw  black;
     box-shadow: 0 .04vw 0 rgba(255,255,255,.3) inset,
                 0 0 .04vw rgba(255,255,255,.3) inset;
@@ -151,10 +151,10 @@
 
 @media screen and (orientation: portrait) {
   .flip-wrapper {
-    height: 4.5vh;
+    height: 4.4vh;
     position: absolute;
     top: 0;
-    width: 2.6vh;
+    width: 2.8vh;
   }
 
   .min-ten {
@@ -162,27 +162,27 @@
   }
 
   .min-one {
-    left: 2.6vh;
+    left: 2.8vh;
   }
 
   .sec-ten {
-    left: 5.8vh;
+    left: 6.2vh;
   }
 
   .sec-one {
-    left: 8.4vh;
+    left: 9vh;
   }
 
   .flip-top, .flip-bottom, .flip-next, .flip-back {
     border: 0.04vh solid black;
-    font-size: 3.2vh;
+    font-size: 4.12vh;
     text-shadow: 0 -0.04vh  black;
     box-shadow: 0 .04vh 0 rgba(255,255,255,.3) inset,
                 0 0 .04vh rgba(255,255,255,.3) inset;
   }
 
   .flip-top, .flip-next {
-    line-height: 4.5vh;
+    line-height: 4.4vh;
     border-radius: .32vh .32vh 0 0;
   }
 
