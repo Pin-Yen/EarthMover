@@ -239,17 +239,13 @@ function humanTurn() {
 function initPlayer(player, color, human) {
   var oppColor = (color == 'black' ? 'white' : 'black');
 
+  // set color
+  $('.player-information.' + player).removeClass(oppColor);
+  $('.player-information.' + player).addClass(color);
+
   // set chess
   $('#pi-chess-' + player).attr('src', 'gomoku/src/chess_' + color + '.png');
   $('#pi-icon-' + player).attr('src', 'gomoku/src/' + (human ? 'human' : 'icon') + '.png');
-
-  // set timer chess background
-  $('#pi-timer-chess-background-' + player).removeClass(oppColor);
-  $('#pi-timer-chess-background-' + player).addClass(color);
-
-  // set timer
-  $('#pi-timer-' + player).removeClass(oppColor);
-  $('#pi-timer-' + player).addClass(color);
 
   // set name
   $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));
@@ -306,7 +302,7 @@ function btnDialogOKClick() {
   // initialize timer
   if (timer.black != null) timer.black.stop();
   if (timer.white != null) timer.white.stop();
-  timer = {black: new Timer($('.pi-timer.black')), white: new Timer($('.pi-timer.white'))};
+  timer = {black: new Timer($('.black .pi-timer')), white: new Timer($('.white .pi-timer'))};
 
   $('#dialog-new-game').hide();
 }
