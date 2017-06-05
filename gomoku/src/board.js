@@ -73,8 +73,6 @@ function cvsMouseMoveOrOver(event) {
 }
 
 function cvsMouseOut() {
-  if (!boardEnable) return;
-
   // if mouse's previous position not has chess
   if (mousePos[0] != -1) {
     // clear the previous image

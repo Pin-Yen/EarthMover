@@ -4,8 +4,11 @@ var Timer = function(span) {
   this.min = {ten: 0, one: 0};
   this.sec = {ten: 0, one: 0};
   for (var i = 0; i < 4; ++i) {
-    span.children().eq(i).find(".flip-top, .flip-bottom").text(0);
-    span.children().eq(i).find(".flip-next, .flip-back").text(1);
+    var wrapper = span.children().eq(i);
+    wrapper.find('.flip-top, .flip-bottom').text(0);
+    wrapper.find('.flip-next, .flip-back').text(1);
+    wrapper.find('.flip-top').removeClass('top-ani');
+    wrapper.find('.flip-back').removeClass('back-ani');
   }
 };
 
@@ -62,18 +65,18 @@ Timer.prototype.add = function() {
 
 // private function
 Timer.prototype.animate = function(wrapper, num, next) {
-  wrapper.find(".flip-top").addClass('top-ani');
-  wrapper.find(".flip-back").addClass('back-ani');
+  wrapper.find('.flip-top').addClass('top-ani');
+  wrapper.find('.flip-back').addClass('back-ani');
 
-  wrapper.find(".flip-back").on('webkitAnimationEnd oanimationend msAnimationEnd animationend', function() {
-    wrapper.find(".flip-top, .flip-bottom").text(num);
+  wrapper.find('.flip-back').on('webkitAnimationEnd oanimationend msAnimationEnd animationend', function() {
+    wrapper.find('.flip-top, .flip-bottom').text(num);
 
     setTimeout (function() {
-      wrapper.find(".flip-top").removeClass('top-ani');
-      wrapper.find(".flip-back").removeClass('back-ani');
+      wrapper.find('.flip-top').removeClass('top-ani');
+      wrapper.find('.flip-back').removeClass('back-ani');
 
       setTimeout (function() {
-        wrapper.find(".flip-next, .flip-back").text(next);
+        wrapper.find('.flip-next, .flip-back').text(next);
       }, 0);
 
     }, 0);
