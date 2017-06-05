@@ -99,7 +99,7 @@ function cvsClick() {
   // if the position is empty, play and post
   if (!boardStatus[mousePos[0]][mousePos[1]]) {
     play(mousePos);
-    post({ row: mousePos[1], col: mousePos[0], think: !humanTurn() }, 'play');
+    post({ row: mousePos[1], col: mousePos[0] }, 'play');
     mousePos = [-1, -1];
   }
 }
