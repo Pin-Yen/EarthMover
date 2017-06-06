@@ -109,8 +109,8 @@ function getPosition(event) {
   var rect = canvas.getBoundingClientRect();
   var scaling = canvas.scrollWidth / 565;
 
-  var x = Math.floor((event.clientX - rect.left - 20)  / (35 * scaling)),
-      y = Math.floor((event.clientY - rect.top - 20) / (35 * scaling));
+  var x = Math.floor((event.clientX - rect.left - 20 * scaling)  / (35 * scaling)),
+      y = Math.floor((event.clientY - rect.top - 20 * scaling) / (35 * scaling));
 
   if (x < 0 || x > 14 || y < 0 || y > 14) {
     x = -1; y = -1;
