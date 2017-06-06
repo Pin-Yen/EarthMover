@@ -9,14 +9,14 @@
   z-index: 1;
 }
 
-.pi-timer-chess-background.black {
+.black .pi-timer-chess-background {
   background: linear-gradient(to bottom, #888, #555, #666, #777, #888, #999);
   background: -moz-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
   background: -o-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
   background: -webkit-linear-gradient(top, #888, #555, #666, #777, #888, #999);
 }
 
-.pi-timer-chess-background.white {
+.white .pi-timer-chess-background {
   background: linear-gradient(to bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
   background: -moz-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
   background: -o-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);

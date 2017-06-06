@@ -54,7 +54,7 @@
 }
 
 .dl-block.player-black, .dl-block.player-white {
-  height: 88px;
+  height: 96px;
   padding: 4px;
   top: 80px;
   width: 138px;
@@ -73,7 +73,7 @@
   left: 8px;
   line-height: 40px;
   text-align: center;
-  top: 180px;
+  top: 188px;
   width: 284px;
 }
 

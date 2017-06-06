@@ -22,7 +22,7 @@ chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
 var canvas = document.getElementById('cvs');
 var context = canvas.getContext("2d");
-$('#cvs').attr({ 'width': 565, 'height': 565 });
+$(canvas).attr({ 'width': 565, 'height': 565 });
 
 var playNo = 0;
 
@@ -73,8 +73,6 @@ function cvsMouseMoveOrOver(event) {
 }
 
 function cvsMouseOut() {
-  if (!boardEnable) return;
-
   // if mouse's previous position not has chess
   if (mousePos[0] != -1) {
     // clear the previous image
@@ -99,7 +97,7 @@ function cvsClick() {
   // if the position is empty, play and post
   if (!boardStatus[mousePos[0]][mousePos[1]]) {
     play(mousePos);
-    post({ row: mousePos[1], col: mousePos[0], think: !humanTurn() }, 'play');
+    post({ row: mousePos[1], col: mousePos[0] }, 'play');
     mousePos = [-1, -1];
   }
 }
@@ -241,17 +239,13 @@ function humanTurn() {
 function initPlayer(player, color, human) {
   var oppColor = (color == 'black' ? 'white' : 'black');
 
+  // set color
+  $('.player-information.' + player).removeClass(oppColor);
+  $('.player-information.' + player).addClass(color);
+
   // set chess
   $('#pi-chess-' + player).attr('src', 'gomoku/src/chess_' + color + '.png');
   $('#pi-icon-' + player).attr('src', 'gomoku/src/' + (human ? 'human' : 'icon') + '.png');
-
-  // set timer chess background
-  $('#pi-timer-chess-background-' + player).removeClass(oppColor);
-  $('#pi-timer-chess-background-' + player).addClass(color);
-
-  // set timer
-  $('#pi-timer-' + player).removeClass(oppColor);
-  $('#pi-timer-' + player).addClass(color);
 
   // set name
   $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));
@@ -308,7 +302,7 @@ function btnDialogOKClick() {
   // initialize timer
   if (timer.black != null) timer.black.stop();
   if (timer.white != null) timer.white.stop();
-  timer = {black: new Timer($('.pi-timer.black')), white: new Timer($('.pi-timer.white'))};
+  timer = {black: new Timer($('.black .pi-timer')), white: new Timer($('.white .pi-timer'))};
 
   $('#dialog-new-game').hide();
 }
