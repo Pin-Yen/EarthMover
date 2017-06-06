@@ -1,11 +1,10 @@
 
-################# ONLY THE DEFAULT BUILD WILL WORK #################
-
 objects = obj/displayboard.o obj/evaluatorfreestyle.o obj/evaluatorrenjubasic.o\
 		  obj/typetreefreestyle.o obj/typetreerenjubasic.o obj/gametree.o\
 		  obj/node.o
 
 objects_network = obj/ai.o obj/httpserver.o obj/networkmain.o
+objects_local = obj/main.o
 
 # General compile options (e.g. Those that should be used in every compilation) should be placed here. 
 generalFlags = -std=c++11
@@ -22,23 +21,24 @@ NetworkDebug : mkdir $(objects) $(objects_network)
 	 g++ -o EM $(objects) $(objects_network) $(generalFlags) -pthread -O0 -g
 NetworkDebug : optimizeFlag = -O0 -g
 
+
 # Analyze build
-analyze : specificFlags = -DANALYZE
-analyze : optimizeFlag = -O3
-analyze : mkdir $(objects) obj/log.o obj/main.o
-	g++ -o EM obj/log.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
+# analyze : specificFlags = -DANALYZE
+# analyze : optimizeFlag = -O3
+# analyze : mkdir $(objects) obj/log.o obj/main.o
+	# g++ -o EM obj/log.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
 # Local-Debug build. For debugging segfaults.
-localdebug : specificFlags = -DDEBUG -g
-localdebug : optimizeFlag = -O0 
-localdebug : mkdir $(objects) obj/main.o obj/objectcounter.o
-	g++ -o EM obj/objectcounter.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
+# localdebug : specificFlags = -DDEBUG -g
+# localdebug : optimizeFlag = -O0 
+# localdebug : mkdir $(objects) obj/main.o obj/objectcounter.o
+	# g++ -o EM obj/objectcounter.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
 #Local-Time build. For performance evaluation.
 localtime : specificFlags = -DTIME
 localtime : optimizeFlag = -O3
-localtime : mkdir $(objects) obj/main.o
-	g++ -o EM obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
+localtime : mkdir $(objects) $(objects_local)
+	g++ -o EM $(objects_local) $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
 # Makes 'obj' directory to put the object files in 
 mkdir : 
@@ -152,3 +152,24 @@ obj/networkmain.o: networkmain.cpp httpserver.hpp ai.hpp \
 
 obj/log.o : log.hpp
 	g++ -c log.cpp -o obj/log.o $(generalFlags) $(optimizeFlag) $(specificFlags)
+
+obj/main.o: main.cpp gametree.hpp virtualboard.hpp gomoku/chesstype.hpp \
+ gomoku/displayboard.hpp gomoku/point.hpp gomoku/chesstype.hpp \
+ gomoku/status.hpp gomoku/virtualboardgomoku.hpp \
+ gomoku/../virtualboard.hpp gomoku/evaluator.hpp gomoku/point.hpp \
+ gomoku/openingtree.hpp gomoku/status.hpp gomoku/virtualboardgomoku.hpp \
+ gomoku/freestyle/virtualboardfreestyle.hpp \
+ gomoku/freestyle/../virtualboardgomoku.hpp \
+ gomoku/freestyle/evaluatorfreestyle.hpp \
+ gomoku/freestyle/../evaluator.hpp gomoku/freestyle/../typetree.hpp \
+ gomoku/freestyle/../chesstype.hpp gomoku/freestyle/../status.hpp \
+ gomoku/freestyle/../../virtualboard.hpp \
+ gomoku/freestyle/../virtualboardgomoku.hpp \
+ gomoku/freestyle/typetreefreestyle.hpp \
+ gomoku/renju_basic/virtualboardrenjubasic.hpp \
+ gomoku/renju_basic/../virtualboardgomoku.hpp \
+ gomoku/renju_basic/evaluatorrenjubasic.hpp \
+ gomoku/renju_basic/typetreerenjubasic.hpp \
+ gomoku/renju_basic/../typetree.hpp
+	g++ -c main.cpp -o obj/main.o $(generalFlags) $(optimizeFlag) $(specificFlags)
+
