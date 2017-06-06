@@ -37,8 +37,7 @@ Timer.prototype.stop = function() {
 };
 
 Timer.prototype.start = function() {
-  var timer = this;
-  this.counting = setInterval(function() { timer.add(); }, 1000);
+  this.counting = setInterval(function() { this.add(); }.bind(this), 1000);
 }
 
 // private function
@@ -61,7 +60,6 @@ Timer.prototype.add = function() {
   }
   this.animate(this.span.children().eq(3), this.sec.one, this.sec.one == 9 ? 0 : this.sec.one + 1);
 };
-
 
 // private function
 Timer.prototype.animate = function(wrapper, num, next) {

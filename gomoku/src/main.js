@@ -22,7 +22,7 @@ chessImage[5].src = "gomoku/src/chess_white_marked.png";
 
 var canvas = document.getElementById('cvs');
 var context = canvas.getContext("2d");
-$('#cvs').attr({ 'width': 565, 'height': 565 });
+$(canvas).attr({ 'width': 565, 'height': 565 });
 
 var playNo = 0;
 
