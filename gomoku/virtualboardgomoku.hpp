@@ -12,6 +12,20 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   ~VirtualBoardGomoku() override;
 
+ protected:
+  class Evaluator;
+
+  template <class Eva>
+  void init();
+
+  /* puts a new chess at (row ,col),
+   * returns 1 if wins after play, -1 if lose */
+  template <class Eva>
+  int play(int row, int col);
+
+ private:
+  class Point;
+
   int getScore(int row, int col) const final override;
 
   /* get the sume of every point's score */
@@ -22,20 +36,6 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   /* get who turn, black = 0, white = 1 */
   bool whoTurn() const final override { return (playNo_ & 1); }
-
-  /* puts a new chess at (row ,col),
-   * returns 1 if wins after play, -1 if lose */
-  template <class Eva>
-  int play(int row, int col);
-
- protected:
-  class Evaluator;
-
-  template <class Eva>
-  void init();
-
- private:
-  class Point;
 
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];

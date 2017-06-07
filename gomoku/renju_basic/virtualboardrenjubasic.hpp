@@ -6,16 +6,16 @@ class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
   VirtualBoardRenjuBasic() : VirtualBoardGomoku() {}
   VirtualBoardRenjuBasic(VirtualBoardRenjuBasic* board) : VirtualBoardGomoku(board) {}
 
+ private:
+  class EvaluatorRenjuBasic;
+
   inline VirtualBoardRenjuBasic* create() final override;
 
   VirtualBoardRenjuBasic* clone() final override {
     return new VirtualBoardRenjuBasic(this);
   }
 
- protected:
   inline int play(int row, int col) final override;
- private:
-  class EvaluatorRenjuBasic;
 };
 
 #include "evaluatorrenjubasic.hpp"
