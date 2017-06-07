@@ -16,6 +16,8 @@ class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
   }
 
   inline int play(int row, int col) final override;
+
+  inline void undo(int row, int col) final override;
 };
 
 #include "evaluatorrenjubasic.hpp"
@@ -31,5 +33,8 @@ int VirtualBoardRenjuBasic::play(int row, int col) {
   return VirtualBoardGomoku::play<VirtualBoardRenjuBasic::EvaluatorRenjuBasic>(row, col);
 }
 
+void VirtualBoardRenjuBasic::undo(int row, int col) {
+  VirtualBoardGomoku::undo<VirtualBoardRenjuBasic::EvaluatorRenjuBasic>(row, col);
+}
 
 #endif

@@ -24,6 +24,8 @@ class VirtualBoard {
    * returns 1 if wins after play, -1 if lose */
   virtual int play(int row, int col) = 0;
 
+  /* remove chess at (row, col) */
+  virtual void undo(int row, int col) = 0;
  protected:
   bool isInit = false;
 };

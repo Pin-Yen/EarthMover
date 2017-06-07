@@ -11,7 +11,6 @@ class VirtualBoardGomoku : public VirtualBoard {
   VirtualBoardGomoku(VirtualBoardGomoku* source);
 
   ~VirtualBoardGomoku() override;
-
  protected:
   class Evaluator;
 
@@ -23,6 +22,9 @@ class VirtualBoardGomoku : public VirtualBoard {
   template <class Eva>
   int play(int row, int col);
 
+  /* remove chess at (row, col) */
+  template <class Eva>
+  void undo(int row, int col);
  private:
   class Point;
 
@@ -220,7 +222,7 @@ int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
 
   STATUS color = ((playNo_ & 1) ? BLACK : WHITE);
 
-  point_[row][col]->play(color);
+  point_[row][col]->setStatus(color);
 
   /* set score to -1 */
   point_[row][col]->setScore(-1, -1);
@@ -263,6 +265,61 @@ int VirtualBoardGomoku<StatusLength>::play(int row, int col) {
   Eva::evaluateRelativeScore(point_, playNo_);
 
   return 0;
+}
+
+template <int StatusLength>
+template <class Eva>
+void VirtualBoardGomoku<StatusLength>::undo(int row, int col) {
+  --playNo_;
+
+  point_[row][col]->setStatus(EMPTY);
+
+  for (int d = 0; d < 4; ++d) {
+    /* get status array */
+    STATUS status[StatusLength]; point_[row][col]->getDirStatus(d, status);
+
+    Eva::evaluateType(status, point_[row][col]->type[d]);
+
+    Eva::evaluateScore(point_[row][col]->type,
+                       point_[row][col]->absScore());
+  }
+
+  /* index: 0→ 1↓ 2↗ 3↘ */
+  const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
+
+  for (int d = 0; d < 4; ++d)
+    for (int move = -1; move <= 1; move += 2) {
+      bool block[2] = {false, false};
+
+      for (int offset = 1; offset <= (StatusLength / 2) + 1; ++offset) {
+        const int checkRow = row + dir[d][0] * move * offset,
+          checkCol = col + dir[d][1] * move * offset;
+
+        /* check if out the bound */
+        if (checkRow < 0 || checkRow >= CHESSBOARD_DIMEN ||
+            checkCol < 0 || checkCol >= CHESSBOARD_DIMEN)
+          break;
+
+        /* check if block */
+        if (point_[checkRow][checkCol]->status() != EMPTY) {
+          block[point_[checkRow][checkCol]->status()] = true;
+
+          if (block[0] & block[1]) break;
+
+          continue;
+        }
+
+        /* get status array */
+        STATUS status[StatusLength]; point_[checkRow][checkCol]->getDirStatus(d, status);
+
+        Eva::evaluateType(status, point_[checkRow][checkCol]->type[d]);
+
+        Eva::evaluateScore(point_[checkRow][checkCol]->type,
+                                 point_[checkRow][checkCol]->absScore());
+      }
+    }
+
+  Eva::evaluateRelativeScore(point_, playNo_);
 }
 
 #endif
