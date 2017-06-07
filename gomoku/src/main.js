@@ -182,7 +182,7 @@ function play(position) {
 function notifyWinner(winnerColor) {
   // TODO: display game status
   boardEnable = false;
-  alert(winnerColor + " wins !");
+  setTimeout(function() { alert(winnerColor + " wins !"); }, 0);
 }
 
 // post request, params should be json type
