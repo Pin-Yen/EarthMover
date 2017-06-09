@@ -66,8 +66,8 @@ function initPlayer(player, color, human) {
   $('.player-information.' + player).addClass(color);
 
   // set chess
-  $('#pi-chess-' + player).attr('src', 'gomoku/src/chess_' + color + '.png');
-  $('#pi-icon-' + player).attr('src', 'gomoku/src/' + (human ? 'human' : 'icon') + '.png');
+  $('#pi-chess-' + player).attr('src', 'gomoku/src/png/chess_' + color + '.png');
+  $('#pi-icon-' + player).attr('src', 'gomoku/src/png/' + (human ? 'human' : 'icon') + '.png');
 
   // set name
   $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));

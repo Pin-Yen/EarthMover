@@ -1,0 +1,18 @@
+.control {
+  background-color: #aaa;
+  height: 6vh;
+  position: relative;
+  z-index: -2;
+}
+
+.ctrl-replay {
+  left: 1vh;
+  position: relative;
+  top: .5vh;
+}
+
+.ctrl-replay img {
+  height: 5vh;
+  margin: 0;
+  position: relative;
+}

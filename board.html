@@ -6,12 +6,13 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
 
-  <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/dialog.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/toolbar.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/timer.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/style.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/dialog.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/toolbar.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/controlbar.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/board.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/playerinformation.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/timer.css">
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game'
@@ -63,11 +64,11 @@
       <div class="tl-sub view">
         <div class="tl-item" id="play-number" onclick="btnPlayNumberClick()">
           play number
-          <img src="gomoku/src/check.png" class="tl-check" id="play-number-check">
+          <img src="gomoku/src/png/check.png" class="tl-check" id="play-number-check">
         </div>
         <div class="tl-item" id="coordinate" onclick="btnCoordinateClick()">
           coordinate
-          <img src="gomoku/src/check.png" class="tl-check" id="coordinate-check">
+          <img src="gomoku/src/png/check.png" class="tl-check" id="coordinate-check">
         </div>
       </div>
     </span>
@@ -75,7 +76,14 @@
 
   <!-- game control bar -->
   <div class="control">
-
+    <span class="ctrl-replay">
+      <img id="ctrl-skip-previous" src="gomoku/src/png/skip_previous.png">
+      <img id="ctrl-fast-rewind" src="gomoku/src/png/fast_rewind.png">
+      <img id="ctrl-back" src="gomoku/src/png/back.png">
+      <img id="ctrl-next" src="gomoku/src/png/next.png">
+      <img id="ctrl-fast-forward" src="gomoku/src/png/fast_forward.png">
+      <img id="ctrl-skip-next" src="gomoku/src/png/skip_next.png">
+    </span>
   </div>
 
   <!-- main div -->
@@ -87,10 +95,10 @@
          NOTE: in this scope, player information is abridged as pi -->
     <span class="player-information opp white">
       <!-- icon -->
-      <img id="pi-icon-opp" src="gomoku/src/icon.png" class="pi-icon opp">
+      <img id="pi-icon-opp" src="gomoku/src/png/icon.png" class="pi-icon opp">
 
       <div id="pi-timer-chess-background-opp" class="pi-timer-chess-background opp">
-        <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
+        <img id="pi-chess-opp" src="gomoku/src/png/chess_white.png" class="pi-chess opp">
         <span id="pi-timer-opp" class="pi-timer opp">:
           <div class="flip-wrapper min-ten">
             <div class="flip-next">1</div>
@@ -121,17 +129,17 @@
       <span id="pi-name-opp" class="pi-name opp">EarthMover</span>
     </span>
     <!-- board image and canvas that used to draw chess on board -->
-    <img src="gomoku/src/board.png" class="board img">
+    <img src="gomoku/src/png/board.png" class="board img">
     <canvas id="cvs" class="board cvs"></canvas>
 
     <!-- self player information
          NOTE: in this scope, player information is abridged as pi -->
     <span class="player-information sel black">
       <!-- icon -->
-      <img id="pi-icon-sel" src="gomoku/src/human.png" class="pi-icon sel">
+      <img id="pi-icon-sel" src="gomoku/src/png/human.png" class="pi-icon sel">
 
       <div id="pi-timer-chess-background-sel" class="pi-timer-chess-background sel">
-        <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
+        <img id="pi-chess-sel" src="gomoku/src/png/chess_black.png" class="pi-chess sel">
         <span id="pi-timer-sel" class="pi-timer sel">:
           <div class="flip-wrapper min-ten">
             <div class="flip-next">1</div>
@@ -163,7 +171,7 @@
     </span>
   </div>
 </body>
-<script type="text/javascript" src="gomoku/src/timer.js"></script>
-<script type="text/javascript" src="gomoku/src/board.js"></script>
-<script type="text/javascript" src="gomoku/src/main.js"></script>
+<script type="text/javascript" src="gomoku/src/js/timer.js"></script>
+<script type="text/javascript" src="gomoku/src/js/board.js"></script>
+<script type="text/javascript" src="gomoku/src/js/main.js"></script>
 </html>

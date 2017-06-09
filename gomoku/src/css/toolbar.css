@@ -110,10 +110,3 @@
 .tl-title.view {
   left: 16vh;
 }
-
-.control {
-  background-color: #aaa;
-  height: 6vh;
-  position: relative;
-  z-index: -2;
-}

@@ -28,7 +28,7 @@ var Board = function() {
 
   function createImage(src) {
     var image = new Image();
-    image.src = 'gomoku/src/chess_' + src + '.png';
+    image.src = 'gomoku/src/png/chess_' + src + '.png';
     return image;
   }
 
