@@ -20,6 +20,7 @@ var Board = function() {
   cvs.mouseout(this.mouseOut.bind(this));
 
   this.playNo = 0;
+  this.displayNo = 0;
 
   // board status array
   this.status = new Array(15);
@@ -48,6 +49,7 @@ var Board = function() {
 
 Board.prototype.init = function() {
   this.playNo = 0;
+  this.displayNo = 0;
 
   for (var row = this.status.length - 1; row >= 0; row--)
     for (var col = this.status[row].length - 1; col >= 0; col--)
@@ -130,7 +132,7 @@ Board.prototype.draw = function(pos) {
   var image;
   if (status == 0) {
     image = this.image[this.whoTurn()].transparent;
-  } else if (status == this.playNo) {
+  } else if (status == this.displayNo) {
     image = this.display.playNumber ? this.image[this.whoTurn(status - 1)].normal :
                               this.image[this.whoTurn(status - 1)].marked;
   } else {
@@ -140,7 +142,7 @@ Board.prototype.draw = function(pos) {
   this.context.drawImage(image, pos[0] * 35 + 21, pos[1] * 35 + 21, 33, 33);
 
   if (this.display.playNumber && status > 0) {
-    if (status == this.playNo)
+    if (status == this.displayNo)
       this.context.fillStyle = 'red';
     else {
       this.context.fillStyle = ((status - 1) & 1) ? 'black' : 'white';
@@ -162,6 +164,7 @@ Board.prototype.clear = function(pos) {
 // play at position, we should make sure that position is empty
 Board.prototype.play = function(pos) {
   ++this.playNo;
+  ++this.displayNo;
   this.status[pos[0]][pos[1]] = this.playNo;
 
   // draw a marked chess
@@ -189,12 +192,7 @@ Board.prototype.whoTurn = function(param) {
 Board.prototype.changePlayNumber = function() {
   this.display.playNumber = !this.display.playNumber;
 
-  for (var row = this.status.length - 1; row >= 0; row--)
-    for (var col = this.status[row].length - 1; col >= 0; col--)
-      if (this.status[row][col] > 0) {
-        this.clear([row, col]);
-        this.draw([row, col]);
-      }
+  this.drawAll();
 
   return this.display.playNumber;
 }
@@ -221,4 +219,22 @@ Board.prototype.changeCoordinate = function() {
   }
 
   return this.display.coordinate;
+};
+
+Board.prototype.changeDisplayNo = function(changeAmount) {
+  this.displayNo += changeAmount;
+  if (this.displayNo < 0) this.displayNo = 0;
+  if (this.displayNo > this.playNo) this.displayNo = this.playNo;
+
+  this.drawAll();
+};
+
+Board.prototype.drawAll = function() {
+  for (var row = this.status.length - 1; row >= 0; row--)
+    for (var col = this.status[row].length - 1; col >= 0; col--)
+      if (this.status[row][col] > 0) {
+        this.clear([row, col]);
+        if (this.status[row][col] <= this.displayNo)
+          this.draw([row, col]);
+      }
 };

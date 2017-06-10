@@ -144,3 +144,8 @@ function btnCoordinateClick() {
     $('#coordinate-check').hide();
   }
 }
+
+function changeDisplayNo(argument) {
+  if (board.gameStarted) return;
+  board.changeDisplayNo(argument);
+}

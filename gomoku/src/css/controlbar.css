@@ -2,12 +2,12 @@
   background-color: #aaa;
   height: 6vh;
   position: relative;
-  z-index: -2;
 }
 
 .ctrl-replay {
+  height: 5vh;
   left: 1vh;
-  position: relative;
+  position: absolute;
   top: .5vh;
 }
 
