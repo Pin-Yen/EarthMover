@@ -73,12 +73,8 @@ function initPlayer(player, color, human) {
   $('#pi-name-' + player).html((human ? $('#dl-name-' + color).val() : 'EarthMover'));
 }
 
-function btnNewGameClick() {
-  $('#dialog-new-game').show();
-}
-
-function btnDialogCancelClick() {
-  $('#dialog-new-game').hide();
+function toggleDialog() {
+  $('#dialog-new-game').toggle();
 }
 
 function btnDialogOKClick() {
@@ -115,9 +111,6 @@ function btnDialogOKClick() {
     }
   }
 
-  board.enable = false;
-  board.gameStarted = true;
-
   // initialize board
   board.init();
 
@@ -130,22 +123,19 @@ function btnDialogOKClick() {
 }
 
 function btnPlayNumberClick() {
-  if (board.changePlayNumber()) {
-    $('#play-number-check').show();
-  } else {
-    $('#play-number-check').hide();
-  }
+  board.changePlayNumber();
+
+  $('#play-number-check').toggle();
 }
 
 function btnCoordinateClick() {
-  if (board.changeCoordinate()) {
-    $('#coordinate-check').show();
-  } else {
-    $('#coordinate-check').hide();
-  }
+  board.changeCoordinate();
+
+  $('#coordinate-check').toggle();
 }
 
-function changeDisplayNo(argument) {
+function changeDisplayNo(changeAmount) {
   if (board.gameStarted) return;
-  board.changeDisplayNo(argument);
+
+  board.changeDisplayNo(changeAmount);
 }
