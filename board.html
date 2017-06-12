@@ -16,7 +16,7 @@
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game'
-       NOTE: in this scope, dialog is abridged as dl -->
+       in this scope, dialog is abridged as dl -->
   <div id="dialog-new-game">
     <div class="dl-body">
       <span class="dl-block rule">
@@ -45,18 +45,19 @@
         </select>
       </span>
       <div class="dl-btn-bar">
-        <button class="dl-btn" onclick="btnDialogOKClick()">OK</button>
-        <button class="dl-btn" onclick="btnDialogCancelClick()">Cancel</button>
+        <button id="dl-ok" class="dl-btn">OK</button>
+        <button id="dl-cancel" class="dl-btn">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- tool bar at the top of the screen -->
+  <!-- tool bar at the top of the screen
+       in this scope, tool is abridged as tl -->
   <div class="tool">
     <span class="tl-title game">
       game
       <div class="tl-sub game">
-        <div class="tl-item" id="new-game" onclick="btnNewGameClick()">new game</div>
+        <div class="tl-item" id="new-game">new game</div>
       </div>
     </span>
     <span class="tl-title view">
@@ -74,7 +75,8 @@
     </span>
   </div>
 
-  <!-- game control bar -->
+  <!-- game control bar
+       in this scope, control is abridged as ctrl -->
   <div class="control">
     <span class="ctrl-replay">
       <img id="ctrl-skip-previous" src="gomoku/src/png/skip_previous.png" onclick="changeDisplayNo(-225)">
@@ -92,13 +94,14 @@
     <span id="background"></span>
 
     <!-- opponent player information
-         NOTE: in this scope, player information is abridged as pi -->
+         in this scope, player information is abridged as pi -->
     <span class="player-information opp white">
       <!-- icon -->
       <img id="pi-icon-opp" src="gomoku/src/png/icon.png" class="pi-icon opp">
 
       <div id="pi-timer-chess-background-opp" class="pi-timer-chess-background opp">
         <img id="pi-chess-opp" src="gomoku/src/png/chess_white.png" class="pi-chess opp">
+        <!-- timer -->
         <span id="pi-timer-opp" class="pi-timer opp">:
           <div class="flip-wrapper min-ten">
             <div class="flip-next">1</div>
@@ -140,6 +143,7 @@
 
       <div id="pi-timer-chess-background-sel" class="pi-timer-chess-background sel">
         <img id="pi-chess-sel" src="gomoku/src/png/chess_black.png" class="pi-chess sel">
+        <!-- timer -->
         <span id="pi-timer-sel" class="pi-timer sel">:
           <div class="flip-wrapper min-ten">
             <div class="flip-next">1</div>
@@ -171,6 +175,7 @@
     </span>
   </div>
 </body>
+<script type="text/javascript" src="gomoku/src/js/dialog.js"></script>
 <script type="text/javascript" src="gomoku/src/js/timer.js"></script>
 <script type="text/javascript" src="gomoku/src/js/board.js"></script>
 <script type="text/javascript" src="gomoku/src/js/main.js"></script>

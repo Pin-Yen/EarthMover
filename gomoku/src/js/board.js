@@ -59,6 +59,9 @@ Board.prototype.init = function() {
   this.lastPlay = [-1, -1];
 
   this.context.clearRect(20, 20, 525, 525);
+
+  this.enable = false;
+  this.gameStarted = true;
 };
 
 Board.prototype.mouseMoveOrOver = function(event) {
@@ -108,7 +111,7 @@ Board.prototype.mouseOut = function() {
 Board.prototype.click = function() {
   // if the game does not started, show new game dialog
   if (!this.gameStarted) {
-    $('#dialog-new-game').show();;
+    dialog.toggle();
     return;
   }
 
@@ -193,8 +196,6 @@ Board.prototype.changePlayNumber = function() {
   this.display.playNumber = !this.display.playNumber;
 
   this.drawAll();
-
-  return this.display.playNumber;
 }
 
 Board.prototype.changeCoordinate = function() {
@@ -217,8 +218,6 @@ Board.prototype.changeCoordinate = function() {
     this.context.clearRect(20, 0, 525, 20);
     this.context.clearRect(20, 545, 525, 20);
   }
-
-  return this.display.coordinate;
 };
 
 Board.prototype.changeDisplayNo = function(changeAmount) {
