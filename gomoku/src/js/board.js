@@ -111,7 +111,7 @@ Board.prototype.mouseOut = function() {
 Board.prototype.click = function() {
   // if the game does not started, show new game dialog
   if (!this.gameStarted) {
-    toggleDialog();
+    dialog.toggle();
     return;
   }
 
