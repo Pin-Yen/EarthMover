@@ -1,6 +1,7 @@
 .control {
   background-color: #aaa;
   height: 6vh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -12,7 +13,20 @@
 }
 
 .ctrl-replay img {
+  float: left;
   height: 5vh;
   margin: 0;
-  position: relative;
+}
+
+.ctrl-game {
+  height: 5vh;
+  left: 32vh;
+  position: absolute;
+  top: .5vh;
+}
+
+.ctrl-game img {
+  float: left;
+  height: 5vh;
+  margin: 0;
 }
