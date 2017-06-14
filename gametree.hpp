@@ -33,6 +33,8 @@ class GameTree {
    * returns 1 if wins after play, -1 if lose */
   int play(int row, int col);
 
+  void undo();
+
   /* debugger */
   VirtualBoard* getCurrentBoard() { return currentBoard; }
  private:

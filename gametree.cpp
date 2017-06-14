@@ -269,16 +269,17 @@ int GameTree::play(int row, int col) {
   if (currentNode->childNode[row][col] == NULL)
     currentNode->childNode[row][col] = new Node(currentNode, row, col, whoWin);
 
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL) {
-        if (r == row && c == col) continue;
-
-        delete currentNode->childNode[r][c];
-        currentNode->childNode[r][c] = NULL;
-      }
-
   currentNode = currentNode->childNode[row][col];
 
   return whoWin;
+}
+
+void GameTree::undo() {
+  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
+    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
+      if (currentNode->parent()->childNode[r][c] == currentNode) {
+        currentBoard->undo(r, c);
+        currentNode = currentNode->parent();
+        return;
+      }
 }
