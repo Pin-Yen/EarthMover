@@ -48,6 +48,8 @@ Dialog.prototype.ok = function() {
   if (timer.white != null) timer.white.stop();
   timer = {black: new Timer($('.black .pi-timer')), white: new Timer($('.white .pi-timer'))};
 
+  $('.ctrl-replay input').prop('disabled', true);
+
   this.toggle();
 };
 

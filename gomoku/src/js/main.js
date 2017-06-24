@@ -35,6 +35,7 @@ function post(params, path) {
         notifyWinner(response.winner == 0 ? 'Black' : 'White');
         board.enable = false;
         board.gameStarted = false;
+        $('.ctrl-replay input').prop('disabled', false);
         return;
       }
     }
@@ -70,7 +71,5 @@ function btnCoordinateClick() {
 }
 
 function changeDisplayNo(changeAmount) {
-  if (board.gameStarted) return;
-
   board.changeDisplayNo(changeAmount);
 }
