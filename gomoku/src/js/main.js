@@ -2,7 +2,7 @@ var timer = { 'black': null, 'white': null };
 
 var player = { 'black': 'human', 'white': 'computer'};
 
-var game = {black : "N/A", white : "N/A", result : "N/A", rule : "N/A", startTime : -1,
+var game = {black : "N/A", white : "N/A", rule : "N/A", startTime : -1,
  earthmover : {level : -1, version : 0}};
 var gameID;
 
