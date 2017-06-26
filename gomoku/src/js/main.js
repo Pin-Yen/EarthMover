@@ -16,13 +16,11 @@ function post(params, path) {
   var http = new XMLHttpRequest();
   http.open('POST', path);
 
-  var response;
-
   changeTimer  =  function() {
     timer[board.whoTurn()].start();
   }
 
-  playAiPoint = function() {
+  playAiPoint = function(response) {
     // play at ai's respond point
     board.play([response.col, response.row]);
 
@@ -31,7 +29,7 @@ function post(params, path) {
   }
 
   // returns true if someone wins
-  checkWinner = function() {
+  checkWinner = function(response) {
     if (response.winner != -1) {
       notifyWinner(response.winner == 0 ? 'Black' : 'White');
       board.enable = false;
@@ -55,19 +53,19 @@ function post(params, path) {
     if (!(http.readyState == 4 && (http.status == 200 || http.status == 204))) return;
     if (path != 'start')
       response = JSON.parse(http.responseText);
-    
+
     switch (path) {
       case 'start':
         checkNextPlayer();
         break;
       case 'think' :
-        playAiPoint();
-        if (checkWinner())
+        playAiPoint(response);
+        if (checkWinner(response))
           return;
         checkNextPlayer();
         break;
       case 'play':
-        if (checkWinner())
+        if (checkWinner(response))
           return;
         checkNextPlayer();
         break;
