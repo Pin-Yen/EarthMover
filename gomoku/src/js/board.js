@@ -170,6 +170,10 @@ Board.prototype.play = function(pos) {
   ++this.displayNo;
   this.status[pos[0]][pos[1]] = this.playNo;
 
+  // write to firebase
+  firebase.database().ref(gameID).child('record').child(this.playNo).child('r').set(pos[0]);
+  firebase.database().ref(gameID).child('record').child(this.playNo).child('c').set(pos[1]);
+
   // draw a marked chess
   this.draw(pos);
 

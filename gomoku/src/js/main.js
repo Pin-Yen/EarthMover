@@ -2,6 +2,10 @@ var timer = { 'black': null, 'white': null };
 
 var player = { 'black': 'human', 'white': 'computer'};
 
+var game = {black : "N/A", white : "N/A", result : "N/A", rule : "N/A", startTime : -1,
+ earthmover : {level : -1, version : 0}};
+var gameID;
+
 var board = new Board();
 
 var dialog = new Dialog();
@@ -13,6 +17,9 @@ function notifyWinner(winnerColor) {
   board.gameStarted = false;
   $('.ctrl-replay input').prop('disabled', false);
   $('.ctrl-game input').prop('disabled', true);
+
+  // write winner to database
+  firebase.database().ref(gameID).child('result').set(winnerColor);
 }
 
 // post request, params should be json type
