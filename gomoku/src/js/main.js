@@ -1,6 +1,6 @@
 var timer = { 'black': null, 'white': null };
 
-var game = { 'black': 'human', 'white': 'computer'};
+var player = { 'black': 'human', 'white': 'computer'};
 
 var board = new Board();
 
@@ -84,7 +84,7 @@ function post(params, path) {
 }
 
 function humanTurn() {
-  return game[board.whoTurn()] == 'human';
+  return player[board.whoTurn()] == 'human';
 }
 
 function btnPlayNumberClick() {

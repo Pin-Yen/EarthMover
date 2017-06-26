@@ -16,7 +16,7 @@ Dialog.prototype.ok = function() {
   if ($('#dl-name-white').val().trim() == '')
     $('#dl-name-white').val('you');
 
-  game = {'black': black, 'white': white};
+  player = {'black': black, 'white': white};
 
   var rule = parseInt($('input[name="rule"]:checked').val(), 10), level = parseInt($('#dl-select').val(), 10);
 
