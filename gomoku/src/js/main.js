@@ -9,6 +9,10 @@ var dialog = new Dialog();
 function notifyWinner(winnerColor) {
   // TODO: display game status
   setTimeout(function() { alert(winnerColor + " wins !"); }, 0);
+  board.enable = false;
+  board.gameStarted = false;
+  $('.ctrl-replay input').prop('disabled', false);
+  $('.ctrl-game input').prop('disabled', true);
 }
 
 // post request, params should be json type
@@ -16,11 +20,11 @@ function post(params, path) {
   var http = new XMLHttpRequest();
   http.open('POST', path);
 
-  changeTimer  =  function() {
+  var changeTimer = function() {
     timer[board.whoTurn()].start();
   }
 
-  playAiPoint = function(response) {
+  var playAiPoint = function(response) {
     // play at ai's respond point
     board.play([response.col, response.row]);
 
@@ -29,18 +33,15 @@ function post(params, path) {
   }
 
   // returns true if someone wins
-  checkWinner = function(response) {
+  var checkWinner = function(response) {
     if (response.winner != -1) {
       notifyWinner(response.winner == 0 ? 'Black' : 'White');
-      board.enable = false;
-      board.gameStarted = false;
-      $('.ctrl-replay input').prop('disabled', false);
       return true;
     }
     return false;
   }
 
-  checkNextPlayer = function() {
+  var checkNextPlayer = function() {
     if (humanTurn()) {
       board.draw(board.mousePos);
       board.enable = true;
@@ -51,26 +52,31 @@ function post(params, path) {
 
   http.onreadystatechange = function() {
     if (!(http.readyState == 4 && (http.status == 200 || http.status == 204))) return;
-    if (path != 'start')
-      response = JSON.parse(http.responseText);
 
     switch (path) {
       case 'start':
         checkNextPlayer();
+        changeTimer();
         break;
       case 'think' :
+        var response = JSON.parse(http.responseText);
         playAiPoint(response);
         if (checkWinner(response))
           return;
         checkNextPlayer();
+        changeTimer();
         break;
       case 'play':
+        var response = JSON.parse(http.responseText);
         if (checkWinner(response))
           return;
         checkNextPlayer();
+        changeTimer();
+        break;
+      case 'resign':
+        notifyWinner(board.whoTurn(board.playNo + 1));
         break;
     }
-    changeTimer();
   };
 
 
@@ -95,4 +101,9 @@ function btnCoordinateClick() {
 
 function changeDisplayNo(changeAmount) {
   board.changeDisplayNo(changeAmount);
+}
+
+function resign() {
+  timer[board.whoTurn()].stop();
+  post(null, 'resign');
 }

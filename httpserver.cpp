@@ -218,7 +218,7 @@ bool HttpServer::handleThink() {
   return result != 0;
 }
 
-bool HttpServer::handleThink() {
+void HttpServer::handleResign() {
   earthMover->resign();
 
   HttpResponse response(204);
