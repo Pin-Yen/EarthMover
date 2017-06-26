@@ -49,6 +49,7 @@ Dialog.prototype.ok = function() {
   timer = {black: new Timer($('.black .pi-timer')), white: new Timer($('.white .pi-timer'))};
 
   $('.ctrl-replay input').prop('disabled', true);
+  $('.ctrl-game input').prop('disabled', false);
 
   this.toggle();
 };
