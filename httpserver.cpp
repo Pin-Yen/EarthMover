@@ -99,6 +99,8 @@ void HttpServer::listenConnection() {
         stopGame = handleThink();
       else if (directory == "/start")
         handleStart(requestBody);
+      else if (directory == "/resign")
+        handleResign();
       else
         handleResourceRequest(requestBody, directory);
 
@@ -214,6 +216,13 @@ bool HttpServer::handleThink() {
 
   // Returns true to stop gameloop if someone is winning.
   return result != 0;
+}
+
+bool HttpServer::handleThink() {
+  earthMover->resign();
+
+  HttpResponse response(204);
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {

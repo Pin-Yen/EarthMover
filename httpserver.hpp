@@ -42,6 +42,9 @@ class HttpServer {
   /* request AI think */
   bool handleThink();
 
+    /* opponent resign, stop background thread */
+  void handleResign();
+
   /* response a resource specified by "directory" to client, or some http error. */
   void handleResourceRequest(std::string requestBody, std::string directory);
 

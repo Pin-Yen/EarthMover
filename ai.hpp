@@ -28,6 +28,12 @@ class AI {
   /* resets AI for a new game */
   void reset(int level, int rule);
 
+  /* opponent pass */
+  //void pass() { }
+
+  /* opponent resign*/
+  void resign() { stopBGThread(); }
+
   /* returns true for black ,false for white. */
   bool whoTurn();
 
