@@ -16,38 +16,63 @@ function post(params, path) {
   var http = new XMLHttpRequest();
   http.open('POST', path);
 
-  http.onreadystatechange = function() {
-    if (!(http.readyState == 4 && (http.status == 200 || http.status == 204))) return;
+  var response;
 
-    if (path != 'start') {
-      var response = JSON.parse(http.responseText);
+  changeTimer  =  function() {
+    timer[board.whoTurn()].start();
+  }
 
-      if (path == 'think') {
-        // play at ai's respond point
-        board.play([response.col, response.row]);
+  playAiPoint = function() {
+    // play at ai's respond point
+    board.play([response.col, response.row]);
 
-        if (response.col == board.mousePos[0] && response.row == board.mousePos[1])
-          board.mousePos = [-1, -1];
-      }
+    if (response.col == board.mousePos[0] && response.row == board.mousePos[1])
+      board.mousePos = [-1, -1];
+  }
 
-      // check if someone win
-      if (response.winner != -1) {
-        notifyWinner(response.winner == 0 ? 'Black' : 'White');
-        board.enable = false;
-        board.gameStarted = false;
-        $('.ctrl-replay input').prop('disabled', false);
-        return;
-      }
+  // returns true if someone wins
+  checkWinner = function() {
+    if (response.winner != -1) {
+      notifyWinner(response.winner == 0 ? 'Black' : 'White');
+      board.enable = false;
+      board.gameStarted = false;
+      $('.ctrl-replay input').prop('disabled', false);
+      return true;
     }
+    return false;
+  }
 
+  checkNextPlayer = function() {
     if (humanTurn()) {
       board.draw(board.mousePos);
       board.enable = true;
     } else {
       post(null, 'think');
     }
+  }
 
-    timer[board.whoTurn()].start();
+  http.onreadystatechange = function() {
+    if (!(http.readyState == 4 && (http.status == 200 || http.status == 204))) return;
+    if (path != 'start')
+      response = JSON.parse(http.responseText);
+    
+    switch (path) {
+      case 'start':
+        checkNextPlayer();
+        break;
+      case 'think' :
+        playAiPoint();
+        if (checkWinner())
+          return;
+        checkNextPlayer();
+        break;
+      case 'play':
+        if (checkWinner())
+          return;
+        checkNextPlayer();
+        break;
+    }
+    changeTimer();
   };
 
 
