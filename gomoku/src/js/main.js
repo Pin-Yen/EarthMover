@@ -111,6 +111,11 @@ function btnWatchGameClick() {
   if (gameIdPrompt != null) {
     gameID = gameIdPrompt.trim();
     alert("STILL UNDER CONSTRUCTION");
+    var gameRef = firebase.database().ref(gameID);
+    gameRef.child('record').on('child_added', function(data) {
+      console.log('key=' + data.key +",row=" + data.val().r + ",col=" + data.val().c);
+      board.put([data.val().r, data.val().c], data.key);
+    });
   }
 }
 
