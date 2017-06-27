@@ -108,10 +108,42 @@ function btnCoordinateClick() {
 
 function btnWatchGameClick() {
   var gameIdPrompt = prompt("Please paste the game ID here");
+
   if (gameIdPrompt != null) {
     gameID = gameIdPrompt.trim();
-    alert("STILL UNDER CONSTRUCTION");
+
+    // clear the board
+    board.init();
+
+    // check if game id exists. If existing, populate player data.
     var gameRef = firebase.database().ref(gameID);
+    gameRef.once('value').then(function(snapshot) {
+
+      if (snapshot.val() == null) {
+        alert("Sorry, the game ID you entered is invalid");
+        return;
+      }
+
+      // deside player's place
+      if (snapshot.child('black') == 'human') {
+        // black == human, white == human -> sel: black, human, opp: white, human
+        // black == human, white == ai -> sel: black, human, opp: white, ai
+        dialog.initPlayer('sel', 'black', true);
+        dialog.initPlayer('opp', 'white', (snapshot.child('white') == 'human'));
+      } else {
+        if (snapshot.child('white') == 'human') {
+        // black == ai, white == human -> sel: white, human, opp: black, ai
+        dialog.initPlayer('sel', 'white', true);
+        dialog.initPlayer('opp', 'black', false);
+        } else {
+          // black == ai, white == ai -> sel: black, ai, opp: white, ai
+          dialog.initPlayer('sel', 'black', false);
+          dialog.initPlayer('opp', 'white', false);
+        }
+      }
+    });
+
+
     gameRef.child('record').on('child_added', function(data) {
       console.log('key=' + data.key +",row=" + data.val().r + ",col=" + data.val().c);
       board.put([data.val().r, data.val().c], data.key);
