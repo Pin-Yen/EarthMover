@@ -154,8 +154,11 @@ void GameTree::MCTSResult(int* row, int* col) const {
           }
         }
 
+    /* PASS */
     if (mostTimes == -1) {
-      std::cout << "##################---FULL---##############" << std::endl;
+      *row = -1, *col = -1;
+      std::cout << "pass" << std::endl;
+      return;
     }
   }
 

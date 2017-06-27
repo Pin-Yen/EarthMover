@@ -47,7 +47,7 @@ void AI::think(int *row, int *col) {
   #endif
 }
 
-int AI::play(int row, int col, bool triggerBackgroundThread ) {
+int AI::play(int row, int col, bool triggerBackgroundThread) {
   // stop background thinking to avoid memory corruption.
   stopBGThread();
   int result = tree->play(row, col);
