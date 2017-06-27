@@ -13,34 +13,26 @@
 
 GameTree::Node::Node() {
   /* initialize all childNodes to NULL */
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      childNode[r][c] = NULL;
+  for (int i = 0; i < CHILD_LENGTH; ++i)
+    childNode[i] = NULL;
 
-  /* initialize playout counters to 0 */
-  for (int i = 0; i < 3; ++i)
-    playout[i] = 0;
+  clearPlayout();
+  clearWinLose();
 
   /* initiaize parent node */
   parent_ = NULL;
-
-  winning_ = false;
-  losing_ = false;
 
   #ifdef DEBUG
   ObjectCounter::registerNode();
   #endif
 }
 
-GameTree::Node::Node(Node *parentNode, int row, int col, int parentWinOrLose) {
+GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
   /* initialize all childNodes to NULL */
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      childNode[r][c] = NULL;
+  for (int i = 0; i < CHILD_LENGTH; ++i)
+    childNode[i] = NULL;
 
-  /* initialize playout counters to 0 */
-  for (int i = 0 ; i < 3; ++i)
-    playout[i] = 0;
+  clearPlayout();
 
   /* initiaize parent node */
   parent_ = parentNode;
@@ -69,17 +61,16 @@ GameTree::Node::Node(Node *parentNode, int row, int col, int parentWinOrLose) {
 }
 
 GameTree::Node::~Node() {
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (childNode[r][c] != NULL)
-        delete childNode[r][c];
+  for (int i = 0; i < CHILD_LENGTH; ++i)
+    if (childNode[i] != NULL)
+      delete childNode[i];
 
   #ifdef DEBUG
   ObjectCounter::unregisterNode();
   #endif
 }
 
-int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
+int GameTree::Node::selection(int* index, VirtualBoard* board) {
   if (winning_) return 1;
   if (losing_) return 0;
 
@@ -91,28 +82,27 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   int scoreSum = board->getScoreSum();
   int same = 1;
 
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c) {
-      int score = board->getScore(r, c);
+  for (int i = 0; i < CHILD_LENGTH; ++i) {
+    int score = board->getScore(i);
 
-      /* skip if this point is occupied */
-      if (score == -1) continue;
+    /* skip if this point is occupied */
+    if (score == -1) continue;
 
-      if (childNode[r][c] != NULL) {
-        /* if child node is winning then DO NOT select this point */
-        if (childNode[r][c]->winning_) {
-          childWinning = true;
-          continue;
-        }
+    if (childNode[i] != NULL) {
+      /* if child node is winning then DO NOT select this point */
+      if (childNode[i]->winning_) {
+        childWinning = true;
+        continue;
+      }
 
         /* if there exists a point that wins in all previous simulations, select this point */
-        if (childNode[r][c]->winRate() == 1) {
-          row = r; col = c;
+        if (childNode[i]->winRate() == 1) {
+          *index = i;
           return -2;
         }
       }
 
-      double ucbValue = getUCBValue(r, c);
+      double ucbValue = getUCBValue(i);
 
       double value = ((double)score / scoreSum) + ucbValue;
 
@@ -120,11 +110,11 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
         same = 1;
 
         max = value;
-        row = r; col = c;
+        *index = i;
       } else if (value == max) {
         ++same;
         if (((double)rand() / RAND_MAX) <= (1. / same)) {
-          row = r; col = c;
+          *index = i;
         }
       }
     }
@@ -146,14 +136,14 @@ int GameTree::Node::selection(int &row, int &col, VirtualBoard* board) {
   return -2;
 }
 
-double GameTree::Node::getUCBValue(int r, int c) const {
-  if (playout[2] == 0)
+double GameTree::Node::getUCBValue(int index) const {
+  if (playout_[2] == 0)
     return 0;
 
-  if (childNode[r][c] != NULL) {
-    return (childNode[r][c]->winRate() +
-            sqrt(0.5 * log10(playout[2]) / (1 + childNode[r][c]->totalPlayout())));
+  if (childNode[index] != NULL) {
+    return (childNode[index]->winRate() +
+            sqrt(0.5 * log10(playout_[2]) / (1 + childNode[index]->totalPlayout())));
   } else {
-    return (sqrt(0.5 * log10(playout[2]) / 1));
+    return (sqrt(0.5 * log10(playout_[2]) / 1));
   }
 }

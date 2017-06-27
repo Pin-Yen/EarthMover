@@ -157,20 +157,20 @@ bool HttpServer::handlePlay(std::string requestBody) {
 
   // 1: self winning, -1: opp winning, 0: not winning.
   // third param: Donot think in background.
-  int result = earthMover->play(row, col, false);
+  int winning = earthMover->play(row * 15 + col, false);
 
   // Fill in the response data
   HttpResponse response(200);
   response.setContentType("application/json");
 
-  /* result   whoTurn   winner
+  /* winning  whoTurn   winner
    *    0                 -1
    *    0                 -1
    *   -1        0         1
    *   -1        1         0
    *    1        0         0
    *    1        1         1 */
-  response.addJson("winner", result == 0 ? -1 : ((result == -1) ^ earthMover->whoTurn()));
+  response.addJson("winner", winning == 0 ? -1 : ((winning == -1) ^ earthMover->whoTurn()));
 
   std::cout << response.getHeaderString()
             << response.getBody();
@@ -180,32 +180,31 @@ bool HttpServer::handlePlay(std::string requestBody) {
   send(server, response.getBody(), response.getBodyLength(), 0);
 
   // Returns true to stop gameloop if someone is winning.
-  return result != 0;
+  return winning != 0;
 }
 
 bool HttpServer::handleThink() {
   // EM think.
-  int row, col;
-  earthMover->think(&row, &col);
+  int result = earthMover->think();
 
   // 1: self winning, -1: opp winning, 0: not winning.
   // third param: Donot think in background.
-  int result = earthMover->play(row, col, true);
+  int winning = earthMover->play(result, true);
 
   // Fill in the response data
   HttpResponse response(200);
   response.setContentType("application/json")
-          .addJson("row", row)
-          .addJson("col", col);
+          .addJson("row", result / 15)
+          .addJson("col", result % 15);
 
-  /* result   whoTurn   winner
+  /* winning  whoTurn   winner
    *    0                 -1
    *    0                 -1
    *   -1        0         1
    *   -1        1         0
    *    1        0         0
    *    1        1         1 */
-  response.addJson("winner", result == 0 ? -1 : ((result == -1) ^ earthMover->whoTurn()));
+  response.addJson("winner", winning == 0 ? -1 : ((winning == -1) ^ earthMover->whoTurn()));
 
   std::cout << response.getHeaderString()
             << response.getBody();
@@ -215,7 +214,7 @@ bool HttpServer::handleThink() {
   send(server, response.getBody(), response.getBodyLength(), 0);
 
   // Returns true to stop gameloop if someone is winning.
-  return result != 0;
+  return winning != 0;
 }
 
 void HttpServer::handleResign() {

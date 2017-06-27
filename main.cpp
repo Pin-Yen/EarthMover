@@ -98,7 +98,7 @@ void start() {
     #endif
 
     tree->MCTS(cycle);
-    tree->MCTSResult(&row, &col);
+    tree->MCTSResult();
 
     #ifdef TIME
     finish = clock();
@@ -137,8 +137,8 @@ void start() {
     #endif
 
     /* update tree and handle result */
-    int result = tree->play(row, col);
-    switch (result) {
+    int winning = tree->play(row * 15 + col);
+    switch (winning) {
       case 1 :
         std::cout << "Five in a row !\n"
                   << (!whoTurn ? "black" : "white") << " wins\n";
@@ -146,6 +146,6 @@ void start() {
       case -1 :
         std::cout << "Black played on a forbidden point !\nwhite wins\n";
     }
-    if (result != 0) break;
+    if (winning != 0) break;
   }
 }

@@ -6,32 +6,32 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (EXCEPT root node) */
-  Node(Node *parentNode, int row, int col, int parentWinOrLose);
+  Node(Node *parentNode, int parentWinOrLose);
 
   ~Node();
 
   /* update when tie */
-  void update() { ++playout[2]; }
+  void update() { ++playout_[2]; }
   /* update, result: 0 -> win, 1 -> lose */
-  void update(bool result) { ++playout[2]; ++playout[result]; }
+  void update(bool result) { ++playout_[2]; ++playout_[result]; }
 
   /* MCTS function, call by GameTree::selection
    * select child according to UCBValue and point's score
    * return -2 if select to leaf and no result yet, 0 for losing, 1 for winning, -1 if chessboard is full */
   // FIX: discription of return value not complete.
-  int selection(int &row, int &col, VirtualBoard* board);
+  int selection(int* index, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */
-  double getUCBValue(int r, int c) const;
+  double getUCBValue(int index) const;
 
   /* get winRate
    * NOTE: the win rate is for the upper layer(parent node)
    * and, in normal circumstances, only the upper layer will call this function*/
   double winRate() const {
-    return ((playout[0] + (playout[2] - playout[0] - playout[1]) / 2.0) / (double)playout[2]);
+    return ((playout_[0] + (playout_[2] - playout_[0] - playout_[1]) / 2.0) / (double)playout_[2]);
   }
 
-  int totalPlayout() const { return playout[2]; }
+  int totalPlayout() const { return playout_[2]; }
 
   Node* parent() const { return parent_; }
 
@@ -39,14 +39,14 @@ class GameTree::Node {
 
   bool losing() const { return losing_; }
 
-  void clearPlayout() { playout[0] = 0; playout[1] = 0; playout[2] = 0; }
+  void clearPlayout() { playout_[0] = 0; playout_[1] = 0; playout_[2] = 0; }
 
   void clearWinLose() { winning_ = false; losing_ = false; }
 
-  Node *childNode[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+  Node *childNode[CHILD_LENGTH];
  private:
   /* 0 = win, 1 = lose, 2 = total */
-  int playout[3];
+  int playout_[3];
 
   /* represent is current player winning or losing */
   bool winning_, losing_;

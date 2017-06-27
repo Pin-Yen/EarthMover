@@ -19,8 +19,10 @@ AI::~AI() {
   if (vb != NULL) delete vb;
 }
 
-void AI::think(int *row, int *col) {
+int AI::think() {
   stopBGThread();
+
+  int result;
 
   #ifdef DEBUG_MCTS_PROCESS
     int batch = 100;
@@ -30,7 +32,7 @@ void AI::think(int *row, int *col) {
     for (int c = 0; c < cycles; ++c) {
       tree->MCTS(batchSize);
       std::cout << "batch " << c << ":\n";
-      tree->MCTSResult(*row, *col);
+      result = tree->MCTSResult();
     }
     printf("============================================\n");
   #else
@@ -43,14 +45,16 @@ void AI::think(int *row, int *col) {
         tree->MCTS(2000, 2000);
     }
 
-    tree->MCTSResult(row, col);
+    result = tree->MCTSResult();
   #endif
+
+  return result;
 }
 
-int AI::play(int row, int col, bool triggerBackgroundThread ) {
+int AI::play(int index, bool triggerBackgroundThread ) {
   // stop background thinking to avoid memory corruption.
   stopBGThread();
-  int result = tree->play(row, col);
+  int result = tree->play(index);
 
   if (triggerBackgroundThread)
     startBGThread();
