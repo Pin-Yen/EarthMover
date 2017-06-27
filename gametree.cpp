@@ -194,6 +194,8 @@ int GameTree::MCTSResult() const {
         << "         " << std::setw(6) << score + ucb << "\n";
   }
   #endif
+
+  return index;
 }
 
 int GameTree::selection(Node** node, VirtualBoard* board) const {

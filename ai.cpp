@@ -51,7 +51,7 @@ int AI::think() {
   return result;
 }
 
-int AI::play(int index, bool triggerBackgroundThread ) {
+int AI::play(int index, bool triggerBackgroundThread) {
   // stop background thinking to avoid memory corruption.
   stopBGThread();
   int result = tree->play(index);
