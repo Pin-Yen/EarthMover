@@ -171,8 +171,7 @@ Board.prototype.play = function(pos) {
   this.status[pos[0]][pos[1]] = this.playNo;
 
   // write to firebase
-  firebase.database().ref(gameID).child('record').child(this.playNo).child('r').set(pos[0]);
-  firebase.database().ref(gameID).child('record').child(this.playNo).child('c').set(pos[1]);
+  firebase.database().ref(gameID).child('record').child(this.playNo).set({r : pos[0], c : pos[1]});
 
   // draw a marked chess
   this.draw(pos);
@@ -189,6 +188,18 @@ Board.prototype.play = function(pos) {
 
   // stop timer
   timer[this.whoTurn(this.playNo - 1)].stop();
+}
+
+// Puts a chess at the specific position, with the specific playNo.
+// In contrast to play(), put() does not check if it is legal nor trigger the timer.
+// All it does is put a chess and update total play/display numbers (for loading a game from the database).
+Board.prototype.put = function(pos, playNo) {
+  ++this.playNo;
+  ++this.displayNo;
+
+  this.status[pos[0]][pos[1]] = playNo;
+  this.drawAll();
+
 }
 
 Board.prototype.whoTurn = function(param) {
