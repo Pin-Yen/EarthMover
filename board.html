@@ -51,6 +51,11 @@
     </div>
   </div>
 
+
+  <!-- this prompt will show when the user clicks 'btn-view-game', 
+    and will prompt the user to input a game id-->
+  <div id="prompt-game-id"></div>
+
   <!-- tool bar at the top of the screen
        in this scope, tool is abridged as tl -->
   <div class="tool">
@@ -58,6 +63,7 @@
       game
       <div class="tl-sub game">
         <div class="tl-item" id="new-game">new game</div>
+        <div class="tl-item" id="watch-game" onclick="btnWatchGameClick()">watch game</div>
       </div>
     </span>
     <span class="tl-title view">

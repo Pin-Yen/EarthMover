@@ -106,6 +106,14 @@ function btnCoordinateClick() {
   $('#coordinate-check').toggle();
 }
 
+function btnWatchGameClick() {
+  var gameIdPrompt = prompt("Please paste the game ID here");
+  if (gameIdPrompt != null) {
+    gameID = gameIdPrompt.trim();
+    alert("STILL UNDER CONSTRUCTION");
+  }
+}
+
 function changeDisplayNo(changeAmount) {
   board.changeDisplayNo(changeAmount);
 }
