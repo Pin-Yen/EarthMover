@@ -153,6 +153,10 @@ void GameTree::MCTSResult(int* row, int* col) const {
             }
           }
         }
+
+    if (mostTimes == -1) {
+      std::cout << "##################---FULL---##############" << std::endl;
+    }
   }
 
   std::cout << std::fixed << std::setprecision(3)
