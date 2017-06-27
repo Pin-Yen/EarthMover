@@ -17,6 +17,7 @@ function notifyWinner(winnerColor) {
   board.gameStarted = false;
   $('.ctrl-replay input').prop('disabled', false);
   $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
 
   // write winner to database
   firebase.database().ref(gameID).child('result').set(winnerColor);
@@ -32,8 +33,10 @@ function post(params, path) {
   }
 
   var playAiPoint = function(response) {
-    // play at ai's respond point
-    board.play([response.col, response.row]);
+    if (response.row == -1)
+      alert('computer pass'); //computer pass
+    else
+      board.play([response.col, response.row]); // play at ai's respond point
 
     if (response.col == board.mousePos[0] && response.row == board.mousePos[1])
       board.mousePos = [-1, -1];
@@ -158,4 +161,8 @@ function changeDisplayNo(changeAmount) {
 function resign() {
   timer[board.whoTurn()].stop();
   post(null, 'resign');
+}
+
+function hint() {
+  post(null, 'think');
 }

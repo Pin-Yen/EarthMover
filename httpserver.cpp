@@ -190,7 +190,8 @@ bool HttpServer::handleThink() {
 
   // 1: self winning, -1: opp winning, 0: not winning.
   // third param: Donot think in background.
-  int result = earthMover->play(row, col, true);
+  //TODO: handle pass
+  int result = (row == -1 ? 0 : earthMover->play(row, col, true));
 
   // Fill in the response data
   HttpResponse response(200);
@@ -226,8 +227,7 @@ void HttpServer::handleResign() {
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {
-
-  if (! sanitize(directory)) {
+  if (!sanitize(directory)) {
     responseHttpError(403, "Requesting resource from forbidden uri");
   } else {
     // if access to this directory is permitted
@@ -235,7 +235,7 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
     /* use the sub-string from pos=1 to skip the first '/' in directory path */
     resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
 
-    if( !resourceFile.is_open()) {
+    if(!resourceFile.is_open()) {
       responseHttpError(404, "can't open resource file, does the file exist?");
     } else {
       HttpResponse response(200);
@@ -253,7 +253,6 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
       std::cout << "sent!" << std::endl;
         #endif
     }
-
   }
 }
 
