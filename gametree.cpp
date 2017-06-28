@@ -151,11 +151,13 @@ int GameTree::MCTSResult() const {
         }
       }
 
-    if (mostTimes == -1)
+    /* pass*/
+    if (mostTimes == -1) {
       index = -1;
+      std::cout << "pass" << std::endl;
+      return;
+    }
   }
-
-
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode->totalPlayout()

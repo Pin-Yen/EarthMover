@@ -25,7 +25,7 @@ class AI {
   void reset(int level, int rule);
 
   /* opponent pass */
-  //void pass() { }
+  void pass() { stopBGThread(); tree->pass(); }
 
   /* opponent resign*/
   void resign() { stopBGThread(); }

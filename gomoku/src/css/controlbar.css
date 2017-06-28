@@ -39,3 +39,10 @@
   position: absolute;
   top: .5vh;
 }
+
+.ctrl-analyze {
+  height: 5vh;
+  left: 48vh;
+  position: absolute;
+  top: .5vh;
+}

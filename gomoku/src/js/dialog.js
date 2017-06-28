@@ -21,7 +21,6 @@ Dialog.prototype.ok = function() {
   var rule = parseInt($('input[name="rule"]:checked').val(), 10), level = parseInt($('#dl-select').val(), 10);
 
   post({rule: rule, level: level}, 'start');
-  
 
   // deside player's place
   if (black == 'human') {
@@ -51,6 +50,7 @@ Dialog.prototype.ok = function() {
 
   $('.ctrl-replay input').prop('disabled', true);
   $('.ctrl-game input').prop('disabled', false);
+  $('.ctrl-analyze input').prop('disabled', false);
 
   this.toggle();
 
@@ -64,7 +64,6 @@ Dialog.prototype.ok = function() {
   var databaseRef = firebase.database().ref().push();
   gameID = databaseRef.key;
   databaseRef.set(game);
-
 };
 
 // initialize player

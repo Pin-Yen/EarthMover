@@ -185,17 +185,20 @@ bool HttpServer::handlePlay(std::string requestBody) {
 
 bool HttpServer::handleThink() {
   // EM think.
-  int result = earthMover->think();
+  int index = earthMover->think();
 
   // 1: self winning, -1: opp winning, 0: not winning.
   // third param: Donot think in background.
-  int winning = earthMover->play(result, true);
+
+  //TODO: handle pass
+  int winning = (index == -1 ? 0 : earthMover->play(index, true));
+  if (index == -1) earthMover->pass();
 
   // Fill in the response data
   HttpResponse response(200);
   response.setContentType("application/json")
-          .addJson("row", result / 15)
-          .addJson("col", result % 15);
+          .addJson("row", index / 15)
+          .addJson("col", index % 15);
 
   /* winning  whoTurn   winner
    *    0                 -1
@@ -225,8 +228,7 @@ void HttpServer::handleResign() {
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {
-
-  if (! sanitize(directory)) {
+  if (!sanitize(directory)) {
     responseHttpError(403, "Requesting resource from forbidden uri");
   } else {
     // if access to this directory is permitted
@@ -234,7 +236,7 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
     /* use the sub-string from pos=1 to skip the first '/' in directory path */
     resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
 
-    if( !resourceFile.is_open()) {
+    if(!resourceFile.is_open()) {
       responseHttpError(404, "can't open resource file, does the file exist?");
     } else {
       HttpResponse response(200);
@@ -252,7 +254,6 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
       std::cout << "sent!" << std::endl;
         #endif
     }
-
   }
 }
 
