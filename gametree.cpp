@@ -150,7 +150,12 @@ int GameTree::MCTSResult() const {
           }
         }
       }
+
+    if (mostTimes == -1)
+      index = -1;
   }
+
+
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode->totalPlayout()
@@ -273,8 +278,17 @@ int GameTree::play(int index) {
   return whoWin;
 }
 
+void GameTree::pass() {
+  currentBoard->pass();
+
+  if (currentNode->childNode[CHILD_LENGTH] == NULL)
+    currentNode->childNode[CHILD_LENGTH] = new Node(currentNode, 0);
+
+  currentNode = currentNode->childNode[CHILD_LENGTH];
+}
+
 void GameTree::undo() {
-  for (int i = 0; i < CHILD_LENGTH; ++i)
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
     if (currentNode->parent()->childNode[i] == currentNode) {
       currentBoard->undo(i);
       currentNode = currentNode->parent();

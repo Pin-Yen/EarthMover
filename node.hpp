@@ -43,7 +43,8 @@ class GameTree::Node {
 
   void clearWinLose() { winning_ = false; losing_ = false; }
 
-  Node *childNode[CHILD_LENGTH];
+  /* +1 for pass */
+  Node *childNode[CHILD_LENGTH + 1];
  private:
   /* 0 = win, 1 = lose, 2 = total */
   int playout_[3];

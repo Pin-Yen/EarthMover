@@ -33,6 +33,9 @@ class GameTree {
    * returns 1 if wins after play, -1 if lose */
   int play(int index);
 
+  /* pass */
+  void pass();
+
   void undo();
 
   /* debugger */

@@ -39,6 +39,9 @@ class VirtualBoardGomoku : public VirtualBoard {
   /* get who turn, black = 0, white = 1 */
   bool whoTurn() const final override { return (playNo_ & 1); }
 
+  /* pass */
+  void pass() { ++playNo_; }
+
   /* point array */
   Point* point_[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
 
@@ -62,7 +65,7 @@ class VirtualBoardGomoku : public VirtualBoard {
 template <int StatusLength>
 template <class Eva>
 void VirtualBoardGomoku<StatusLength>::init() {
-  isInit = true;
+  isInit_ = true;
 
   /* initialize point array */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -114,7 +117,7 @@ void VirtualBoardGomoku<StatusLength>::init() {
 
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLength>* source) {
-  isInit = true;
+  isInit_ = true;
 
   /* copy point */
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
@@ -154,7 +157,7 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLe
 
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
-  if (!isInit) return;
+  if (!isInit_) return;
 
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)

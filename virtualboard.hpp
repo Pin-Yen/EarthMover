@@ -20,14 +20,17 @@ class VirtualBoard {
   /* get the highest score's position, if every point is not empty, return false */
   virtual bool getHSP(int* index) const = 0;
 
-  /* puts a new chess at (row ,col),
+  /* puts a new chess at "index",
    * returns 1 if wins after play, -1 if lose */
   virtual int play(int index) = 0;
 
-  /* remove chess at (row, col) */
+  /* pass */
+  virtual void pass() = 0;
+
+  /* remove chess at "index" */
   virtual void undo(int index) = 0;
  protected:
-  bool isInit = false;
+  bool isInit_ = false;
 };
 
 VirtualBoard::~VirtualBoard() {}

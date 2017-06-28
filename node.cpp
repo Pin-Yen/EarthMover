@@ -13,7 +13,7 @@
 
 GameTree::Node::Node() {
   /* initialize all childNodes to NULL */
-  for (int i = 0; i < CHILD_LENGTH; ++i)
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
     childNode[i] = NULL;
 
   clearPlayout();
@@ -29,7 +29,7 @@ GameTree::Node::Node() {
 
 GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
   /* initialize all childNodes to NULL */
-  for (int i = 0; i < CHILD_LENGTH; ++i)
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
     childNode[i] = NULL;
 
   clearPlayout();
@@ -47,8 +47,7 @@ GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
       losing_ = false;
       break;
     default:
-      winning_ = false;
-      losing_ = false;
+      clearWinLose();
   }
 
   /* if is losing, set parent_ to winning */
@@ -61,7 +60,7 @@ GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
 }
 
 GameTree::Node::~Node() {
-  for (int i = 0; i < CHILD_LENGTH; ++i)
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
     if (childNode[i] != NULL)
       delete childNode[i];
 
