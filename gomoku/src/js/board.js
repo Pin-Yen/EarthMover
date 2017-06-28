@@ -193,6 +193,8 @@ Board.prototype.play = function(pos) {
 Board.prototype.pass = function() {
   ++this.playNo;
   ++this.displayNo;
+
+  this.enable = false;
 };
 
 // Puts a chess at the specific position, with the specific playNo.

@@ -33,10 +33,12 @@ function post(params, path) {
   }
 
   var playAiPoint = function(response) {
-    if (response.row == -1)
+    if (response.row == -1) {
+      board.pass();
       alert('computer pass'); //computer pass
-    else
+    } else {
       board.play([response.col, response.row]); // play at ai's respond point
+    }
 
     if (response.col == board.mousePos[0] && response.row == board.mousePos[1])
       board.mousePos = [-1, -1];

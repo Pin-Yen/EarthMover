@@ -199,8 +199,8 @@ bool HttpServer::handleThink() {
   // Fill in the response data
   HttpResponse response(200);
   response.setContentType("application/json")
-          .addJson("row", index / 15)
-          .addJson("col", index % 15);
+          .addJson("row", (index == -1 ? -1 : index / 15))
+          .addJson("col", (index == -1 ? -1 : index % 15));
 
   /* winning  whoTurn   winner
    *    0                 -1
