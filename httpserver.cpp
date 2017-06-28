@@ -99,6 +99,8 @@ void HttpServer::listenConnection() {
         stopGame = handleThink();
       else if (directory == "/start")
         handleStart(requestBody);
+      else if (directory == "/pass")
+        handlePass();
       else if (directory == "/resign")
         handleResign();
       else
@@ -218,6 +220,13 @@ bool HttpServer::handleThink() {
 
   // Returns true to stop gameloop if someone is winning.
   return winning != 0;
+}
+
+void HttpServer::handlePass() {
+  earthMover->pass();
+
+  HttpResponse response(204);
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
 }
 
 void HttpServer::handleResign() {

@@ -65,10 +65,11 @@ function post(params, path) {
 
     switch (path) {
       case 'start':
+      case 'pass':
         checkNextPlayer();
         changeTimer();
         break;
-      case 'think' :
+      case 'think':
         var response = JSON.parse(http.responseText);
         playAiPoint(response);
         if (checkWinner(response))
@@ -124,6 +125,12 @@ function btnWatchGameClick() {
 
 function changeDisplayNo(changeAmount) {
   board.changeDisplayNo(changeAmount);
+}
+
+function pass(argument) {
+  timer[board.whoTurn()].stop();
+  board.pass();
+  post(null, 'pass');
 }
 
 function resign() {

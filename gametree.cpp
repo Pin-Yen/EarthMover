@@ -153,9 +153,8 @@ int GameTree::MCTSResult() const {
 
     /* pass*/
     if (mostTimes == -1) {
-      index = -1;
       std::cout << "pass" << std::endl;
-      return;
+      return -1;
     }
   }
 
