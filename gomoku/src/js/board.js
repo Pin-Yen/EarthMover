@@ -222,11 +222,16 @@ Board.prototype.undo = function(times) {
 
   // remove chess
   for (var row = this.status.length - 1; row >= 0; row--)
-    for (var col = this.status[row].length - 1; col >= 0; col--)
+    for (var col = this.status[row].length - 1; col >= 0; col--) {
       if (this.status[row][col] > this.playNo) {
         this.status[row][col] = 0;
         this.clear([row, col]);
+      } else if (this.playNo > 0 && this.status[row][col] == this.playNo) {
+        this.lastPlay = [row, col];
+        this.clear(this.lastPlay);
+        this.draw(this.lastPlay);
       }
+    }
 };
 
 // Puts a chess at the specific position, with the specific playNo.

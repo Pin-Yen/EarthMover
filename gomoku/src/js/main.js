@@ -55,6 +55,8 @@ function post(params, path) {
       board.enable = true;
       $('.ctrl-game input').prop('disabled', false);
       $('.ctrl-analyze input').prop('disabled', false);
+      if (board.playNo == 0 || (board.playNo == 1 && player['black'] == 'computer'))
+        $('#ctrl-undo').prop('disabled', true);
     } else {
       post(null, 'think');
     }
