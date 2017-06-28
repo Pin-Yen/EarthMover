@@ -3,7 +3,7 @@ var timer = { 'black': null, 'white': null };
 var player = { 'black': 'human', 'white': 'computer'};
 
 var game = {black : "N/A", white : "N/A", rule : "N/A", startTime : -1,
- earthmover : {level : -1, version : 0}};
+            earthmover : {level : -1, version : 0}};
 var gameID;
 
 var board = new Board();
@@ -27,10 +27,6 @@ function notifyWinner(winnerColor) {
 function post(params, path) {
   var http = new XMLHttpRequest();
   http.open('POST', path);
-
-  var changeTimer = function() {
-    timer[board.whoTurn()].start();
-  }
 
   var playAiPoint = function(response) {
     if (response.row == -1) {
@@ -62,6 +58,8 @@ function post(params, path) {
     } else {
       post(null, 'think');
     }
+
+    timer[board.whoTurn()].start();
   }
 
   http.onreadystatechange = function() {
@@ -71,7 +69,6 @@ function post(params, path) {
       case 'start':
       case 'pass':
         checkNextPlayer();
-        changeTimer();
         break;
       case 'think':
         var response = JSON.parse(http.responseText);
@@ -79,17 +76,18 @@ function post(params, path) {
         if (checkWinner(response))
           return;
         checkNextPlayer();
-        changeTimer();
         break;
       case 'play':
         var response = JSON.parse(http.responseText);
         if (checkWinner(response))
           return;
         checkNextPlayer();
-        changeTimer();
         break;
       case 'resign':
         notifyWinner(board.whoTurn(board.playNo + 1));
+        break;
+      case 'undo':
+        checkNextPlayer();
         break;
     }
   };
@@ -164,15 +162,23 @@ function changeDisplayNo(changeAmount) {
 }
 
 function undo() {
-  // body...
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
+  var times = (player[board.whoTurn(board.playNo + 1)] === 'human' ? 1 : 2);
+  board.undo(times);
+  post({ times: times }, 'undo');
 }
 
 function pass() {
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
   board.pass();
   post(null, 'pass');
 }
 
 function resign() {
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
   timer[board.whoTurn()].stop();
   post(null, 'resign');
 }

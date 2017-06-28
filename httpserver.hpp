@@ -42,6 +42,9 @@ class HttpServer {
   /* request AI think */
   bool handleThink();
 
+  /* undo */
+  void handleUndo(std::string requestBody);
+
   /* pass */
   void handlePass();
 

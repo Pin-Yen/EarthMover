@@ -24,6 +24,12 @@ class AI {
   /* resets AI for a new game */
   void reset(int level, int rule);
 
+  /* undo "times" move */
+  void undo(int times) {
+    stopBGThread();
+    for (int i = 0; i < times; ++i) tree->undo();
+  }
+
   /* opponent pass */
   void pass() { stopBGThread(); tree->pass(); }
 

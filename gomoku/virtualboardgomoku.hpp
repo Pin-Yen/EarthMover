@@ -17,12 +17,12 @@ class VirtualBoardGomoku : public VirtualBoard {
   template <class Eva>
   void init();
 
-  /* puts a new chess at (row ,col),
+  /* puts a new chess at "index",
    * returns 1 if wins after play, -1 if lose */
   template <class Eva>
   int play(int index);
 
-  /* remove chess at (row, col) */
+  /* remove chess at "index" */
   template <class Eva>
   void undo(int index);
  private:
@@ -274,6 +274,9 @@ template <int StatusLength>
 template <class Eva>
 void VirtualBoardGomoku<StatusLength>::undo(int index) {
   --playNo_;
+
+  /* index == 225 means that previous move is pass */
+  if (index == CHESSBOARD_DIMEN * CHESSBOARD_DIMEN) return;
 
   point_[0][index]->setStatus(EMPTY);
 
