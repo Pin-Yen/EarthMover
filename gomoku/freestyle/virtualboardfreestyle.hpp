@@ -15,9 +15,9 @@ class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
     return new VirtualBoardFreeStyle(this);
   }
 
-  inline int play(int row, int col) final override;
+  inline int play(int index) final override;
 
-  inline void undo(int row, int col) final override;
+  inline void undo(int index) final override;
 };
 
 #include "evaluatorfreestyle.hpp"
@@ -29,12 +29,12 @@ VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
   return temp;
 }
 
-int VirtualBoardFreeStyle::play(int row, int col) {
-  return VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(row, col);
+int VirtualBoardFreeStyle::play(int index) {
+  return VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
 }
 
-void VirtualBoardFreeStyle::undo(int row, int col) {
-  VirtualBoardGomoku::undo<VirtualBoardFreeStyle::EvaluatorFreeStyle>(row, col);
+void VirtualBoardFreeStyle::undo(int index) {
+  VirtualBoardGomoku::undo<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
 }
 
 #endif

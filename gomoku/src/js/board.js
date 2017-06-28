@@ -190,6 +190,11 @@ Board.prototype.play = function(pos) {
   timer[this.whoTurn(this.playNo - 1)].stop();
 }
 
+Board.prototype.pass = function() {
+  ++this.playNo;
+  ++this.displayNo;
+};
+
 // Puts a chess at the specific position, with the specific playNo.
 // In contrast to play(), put() does not check if it is legal nor trigger the timer.
 // All it does is put a chess and update total play/display numbers (for loading a game from the database).
@@ -199,7 +204,6 @@ Board.prototype.put = function(pos, playNo) {
 
   this.status[pos[0]][pos[1]] = playNo;
   this.drawAll();
-
 }
 
 Board.prototype.whoTurn = function(param) {

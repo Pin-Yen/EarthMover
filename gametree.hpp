@@ -5,7 +5,7 @@
 
 class GameTree {
  public:
-  static const int CHESSBOARD_DIMEN = 15;
+  static const int CHILD_LENGTH = 225;
 
   GameTree();
   ~GameTree();
@@ -27,11 +27,14 @@ class GameTree {
   void MCTS(int maxCycle, const bool &stop);
 
   /* get the child that has highest playout from current node */
-  void MCTSResult(int* row, int* col) const;
+  int MCTSResult() const;
 
   /* called when a REAL point is played, updates the currentRoot
    * returns 1 if wins after play, -1 if lose */
-  int play(int row, int col);
+  int play(int index);
+
+  /* pass */
+  void pass();
 
   void undo();
 

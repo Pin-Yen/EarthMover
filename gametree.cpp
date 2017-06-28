@@ -87,11 +87,10 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
     }
 
     /* get mostTimes */
-    for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-      for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-        if (currentNode->childNode[r][c] != NULL)
-          if (currentNode->childNode[r][c]->totalPlayout() > mostTimes)
-            mostTimes = currentNode->childNode[r][c]->totalPlayout();
+    for (int i = 0; i < CHILD_LENGTH; ++i)
+      if (currentNode->childNode[i] != NULL)
+        if (currentNode->childNode[i]->totalPlayout() > mostTimes)
+          mostTimes = currentNode->childNode[i]->totalPlayout();
 
   } while (mostTimes < minMostTimesCycle);
 
@@ -123,50 +122,47 @@ void GameTree::MCTS(int maxCycle, const bool &stop) {
   }
 }
 
-void GameTree::MCTSResult(int* row, int* col) const {
+int GameTree::MCTSResult() const {
+  int index;
+
   if (currentNode->winning()) {
-    for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-      for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-        if (currentNode->childNode[r][c] != NULL)
-          if (currentNode->childNode[r][c]->losing()) {
-            *row = r; *col = c;
-          }
+    for (int i = 0; i < CHILD_LENGTH; ++i)
+      if (currentNode->childNode[i] != NULL)
+        if (currentNode->childNode[i]->losing())
+          index = i;
+
   } else {
     int mostTimes = -1;
     int score;
 
-    for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-      for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-        if (currentNode->childNode[r][c] != NULL) {
+    for (int i = 0; i < CHILD_LENGTH; ++i)
+      if (currentNode->childNode[i] != NULL) {
 
-          /* priority order: playout -> score */
-          if (currentNode->childNode[r][c]->totalPlayout() > mostTimes) {
-            *row = r;
-            *col = c;
-            mostTimes = currentNode->childNode[r][c]->totalPlayout();
-            score = currentBoard->getScore(r, c);
-          } else if (currentNode->childNode[r][c]->totalPlayout() == mostTimes) {
-            if (currentBoard->getScore(r, c) > score) {
-              *row = r;
-              *col = c;
-              score = currentBoard->getScore(r, c);
-            }
+        /* priority order: playout -> score */
+        if (currentNode->childNode[i]->totalPlayout() > mostTimes) {
+          index = i;
+          mostTimes = currentNode->childNode[i]->totalPlayout();
+          score = currentBoard->getScore(i);
+        } else if (currentNode->childNode[i]->totalPlayout() == mostTimes) {
+          if (currentBoard->getScore(i) > score) {
+            index = i;
+            score = currentBoard->getScore(i);
           }
         }
+      }
 
-    /* PASS */
+    /* pass*/
     if (mostTimes == -1) {
-      *row = -1, *col = -1;
       std::cout << "pass" << std::endl;
-      return;
+      return -1;
     }
   }
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode->totalPlayout()
-            << "  best: " << (char)(*col + 65) << *row + 1
-            << "  sim: " << currentNode->childNode[*row][*col]->totalPlayout()
-            << "  WinR: " << currentNode->childNode[*row][*col]->winRate()
+            << "  best: " << (char)(index % 15 + 65) << index / 15 + 1
+            << "  sim: " << currentNode->childNode[index]->totalPlayout()
+            << "  WinR: " << currentNode->childNode[index]->winRate()
             << "  W: " << currentNode->winning()
             << "  L: " << currentNode->losing()
             << std::endl;
@@ -176,7 +172,7 @@ void GameTree::MCTSResult(int* row, int* col) const {
   std::vector<std::tuple<int, int>> sortedList;
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[r][c] != NULL)
+      if (currentNode->childNode[i] != NULL)
         sortedList.push_back(std::make_tuple(r, c));
 
   std::sort(sortedList.begin(), sortedList.end(), [this](const std::tuple<int, int> i, const std::tuple<int, int> k)->bool{
@@ -204,24 +200,26 @@ void GameTree::MCTSResult(int* row, int* col) const {
         << "         " << std::setw(6) << score + ucb << "\n";
   }
   #endif
+
+  return index;
 }
 
 int GameTree::selection(Node** node, VirtualBoard* board) const {
   *node = currentNode;
 
   while (true) {
-    int r, c;
+    int index;
 
-    int result = (*node)->selection(r, c, board);
+    int result = (*node)->selection(&index, board);
     if (result != -2) {
       return result;
     }
 
     /* check if reached leaf */
-    if ((*node)->childNode[r][c] == NULL) {
-      bool parentWinning = board->play(r, c);
-      (*node)->childNode[r][c] = new Node(*node, r, c, parentWinning);
-      *node = (*node)->childNode[r][c];
+    if ((*node)->childNode[index] == NULL) {
+      bool parentWinning = board->play(index);
+      (*node)->childNode[index] = new Node(*node, parentWinning);
+      *node = (*node)->childNode[index];
 
       if (parentWinning)
         return 0;
@@ -229,8 +227,8 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
         return -2;
     }
 
-    *node = (*node)->childNode[r][c];
-    board->play(r, c);
+    *node = (*node)->childNode[index];
+    board->play(index);
   }
 }
 
@@ -238,13 +236,13 @@ int GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
   /* simulate until reach max depth */
   for (int d = 1; d <= MAX_DEPTH; ++d) {
-    int r, c;
+    int index;
     /* return tie(-1) if every point is not empty point */
-    if (!board->getHSP(&r, &c))
+    if (!board->getHSP(&index))
       return -1;
 
     /* if win, return */
-    if (board->play(r, c))
+    if (board->play(index))
       return (d & 1);
   }
 
@@ -270,23 +268,31 @@ void GameTree::backProp(Node* node) {
   node->update();
 }
 
-int GameTree::play(int row, int col) {
-  int whoWin = currentBoard->play(row, col);
+int GameTree::play(int index) {
+  int whoWin = currentBoard->play(index);
 
-  if (currentNode->childNode[row][col] == NULL)
-    currentNode->childNode[row][col] = new Node(currentNode, row, col, whoWin);
+  if (currentNode->childNode[index] == NULL)
+    currentNode->childNode[index] = new Node(currentNode, whoWin);
 
-  currentNode = currentNode->childNode[row][col];
+  currentNode = currentNode->childNode[index];
 
   return whoWin;
 }
 
+void GameTree::pass() {
+  currentBoard->pass();
+
+  if (currentNode->childNode[CHILD_LENGTH] == NULL)
+    currentNode->childNode[CHILD_LENGTH] = new Node(currentNode, 0);
+
+  currentNode = currentNode->childNode[CHILD_LENGTH];
+}
+
 void GameTree::undo() {
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->parent()->childNode[r][c] == currentNode) {
-        currentBoard->undo(r, c);
-        currentNode = currentNode->parent();
-        return;
-      }
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
+    if (currentNode->parent()->childNode[i] == currentNode) {
+      currentBoard->undo(i);
+      currentNode = currentNode->parent();
+      return;
+    }
 }
