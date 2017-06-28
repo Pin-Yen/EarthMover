@@ -57,6 +57,8 @@ function post(params, path) {
     if (humanTurn()) {
       board.draw(board.mousePos);
       board.enable = true;
+      $('.ctrl-game input').prop('disabled', false);
+      $('.ctrl-analyze input').prop('disabled', false);
     } else {
       post(null, 'think');
     }
@@ -161,7 +163,11 @@ function changeDisplayNo(changeAmount) {
   board.changeDisplayNo(changeAmount);
 }
 
-function pass(argument) {
+function undo() {
+  // body...
+}
+
+function pass() {
   board.pass();
   post(null, 'pass');
 }
@@ -172,5 +178,8 @@ function resign() {
 }
 
 function hint() {
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
+  board.enable = false;
   post(null, 'think');
 }

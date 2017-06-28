@@ -186,6 +186,10 @@ Board.prototype.play = function(pos) {
   // lock board
   this.enable = false;
 
+  // lock game and analyze bar
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
+
   // stop timer
   timer[this.whoTurn(this.playNo - 1)].stop();
 }
@@ -199,6 +203,10 @@ Board.prototype.pass = function() {
 
   // lock board
   this.enable = false;
+
+  // lock game and analyze bar
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
 
   // stop timer
   timer[this.whoTurn(this.playNo - 1)].stop();
