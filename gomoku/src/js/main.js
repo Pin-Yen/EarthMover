@@ -162,7 +162,6 @@ function changeDisplayNo(changeAmount) {
 }
 
 function pass(argument) {
-  timer[board.whoTurn()].stop();
   board.pass();
   post(null, 'pass');
 }

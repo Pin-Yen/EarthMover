@@ -193,12 +193,15 @@ Board.prototype.play = function(pos) {
 Board.prototype.pass = function() {
   ++this.playNo;
   ++this.displayNo;
-  
+
   // write '{r: -1, c: -1} to database
   firebase.database().ref(gameID).child('record').child(this.playNo).set({r : -1, c : -1});
 
-
+  // lock board
   this.enable = false;
+
+  // stop timer
+  timer[this.whoTurn(this.playNo - 1)].stop();
 };
 
 // Puts a chess at the specific position, with the specific playNo.
@@ -210,7 +213,7 @@ Board.prototype.put = function(pos, playNo) {
 
   if (pos != [-1, -1])
     this.status[pos[0]][pos[1]] = playNo;
-  
+
   this.drawAll();
 }
 
