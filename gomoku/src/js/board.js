@@ -193,6 +193,10 @@ Board.prototype.play = function(pos) {
 Board.prototype.pass = function() {
   ++this.playNo;
   ++this.displayNo;
+  
+  // write '{r: -1, c: -1} to database
+  firebase.database().ref(gameID).child('record').child(this.playNo).set({r : -1, c : -1});
+
 
   this.enable = false;
 };
@@ -204,7 +208,9 @@ Board.prototype.put = function(pos, playNo) {
   ++this.playNo;
   ++this.displayNo;
 
-  this.status[pos[0]][pos[1]] = playNo;
+  if (pos != [-1, -1])
+    this.status[pos[0]][pos[1]] = playNo;
+  
   this.drawAll();
 }
 
