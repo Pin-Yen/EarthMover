@@ -129,13 +129,13 @@ function btnWatchGameClick() {
       }
 
       // deside player's place
-      if (snapshot.child('black') == 'human') {
+      if (snapshot.child('black').val() == 'human') {
         // black == human, white == human -> sel: black, human, opp: white, human
         // black == human, white == ai -> sel: black, human, opp: white, ai
         dialog.initPlayer('sel', 'black', true);
-        dialog.initPlayer('opp', 'white', (snapshot.child('white') == 'human'));
+        dialog.initPlayer('opp', 'white', (snapshot.child('white').val() == 'human'));
       } else {
-        if (snapshot.child('white') == 'human') {
+        if (snapshot.child('white').val() == 'human') {
         // black == ai, white == human -> sel: white, human, opp: black, ai
         dialog.initPlayer('sel', 'white', true);
         dialog.initPlayer('opp', 'black', false);
