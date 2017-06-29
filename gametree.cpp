@@ -301,25 +301,25 @@ void GameTree::undo() {
 }
 
 std::string GameTree::getTreeJSON() {
-  return getSubTreeJSON(currentNode, 0).dump();
+  return getSubTreeJSON(currentNode, 0, false).dump();
 }
 
-json GameTree::getSubTreeJSON(Node* node, int position) {
+json GameTree::getSubTreeJSON(Node* node, int position, bool isSelf) {
   json tree;
 
   tree["r"] = position / 15;
   tree["c"] = position % 15;
 
   tree["totalCount"] = node->totalPlayout();
-  tree["winCount"] = node->winPlayout();
-  tree["loseCount"] = node->losePlayout();
-  tree["isWinning"] = node->winning();
-  tree["isLosing"] = node->winning();
+  tree["winCount"] = (isSelf) ? node->winPlayout() : node->losePlayout();
+  tree["loseCount"] = (isSelf) ? node->losePlayout() : node->winPlayout();
+  tree["isWinning"] = (isSelf) ? node->winning() : node->losing();
+  tree["isLosing"] = (isSelf) ? node->losing() : node->winning();
 
   tree["children"] = json::array();
   for (int i = 0; i < CHILD_LENGTH + 1; ++i) {
-    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() > 50) {
-      json subtree = getSubTreeJSON(node->childNode[i], i);
+    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() > 20) {
+      json subtree = getSubTreeJSON(node->childNode[i], i, !isSelf);
       tree["children"].push_back(subtree);
     }
   }

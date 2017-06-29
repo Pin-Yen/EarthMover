@@ -48,6 +48,7 @@ int AI::think() {
     result = tree->MCTSResult();
   #endif
 
+  std::cout << getTreeJSON();
   return result;
 }
 

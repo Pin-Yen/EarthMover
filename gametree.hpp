@@ -67,8 +67,9 @@ class GameTree {
   void backProp(Node* node);
 
   /* returns the part of the tree below 'node' in JSON format
-   * position: the index of 'node' in its parents child array */
-  nlohmann::json getSubTreeJSON(Node *node, int position);
+   * position: the index of 'node' in its parents child array
+   * isSelf : indicates whether the node is self's turn */
+  nlohmann::json getSubTreeJSON(Node *node, int position, bool isSelf);
 
   Node *root, *currentNode;
 
