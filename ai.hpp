@@ -3,6 +3,7 @@
 
 #include "virtualboard.hpp"
 #include "gametree.hpp"
+#include <string>
 #include <thread>
 
 class AI {
@@ -32,6 +33,8 @@ class AI {
 
   /* returns true for black ,false for white. */
   bool whoTurn();
+
+  std::string getTreeJSON() { return tree->getTreeJSON(); }
 
  private:
   /* this thread lets EM thinks in the background when it's the users turn */

@@ -2,6 +2,9 @@
 #define GAME_TREE_H
 
 #include "virtualboard.hpp"
+#include "lib/json.hpp"
+
+#include <string>
 
 class GameTree {
  public:
@@ -38,6 +41,9 @@ class GameTree {
 
   void undo();
 
+  /* Returns the whole tree in JSON format */
+  std::string getTreeJSON();
+
   /* debugger */
   VirtualBoard* getCurrentBoard() { return currentBoard; }
  private:
@@ -59,6 +65,10 @@ class GameTree {
    * back propagation form node, until reach the current node */
   void backProp(Node* node, bool result);
   void backProp(Node* node);
+
+  /* returns the part of the tree below 'node' in JSON format
+   * position: the index of 'node' in its parents child array */
+  nlohmann::json getSubTreeJSON(Node *node, int position);
 
   Node *root, *currentNode;
 

@@ -3,6 +3,7 @@
 #include "virtualboard.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
+#include  "lib/json.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -13,6 +14,8 @@
 #ifdef ANALYZE
 #include "log.hpp"
 #endif
+
+using json = nlohmann::json;
 
 GameTree::GameTree() {
   root = NULL;
@@ -295,4 +298,30 @@ void GameTree::undo() {
       currentNode = currentNode->parent();
       return;
     }
+}
+
+std::string GameTree::getTreeJSON() {
+  return getSubTreeJSON(currentNode, 0).dump();
+}
+
+json GameTree::getSubTreeJSON(Node* node, int position) {
+  json tree;
+
+  tree["r"] = position / 15;
+  tree["c"] = position % 15;
+
+  tree["totalCount"] = node->totalPlayout();
+  tree["winCount"] = node->winPlayout();
+  tree["loseCount"] = node->losePlayout();
+  tree["isWinning"] = node->winning();
+  tree["isLosing"] = node->winning();
+
+  tree["children"] = json::array();
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i) {
+    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() > 50) {
+      json subtree = getSubTreeJSON(node->childNode[i], i);
+      tree["children"].push_back(subtree);
+    }
+  }
+  return tree;
 }
