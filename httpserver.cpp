@@ -99,6 +99,8 @@ void HttpServer::listenConnection() {
         stopGame = handleThink();
       else if (directory == "/start")
         handleStart(requestBody);
+      else if (directory == "/undo")
+        handleUndo(requestBody);
       else if (directory == "/pass")
         handlePass();
       else if (directory == "/resign")
@@ -150,7 +152,6 @@ bool HttpServer::handlePlay(std::string requestBody) {
   try {
     row = parsedBody.at("row");
     col = parsedBody.at("col");
-    //shouldAiThink = parsedBody.at("think");
   } catch (std::exception& e) {
     std::cerr << "failed to parse requestBody:\n"<< e.what();
     HttpResponse response(400);
@@ -220,6 +221,26 @@ bool HttpServer::handleThink() {
 
   // Returns true to stop gameloop if someone is winning.
   return winning != 0;
+}
+
+void HttpServer::handleUndo(std::string requestBody) {
+  json parsedBody = json::parse(requestBody);
+
+  int times;
+
+  // extract row & col from request body
+  try {
+    times = parsedBody.at("times");
+  } catch (std::exception& e) {
+    std::cerr << "failed to parse requestBody:\n"<< e.what();
+    HttpResponse response(400);
+    return;
+  }
+
+  earthMover->undo(times);
+
+  HttpResponse response(204);
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
 }
 
 void HttpServer::handlePass() {

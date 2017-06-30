@@ -40,12 +40,28 @@
   top: 0;
 }
 
+.tl-title.game {
+  left: 1vh;
+}
+
+.tl-title.view {
+  left: 16vh;
+}
+
+.tl-title.analyze {
+  left: 31vh;
+}
+
 .tl-sub.game {
   width: 20vh;
 }
 
 .tl-sub.view {
   width: 24vh;
+}
+
+.tl-sub.analyze {
+  width: 20vh;
 }
 
 .tl-title:hover {
@@ -58,6 +74,10 @@
 
 .tl-title:hover .tl-sub.view {
   height: 10.6vh;
+}
+
+.tl-title:hover .tl-sub.analyze {
+  height: 5.4vh;
 }
 
 .tl-item {
@@ -101,12 +121,4 @@
   background: -moz-linear-gradient(bottom, #fd6, #fe9);
   background: -o-linear-gradient(bottom, #fd6, #fe9);
   background: -webkit-linear-gradient(top, #fd6, #fe9);
-}
-
-.tl-title.game {
-  left: .5vh;
-}
-
-.tl-title.view {
-  left: 16vh;
 }

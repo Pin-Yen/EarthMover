@@ -62,20 +62,26 @@
       game
       <div class="tl-sub game">
         <div class="tl-item" id="new-game">new game</div>
-        <div class="tl-item" id="watch-game" onclick="btnWatchGameClick()">watch game</div>
+        <div class="tl-item" onclick="btnWatchGameClick()">watch game</div>
       </div>
     </span>
     <span class="tl-title view">
       view
       <div class="tl-sub view">
-        <div class="tl-item" id="play-number" onclick="btnPlayNumberClick()">
+        <div class="tl-item" onclick="btnPlayNumberClick()">
           play number
           <img src="gomoku/src/png/check.png" class="tl-check" id="play-number-check">
         </div>
-        <div class="tl-item" id="coordinate" onclick="btnCoordinateClick()">
+        <div class="tl-item" onclick="btnCoordinateClick()">
           coordinate
           <img src="gomoku/src/png/check.png" class="tl-check" id="coordinate-check">
         </div>
+      </div>
+    </span>
+    <span class="tl-title analyze">
+      analyze
+      <div class="tl-sub analyze">
+        <div class="tl-item">analyze tree</div>
       </div>
     </span>
   </div>
@@ -84,15 +90,15 @@
        in this scope, control is abridged as ctrl -->
   <div class="control">
     <span class="ctrl-replay">
-      <input type="image" src="gomoku/src/png/skip_previous.png" onclick="changeDisplayNo(-225)">
-      <input type="image" src="gomoku/src/png/fast_rewind.png" onclick="changeDisplayNo(-5)">
-      <input type="image" src="gomoku/src/png/back.png" onclick="changeDisplayNo(-1)">
-      <input type="image" src="gomoku/src/png/next.png" onclick="changeDisplayNo(1)">
-      <input type="image" src="gomoku/src/png/fast_forward.png" onclick="changeDisplayNo(5)">
-      <input type="image" src="gomoku/src/png/skip_next.png" onclick="changeDisplayNo(225)">
+      <input type="image" src="gomoku/src/png/skip_previous.png" disabled="true" onclick="changeDisplayNo(-225)">
+      <input type="image" src="gomoku/src/png/fast_rewind.png" disabled="true" onclick="changeDisplayNo(-5)">
+      <input type="image" src="gomoku/src/png/back.png" disabled="true" onclick="changeDisplayNo(-1)">
+      <input type="image" src="gomoku/src/png/next.png" disabled="true" onclick="changeDisplayNo(1)">
+      <input type="image" src="gomoku/src/png/fast_forward.png" disabled="true" onclick="changeDisplayNo(5)">
+      <input type="image" src="gomoku/src/png/skip_next.png" disabled="true" onclick="changeDisplayNo(225)">
     </span>
     <span class="ctrl-game">
-      <input type="image" src="gomoku/src/png/undo.png" disabled="true">
+      <input id="ctrl-undo" type="image" src="gomoku/src/png/undo.png" disabled="true" onclick="undo()">
       <input type="image" src="gomoku/src/png/pass.png" disabled="true" onclick="pass()">
       <input type="image" src="gomoku/src/png/resign.png" disabled="true" onclick="resign()">
     </span>

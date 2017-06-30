@@ -166,12 +166,19 @@ Board.prototype.clear = function(pos) {
 
 // play at position, we should make sure that position is empty
 Board.prototype.play = function(pos) {
+  // lock board
+  this.enable = false;
+
+  // lock game and analyze bar
+  $('.ctrl-game input').prop('disabled', true);
+  $('.ctrl-analyze input').prop('disabled', true);
+
+  // stop timer
+  timer[this.whoTurn()].stop();
+
   ++this.playNo;
   ++this.displayNo;
   this.status[pos[0]][pos[1]] = this.playNo;
-
-  // write to firebase
-  firebase.database().ref(gameID).child('record').child(this.playNo).set({r : pos[0], c : pos[1]});
 
   // draw a marked chess
   this.draw(pos);
@@ -183,22 +190,48 @@ Board.prototype.play = function(pos) {
   // update last play
   this.lastPlay = pos.slice(0);
 
+  // write to firebase
+  firebase.database().ref(gameID).child('record').child(this.playNo).set({r : pos[0], c : pos[1]});
+}
+
+// pass
+Board.prototype.pass = function() {
   // lock board
   this.enable = false;
 
   // stop timer
-  timer[this.whoTurn(this.playNo - 1)].stop();
-}
+  timer[this.whoTurn()].stop();
 
-Board.prototype.pass = function() {
   ++this.playNo;
   ++this.displayNo;
-  
+
   // write '{r: -1, c: -1} to database
   firebase.database().ref(gameID).child('record').child(this.playNo).set({r : -1, c : -1});
+};
 
-
+// undo 'times' move
+Board.prototype.undo = function(times) {
+  // lock board
   this.enable = false;
+
+  // stop timer
+  timer[this.whoTurn()].stop();
+
+  this.playNo -= times;
+  this.displayNo = this.playNo;
+
+  // remove chess
+  for (var row = this.status.length - 1; row >= 0; row--)
+    for (var col = this.status[row].length - 1; col >= 0; col--) {
+      if (this.status[row][col] > this.playNo) {
+        this.status[row][col] = 0;
+        this.clear([row, col]);
+      } else if (this.playNo > 0 && this.status[row][col] == this.playNo) {
+        this.lastPlay = [row, col];
+        this.clear(this.lastPlay);
+        this.draw(this.lastPlay);
+      }
+    }
 };
 
 // Puts a chess at the specific position, with the specific playNo.
@@ -210,7 +243,7 @@ Board.prototype.put = function(pos, playNo) {
 
   if (pos != [-1, -1])
     this.status[pos[0]][pos[1]] = playNo;
-  
+
   this.drawAll();
 }
 
