@@ -202,8 +202,15 @@ function analyzeClick() {
 
   $('.player-information').toggle();
 
-  if (analyzing)
+  $('#tree-visualize').toggle();
+
+  if (analyzing) {
     $('.board').addClass('aside');
-  else
+    requestTree();
+  } else {
     $('.board').removeClass('aside');
+    removeTree();
+  }
+
+
 }

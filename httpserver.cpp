@@ -255,7 +255,7 @@ void HttpServer::handlePass() {
 void HttpServer::handleResign() {
   earthMover->resign();
 
-  HttpResponse response(200);
+  HttpResponse response(204);
 
   send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
 }

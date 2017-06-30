@@ -1,0 +1,27 @@
+#tree-visualize {
+  left: 88vh;
+  background-color: white;
+  bottom: 0;
+  display: none;
+  overflow: scroll;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}

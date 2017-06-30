@@ -3,6 +3,7 @@
 <html>
 <head>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
 
@@ -13,6 +14,7 @@
   <link rel="stylesheet" type="text/css" href="gomoku/src/css/board.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/css/playerinformation.css">
   <link rel="stylesheet" type="text/css" href="gomoku/src/css/timer.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/treevisualize.css">
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game'
@@ -195,6 +197,8 @@
       </div>
       <span id="pi-name-sel" class="pi-name sel">You</span>
     </span>
+
+    <div id="tree-visualize"></div>
   </div>
 </body>
 
@@ -216,5 +220,6 @@
 <script type="text/javascript" src="gomoku/src/js/dialog.js"></script>
 <script type="text/javascript" src="gomoku/src/js/timer.js"></script>
 <script type="text/javascript" src="gomoku/src/js/board.js"></script>
+<script type="text/javascript" src="gomoku/src/js/treevisualize.js"></script>
 <script type="text/javascript" src="gomoku/src/js/main.js"></script>
 </html>
