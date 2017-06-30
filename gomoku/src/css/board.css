@@ -10,6 +10,13 @@
   z-index: 2;
 }
 
+.board.aside {
+  bottom: 0;
+  margin: auto 0;
+  left: 4vh;
+  top: 0;
+}
+
 .board.img {
   border-color: #999;
 }

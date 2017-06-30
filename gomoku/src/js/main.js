@@ -192,6 +192,18 @@ function hint() {
   post(null, 'think');
 }
 
+var analyzing = false
+
 function analyzeClick() {
-  var analyzeWindow = window.open("/gomoku/src/analyze.html", "analyzeWindow");
+  analyzing = !analyzing;
+  //var analyzeWindow = window.open("/gomoku/src/analyze.html", "analyzeWindow");
+
+  $('#analyze-check').toggle();
+
+  $('.player-information').toggle();
+
+  if (analyzing)
+    $('.board').addClass('aside');
+  else
+    $('.board').removeClass('aside');
 }
