@@ -191,3 +191,7 @@ function hint() {
   board.enable = false;
   post(null, 'think');
 }
+
+function analyzeClick() {
+  var analyzeWindow = window.open("/gomoku/src/analyze.html", "analyzeWindow");
+}

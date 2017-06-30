@@ -105,6 +105,8 @@ void HttpServer::listenConnection() {
         handlePass();
       else if (directory == "/resign")
         handleResign();
+      else if (directory == "/visualize")
+        handleVisualize();
       else
         handleResourceRequest(requestBody, directory);
 
@@ -253,8 +255,21 @@ void HttpServer::handlePass() {
 void HttpServer::handleResign() {
   earthMover->resign();
 
-  HttpResponse response(204);
+  HttpResponse response(200);
+
   send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+}
+
+void HttpServer::handleVisualize() {
+  HttpResponse response(200);
+
+  response.setContentType("application/json");
+  response.setBody(earthMover->getTreeJSON());
+
+  std::cout << response.getHeaderString();
+
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {
@@ -458,6 +473,11 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   file->seekg(0, std::ios_base::beg);
   file->read(binBody, fileLength);
 
+}
+
+void HttpServer::HttpResponse::setBody(std::string body) {
+  bodyLength = body.length();
+  this->body = body;
 }
 
 std::string HttpServer::HttpResponse::getHeaderString(){

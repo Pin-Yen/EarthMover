@@ -51,6 +51,9 @@ class HttpServer {
   /* opponent resign, stop background thread */
   void handleResign();
 
+  /* returns JSON Monte-Carlo tree to client */
+  void handleVisualize();
+
   /* response a resource specified by "directory" to client, or some http error. */
   void handleResourceRequest(std::string requestBody, std::string directory);
 
@@ -94,6 +97,8 @@ class HttpServer::HttpResponse
 
   /* sets the response body */
   void setBody(std::ifstream *file);
+
+  void setBody(std::string body);
 
   std::string getHeaderString();
 
