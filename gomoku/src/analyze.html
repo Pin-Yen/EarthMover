@@ -91,6 +91,7 @@ function drawTree(treeData) {
     // Normalize for fixed-depth.
     nodes.forEach(function(d){ d.y = d.depth * 100});
 
+
     // ****************** Nodes section ***************************
 
     // Update the nodes...
@@ -130,6 +131,24 @@ function drawTree(treeData) {
         .text(function(d) { return "(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")"; 
         });
 
+    nodeEnter.filter(function(d){return d.data.isWinning;}).append('line')
+        .attr('class', 'X1')
+        .attr('x1', function(d){return -5;})
+        .attr('y1', function(d){return -5;})
+        .attr('x2', function(d){return 5;})
+        .attr('y2', function(d){return 5;})
+        .style('stroke-width', "3px")
+        .style("stroke", "red");
+    nodeEnter.filter(function(d){return d.data.isWinning;}).append('line')
+        .attr('class', 'X2')
+        .attr('x1', function(d){return 5;})
+        .attr('y1', function(d){return -5;})
+        .attr('x2', function(d){return -5;})
+        .attr('y2', function(d){return 5;})
+        .style('stroke-width', "3px")
+        .style("stroke", "red");
+
+
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
 
@@ -146,9 +165,20 @@ function drawTree(treeData) {
   	       return Math.log(d.data.totalCount);
         })
         .style("fill", function(d) {
-  	       return d.data.isWinning ? "lightblue" : d.data.isLosing ?　"red" : "#fff";
+  	       return d.data.isWinning ? "#ffffff" : d.data.isLosing ?　"red" : "#lightblue";
+        })
+        .style("stroke", function(d){
+           return d.data.isWinning ? "#ffffff" : d.data.isLosing ?　"red" : "#lightblue";          
         })
         .attr('cursor', 'pointer');
+
+    // nodeUpdate.select('line.X1')
+    //     .attr('x1', function(d){return d.x - 5;})
+    //     .attr('y1', function(d){return d.y - 5;})
+    //     .attr('x2', function(d){return d.x + 5;})
+    //     .attr('y2', function(d){return d.y + 5;})
+    //     .style('fill', "red");
+
 
 
     // Remove any exiting nodes
