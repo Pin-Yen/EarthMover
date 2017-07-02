@@ -68,8 +68,8 @@ class GameTree {
 
   /* returns the part of the tree below 'node' in JSON format
    * position: the index of 'node' in its parents child array
-   * isSelf : indicates whether the node is self's turn */
-  nlohmann::json getSubTreeJSON(Node *node, int position, bool isSelf);
+   * whiteTurn : indicates whether the node is white turn */
+  nlohmann::json getSubTreeJSON(Node *node, int position, bool whiteTurn);
 
   Node *root, *currentNode;
 

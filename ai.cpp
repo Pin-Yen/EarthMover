@@ -1,6 +1,4 @@
 #include "ai.hpp"
-// #include "virtualboard.hpp"
-// #include "gomoku/virtualboardgomoku.hpp"
 #include "gomoku/freestyle/virtualboardfreestyle.hpp"
 #include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
 #include "const.hpp"
@@ -77,8 +75,4 @@ void AI::reset(int level, int rule) {
 
   tree->reset(vb);
   level_ = level;
-}
-
-bool AI::whoTurn() {
-  return tree->getCurrentBoard()->whoTurn();
 }

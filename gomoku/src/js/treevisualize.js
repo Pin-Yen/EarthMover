@@ -52,7 +52,6 @@ function drawTree(treeData) {
 
   function update(source) {
     // Assigns the x and y position for the nodes
-    // var treeData = treemap(root);
     var treeData = mctsTree(root);
 
     // Compute the new tree layout.
@@ -61,7 +60,7 @@ function drawTree(treeData) {
 
     // Normalize for fixed-depth.
     nodes.forEach(function(d){ d.y = d.depth * 100});
-    
+
     // align to top
     nodes.forEach(function(d) {
       var descendants = d.descendants();
@@ -77,8 +76,8 @@ function drawTree(treeData) {
         return;
       for (var i = 0; i < d.children.length; ++i) {
         for (var k = 0; k < d.children.length; ++k) {
-          
-          if (d.children[i].data.totalCount < d.children[k].data.totalCount && 
+
+          if (d.children[i].data.totalCount < d.children[k].data.totalCount &&
               d.children[i].x < d.children[k].x) {
             // if the order of child i & child k is wrong, swap them.
             var dispacement = d.children[k].x - d.children[i].x;
@@ -112,10 +111,12 @@ function drawTree(treeData) {
 
     // Add Circle for the nodes
     nodeEnter.append('circle')
-        .attr('class', 'node')
         .attr('r', 1e-6)
         .style("fill", function(d) {
-          return d.data.isWinning ? "lightblue" : d.data.isLosing ? "red" : "#fff";
+          return d.data.whiteTurn ? "black" : "white";
+        })
+        .style("stroke", function(d) {
+          return gradient(d.data.winRate);
         });
 
     // Add labels for the nodes
@@ -135,6 +136,30 @@ function drawTree(treeData) {
         .text(function(d) { return "(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")";
         });
 
+
+    nodeEnter.append("line")
+        .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
+        .attr("x1", function(d) {
+          return -stroke(d) * (4 / 9) + "px";
+        })
+        .attr("x2", function(d) {
+          return stroke(d) * (4 / 9) + "px";
+        })
+        .attr("y1", function(d) {
+          return -stroke(d) * (4 / 9) + "px";
+        })
+        .attr("y2", function(d) {
+          return stroke(d) * (4 / 9) + "px";
+        })
+        .style("stroke-width", function(d){
+        // set the link's stroke-width according to total simulation count.
+          return stroke(d) / 5 + "px";
+        })
+        .style("stroke", function(d) {
+          return d.data.isWinning ? gradient(100) : gradient(0);
+        });
+
+
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
 
@@ -146,12 +171,18 @@ function drawTree(treeData) {
         });
 
     // Update the node attributes and style
-    nodeUpdate.select('circle.node')
+    nodeUpdate.select('circle')
         .attr('r', function(d) {
-           return Math.log(d.data.totalCount);
+           return stroke(d) * (3 / 4) + "px";
         })
         .style("fill", function(d) {
-           return d.data.isWinning ? "lightblue" : d.data.isLosing ? "red" : "#fff";
+           return d.data.whiteTurn ? "black" : "white";
+        })
+        .style("stroke", function(d) {
+          return gradient(d.data.winRate);
+        })
+        .style("stroke-width", function(d) {
+          return stroke(d) * (1 / 4) + "px";
         })
         .attr('cursor', 'pointer');
 
@@ -172,6 +203,12 @@ function drawTree(treeData) {
     nodeExit.select('text')
         .style('fill-opacity', 1e-6);
 
+    nodeExit.select('line')
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", 0)
+        .attr("y2", 0);
+
     // ****************** links section ***************************
 
     // Update the links...
@@ -182,18 +219,15 @@ function drawTree(treeData) {
     var linkEnter = link.enter().insert('path', "g")
         .attr("class", "link")
         .attr('d', function(d){
-        var o = {x: source.x0, y: source.y0}
-          return diagonal(o, o)
+          var o = {x: source.x0, y: source.y0};
+          return diagonal(o, o);
         })
-        .attr("title", function(d){return d.data.totalCount;})
         .style("stroke-width", function(d){
           // set the link's stroke-width according to total simulation count.
-                          return Math.pow(d.data.totalCount, 1/3) + "px";
+          return stroke(d) + "px";
         })
         .style("stroke", function(d) {
-          var winRate = d.data.winCount / d.data.totalCount;
-          var loseRate = d.data.loseCount / d.data.totalCount;
-          return gradient( (winRate - loseRate + 1) / 2 );
+          return gradient(d.data.winRate);
         });
 
     // UPDATE
@@ -201,17 +235,17 @@ function drawTree(treeData) {
 
     // Transition back to the parent element position
     linkUpdate.transition()
-      .duration(duration)
-      .attr('d', function(d){ return diagonal(d, d.parent) });
+        .duration(duration)
+        .attr('d', function(d){ return diagonal(d, d.parent); });
 
     // Remove any exiting links
     var linkExit = link.exit().transition()
-      .duration(duration)
-      .attr('d', function(d) {
-        var o = {x: source.x, y: source.y}
-        return diagonal(o, o)
-      })
-      .remove();
+        .duration(duration)
+        .attr('d', function(d) {
+          var o = {x: source.x, y: source.y};
+          return diagonal(o, o);
+        })
+        .remove();
 
     // Store the old positions for transition.
     nodes.forEach(function(d){
@@ -244,10 +278,14 @@ function drawTree(treeData) {
 
     function gradient(level) {
       var hStart = 0 // red
-      var hEnd = 240 //blue
+      var hEnd = 200 //blue
 
       h = hStart + (hEnd - hStart) * level;
-        return `hsl(${h},100%,45%)`;
+      return `hsl(${h},100%,45%)`;
+    }
+
+    function stroke(d) {
+      return Math.pow(d.data.totalCount, .25) + 5;
     }
   }
 }

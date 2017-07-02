@@ -33,9 +33,9 @@ class GameTree::Node {
 
   int totalPlayout() const { return playout_[2]; }
 
-  int winPlayout() const {return playout_[0]; }
+  //int winPlayout() const {return playout_[0]; }
 
-  int losePlayout() const {return playout_[1]; }
+  //int losePlayout() const {return playout_[1]; }
 
   Node* parent() const { return parent_; }
 

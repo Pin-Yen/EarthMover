@@ -38,7 +38,7 @@ class AI {
   void resign() { stopBGThread(); }
 
   /* returns true for black ,false for white. */
-  bool whoTurn();
+  bool whoTurn() {return tree->getCurrentBoard()->whoTurn(); }
 
   std::string getTreeJSON() { return tree->getTreeJSON(); }
 
