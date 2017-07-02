@@ -61,7 +61,41 @@ function drawTree(treeData) {
 
     // Normalize for fixed-depth.
     nodes.forEach(function(d){ d.y = d.depth * 100});
+    
+    // align to top
+    nodes.forEach(function(d) {
+      var descendants = d.descendants();
+      for (var i = 0; i < descendants.length; ++i) {
+        if (descendants[i].x < d.x)
+          d.x = descendants[i].x;
+      }
+    });
 
+    // adjust node sequence
+    nodes.forEach(function(d) {
+      if (d.children == undefined)
+        return;
+      for (var i = 0; i < d.children.length; ++i) {
+        for (var k = 0; k < d.children.length; ++k) {
+          
+          if (d.children[i].data.totalCount < d.children[k].data.totalCount && 
+              d.children[i].x < d.children[k].x) {
+            // if the order of child i & child k is wrong, swap them.
+            var dispacement = d.children[k].x - d.children[i].x;
+
+            var upperChildDescendants = d.children[k].descendants();
+            for (var m = 0; m < upperChildDescendants.length; ++m) {
+              upperChildDescendants[m].x -= dispacement;
+            }
+
+            var lowerChildDescendants = d.children[i].descendants();
+            for (var m = 0; m < lowerChildDescendants.length; ++m) {
+              lowerChildDescendants[m].x += dispacement;
+            }
+          }
+        }
+      }
+    });
     // ****************** Nodes section ***************************
 
     // Update the nodes...
@@ -159,8 +193,6 @@ function drawTree(treeData) {
         .style("stroke", function(d) {
           var winRate = d.data.winCount / d.data.totalCount;
           var loseRate = d.data.loseCount / d.data.totalCount;
-          console.log((winRate - loseRate + 1) / 2);
-          console.log(gradient( (winRate - loseRate + 1) / 2 ));
           return gradient( (winRate - loseRate + 1) / 2 );
         });
 
