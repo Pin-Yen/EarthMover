@@ -120,7 +120,7 @@ void HttpServer::redirect(std::string *directory) {
     directory->append("board.html");
   } else if (*directory == "/favicon.ico") {
     // favicon, should replace with EM icon.
-    *directory = std::string("/gomoku/src/chess_white.png");
+    *directory = std::string("/gomoku/src/png/chess_white.png");
   }
 }
 
@@ -265,8 +265,6 @@ void HttpServer::handleVisualize() {
 
   response.setContentType("application/json");
   response.setBody(earthMover->getTreeJSON());
-
-  std::cout << response.getHeaderString();
 
   send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
   send(server, response.getBody(), response.getBodyLength(), 0);

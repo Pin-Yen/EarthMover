@@ -170,40 +170,6 @@ int GameTree::MCTSResult() const {
             << "  L: " << currentNode->losing()
             << std::endl;
 
-  #ifdef ANALYZE
-  /* sort coordinates */
-  std::vector<std::tuple<int, int>> sortedList;
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      if (currentNode->childNode[i] != NULL)
-        sortedList.push_back(std::make_tuple(r, c));
-
-  std::sort(sortedList.begin(), sortedList.end(), [this](const std::tuple<int, int> i, const std::tuple<int, int> k)->bool{
-    return currentNode->childNode[std::get<0>(i)][std::get<1>(i)]->totalPlayout()
-      > currentNode->childNode[std::get<0>(k)][std::get<1>(k)]->totalPlayout();
-  });
-
-  Log log;
-  Log::precision(3);
-  log << "           sim    winRate      score       UCB    score + UCB\n";
-  for (int i = 0; i < sortedList.size() ; ++i) {
-    int *row = std::get<0>(sortedList[i]);
-    int *col = std::get<1>(sortedList[i]);
-
-    double winRate = currentNode->childNode[*row][*col]->winRate(),
-           score = (double)(currentBoard->getScore(*row, *col)) / currentBoard->getScoreSum(),
-           ucb = currentNode->getUCBValue(*row, *col);
-
-    log << std::setw(2) << i + 1 << ". "
-        << (char)('A' + *col) << std::setw(2) << *row + 1
-        << "  " << std::setw(5) << currentNode->childNode[*row][*col]->totalPlayout()
-        << "      " << std::setw(5) << winRate
-        << "     " << std::setw(6) << score
-        << "     " << std::setw(5) << ucb
-        << "         " << std::setw(6) << score + ucb << "\n";
-  }
-  #endif
-
   return index;
 }
 
@@ -301,7 +267,7 @@ void GameTree::undo() {
 }
 
 std::string GameTree::getTreeJSON() {
-  return getSubTreeJSON(currentNode, 0, false).dump();
+  return currentNode == NULL ? "" : getSubTreeJSON(currentNode, 0, false).dump();
 }
 
 json GameTree::getSubTreeJSON(Node* node, int position, bool isSelf) {
@@ -319,8 +285,7 @@ json GameTree::getSubTreeJSON(Node* node, int position, bool isSelf) {
   tree["children"] = json::array();
   for (int i = 0; i < CHILD_LENGTH + 1; ++i) {
     if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() > 20) {
-      json subtree = getSubTreeJSON(node->childNode[i], i, !isSelf);
-      tree["children"].push_back(subtree);
+      tree["children"].push_back(getSubTreeJSON(node->childNode[i], i, !isSelf));
     }
   }
   return tree;
