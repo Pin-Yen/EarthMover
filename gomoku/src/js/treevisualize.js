@@ -73,7 +73,6 @@ D3.drawTree = function(treeData) {
       }
     });
 
-    /*
     // adjust node sequence
     nodes.forEach(function(d) {
       if (d.children == undefined)
@@ -99,7 +98,7 @@ D3.drawTree = function(treeData) {
         }
       }
     });
-    */
+
     // ****************** Nodes section ***************************
 
     // Update the nodes...
@@ -111,8 +110,7 @@ D3.drawTree = function(treeData) {
         .attr('class', 'node')
         .attr("transform", function(d) {
           return "translate(" + source.y0 + "," + source.x0 + ")";
-        })
-        .on('click', click);
+        });
 
     // Add Circle for the nodes
     nodeEnter.append('circle')
@@ -133,7 +131,6 @@ D3.drawTree = function(treeData) {
         .attr("text-anchor", "start")
         .style("fill-opacity", 0);
 
-
     nodeEnter.append("line")
         .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
         .attr("x1", 0)
@@ -141,14 +138,15 @@ D3.drawTree = function(treeData) {
         .attr("y1", 0)
         .attr("y2", 0);
 
-
     // UPDATE
     // Transition to the proper position for the node
+    nodeEnter.merge(node).on('click', click);
+
     var nodeUpdate = nodeEnter.merge(node).transition()
         .duration(duration)
         .attr("transform", function(d) {
            return "translate(" + d.y + "," + d.x + ")";
-        });
+        })
 
     // Update the node attributes and style
     nodeUpdate.select('circle')
@@ -187,6 +185,15 @@ D3.drawTree = function(treeData) {
         .style("stroke", function(d) {
           return d.data.isWinning ? gradient(100) : gradient(0);
         });
+
+    nodeUpdate.select('line')
+        .filter(function(d) { return !(d.data.isWinning || d.data.isLosing); })
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", 0)
+        .attr("y2", 0)
+        .style("stroke-width", null)
+        .style("stroke", null);
 
     nodeUpdate.select('text')
         .text(function(d) {
@@ -232,11 +239,9 @@ D3.drawTree = function(treeData) {
 
     // UPDATE
     // Transition back to the parent element position
-    var linkUpdate = linkEnter.merge(link).transition()
+    linkEnter.merge(link).transition()
         .duration(duration)
-        .attr('d', function(d){ return diagonal(d, d.parent); });
-
-    linkUpdate
+        .attr('d', function(d){ return diagonal(d, d.parent); })
         .style("stroke-width", function(d) {
           // set the link's stroke-width according to total simulation count.
           return stroke(d) + "px";
@@ -246,7 +251,7 @@ D3.drawTree = function(treeData) {
         });
 
     // Remove any exiting links
-    var linkExit = link.exit().transition()
+    link.exit().transition()
         .duration(duration)
         .attr('d', function(d) {
           var o = {x: source.x, y: source.y};
@@ -255,7 +260,7 @@ D3.drawTree = function(treeData) {
         .remove();
 
     // Store the old positions for transition.
-    nodes.forEach(function(d){
+    nodes.forEach(function(d) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
