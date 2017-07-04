@@ -10,8 +10,22 @@
   z-index: 10;
 }
 
+#tree-visualize input {
+  margin: 4px;
+  outline: none;
+  width: 32px;
+}
+
+#tree-visualize input:hover {
+  background-color: #ccc;
+}
+
+#tree-visualize input:active {
+  background-color: #ddd;
+}
+
 .node text {
-  font: 12px sans-serif;
+  font: 12px;
 }
 
 .link {

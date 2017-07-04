@@ -196,7 +196,6 @@ var analyzing = false
 
 function analyzeClick() {
   analyzing = !analyzing;
-  //var analyzeWindow = window.open("/gomoku/src/analyze.html", "analyzeWindow");
 
   $('#analyze-check').toggle();
 
@@ -206,11 +205,13 @@ function analyzeClick() {
 
   if (analyzing) {
     $('.board').addClass('aside');
-    requestTree();
+    D3.requestTree();
   } else {
     $('.board').removeClass('aside');
-    removeTree();
+    D3.removeTree();
   }
+}
 
-
+function refresh() {
+  D3.requestTree();
 }

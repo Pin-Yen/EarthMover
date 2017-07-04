@@ -1,23 +1,24 @@
-function requestTree() {
+var D3 = D3 || {};
 
-  var  request = new XMLHttpRequest();
+D3.requestTree = function() {
+  var request = new XMLHttpRequest();
   request.open('POST', '/visualize');
 
   request.onreadystatechange = function() {
     if (request.readyState != 4 || request.status != 200)
       return;
 
-    drawTree(JSON.parse(request.responseText));
+    D3.drawTree(JSON.parse(request.responseText));
   }
 
   request.send("requesting mct");
 }
 
-function removeTree() {
+D3.removeTree = function() {
   d3.select("#tree-visualize svg").remove();
 }
 
-function drawTree(treeData) {
+D3.drawTree = function(treeData) {
   // Set the dimensions and margins of the diagram
   var margin = {top: 20, right: 90, bottom: 30, left: 90},
   width = 1400 - margin.left - margin.right,
@@ -26,11 +27,13 @@ function drawTree(treeData) {
   // append the svg object to the body of the page
   // appends a 'group' element to 'svg'
   // moves the 'group' element to the top left margin
-  var svg = d3.select("#tree-visualize").append("svg")
-  .attr("width", width + margin.right + margin.left)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-  .attr("transform", "translate("+ margin.left + "," + margin.top + ")");
+  var svg = d3.select("#tree-visualize").select("svg").empty() ?
+      d3.select("#tree-visualize").append("svg")
+      .attr("width", width + margin.right + margin.left)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate("+ margin.left + "," + margin.top + ")") :
+      d3.select("#tree-visualize").select("svg").select("g");
 
   var idCounter = 0, duration = 750, root;
 
@@ -41,7 +44,7 @@ function drawTree(treeData) {
   // Sort childrens by total simulations in descendant order.
   root = d3.hierarchy(treeData, function(d) { return d.children; })
            .sort(function(child1, child2) {
-  return child2.data.totalCount - child1.data.totalCount;
+    return child2.data.totalCount - child1.data.totalCount;
   });
 
   root.x0 = height / 2;
