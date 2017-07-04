@@ -111,7 +111,7 @@ function drawTree(treeData) {
 
     // Add Circle for the nodes
     nodeEnter.append('circle')
-        .attr('r', 1e-6)
+        .attr('r', 0)
         .style("fill", function(d) {
           return d.data.whiteTurn ? "black" : "white";
         })
@@ -134,23 +134,16 @@ function drawTree(treeData) {
           return d.children || d._children ? "middle" : "start";
         })
         .text(function(d) { return "(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")";
-        });
+        })
+        .style("fill-opacity", 0);
 
 
     nodeEnter.append("line")
         .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
-        .attr("x1", function(d) {
-          return -stroke(d) * (4 / 9) + "px";
-        })
-        .attr("x2", function(d) {
-          return stroke(d) * (4 / 9) + "px";
-        })
-        .attr("y1", function(d) {
-          return -stroke(d) * (4 / 9) + "px";
-        })
-        .attr("y2", function(d) {
-          return stroke(d) * (4 / 9) + "px";
-        })
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", 0)
+        .attr("y2", 0)
         .style("stroke-width", function(d){
         // set the link's stroke-width according to total simulation count.
           return stroke(d) / 5 + "px";
@@ -159,12 +152,9 @@ function drawTree(treeData) {
           return d.data.isWinning ? gradient(100) : gradient(0);
         });
 
-
     // UPDATE
-    var nodeUpdate = nodeEnter.merge(node);
-
     // Transition to the proper position for the node
-    nodeUpdate.transition()
+    var nodeUpdate = nodeEnter.merge(node).transition()
         .duration(duration)
         .attr("transform", function(d) {
            return "translate(" + d.y + "," + d.x + ")";
@@ -186,6 +176,21 @@ function drawTree(treeData) {
         })
         .attr('cursor', 'pointer');
 
+    nodeUpdate.select('line')
+        .attr("x1", function(d) {
+          return -stroke(d) * (4 / 9) + "px";
+        })
+        .attr("x2", function(d) {
+          return stroke(d) * (4 / 9) + "px";
+        })
+        .attr("y1", function(d) {
+          return -stroke(d) * (4 / 9) + "px";
+        })
+        .attr("y2", function(d) {
+          return stroke(d) * (4 / 9) + "px";
+        });
+
+    nodeUpdate.select('text') .style("fill-opacity", 1);
 
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -197,11 +202,11 @@ function drawTree(treeData) {
 
     // On exit reduce the node circles size to 0
     nodeExit.select('circle')
-        .attr('r', 1e-6);
+        .attr('r', 0);
 
     // On exit reduce the opacity of text labels
     nodeExit.select('text')
-        .style('fill-opacity', 1e-6);
+        .style('fill-opacity', 0);
 
     nodeExit.select('line')
         .attr("x1", 0)
