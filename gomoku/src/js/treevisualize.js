@@ -73,6 +73,7 @@ D3.drawTree = function(treeData) {
       }
     });
 
+    /*
     // adjust node sequence
     nodes.forEach(function(d) {
       if (d.children == undefined)
@@ -98,6 +99,7 @@ D3.drawTree = function(treeData) {
         }
       }
     });
+    */
     // ****************** Nodes section ***************************
 
     // Update the nodes...
@@ -123,21 +125,12 @@ D3.drawTree = function(treeData) {
         });
 
     // Add labels for the nodes
-    // labels of a leaf node will be at the right of the node,
-    // otherwise, it will be above the node.
+    // labels will be at the right of the node,
     nodeEnter.append('text')
         .attr("dy", ".35em")
-        .attr("x", function(d) {
-          return d.children || d.hiddenChildren ? 0 : 13;
-        })
-        .attr("y", function(d) {
-          return d.children || d.hiddenChildren ? -15 : 0;
-        })
-        .attr("text-anchor", function(d) {
-          return d.children || d._children ? "middle" : "start";
-        })
-        .text(function(d) { return "(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")";
-        })
+        .attr("x", 18)
+        .attr("y", 0)
+        .attr("text-anchor", "start")
         .style("fill-opacity", 0);
 
 
@@ -146,14 +139,8 @@ D3.drawTree = function(treeData) {
         .attr("x1", 0)
         .attr("x2", 0)
         .attr("y1", 0)
-        .attr("y2", 0)
-        .style("stroke-width", function(d){
-        // set the link's stroke-width according to total simulation count.
-          return stroke(d) / 5 + "px";
-        })
-        .style("stroke", function(d) {
-          return d.data.isWinning ? gradient(100) : gradient(0);
-        });
+        .attr("y2", 0);
+
 
     // UPDATE
     // Transition to the proper position for the node
@@ -180,6 +167,7 @@ D3.drawTree = function(treeData) {
         .attr('cursor', 'pointer');
 
     nodeUpdate.select('line')
+        .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
         .attr("x1", function(d) {
           return -stroke(d) * (4 / 9) + "px";
         })
@@ -191,9 +179,20 @@ D3.drawTree = function(treeData) {
         })
         .attr("y2", function(d) {
           return stroke(d) * (4 / 9) + "px";
+        })
+        .style("stroke-width", function(d){
+        // set the link's stroke-width according to total simulation count.
+          return stroke(d) / 5 + "px";
+        })
+        .style("stroke", function(d) {
+          return d.data.isWinning ? gradient(100) : gradient(0);
         });
 
-    nodeUpdate.select('text') .style("fill-opacity", 1);
+    nodeUpdate.select('text')
+        .text(function(d) {
+          return "(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")";
+        })
+        .style("fill-opacity", 1);
 
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -229,22 +228,22 @@ D3.drawTree = function(treeData) {
         .attr('d', function(d){
           var o = {x: source.x0, y: source.y0};
           return diagonal(o, o);
-        })
-        .style("stroke-width", function(d){
+        });
+
+    // UPDATE
+    // Transition back to the parent element position
+    var linkUpdate = linkEnter.merge(link).transition()
+        .duration(duration)
+        .attr('d', function(d){ return diagonal(d, d.parent); });
+
+    linkUpdate
+        .style("stroke-width", function(d) {
           // set the link's stroke-width according to total simulation count.
           return stroke(d) + "px";
         })
         .style("stroke", function(d) {
           return gradient(d.data.winRate);
         });
-
-    // UPDATE
-    var linkUpdate = linkEnter.merge(link);
-
-    // Transition back to the parent element position
-    linkUpdate.transition()
-        .duration(duration)
-        .attr('d', function(d){ return diagonal(d, d.parent); });
 
     // Remove any exiting links
     var linkExit = link.exit().transition()
