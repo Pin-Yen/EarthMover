@@ -11,8 +11,10 @@
 }
 
 #tree-visualize input {
-  margin: 4px;
+  left: 4px;
   outline: none;
+  position: absolute;
+  top: 4px;
   width: 32px;
 }
 
@@ -22,6 +24,12 @@
 
 #tree-visualize input:active {
   background-color: #ddd;
+}
+
+#tree-visualize svg {
+  left: 0;
+  position: absolute;
+  top: 40px;
 }
 
 .node text {

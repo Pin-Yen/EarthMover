@@ -15,88 +15,50 @@ D3.requestTree = function() {
 }
 
 D3.removeTree = function() {
-  d3.select("#tree-visualize svg").remove();
+  d3.select("#tree-visualize").select("svg").select("g").remove();
 }
 
 D3.drawTree = function(treeData) {
-  // Set the dimensions and margins of the diagram
-  var margin = {top: 20, right: 90, bottom: 30, left: 90},
-  width = 1400 - margin.left - margin.right,
-  height = 800 - margin.top - margin.bottom;
+  // Assigns parent, children, height, depth.
+  // Sort childrens by total simulations in descendant order.
+  var root = d3.hierarchy(treeData)
+               .sort(function(child1, child2) {
+                 return child2.data.totalCount - child1.data.totalCount;
+               });
+
+  var margin = { left: 80, top: 20, right: 80, bottom: 20};
 
   // append the svg object to the body of the page
   // appends a 'group' element to 'svg'
   // moves the 'group' element to the top left margin
-  var svg = d3.select("#tree-visualize").select("svg").empty() ?
-      d3.select("#tree-visualize").append("svg")
-      .attr("width", width + margin.right + margin.left)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate("+ margin.left + "," + margin.top + ")") :
-      d3.select("#tree-visualize").select("svg").select("g");
+  var svg = d3.select("#tree-visualize").select("svg")
+      .attr("width", root.height * 80 + margin.left + margin.right)
+      .attr("height", (root.leaves().length - 1) * 20 + margin.top + margin.bottom);
 
-  var idCounter = 0, duration = 750, root;
+  var svg = svg.select("g").empty() ?
+      svg.append("g").attr("transform", "translate("+ margin.left + "," + margin.top + ")") :
+      svg.select("g");
 
-  // declares a tree layout and assigns the size
-  var mctsTree = d3.tree().size([height, width]);
-
-  // Assigns parent, children, height, depth.
-  // Sort childrens by total simulations in descendant order.
-  root = d3.hierarchy(treeData, function(d) { return d.children; })
-           .sort(function(child1, child2) {
-    return child2.data.totalCount - child1.data.totalCount;
-  });
-
-  root.x0 = height / 2;
+  root.x0 = 0;
   root.y0 = 0;
+
+  var idCounter = 0, duration = 750;
 
   update(root);
 
-
   function update(source) {
-    // Assigns the x and y position for the nodes
-    var treeData = mctsTree(root);
+    // assigns leaves' x position
+    var leavesCounter = -1;
+    root.leaves().forEach(function(d){ d.x = ++leavesCounter * 20});
 
     // Compute the new tree layout.
-    var nodes = treeData.descendants(),
-    links = treeData.descendants().slice(1);
+    var nodes = root.descendants(),
+        links = root.descendants().slice(1);
 
-    // Normalize for fixed-depth.
-    nodes.forEach(function(d){ d.y = d.depth * 100});
-
-    // align to top
+    // assings position
     nodes.forEach(function(d) {
-      var descendants = d.descendants();
-      for (var i = 0; i < descendants.length; ++i) {
-        if (descendants[i].x < d.x)
-          d.x = descendants[i].x;
-      }
-    });
-
-    // adjust node sequence
-    nodes.forEach(function(d) {
-      if (d.children == undefined)
-        return;
-      for (var i = 0; i < d.children.length; ++i) {
-        for (var k = 0; k < d.children.length; ++k) {
-
-          if (d.children[i].data.totalCount < d.children[k].data.totalCount &&
-              d.children[i].x < d.children[k].x) {
-            // if the order of child i & child k is wrong, swap them.
-            var dispacement = d.children[k].x - d.children[i].x;
-
-            var upperChildDescendants = d.children[k].descendants();
-            for (var m = 0; m < upperChildDescendants.length; ++m) {
-              upperChildDescendants[m].x -= dispacement;
-            }
-
-            var lowerChildDescendants = d.children[i].descendants();
-            for (var m = 0; m < lowerChildDescendants.length; ++m) {
-              lowerChildDescendants[m].x += dispacement;
-            }
-          }
-        }
-      }
+      d.x = d.leaves()[0].x;
+      d.y = d.depth * 80;
     });
 
     // ****************** Nodes section ***************************
@@ -126,7 +88,7 @@ D3.drawTree = function(treeData) {
     // labels will be at the right of the node,
     nodeEnter.append('text')
         .attr("dy", ".35em")
-        .attr("x", 18)
+        .attr("x", 15)
         .attr("y", 0)
         .attr("text-anchor", "start")
         .style("fill-opacity", 0);
