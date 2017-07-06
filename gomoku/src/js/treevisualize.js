@@ -111,60 +111,50 @@ D3.drawTree = function(treeData) {
     var nodeUpdate = nodeEnter.merge(node).transition(t)
         .attr("transform", function(d) {
            return "translate(" + d.y + "," + d.x + ")";
-        })
-
-    // Update the node attributes and style
-    nodeUpdate.select('circle')
-        .attr('r', function(d) {
-           return stroke(d) * (3 / 4) + "px";
-        })
-        .style("fill", function(d) {
-           return d.data.whiteTurn ? "black" : "white";
-        })
-        .style("stroke", function(d) {
-          return gradient(d.data.winRate);
-        })
-        .style("stroke-width", function(d) {
-          return stroke(d) * (1 / 4) + "px";
-        })
-        .attr('cursor', 'pointer');
-
-    nodeUpdate.select('line')
-        .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
-        .attr("x1", function(d) {
-          return -stroke(d) * (4 / 9) + "px";
-        })
-        .attr("x2", function(d) {
-          return stroke(d) * (4 / 9) + "px";
-        })
-        .attr("y1", function(d) {
-          return -stroke(d) * (4 / 9) + "px";
-        })
-        .attr("y2", function(d) {
-          return stroke(d) * (4 / 9) + "px";
-        })
-        .style("stroke-width", function(d){
-        // set the link's stroke-width according to total simulation count.
-          return stroke(d) / 5 + "px";
-        })
-        .style("stroke", function(d) {
-          return d.data.isWinning ? gradient(100) : gradient(0);
         });
-
-    nodeUpdate.select('line')
-        .filter(function(d) { return !(d.data.isWinning || d.data.isLosing); })
-        .attr("x1", 0)
-        .attr("x2", 0)
-        .attr("y1", 0)
-        .attr("y2", 0)
-        .style("stroke-width", null)
-        .style("stroke", null);
 
     nodeUpdate.select('text')
         .text(function(d) {
           return d.data.r == 15 ? "(pass)" : ("(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")");
         })
         .style("fill-opacity", 1);
+
+    // Update the node attributes and style
+    nodeUpdate.each(function(d) {
+      var w = width(d.data.totalCount);
+
+      var r = w * .75 + "px",
+          cw = w * .25 + "px",
+          g = gradient(d.data.winRate),
+          f = d.data.whiteTurn ? "black" : "white";
+
+      var l = 0,
+          nl = 0,
+          lw = w * .2 + "px",
+          s = null;
+
+      if (d.data.isWinning || d.data.isLosing) {
+        l = w * .44 + "px";
+        nl = -w * .44 + "px";
+        s =  d.data.isWinning ? gradient(1) : gradient(0);
+      }
+
+      var update = d3.select(this).transition(t);
+
+      update.select('circle')
+          .attr('r', r)
+          .style("stroke", g)
+          .style("stroke-width", cw)
+          .style("fill", f);
+
+      update.select('line')
+          .attr("x1", nl)
+          .attr("x2", l)
+          .attr("y1", nl)
+          .attr("y2", l)
+          .style("stroke-width", lw)
+          .style("stroke", s);
+    });
 
     // Remove any exiting nodes
     var nodeExit = node.exit().transition(t)
@@ -204,10 +194,9 @@ D3.drawTree = function(treeData) {
     // UPDATE
     // Transition back to the parent element position
     linkEnter.merge(link).transition(t)
-        .attr('d', function(d){ return diagonal(d, d.parent); })
+        .attr('d', function(d) { return diagonal(d, d.parent); })
         .style("stroke-width", function(d) {
-          // set the link's stroke-width according to total simulation count.
-          return stroke(d) + "px";
+          return width(d.data.totalCount) + "px";
         })
         .style("stroke", function(d) {
           return gradient(d.data.winRate);
@@ -258,8 +247,8 @@ D3.drawTree = function(treeData) {
       return `hsl(${h},100%,45%)`;
     }
 
-    function stroke(d) {
-      return Math.pow(d.data.totalCount, .25) + 5;
+    function width(count) {
+      return Math.pow(count, .25) + 5;
     }
   }
 }

@@ -36,6 +36,10 @@
   font: 12px;
 }
 
+.node circle {
+  cursor: pointer;
+}
+
 .link {
   fill: none;
 }
