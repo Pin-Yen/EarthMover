@@ -199,8 +199,12 @@
     </span>
 
     <div id="tree-visualize">
-      <input type="image" src="gomoku/src/png/refresh.png" onclick="refresh()">
-      <svg></svg>
+      <div id="tv-control">
+        <input type="image" src="gomoku/src/png/refresh.png" onclick="refresh()">
+      </div>
+      <div id="tv-main">
+        <svg id="tv-svg"></svg>
+      </div>
     </div>
   </div>
 </body>

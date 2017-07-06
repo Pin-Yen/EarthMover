@@ -8,14 +8,14 @@ D3.requestTree = function() {
     if (request.readyState != 4 || request.status != 200)
       return;
 
-    D3.drawTree(JSON.parse(request.responseText));
+    if (request.responseText) D3.drawTree(JSON.parse(request.responseText));
   }
 
   request.send("requesting mct");
 }
 
 D3.removeTree = function() {
-  d3.select("#tree-visualize").select("svg").select("g").remove();
+  d3.select("#tv-svg").select("g").remove();
 }
 
 D3.drawTree = function(treeData) {
@@ -26,12 +26,12 @@ D3.drawTree = function(treeData) {
                  return child2.data.totalCount - child1.data.totalCount;
                });
 
-  var margin = { left: 60, top: 20, right: 60, bottom: 20};
+  var margin = { left: 60, top: 40, right: 60, bottom: 40};
 
   // append the svg object to the body of the page
   // appends a 'group' element to 'svg'
   // moves the 'group' element to the top left margin
-  var svg = d3.select("#tree-visualize").select("svg");
+  var svg = d3.select("#tv-svg");
 
   var g = svg.select("g").empty() ?
       svg.append("g").attr("transform", "translate("+ margin.left + "," + margin.top + ")") :
@@ -71,11 +71,11 @@ D3.drawTree = function(treeData) {
     var node = g.selectAll('g.node')
         .data(nodes, function(d) {
           if (!d.id) {
-            d.id = d.data.r * 15 + d.data.c;
+            d.id = d.data.index;
             var currentNode = d;
             while (currentNode.parent) {
               currentNode = currentNode.parent;
-              d.id += "-" + currentNode.data.r * 15 + currentNode.data.c;
+              d.id += "-" + currentNode.data.index;
             }
           }
 
@@ -106,6 +106,10 @@ D3.drawTree = function(treeData) {
         .attr("x", 15)
         .attr("y", 0)
         .attr("text-anchor", "start")
+        .text(function(d) {
+          return d.data.index == 225 ? "(pass)" :
+              ("(" + String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1) + ")");
+        })
         .style("fill-opacity", 0);
 
     nodeEnter.append("line")
@@ -125,9 +129,6 @@ D3.drawTree = function(treeData) {
         });
 
     nodeUpdate.select('text')
-        .text(function(d) {
-          return d.data.r == 15 ? "(pass)" : ("(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")");
-        })
         .style("fill-opacity", 1);
 
     // Update the node attributes and style
@@ -136,8 +137,7 @@ D3.drawTree = function(treeData) {
 
       var r = w * .75 + "px",
           cw = w * .25 + "px",
-          g = gradient(d.data.winRate),
-          f = d.data.whiteTurn ? "black" : "white";
+          g = gradient(d.data.winRate);
 
       var l = 0,
           nl = 0,
@@ -155,8 +155,7 @@ D3.drawTree = function(treeData) {
       update.select('circle')
           .attr('r', r)
           .style("stroke", g)
-          .style("stroke-width", cw)
-          .style("fill", f);
+          .style("stroke-width", cw);
 
       update.select('line')
           .attr("x1", nl)

@@ -279,8 +279,7 @@ std::string GameTree::getTreeJSON() {
 json GameTree::getSubTreeJSON(Node* node, int position, bool whiteTurn) {
   json tree;
 
-  tree["r"] = position / 15;
-  tree["c"] = position % 15;
+  tree["index"] = position;
 
   tree["totalCount"] = node->totalPlayout();
 

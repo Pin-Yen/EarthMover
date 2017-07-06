@@ -3,31 +3,40 @@
   background-color: white;
   bottom: 0;
   display: none;
-  overflow: scroll;
   position: absolute;
   right: 0;
   top: 0;
   z-index: 10;
 }
 
-#tree-visualize input {
+#tv-control {
+  background-color: #eee;
+  height: 40px;
+  outline: none;
+  width: 100%;
+}
+
+#tv-control input {
   margin: 4px;
   outline: none;
-  position: fixed;
+  position: relative;
   width: 32px;
 }
 
-#tree-visualize input:hover {
+#tv-control input:hover {
   background-color: #ccc;
 }
 
-#tree-visualize input:active {
+#tv-control input:active {
   background-color: #ddd;
 }
 
-#tree-visualize svg {
-  left: 40px;
+#tv-main {
+  bottom: 0;
+  left: 0;
+  overflow: scroll;
   position: absolute;
+  right: 0;
   top: 40px;
 }
 
