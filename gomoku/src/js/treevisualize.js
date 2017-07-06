@@ -26,7 +26,7 @@ D3.drawTree = function(treeData) {
                  return child2.data.totalCount - child1.data.totalCount;
                });
 
-  var margin = { left: 80, top: 20, right: 80, bottom: 20};
+  var margin = { left: 60, top: 20, right: 60, bottom: 20};
 
   // append the svg object to the body of the page
   // appends a 'group' element to 'svg'
@@ -69,7 +69,18 @@ D3.drawTree = function(treeData) {
 
     // Update the nodes...
     var node = g.selectAll('g.node')
-        .data(nodes, function(d) {return d.id || (d.id = ++idCounter); });
+        .data(nodes, function(d) {
+          if (!d.id) {
+            d.id = d.data.r * 15 + d.data.c;
+            var currentNode = d;
+            while (currentNode.parent) {
+              currentNode = currentNode.parent;
+              d.id += "-" + currentNode.data.r * 15 + currentNode.data.c;
+            }
+          }
+
+          return d.id;
+        });
 
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append('g')
@@ -186,7 +197,7 @@ D3.drawTree = function(treeData) {
     // Enter any new links at the parent's previous position.
     var linkEnter = link.enter().insert('path', "g")
         .attr("class", "link")
-        .attr('d', function(d){
+        .attr('d', function(d) {
           var o = {x: source.x0, y: source.y0};
           return diagonal(o, o);
         });
