@@ -267,7 +267,13 @@ void GameTree::undo() {
 }
 
 std::string GameTree::getTreeJSON() {
-  return currentNode == NULL ? "" : getSubTreeJSON(currentNode, 0, currentBoard->whoTurn()).dump();
+  if (currentNode == NULL) return "";
+  if (currentNode->parent() == NULL) return "";
+
+  /* get current node's index */
+  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
+    if (currentNode->parent()->childNode[i] == currentNode)
+      return getSubTreeJSON(currentNode, i, currentBoard->whoTurn()).dump();
 }
 
 json GameTree::getSubTreeJSON(Node* node, int position, bool whiteTurn) {

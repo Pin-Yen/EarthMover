@@ -31,22 +31,26 @@ D3.drawTree = function(treeData) {
   // append the svg object to the body of the page
   // appends a 'group' element to 'svg'
   // moves the 'group' element to the top left margin
-  var svg = d3.select("#tree-visualize").select("svg")
-      .attr("width", root.height * 80 + margin.left + margin.right)
-      .attr("height", (root.leaves().length - 1) * 20 + margin.top + margin.bottom);
+  var svg = d3.select("#tree-visualize").select("svg");
 
-  var svg = svg.select("g").empty() ?
+  var g = svg.select("g").empty() ?
       svg.append("g").attr("transform", "translate("+ margin.left + "," + margin.top + ")") :
       svg.select("g");
 
   root.x0 = 0;
   root.y0 = 0;
 
-  var idCounter = 0, duration = 750;
+  var idCounter = 0, duration = 600;
+
+  svg.transition().duration(duration)
+     .attr("width", root.height * 80 + margin.left + margin.right)
+     .attr("height", (root.leaves().length - 1) * 20 + margin.top + margin.bottom);
 
   update(root);
 
   function update(source) {
+    var t = d3.transition().duration(duration);
+
     // assigns leaves' x position
     var leavesCounter = -1;
     root.leaves().forEach(function(d){ d.x = ++leavesCounter * 20});
@@ -64,7 +68,7 @@ D3.drawTree = function(treeData) {
     // ****************** Nodes section ***************************
 
     // Update the nodes...
-    var node = svg.selectAll('g.node')
+    var node = g.selectAll('g.node')
         .data(nodes, function(d) {return d.id || (d.id = ++idCounter); });
 
     // Enter any new nodes at the parent's previous position.
@@ -104,8 +108,7 @@ D3.drawTree = function(treeData) {
     // Transition to the proper position for the node
     nodeEnter.merge(node).on('click', click);
 
-    var nodeUpdate = nodeEnter.merge(node).transition()
-        .duration(duration)
+    var nodeUpdate = nodeEnter.merge(node).transition(t)
         .attr("transform", function(d) {
            return "translate(" + d.y + "," + d.x + ")";
         })
@@ -159,13 +162,12 @@ D3.drawTree = function(treeData) {
 
     nodeUpdate.select('text')
         .text(function(d) {
-          return "(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")";
+          return d.data.r == 15 ? "(pass)" : ("(" + String.fromCharCode(65 + d.data.c) + (d.data.r + 1) + ")");
         })
         .style("fill-opacity", 1);
 
     // Remove any exiting nodes
-    var nodeExit = node.exit().transition()
-        .duration(duration)
+    var nodeExit = node.exit().transition(t)
         .attr("transform", function(d) {
           return "translate(" + source.y + "," + source.x + ")";
         })
@@ -188,7 +190,7 @@ D3.drawTree = function(treeData) {
     // ****************** links section ***************************
 
     // Update the links...
-    var link = svg.selectAll('path.link')
+    var link = g.selectAll('path.link')
         .data(links, function(d) { return d.id; });
 
     // Enter any new links at the parent's previous position.
@@ -201,8 +203,7 @@ D3.drawTree = function(treeData) {
 
     // UPDATE
     // Transition back to the parent element position
-    linkEnter.merge(link).transition()
-        .duration(duration)
+    linkEnter.merge(link).transition(t)
         .attr('d', function(d){ return diagonal(d, d.parent); })
         .style("stroke-width", function(d) {
           // set the link's stroke-width according to total simulation count.
@@ -213,8 +214,7 @@ D3.drawTree = function(treeData) {
         });
 
     // Remove any exiting links
-    link.exit().transition()
-        .duration(duration)
+    link.exit().transition(t)
         .attr('d', function(d) {
           var o = {x: source.x, y: source.y};
           return diagonal(o, o);
