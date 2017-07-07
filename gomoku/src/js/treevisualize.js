@@ -37,20 +37,17 @@ D3.drawTree = function(treeData) {
       svg.append("g").attr("transform", "translate("+ margin.left + "," + margin.top + ")") :
       svg.select("g");
 
-  root.x0 = 0;
-  root.y0 = 0;
-
   var idCounter = 0, duration = 600;
 
   var verticalSpacing, horizontalSpacing;
 
-  update(root);
+  update();
 
   svg.transition().duration(duration)
      .attr("width", root.height * horizontalSpacing + margin.left + margin.right)
      .attr("height", (root.leaves().length - 1) * verticalSpacing + margin.top + margin.bottom);
 
-  function update(source) {
+  function update() {
     var t = d3.transition().duration(duration);
 
     verticalSpacing = 300 / Math.pow(root.leaves().length, 1.2) + 10;
@@ -58,12 +55,13 @@ D3.drawTree = function(treeData) {
     var deepest = 0;
 
     // assigns leaves' x position
+    // find the deepest depth
     root.leaves().forEach(function(d, i) {
       d.x = i * verticalSpacing ;
       if (d.depth > deepest) deepest = d.depth;
     });
 
-    horizontalSpacing = 150 / Math.pow(deepest + 1, 1.2) + 60;
+    horizontalSpacing = 200 / Math.pow(deepest + 1, 1.2) + 60;
 
     // Compute the new tree layout.
     var nodes = root.descendants(),
@@ -77,15 +75,14 @@ D3.drawTree = function(treeData) {
 
     // ****************** Nodes section ***************************
 
-    // Update the nodes...
+    // Update the nodes
     var node = g.selectAll('g.node')
         .data(nodes, function(d) {
           if (!d.id) {
-            d.id = d.data.index;
+            d.id = "id" + d.data.index;
             var currentNode = d;
-            while (currentNode.parent) {
-              currentNode = currentNode.parent;
-              d.id += "-" + currentNode.data.index;
+            while (currentNode = currentNode.parent) {
+              d.id += currentNode.data.index;
             }
           }
 
@@ -94,9 +91,24 @@ D3.drawTree = function(treeData) {
 
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append('g')
+        .attr('id', function(d) {
+          return d.id;
+        })
         .attr('class', 'node')
         .attr("transform", function(d) {
-          return "translate(" + source.y0 + "," + source.x0 + ")";
+          d.x0 = 0;
+          d.y0 = 0;
+          var currentNode = d;
+          while (currentNode = currentNode.parent) {
+            var position;
+            if (position = d3.select("#" + currentNode.id).property("previousPos")) {
+              d.x0 = position.x;;
+              d.y0 = position.y;
+              break;
+            }
+          }
+
+          return "translate(" + d.y0 + "," + d.x0 + ")";
         });
 
     // Add Circle for the nodes
@@ -139,6 +151,8 @@ D3.drawTree = function(treeData) {
 
     // Update the node attributes and style
     nodeUpdate.each(function(d) {
+      d3.select(this).property("previousPos", {x: d.x, y: d.y});
+
       var w = width(d.data.totalCount);
 
       var r = w * .75 + "px",
@@ -183,7 +197,18 @@ D3.drawTree = function(treeData) {
     // Remove any exiting nodes
     var nodeExit = node.exit().transition(t)
         .attr("transform", function(d) {
-          return "translate(" + source.y + "," + source.x + ")";
+          d.x1 = 0;
+          d.y1 = 0;
+
+          var currentNode = d;
+          while (currentNode = currentNode.parent) {
+            if (!currentNode.children) {
+              d.x1 = currentNode.x;
+              d.y1 = currentNode.y;
+            }
+          }
+
+          return "translate(" + d.y1 + "," + d.x1 + ")";
         })
         .remove();
 
@@ -211,7 +236,7 @@ D3.drawTree = function(treeData) {
     var linkEnter = link.enter().insert('path', "g")
         .attr("class", "link")
         .attr('d', function(d) {
-          var o = {x: source.x0, y: source.y0};
+          var o = {x: d.x0, y: d.y0};
           return diagonal(o, o);
         });
 
@@ -229,16 +254,10 @@ D3.drawTree = function(treeData) {
     // Remove any exiting links
     link.exit().transition(t)
         .attr('d', function(d) {
-          var o = {x: source.x, y: source.y};
+          var o = {x: d.x1, y: d.y1};
           return diagonal(o, o);
         })
         .remove();
-
-    // Store the old positions for transition.
-    nodes.forEach(function(d) {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
 
     // Creates a curved (diagonal) path from parent to the child nodes
     function diagonal(s, d) {
@@ -260,7 +279,7 @@ D3.drawTree = function(treeData) {
         d.children = d.hiddenChildren;
         d.hiddenChildren = null;
       }
-      update(d);
+      update();
     }
 
     function gradient(level) {
