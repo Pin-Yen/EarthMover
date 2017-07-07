@@ -61,7 +61,7 @@ D3.drawTree = function(treeData) {
       if (d.depth > deepest) deepest = d.depth;
     });
 
-    horizontalSpacing = 200 / Math.pow(deepest + 1, 1.2) + 60;
+    horizontalSpacing = 240 / Math.pow(deepest + 1, 1.2) + 60;
 
     // Compute the new tree layout.
     var nodes = root.descendants(),
@@ -76,6 +76,7 @@ D3.drawTree = function(treeData) {
     // ****************** Nodes section ***************************
 
     // Update the nodes
+    // id is a stringfied index serious form current node to root
     var node = g.selectAll('g.node')
         .data(nodes, function(d) {
           if (!d.id) {
@@ -90,25 +91,29 @@ D3.drawTree = function(treeData) {
         });
 
     // Enter any new nodes at the parent's previous position.
+    // parent's previous position stored in DOM's property (at node.update)
+    // and can select by corresponding id
     var nodeEnter = node.enter().append('g')
         .attr('id', function(d) {
           return d.id;
         })
         .attr('class', 'node')
         .attr("transform", function(d) {
-          d.x0 = 0;
-          d.y0 = 0;
           var currentNode = d;
+
+          // continuously finding parent's DOM property to find previous position
           while (currentNode = currentNode.parent) {
-            var position;
-            if (position = d3.select("#" + currentNode.id).property("previousPos")) {
-              d.x0 = position.x;;
-              d.y0 = position.y;
+            if (d.previousPos = d3.select("#" + currentNode.id).property("previousPos")) {
               break;
             }
           }
 
-          return "translate(" + d.y0 + "," + d.x0 + ")";
+          // if previous position undefined,
+          // means that either is painting a new tree (root is different) or is at root (no parent)
+          // set the pervious position to origin (0, 0)
+          if (!d.previousPos) d.previousPos = {x: 0, y: 0};
+
+          return "translate(" + d.previousPos.y + "," + d.previousPos.x + ")";
         });
 
     // Add Circle for the nodes
@@ -141,23 +146,26 @@ D3.drawTree = function(treeData) {
         .attr("y2", 0);
 
     // UPDATE
-    // Transition to the proper position for the node
+    // update onclick handler
     nodeEnter.merge(node).on('click', click);
 
+    // Transition to the proper position for the node
     var nodeUpdate = nodeEnter.merge(node).transition(t)
         .attr("transform", function(d) {
            return "translate(" + d.y + "," + d.x + ")";
         });
 
     // Update the node attributes and style
+    // using 'each' method to prevent repeating calling width()
+    // and storing current position in DOM's property
     nodeUpdate.each(function(d) {
-      d3.select(this).property("previousPos", {x: d.x, y: d.y});
+      d3.select(this).property("previousPos", { x: d.x, y: d.y });
 
       var w = width(d.data.totalCount);
 
       var r = w * .75 + "px",
           cw = w * .25 + "px",
-          g = gradient(d.data.winRate);
+          c = gradient(d.data.winRate);
 
       var l = 0,
           nl = 0,
@@ -177,7 +185,7 @@ D3.drawTree = function(treeData) {
 
       update.select('circle')
           .attr('r', r)
-          .style("stroke", g)
+          .style("stroke", c)
           .style("stroke-width", cw);
 
       update.select('line')
@@ -194,32 +202,38 @@ D3.drawTree = function(treeData) {
         .style("fill-opacity", 1);
     });
 
+    // EXIT
     // Remove any exiting nodes
+    // transition to exit position
     var nodeExit = node.exit().transition(t)
         .attr("transform", function(d) {
-          d.x1 = 0;
-          d.y1 = 0;
-
           var currentNode = d;
+
+          // continuously finding the parent that no children (new leaf)
           while (currentNode = currentNode.parent) {
             if (!currentNode.children) {
-              d.x1 = currentNode.x;
-              d.y1 = currentNode.y;
+              d.exitPos = { x: currentNode.x, y: currentNode.y };
+              break;
             }
           }
 
-          return "translate(" + d.y1 + "," + d.x1 + ")";
+          // exit position undefined when painting a new tree (root is different)
+          // set the exit position to origin (0, 0)
+          if (!d.exitPos) d.exitPos = { x: 0, y: 0 };
+
+          return "translate(" + d.exitPos.y + "," + d.exitPos.x + ")";
         })
         .remove();
 
-    // On exit reduce the node circles size to 0
+    // reduce the node circles size to 0
     nodeExit.select('circle')
         .attr('r', 0);
 
-    // On exit reduce the opacity of text labels
+    // reduce the opacity of text labels
     nodeExit.select('text')
         .style('fill-opacity', 0);
 
+    // reduce the node lines size to 0
     nodeExit.select('line')
         .attr("x1", 0)
         .attr("x2", 0)
@@ -232,12 +246,11 @@ D3.drawTree = function(treeData) {
     var link = g.selectAll('path.link')
         .data(links, function(d) { return d.id; });
 
-    // Enter any new links at the parent's previous position.
+    // Enter any new links at the parent's previous position
     var linkEnter = link.enter().insert('path', "g")
         .attr("class", "link")
         .attr('d', function(d) {
-          var o = {x: d.x0, y: d.y0};
-          return diagonal(o, o);
+          return diagonal(d.previousPos, d.previousPos);
         });
 
     // UPDATE
@@ -254,8 +267,7 @@ D3.drawTree = function(treeData) {
     // Remove any exiting links
     link.exit().transition(t)
         .attr('d', function(d) {
-          var o = {x: d.x1, y: d.y1};
-          return diagonal(o, o);
+          return diagonal(d.exitPos, d.exitPos);
         })
         .remove();
 
