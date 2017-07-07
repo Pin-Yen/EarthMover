@@ -42,27 +42,37 @@ D3.drawTree = function(treeData) {
 
   var idCounter = 0, duration = 600;
 
-  svg.transition().duration(duration)
-     .attr("width", root.height * 80 + margin.left + margin.right)
-     .attr("height", (root.leaves().length - 1) * 20 + margin.top + margin.bottom);
+  var verticalSpacing, horizontalSpacing;
 
   update(root);
+
+  svg.transition().duration(duration)
+     .attr("width", root.height * horizontalSpacing + margin.left + margin.right)
+     .attr("height", (root.leaves().length - 1) * verticalSpacing + margin.top + margin.bottom);
 
   function update(source) {
     var t = d3.transition().duration(duration);
 
+    verticalSpacing = 300 / Math.pow(root.leaves().length, 1.2) + 10;
+
+    var deepest = 0;
+
     // assigns leaves' x position
-    var leavesCounter = -1;
-    root.leaves().forEach(function(d){ d.x = ++leavesCounter * 20});
+    root.leaves().forEach(function(d, i) {
+      d.x = i * verticalSpacing ;
+      if (d.depth > deepest) deepest = d.depth;
+    });
+
+    horizontalSpacing = 150 / Math.pow(deepest + 1, 1.2) + 60;
 
     // Compute the new tree layout.
     var nodes = root.descendants(),
-        links = root.descendants().slice(1);
+        links = nodes.slice(1);
 
     // assings position
     nodes.forEach(function(d) {
       d.x = d.leaves()[0].x;
-      d.y = d.depth * 80;
+      d.y = d.depth * horizontalSpacing;
     });
 
     // ****************** Nodes section ***************************
@@ -102,7 +112,6 @@ D3.drawTree = function(treeData) {
     // Add labels for the nodes
     // labels will be at the right of the node,
     nodeEnter.append('text')
-        .attr("dy", ".35em")
         .attr("x", 15)
         .attr("y", 0)
         .attr("text-anchor", "start")
@@ -128,9 +137,6 @@ D3.drawTree = function(treeData) {
            return "translate(" + d.y + "," + d.x + ")";
         });
 
-    nodeUpdate.select('text')
-        .style("fill-opacity", 1);
-
     // Update the node attributes and style
     nodeUpdate.each(function(d) {
       var w = width(d.data.totalCount);
@@ -143,6 +149,9 @@ D3.drawTree = function(treeData) {
           nl = 0,
           lw = w * .2 + "px",
           s = null;
+
+      var f = w + "px",
+          dy = w * .33 + "px";
 
       if (d.data.isWinning || d.data.isLosing) {
         l = w * .44 + "px";
@@ -164,6 +173,11 @@ D3.drawTree = function(treeData) {
           .attr("y2", l)
           .style("stroke-width", lw)
           .style("stroke", s);
+
+      update.select('text')
+        .attr("dy", dy)
+        .style("font-size", f)
+        .style("fill-opacity", 1);
     });
 
     // Remove any exiting nodes
@@ -258,7 +272,7 @@ D3.drawTree = function(treeData) {
     }
 
     function width(count) {
-      return Math.pow(count, .25) + 5;
+      return Math.pow(count, .2) + 6;
     }
   }
 }

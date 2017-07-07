@@ -41,7 +41,7 @@
 }
 
 .node text {
-  font: 12px;
+  cursor: pointer;
 }
 
 .node circle {
