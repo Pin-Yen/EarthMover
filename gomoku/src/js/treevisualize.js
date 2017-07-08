@@ -223,9 +223,9 @@ D3.drawTree = function(treeData) {
         .attr("transform", function(d) {
           var currentNode = d;
 
-          // continuously finding the parent that no children (new leaf)
+          // continuously finding the parent that no exit position
           while (currentNode = currentNode.parent) {
-            if (!currentNode.children) {
+            if (!currentNode.exitPos) {
               d.exitPos = { x: currentNode.x, y: currentNode.y };
               break;
             }
