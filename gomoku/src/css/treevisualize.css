@@ -19,8 +19,25 @@
 #tv-control input {
   margin: 4px;
   outline: none;
-  position: relative;
   width: 32px;
+}
+
+#tv-branch-parent {
+  height: 40px;
+  left: 40px;
+  line-height: 40px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 200px;
+}
+
+#tv-information {
+  height: 40px;
+  left: 240px;
+  line-height: 32px;
+  position: absolute;
+  top: 0;
 }
 
 #tv-control input:hover {

@@ -201,14 +201,17 @@
     <div id="tree-visualize">
       <div id="tv-control">
         <input type="image" src="gomoku/src/png/refresh.png" onclick="refresh()">
-        <span>
-          Maximun number of child in each node
-          <select id="tv-child">
+        <span id="tv-branch-parent">
+          Maximun branch
+          <select id="tv-branch">
             <option value="3">3</option>
             <option value="5">5</option>
             <option value="10">10</option>
-            <option value="20">20</option>
+            <option value="-1">unlimit</option>
           </select>
+        </span>
+        <span id="tv-information">
+
         </span>
       </div>
       <div id="tv-main">

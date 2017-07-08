@@ -50,7 +50,9 @@ D3.drawTree = function(treeData) {
   function update() {
     var t = d3.transition().duration(duration);
 
-    hideChildren(root, parseInt($('#tv-child').val(), 10));
+    var hide = parseInt($('#tv-branch').val(), 10);
+
+    if (hide != -1) hideChildren(root, hide);
 
     function hideChildren(node, reserved) {
       if (!node.children) return;
@@ -315,7 +317,7 @@ D3.drawTree = function(treeData) {
     }
 
     function width(count) {
-      return Math.pow(count, .2) + 6;
+      return Math.pow(count, .24) + 6;
     }
   }
 }
