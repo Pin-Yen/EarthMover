@@ -50,7 +50,18 @@ D3.drawTree = function(treeData) {
   function update() {
     var t = d3.transition().duration(duration);
 
-    verticalSpacing = 300 / Math.pow(root.leaves().length, 1.2) + 10;
+    hideChildren(root, parseInt($('#tv-child').val(), 10));
+
+    function hideChildren(node, reserved) {
+      if (!node.children) return;
+      node.hiddenChildrenExceedMax = node.children.slice(reserved);
+      node.children = node.children.slice(0, reserved);
+      node.children.forEach(function(d) {
+        hideChildren(d, reserved);
+      });
+    }
+
+    verticalSpacing = 300 / root.leaves().length + 10;
 
     var deepest = 0;
 
@@ -61,7 +72,7 @@ D3.drawTree = function(treeData) {
       if (d.depth > deepest) deepest = d.depth;
     });
 
-    horizontalSpacing = 240 / Math.pow(deepest + 1, 1.2) + 60;
+    horizontalSpacing = 240 / (deepest + 1) + 60;
 
     // Compute the new tree layout.
     var nodes = root.descendants(),
@@ -129,9 +140,10 @@ D3.drawTree = function(treeData) {
     // Add labels for the nodes
     // labels will be at the right of the node,
     nodeEnter.append('text')
-        .attr("x", 15)
+        .attr("x", 12)
         .attr("y", 0)
         .attr("text-anchor", "start")
+        .style("font-size", 0)
         .text(function(d) {
           return d.data.index == 225 ? "(pass)" :
               ("(" + String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1) + ")");
