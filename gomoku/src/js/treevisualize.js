@@ -226,6 +226,7 @@ D3.drawTree = function(treeData) {
           // continuously finding the parent that no exit position
           while (currentNode = currentNode.parent) {
             if (!currentNode.exitPos) {
+              currentNode = d3.select("#" + currentNode.id).datum();
               d.exitPos = { x: currentNode.x, y: currentNode.y };
               break;
             }
@@ -281,7 +282,9 @@ D3.drawTree = function(treeData) {
     // Remove any exiting links
     link.exit().transition(t)
         .attr('d', function(d) {
-          return diagonal(d.exitPos, d.exitPos);
+          var c = diagonal(d.exitPos, d.exitPos);
+          d.exitPos = null;
+          return c;
         })
         .remove();
 
