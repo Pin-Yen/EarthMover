@@ -32,9 +32,19 @@
   width: 200px;
 }
 
-#tv-information {
+#tv-count-parent {
   height: 40px;
   left: 240px;
+  line-height: 40px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 200px;
+}
+
+#tv-information {
+  height: 40px;
+  left: 480px;
   line-height: 32px;
   position: absolute;
   top: 0;

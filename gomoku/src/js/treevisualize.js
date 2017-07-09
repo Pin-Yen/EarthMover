@@ -50,16 +50,27 @@ D3.drawTree = function(treeData) {
   function update() {
     var t = d3.transition().duration(duration);
 
-    var hide = parseInt($('#tv-branch').val(), 10);
+    var maxBranch = parseInt($('#tv-branch').val(), 10),
+        minCount = parseInt($('#tv-count').val(), 10);
 
-    if (hide != -1) hideChildren(root, hide);
+    hideChildren(root, maxBranch, minCount);
 
-    function hideChildren(node, reserved) {
+    function hideChildren(node, branch, count) {
       if (!node.children) return;
-      node.hiddenChildrenExceedMax = node.children.slice(reserved);
+      var reserved = 0;
+      for (reserved = 0; reserved < branch && reserved < node.children.length; ++reserved) {
+        if (node.children[reserved].data.totalCount < count) {
+          break;
+        }
+      }
+      if (reserved < 1) {
+        node.children = null;
+        console.log(node);
+        return;
+      }
       node.children = node.children.slice(0, reserved);
       node.children.forEach(function(d) {
-        hideChildren(d, reserved);
+        hideChildren(d, branch, count);
       });
     }
 
@@ -82,6 +93,7 @@ D3.drawTree = function(treeData) {
 
     // assings position
     nodes.forEach(function(d) {
+      console.log(d.leaves());
       d.x = d.leaves()[0].x;
       d.y = d.depth * horizontalSpacing;
     });
@@ -162,6 +174,7 @@ D3.drawTree = function(treeData) {
     // UPDATE
     // update onclick handler
     nodeEnter.merge(node).on('click', click);
+    nodeEnter.merge(node).on('mouseover', mouseOver);
 
     // Transition to the proper position for the node
     var nodeUpdate = nodeEnter.merge(node).transition(t)
@@ -309,6 +322,13 @@ D3.drawTree = function(treeData) {
         d.hiddenChildren = null;
       }
       update();
+    }
+
+    function mouseOver(d) {
+      var text = String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1)
+          + ', count: ' + d.data.totalCount
+          + ', win rate: ' + d.data.winRate;
+      d3.select('#tv-information').text(text);
     }
 
     function gradient(level) {

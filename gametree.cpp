@@ -291,7 +291,7 @@ json GameTree::getSubTreeJSON(Node* node, int position, bool whiteTurn) {
 
   tree["children"] = json::array();
   for (int i = 0; i < CHILD_LENGTH; ++i) {
-    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() > 20) {
+    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() >= 8) {
       tree["children"].push_back(getSubTreeJSON(node->childNode[i], i, !whiteTurn));
     }
   }
