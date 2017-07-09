@@ -65,7 +65,6 @@ D3.drawTree = function(treeData) {
       }
       if (reserved < 1) {
         node.children = null;
-        console.log(node);
         return;
       }
       node.children = node.children.slice(0, reserved);
@@ -93,7 +92,6 @@ D3.drawTree = function(treeData) {
 
     // assings position
     nodes.forEach(function(d) {
-      console.log(d.leaves());
       d.x = d.leaves()[0].x;
       d.y = d.depth * horizontalSpacing;
     });
@@ -175,6 +173,7 @@ D3.drawTree = function(treeData) {
     // update onclick handler
     nodeEnter.merge(node).on('click', click);
     nodeEnter.merge(node).on('mouseover', mouseOver);
+    nodeEnter.merge(node).on('mouseout', mouseOut);
 
     // Transition to the proper position for the node
     var nodeUpdate = nodeEnter.merge(node).transition(t)
@@ -325,10 +324,44 @@ D3.drawTree = function(treeData) {
     }
 
     function mouseOver(d) {
-      var text = String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1)
-          + ', count: ' + d.data.totalCount
-          + ', win rate: ' + d.data.winRate;
-      d3.select('#tv-information').text(text);
+      d3.select('#tv-inf-position')
+          .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
+      d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
+      var winRate = Math.floor(d.data.winRate * 100);
+      d3.select('#tv-inf-win-rate-white').text(100 - winRate);
+      d3.select('#tv-inf-win-rate-black').text(winRate);
+      d3.select('#tv-inf-win-rate-pointer').style('left', function() {
+        return (40 + 120 * d.data.winRate) + "px";
+      })
+      .style('background', function() {
+        return gradient(d.data.winRate);
+      });
+    }
+
+    mouseOut();
+
+    function mouseOut() {
+      if (root.children) {
+        var d = root.children[0];
+        d3.select('#tv-inf-position')
+          .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
+        d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
+        var winRate = Math.floor(d.data.winRate * 100);
+        d3.select('#tv-inf-win-rate-white').text(100 - winRate);
+        d3.select('#tv-inf-win-rate-black').text(winRate);
+        d3.select('#tv-inf-win-rate-pointer').style('left', function() {
+          return (40 + 120 * d.data.winRate) + "px";
+        })
+        .style('background', function() {
+          return gradient(d.data.winRate);
+        });
+      } else {
+        d3.select('#tv-inf-position').text('');
+        d3.select('#tv-inf-count').text('');
+        d3.select('#tv-inf-win-rate-white').text('');
+        d3.select('#tv-inf-win-rate-black').text('');
+        d3.select('#tv-inf-win-rate-pointer').style('background', null);
+      }
     }
 
     function gradient(level) {

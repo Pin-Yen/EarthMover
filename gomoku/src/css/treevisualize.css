@@ -23,31 +23,114 @@
 }
 
 #tv-branch-parent {
+  font-size: 14px;
   height: 40px;
   left: 40px;
   line-height: 40px;
   position: absolute;
   text-align: center;
   top: 0;
-  width: 200px;
+  width: 160px;
 }
 
 #tv-count-parent {
+  font-size: 14px;
   height: 40px;
-  left: 240px;
+  left: 200px;
   line-height: 40px;
   position: absolute;
   text-align: center;
   top: 0;
-  width: 200px;
+  width: 160px;
 }
 
 #tv-information {
   height: 40px;
-  left: 480px;
-  line-height: 32px;
+  left: 360px;
+  line-height: 40px;
   position: absolute;
   top: 0;
+  width: 360px;
+}
+
+#tv-inf-position {
+  height: 40px;
+  left: 0px;
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+
+#tv-inf-count {
+  height: 40px;
+  left: 40px;
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  width: 120px;
+}
+
+#tv-inf-win-rate {
+  height: 40px;
+  left: 160px;
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  width: 200px;
+}
+
+.tv-img {
+  font-size: 14px;
+  height: 24px;
+  line-height: 24px;
+  position: absolute;
+  text-align: center;
+  top: 8px;
+  width: 24px;
+}
+
+.tv-img.white {
+  left: 8px;
+}
+
+.tv-img.black {
+  color: white;
+  right: 8px;
+}
+
+#tv-inf-win-rate-bar {
+  background: linear-gradient(to right, hsl(0, 100%, 45%), hsl(20, 100%, 45%), hsl(40, 100%, 45%),
+                                        hsl(60, 100%, 45%), hsl(80, 100%, 45%), hsl(100, 100%, 45%),
+                                        hsl(120, 100%, 45%), hsl(140, 100%, 45%), hsl(160, 100%, 45%),
+                                        hsl(180, 100%, 45%), hsl(200, 100%, 45%));
+  background: -moz-linear-gradient(right, hsl(0, 100%, 45%), hsl(20, 100%, 45%), hsl(40, 100%, 45%),
+                                          hsl(60, 100%, 45%), hsl(80, 100%, 45%), hsl(100, 100%, 45%),
+                                          hsl(120, 100%, 45%), hsl(140, 100%, 45%), hsl(160, 100%, 45%),
+                                          hsl(180, 100%, 45%), hsl(200, 100%, 45%));
+  background: -o-linear-gradient(right, hsl(0, 100%, 45%), hsl(20, 100%, 45%), hsl(40, 100%, 45%),
+                                        hsl(60, 100%, 45%), hsl(80, 100%, 45%), hsl(100, 100%, 45%),
+                                        hsl(120, 100%, 45%), hsl(140, 100%, 45%), hsl(160, 100%, 45%),
+                                        hsl(180, 100%, 45%), hsl(200, 100%, 45%));
+  background: -webkit-linear-gradient(left, hsl(0, 100%, 45%), hsl(20, 100%, 45%), hsl(40, 100%, 45%),
+                                            hsl(60, 100%, 45%), hsl(80, 100%, 45%), hsl(100, 100%, 45%),
+                                            hsl(120, 100%, 45%), hsl(140, 100%, 45%), hsl(160, 100%, 45%),
+                                            hsl(180, 100%, 45%), hsl(200, 100%, 45%));
+  border: solid 1px black;
+  height: 16px;
+  left: 40px;
+  position: absolute;
+  top: 12px;
+  width: 120px;
+}
+
+#tv-inf-win-rate-pointer {
+  border: solid 1px gray;
+  height: 24px;
+  left: 100px;
+  position: absolute;
+  top: 8px;
+  width: 5px;
 }
 
 #tv-control input:hover {
