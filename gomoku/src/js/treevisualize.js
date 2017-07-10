@@ -360,7 +360,10 @@ D3.drawTree = function(treeData) {
         d3.select('#tv-inf-count').text('');
         d3.select('#tv-inf-win-rate-white').text('');
         d3.select('#tv-inf-win-rate-black').text('');
-        d3.select('#tv-inf-win-rate-pointer').style('background', null);
+        d3.select('#tv-inf-win-rate-pointer').style('left', "98px")
+        .style('background', function() {
+          return gradient(.5);
+        });
       }
     }
 
