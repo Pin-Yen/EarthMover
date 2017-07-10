@@ -143,7 +143,7 @@ D3.drawTree = function(treeData) {
     nodeEnter.append('circle')
         .attr('r', 0)
         .style("fill", function(d) {
-          return d.data.whiteTurn ? "black" : "white";
+          return d.data.whiteTurn ? "#444" : "#ffe";
         })
         .style("stroke", function(d) {
           return gradient(d.data.winRate);
@@ -369,10 +369,10 @@ D3.drawTree = function(treeData) {
 
     function gradient(level) {
       var h;
-      if (level < (19 / 36)) {
-        h = (Math.asin(level * 3.6 - .9) * 180 / Math.PI + 90) * (2 / 3);
+      if (level < (19 / 35)) {
+        h = (Math.asin(level * 3.5 - .9) * 180 / Math.PI + 90) * (2 / 3);
       } else {
-        h = 120 + (Math.asin(level * 3.6 - 2.9) * 180 / Math.PI + 90) * (2 / 3);
+        h = 120 + (Math.asin(level * 3.5 - 2.9) * 180 / Math.PI + 90) * (2 / 3);
       }
 
       return `hsl(${h},80%,50%)`;
