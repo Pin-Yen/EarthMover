@@ -331,7 +331,7 @@ D3.drawTree = function(treeData) {
       d3.select('#tv-inf-win-rate-white').text(100 - winRate);
       d3.select('#tv-inf-win-rate-black').text(winRate);
       d3.select('#tv-inf-win-rate-pointer').style('left', function() {
-        return (40 + 120 * d.data.winRate) + "px";
+        return (38 + 120 * d.data.winRate) + "px";
       })
       .style('background', function() {
         return gradient(d.data.winRate);
@@ -350,7 +350,7 @@ D3.drawTree = function(treeData) {
         d3.select('#tv-inf-win-rate-white').text(100 - winRate);
         d3.select('#tv-inf-win-rate-black').text(winRate);
         d3.select('#tv-inf-win-rate-pointer').style('left', function() {
-          return (40 + 120 * d.data.winRate) + "px";
+          return (38 + 120 * d.data.winRate) + "px";
         })
         .style('background', function() {
           return gradient(d.data.winRate);
@@ -365,11 +365,14 @@ D3.drawTree = function(treeData) {
     }
 
     function gradient(level) {
-      var hStart = 0 // red
-      var hEnd = 200 //blue
+      var h;
+      if (level < (19 / 36)) {
+        h = (Math.asin(level * 3.6 - .9) * 180 / Math.PI + 90) * (2 / 3);
+      } else {
+        h = 120 + (Math.asin(level * 3.6 - 2.9) * 180 / Math.PI + 90) * (2 / 3);
+      }
 
-      h = hStart + (hEnd - hStart) * level;
-      return `hsl(${h},100%,45%)`;
+      return `hsl(${h},80%,50%)`;
     }
 
     function width(count) {
