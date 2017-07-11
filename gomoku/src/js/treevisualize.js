@@ -325,12 +325,24 @@ D3.drawTree = function(treeData) {
 
     function mouseOver(d) {
       updateInf(d);
+      var evolve = [];
+      while (d.parent) {
+        var data = {
+          row: Math.floor(d.data.index / 15),
+          col: Math.floor(d.data.index % 15),
+          color: d.data.whiteTurn ? 'black' : 'white'
+        }
+        evolve.unshift(data);
+        d = d.parent;
+      }
+      if (evolve.length) board.drawEvolve(evolve);
     }
 
     mouseOut();
 
     function mouseOut() {
       updateInf(root.children ? root.children[0] : root);
+      board.drawAll();
     }
 
     function updateInf(d) {
