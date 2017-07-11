@@ -324,47 +324,29 @@ D3.drawTree = function(treeData) {
     }
 
     function mouseOver(d) {
-      d3.select('#tv-inf-position')
-          .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
-      d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
-      var winRate = Math.floor(d.data.winRate * 100);
-      d3.select('#tv-inf-win-rate-white').text(100 - winRate);
-      d3.select('#tv-inf-win-rate-black').text(winRate);
-      d3.select('#tv-inf-win-rate-pointer').style('left', function() {
-        return (38 + 120 * d.data.winRate) + "px";
-      })
-      .style('background', function() {
-        return gradient(d.data.winRate);
-      });
+      updateInf(d);
     }
 
     mouseOut();
 
     function mouseOut() {
-      if (root.children) {
-        var d = root.children[0];
-        d3.select('#tv-inf-position')
-          .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
-        d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
-        var winRate = Math.floor(d.data.winRate * 100);
-        d3.select('#tv-inf-win-rate-white').text(100 - winRate);
-        d3.select('#tv-inf-win-rate-black').text(winRate);
-        d3.select('#tv-inf-win-rate-pointer').style('left', function() {
-          return (38 + 120 * d.data.winRate) + "px";
-        })
-        .style('background', function() {
-          return gradient(d.data.winRate);
-        });
-      } else {
-        d3.select('#tv-inf-position').text('');
-        d3.select('#tv-inf-count').text('');
-        d3.select('#tv-inf-win-rate-white').text('');
-        d3.select('#tv-inf-win-rate-black').text('');
-        d3.select('#tv-inf-win-rate-pointer').style('left', "98px")
-        .style('background', function() {
-          return gradient(.5);
-        });
-      }
+      updateInf(root.children ? root.children[0] : root);
+    }
+
+    function updateInf(d) {
+      d3.select('#tv-inf-position')
+        .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
+      d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
+      var winRate = d.data.winRate;
+      d3.select('#tv-inf-win-rate-pointer').style('left', function() {
+        return (38 + 120 * winRate) + "px";
+      })
+      .style('background', function() {
+        return gradient(winRate);
+      });
+      winRate = Math.floor(winRate * 100);
+      d3.select('#tv-inf-win-rate-white').text(100 - winRate);
+      d3.select('#tv-inf-win-rate-black').text(winRate);
     }
 
     function gradient(level) {
