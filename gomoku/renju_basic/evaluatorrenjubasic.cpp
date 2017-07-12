@@ -1,27 +1,16 @@
 #include "../chesstype.hpp"
 #include "../status.hpp"
-#include "virtualboard.hpp"
-#include "point.hpp"
-#include "evaluator.hpp"
-#include "typetree.hpp"
-#include "../openingtree.hpp"
+#include "virtualboardrenjubasic.hpp"
+#include "../point.hpp"
+#include "evaluatorrenjubasic.hpp"
+#include "typetreerenjubasic.hpp"
 
-bool VirtualBoard::Evaluator::isInitialized = false;
-
-void VirtualBoard::Evaluator::initialize() {
-  if (isInitialized) return;
-  isInitialized = true;
-
-  TypeTree::initialize();
-  OpeningTree::initialize();
-}
-
-void VirtualBoard::Evaluator::evaluateType(STATUS *status, ChessType* type[2]) {
-  TypeTree::classify(status, type);
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(STATUS *status, ChessType* type[2]) {
+  TypeTree<VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic>::classify(status, type);
 }
 
 /* score[0]:black's total score,[1]:white's */
-void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType* type[4][2], int *score) {
   //len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},             /* 0 */
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},            /* X */
@@ -86,6 +75,8 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
     }
   }
 
+  if (count[BLACK][4][LIVE] + count[BLACK][4][DEAD] >= 2 || count[BLACK][3][LIVE] >= 2) forbidden = true;
+
   /* [0] attack, [1] defense */
 
   /* calculate score */
@@ -97,10 +88,7 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
       continue;
     } else if (count[selfColor][4][DEAD] >= 2) {
       /* self muliy-4 */
-      if (selfColor = BLACK)
-        forbidden = true;
-      else
-        score[selfColor] += SCORE_DOUBLE4[ATTACK];
+      score[selfColor] += SCORE_DOUBLE4[ATTACK];
     } else if (count[selfColor][4][DEAD] > 0 &&
                count[selfColor][3][LIVE] > 0) {
       /* self d4-l3 */
@@ -115,66 +103,16 @@ void VirtualBoard::Evaluator::evaluateScore(ChessType* type[4][2], int *score) {
       score[selfColor] += SCORE_DEAD4LIVE3[DEFENSE];
     } else if (count[selfColor][3][LIVE] >= 2) {
       /* self multi-3 */
-      if (selfColor = BLACK)
-        forbidden = true;
-      else
-        score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
+      score[selfColor] += SCORE_DOUBLELIVE3[ATTACK];
     } else if (count[opponentColor][3][LIVE] >= 2) {
       /* opponent multi-3 */
       if (selfColor = BLACK)
         score[selfColor] += SCORE_DOUBLELIVE3[DEFENSE];
+      else
+        score[selfColor] -= SCORE[3][1][0][0];
     }
   }
 
   if (forbidden && !win)
     score[BLACK] = SCORE_FORBIDDEN;
-}
-
-void VirtualBoard::Evaluator::evaluateRelativeScore(VirtualBoard::Point* point[15][15],
-                                                    int playNo) {
-  if (playNo == 0) {
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c)
-        point[r][c]->setRelScore(-1);
-
-    point[7][7]->setRelScore(1);
-  } else {
-    /* using opening */
-    if (playNo <= 4) {
-      int row = -1, col = -1;
-      OpeningTree::classify(point, &row, &col);
-
-      if (row != -1) {
-        for (int r = 0; r < 15; ++r) {
-          for (int c = 0; c < 15; ++c) {
-            if (r == row && c == col)
-              point[r][c]->setRelScore(1);
-            else
-              point[r][c]->setRelScore(-1);
-          }
-        }
-        return;
-      }
-    }
-
-    /* using absloute score */
-
-    bool whoTurn = playNo & 1;
-
-    /* get highest score */
-    int highestScore = -1;
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c)
-        if (point[r][c]->absScore(whoTurn) > highestScore)
-          highestScore = point[r][c]->absScore(whoTurn);
-
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c) {
-        int score = point[r][c]->absScore(whoTurn);
-        if (score * 8 < highestScore || (playNo < 10 && score < 140))
-          point[r][c]->setRelScore(-1);
-        else
-          point[r][c]->setRelScore(score);
-      }
-  }
 }

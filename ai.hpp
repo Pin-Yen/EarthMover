@@ -1,8 +1,9 @@
 #ifndef AI_H_
 #define AI_H_
 
-#include "gomoku/displayboard.hpp"
+#include "virtualboard.hpp"
 #include "gametree.hpp"
+#include <string>
 #include <thread>
 
 class AI {
@@ -13,25 +14,33 @@ class AI {
 
   ~AI();
 
-  /* puts a new point on displayboard
-   * returns false if the point is invalid */
-  bool displayNewPoint(int row, int col);
-
   /* think of a play, and return it. */
-  void think(int *Row, int *Col);
+  int think();
 
-  /* plays a new point, returns true if someone wins after this move.
+  /* plays a new point
+   * return value: 1: self-winning, -1: opp-winning, 0 no winning
    * triggerBackgroundThread: true: start bg thread */
-  bool play(int row, int col, bool triggerBackgroundThread);
+  int play(int index, bool triggerBackgroundThread);
 
   /* resets AI for a new game */
   void reset(int level, int rule);
 
-  /* returns true for black ,false for white. */
-  bool whoTurn();
+  /* undo "times" move */
+  void undo(int times) {
+    stopBGThread();
+    for (int i = 0; i < times; ++i) tree->undo();
+  }
 
-  static const int RENJU_BASIC = 1;
-  static const int FREESTYLE = 2;
+  /* opponent pass */
+  void pass() { stopBGThread(); tree->pass(); }
+
+  /* opponent resign*/
+  void resign() { stopBGThread(); }
+
+  /* returns true for black ,false for white. */
+  bool whoTurn() {return tree->getCurrentBoard()->whoTurn(); }
+
+  std::string getTreeJSON() { return tree->getTreeJSON(); }
 
  private:
   /* this thread lets EM thinks in the background when it's the users turn */

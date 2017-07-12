@@ -6,7 +6,7 @@
 #include "../point.hpp"
 #include "../evaluator.hpp"
 #include "evaluatorfreestyle.hpp"
-#include "typetree.hpp"
+#include "typetreefreestyle.hpp"
 #include "../openingtree.hpp"
 
 /* score[0]:black's total score,[1]:white's */
@@ -100,5 +100,5 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType* type[4]
 }
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(STATUS *status, ChessType* type[2]) {
-  TypeTree::classify(status, type);
+  TypeTreeFreeStyle::classify(status, type);
 }

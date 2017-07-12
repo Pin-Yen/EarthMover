@@ -3,6 +3,7 @@
 
 #include "chesstype.hpp"
 #include "status.hpp"
+#include "virtualboardgomoku.hpp"
 
 #include <cstddef>
 
@@ -15,8 +16,6 @@ class VirtualBoardGomoku<StatusLength>::Point {
   Point(Point* source);
 
   ~Point();
-  /* play at this point */
-  void play(STATUS status) { status_ = status; }
 
   /* set the status pointer */
   /* note: to finish initialize this point, shound call this to write all status pointer */
@@ -28,6 +27,7 @@ class VirtualBoardGomoku<StatusLength>::Point {
       dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
   }
 
+  void setStatus(STATUS status) { status_ = status; }
   STATUS status() const { return status_; }
   STATUS* statusRef() { return &status_; }
 

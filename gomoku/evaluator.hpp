@@ -1,21 +1,21 @@
 #ifndef GOMOKU_EVALUATOR_H
 #define GOMOKU_EVALUATOR_H
 
+#include "virtualboardgomoku.hpp"
+
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
-  /* inputs status array in *status.
-   * analyzes both player's chesstype, and stores black's type in type[0], white's in type[1] */
-  static void evaluateType(STATUS *status, ChessType* type[2]);
 
   static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
-  static const int SCORE_WIN = 10000000;
+  static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
 
  protected:
-  static void init();
 
- private:
+  template <class derivedTypeTree>
+  class TypeTree;
+
   class OpeningTree;
 };
 
@@ -25,11 +25,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
 #include "virtualboardgomoku.hpp"
 #include "point.hpp"
 #include "openingtree.hpp"
-
-template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::init() {
-  OpeningTree::init();
-}
 
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(

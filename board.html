@@ -2,34 +2,43 @@
 
 <html>
 <head>
-  <script type="text/javascript"
-          src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Ubuntu">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/style.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/dialog.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/toolbar.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/board.css">
-  <link rel="stylesheet" type="text/css" href="gomoku/src/playerinformation.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
+
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/style.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/dialog.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/toolbar.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/controlbar.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/board.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/playerinformation.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/timer.css">
+  <link rel="stylesheet" type="text/css" href="gomoku/src/css/treevisualize.css">
 </head>
 <body>
   <!-- this dialog will show when click 'btn-new-game'
-       NOTE: in this scope, dialog is abridged as dl -->
+       in this scope, dialog is abridged as dl -->
   <div id="dialog-new-game">
     <div class="dl-body">
-      <span class="dl-block left">
+      <span class="dl-block rule">
+        Rule:<br>
+        <input type="radio" name="rule" value="0" checked="true">freestyle
+        <input type="radio" name="rule" value="1">renju-basic
+      </span>
+      <span class="dl-block player-black">
         Black:<br>
         <input type="radio" name="black" value="human" checked="true">human<br>
         <input id="dl-name-black" class="dl-name" type="text" value="you"><br>
-        <input type="radio" name="black" value="computer">computer<br>
+        <input type="radio" name="black" value="computer">computer
       </span>
-      <span class="dl-block right">
+      <span class="dl-block player-white">
         White:<br>
         <input type="radio" name="white" value="human" checked="true">human<br>
         <input id="dl-name-white" class="dl-name" type="text" value="you"><br>
-        <input type="radio" name="white" value="computer">computer<br>
+        <input type="radio" name="white" value="computer">computer
       </span>
-      <span class="dl-block bottom">
+      <span class="dl-block level">
         Computer Level
         <select id="dl-select">
           <option value="0">NORMAL</option>
@@ -38,38 +47,69 @@
         </select>
       </span>
       <div class="dl-btn-bar">
-        <button class="dl-btn" onclick="btnDialogOKClick()">OK</button>
-        <button class="dl-btn" onclick="btnDialogCancelClick()">Cancel</button>
+        <input type="button" value="OK" id="dl-ok" class="dl-btn">
+        <input type="button" value="Cancel" id="dl-cancel" class="dl-btn">
       </div>
     </div>
   </div>
 
-  <!-- tool bar at the top of the screen -->
+  <!-- this prompt will show when the user clicks 'btn-view-game',
+    and will prompt the user to input a game id-->
+  <div id="prompt-game-id"></div>
+
+  <!-- tool bar at the top of the screen
+       in this scope, tool is abridged as tl -->
   <div class="tool">
     <span class="tl-title game">
       game
       <div class="tl-sub game">
-        <div class="tl-item" id="new-game" onclick="btnNewGameClick()">new game</div>
+        <div class="tl-item" id="new-game">new game</div>
+        <div class="tl-item" onclick="btnWatchGameClick()">watch game</div>
       </div>
     </span>
     <span class="tl-title view">
       view
       <div class="tl-sub view">
-        <div class="tl-item" id="play-number" onclick="btnPlayNumberClick()">
+        <div class="tl-item" onclick="btnPlayNumberClick()">
           play number
-          <img src="gomoku/src/check.png" class="tl-check" id="play-number-check">
+          <img src="gomoku/src/png/check.png" class="tl-check" id="play-number-check">
         </div>
-        <div class="tl-item" id="coordinate" onclick="btnCoordinateClick()">
+        <div class="tl-item" onclick="btnCoordinateClick()">
           coordinate
-          <img src="gomoku/src/check.png" class="tl-check" id="coordinate-check">
+          <img src="gomoku/src/png/check.png" class="tl-check" id="coordinate-check">
+        </div>
+      </div>
+    </span>
+    <span class="tl-title analyze">
+      analyze
+      <div class="tl-sub analyze">
+        <div class="tl-item" onclick="analyzeClick()">
+          analyze tree
+          <img src="gomoku/src/png/check.png" class="tl-check" id="analyze-check">
         </div>
       </div>
     </span>
   </div>
 
-  <!-- game control bar -->
+  <!-- game control bar
+       in this scope, control is abridged as ctrl -->
   <div class="control">
-
+    <span class="ctrl-replay">
+      <input type="image" src="gomoku/src/png/skip_previous.png" disabled="true" onclick="changeDisplayNo(-225)">
+      <input type="image" src="gomoku/src/png/fast_rewind.png" disabled="true" onclick="changeDisplayNo(-5)">
+      <input type="image" src="gomoku/src/png/back.png" disabled="true" onclick="changeDisplayNo(-1)">
+      <input type="image" src="gomoku/src/png/next.png" disabled="true" onclick="changeDisplayNo(1)">
+      <input type="image" src="gomoku/src/png/fast_forward.png" disabled="true" onclick="changeDisplayNo(5)">
+      <input type="image" src="gomoku/src/png/skip_next.png" disabled="true" onclick="changeDisplayNo(225)">
+    </span>
+    <span class="ctrl-game">
+      <input id="ctrl-undo" type="image" src="gomoku/src/png/undo.png" disabled="true" onclick="undo()">
+      <input type="image" src="gomoku/src/png/pass.png" disabled="true" onclick="pass()">
+      <input type="image" src="gomoku/src/png/resign.png" disabled="true" onclick="resign()">
+    </span>
+    <span class="ctrl-analyze">
+      <input type="image" src="gomoku/src/png/hint.png" disabled="true" onclick="hint()">
+    </span>
   </div>
 
   <!-- main div -->
@@ -78,43 +118,144 @@
     <span id="background"></span>
 
     <!-- opponent player information
-         NOTE: in this scope, player information is abridged as pi -->
-    <span class="player-information opp">
+         in this scope, player information is abridged as pi -->
+    <span class="player-information opp white">
       <!-- icon -->
-      <img id="pi-icon-opp" src="gomoku/src/icon.png" class="pi-icon opp">
+      <img id="pi-icon-opp" src="gomoku/src/png/icon.png" class="pi-icon opp">
 
-      <div id="pi-background-opp" class="pi-background opp white">
-        <img id="pi-chess-opp" src="gomoku/src/chess_white.png" class="pi-chess opp">
-        <span id="pi-timer-opp" class="pi-timer opp white">00:00</span>
+      <div id="pi-timer-chess-background-opp" class="pi-timer-chess-background opp">
+        <img id="pi-chess-opp" src="gomoku/src/png/chess_white.png" class="pi-chess opp">
+        <!-- timer -->
+        <span id="pi-timer-opp" class="pi-timer opp">:
+          <div class="flip-wrapper min-ten">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper min-one">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-ten">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-one">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+        </span>
       </div>
       <span id="pi-name-opp" class="pi-name opp">EarthMover</span>
     </span>
     <!-- board image and canvas that used to draw chess on board -->
-    <img src="gomoku/src/board.png" class="board img">
-    <canvas id="cvs" class="board cvs"
-            onclick="cvsClick()"
-            onmousemove="cvsMouseMoveOrOver(event)"
-            onmouseout="cvsMouseOut()"
-            onmouseover="cvsMouseMoveOrOver(event)"></canvas>
+    <img src="gomoku/src/png/board.png" class="board img">
+    <canvas id="cvs" class="board cvs"></canvas>
 
     <!-- self player information
          NOTE: in this scope, player information is abridged as pi -->
-    <span class="player-information sel">
+    <span class="player-information sel black">
       <!-- icon -->
-      <img id="pi-icon-sel" src="gomoku/src/human.png" class="pi-icon sel">
+      <img id="pi-icon-sel" src="gomoku/src/png/human.png" class="pi-icon sel">
 
-      <div id="pi-background-sel" class="pi-background sel black">
-        <img id="pi-chess-sel" src="gomoku/src/chess_black.png" class="pi-chess sel">
-        <span id="pi-timer-sel" class="pi-timer sel black">00:00</span>
+      <div id="pi-timer-chess-background-sel" class="pi-timer-chess-background sel">
+        <img id="pi-chess-sel" src="gomoku/src/png/chess_black.png" class="pi-chess sel">
+        <!-- timer -->
+        <span id="pi-timer-sel" class="pi-timer sel">:
+          <div class="flip-wrapper min-ten">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper min-one">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-ten">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+          <div class="flip-wrapper sec-one">
+            <div class="flip-next">1</div>
+            <div class="flip-top">0</div>
+            <div class="flip-back">1</div>
+            <div class="flip-bottom">0</div>
+          </div>
+        </span>
       </div>
       <span id="pi-name-sel" class="pi-name sel">You</span>
     </span>
-  </div>
 
-  <img src="gomoku/src/chess_black_transparent.png" style="display: none;">
-  <img src="gomoku/src/chess_black_marked.png" style="display: none;">
-  <img src="gomoku/src/chess_white_transparent.png" style="display: none;">
-  <img src="gomoku/src/chess_white_marked.png" style="display: none;">
+    <div id="tree-visualize">
+      <div id="tv-control">
+        <input type="image" src="gomoku/src/png/refresh.png" onclick="refresh()">
+        <span id="tv-branch-parent">
+          Max branch
+          <select id="tv-branch">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+        </span>
+        <span id="tv-count-parent">
+          Min count
+          <select id="tv-count">
+            <option value="50">50</option>
+            <option value="20">20</option>
+            <option value="8">8</option>
+          </select>
+        </span>
+        <span id="tv-information">
+          <span id="tv-inf-position"></span>
+          <span id="tv-inf-count"></span>
+          <span id="tv-inf-win-rate">
+            <img class="tv-img white" src="gomoku/src/png/chess_white.png">
+            <span id="tv-inf-win-rate-white" class="tv-img white"></span>
+            <span id="tv-inf-win-rate-bar"></span>
+            <span id="tv-inf-win-rate-pointer"></span>
+            <img class="tv-img black" src="gomoku/src/png/chess_black.png">
+            <span id="tv-inf-win-rate-black" class="tv-img black"></span>
+          </span>
+        </span>
+      </div>
+      <div id="tv-main">
+        <svg id="tv-svg"></svg>
+      </div>
+    </div>
+  </div>
 </body>
-<script type="text/javascript" src="gomoku/src/board.js"></script>
+
+<!-- add firebase-->
+<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCeE0OVOo_XJigHXKhLMoGSZ47NjxIqbBg",
+    authDomain: "earthmover-b0704.firebaseapp.com",
+    databaseURL: "https://earthmover-b0704.firebaseio.com",
+    projectId: "earthmover-b0704",
+    storageBucket: "earthmover-b0704.appspot.com",
+    messagingSenderId: "171399608972"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script type="text/javascript" src="gomoku/src/js/dialog.js"></script>
+<script type="text/javascript" src="gomoku/src/js/timer.js"></script>
+<script type="text/javascript" src="gomoku/src/js/board.js"></script>
+<script type="text/javascript" src="gomoku/src/js/treevisualize.js"></script>
+<script type="text/javascript" src="gomoku/src/js/main.js"></script>
 </html>

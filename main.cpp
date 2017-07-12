@@ -1,11 +1,18 @@
-#include "gomoku/chesstype.hpp"
-#include "gomoku/status.hpp"
-#include "virtualboard.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-#include "gomoku/point.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
-#include "gomoku/displayboard.hpp"
+// mutual dependencies
 #include "gametree.hpp"
+#include "virtualboard.hpp"
+
+#include "gomoku/chesstype.hpp"
+#include "gomoku/displayboard.hpp"
+#include "gomoku/point.hpp"
+#include "gomoku/status.hpp"
+#include "gomoku/virtualboardgomoku.hpp"
+// freestyle dependencies
+#include "gomoku/freestyle/virtualboardfreestyle.hpp"
+// renju_basic dependencies
+#include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
+
+
 
 #include <time.h>
 #include <assert.h>
@@ -41,8 +48,7 @@ int main() {
   Log::init();
   #endif
 
-  //start();
-  start_AI();
+  start();
 
   #ifdef ANALYZE
   Log::closeLog();
@@ -51,15 +57,25 @@ int main() {
   return 0;
 }
 
-void start_AI() {
+void start() {
   int cycle;
   std::cout << "simulate cycle: ";
   std::cin >> cycle;
 
   DisplayBoard* board = new DisplayBoard();
-  VirtualBoardFreeStyle vb;
   GameTree* tree = new GameTree();
-  tree->reset(&vb);
+
+  int rule;
+  std::cout << "freestyle (1), renju-basic (2)\n";
+  std::cin >> rule;
+
+  VirtualBoard *vb;
+  switch (rule) {
+    case 1: vb = new VirtualBoardFreeStyle(); break;
+    case 2: vb = new VirtualBoardRenjuBasic(); break;
+  }
+  tree->reset(vb);
+
 
   #ifdef ANALYZE
   Log log;
@@ -82,7 +98,7 @@ void start_AI() {
     #endif
 
     tree->MCTS(cycle);
-    tree->MCTSResult(row, col);
+    tree->MCTSResult();
 
     #ifdef TIME
     finish = clock();
@@ -121,60 +137,15 @@ void start_AI() {
     #endif
 
     /* update tree and handle result */
-    if (tree->play(row, col)) {
-      /* somebody wins */
-      std::cout << (!whoTurn ? "black" : "white") << " wins\n";
-      break;
+    int winning = tree->play(row * 15 + col);
+    switch (winning) {
+      case 1 :
+        std::cout << "Five in a row !\n"
+                  << (!whoTurn ? "black" : "white") << " wins\n";
+        break;
+      case -1 :
+        std::cout << "Black played on a forbidden point !\nwhite wins\n";
     }
-  }
-}
-
-void start() {
-  DisplayBoard* board = new DisplayBoard();
-  GameTree* tree = new GameTree();
-
-  while (true) {
-    int row, col;
-
-    /* get who turn, 0 = black, 1 = white*/
-    bool whoTurn = board->whoTurn();
-
-    // debugger
-    VirtualBoard* virtualBoard = tree->getCurrentBoard();
-    virtualBoard->getHSP(row, col);
-    std::cout << "highest position: "
-              << (char)(col + 65) << row + 1
-              << " score: "
-              << virtualBoard->getScore(row, col) << std::endl;
-    // end debugger
-
-    /* get user's input and try to play, if the input is not valid,*/
-    /* it will keep ask another input*/
-    bool validInput = false;
-
-    while (!validInput) {
-      /* get user input*/
-      board->getInput(&row, &col);
-
-      /* tries to play at (row, col) */
-      validInput = board->play(row, col);
-
-      /* handle invalid input */
-      if (!validInput)
-        std::cout << "Invalid move\n";
-    }
-
-    // debugger
-    std::cout << (char)(col + 65) << row + 1
-              << " score: "
-              << virtualBoard->getScore(row, col) << std::endl;
-    // end debugger
-
-    /* update tree and handle result */
-    if (tree->play(row, col)) {
-      /* somebody wins */
-      std::cout << (!whoTurn ? "black" : "white") << " wins\n";
-      break;
-    }
+    if (winning != 0) break;
   }
 }

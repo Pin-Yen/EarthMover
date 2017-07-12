@@ -1,9 +1,8 @@
-#ifndef GOMOKU_RENJU_BASIC_EVALUATOR_H
-#define GOMOKU_RENJU_BASIC_EVALUATOR_H
-
-class VirtualBoard::Evaluator {
+#ifndef GOMOKU_RENJU_BASIC_EVALUATOR_RENJU_BASIC_H
+#define GOMOKU_RENJU_BASIC_EVALUATOR_RENJU_BASIC_H
+class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::Evaluator {
  public:
-  static void initialize();
+  static inline void init();
 
   /* check win lor lose (call by virtualboard::play)
    * -1 for lose, 0 for nothng, 1 for win */
@@ -21,15 +20,15 @@ class VirtualBoard::Evaluator {
    * returns black's score in score[0], white's in score[1] */
   static void evaluateScore(ChessType* type[4][2], int *score);
 
-  static void evaluateRelativeScore(VirtualBoard::Point* point[15][15], int playNo);
-
-  static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
-
  private:
-  class TypeTree;
-  class OpeningTree;
-
-  static bool isInitialized;
+  class TypeTreeRenjuBasic;
 };
+
+#include "typetreerenjubasic.hpp"
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
+  OpeningTree::init();
+  TypeTreeRenjuBasic::init();
+}
+
 
 #endif

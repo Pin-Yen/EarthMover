@@ -37,27 +37,27 @@ class ChessType {
 
   bool life() const { return life_; }
 
-  bool operator==(const ChessType &type) {
+  bool operator==(const ChessType &type) const {
     return (length_ == type.length_ && life_ == type.life_ && level_ == type.level_);
   }
 
-  bool operator!=(const ChessType &type) {
+  bool operator!=(const ChessType &type) const {
     return (length_ != type.length_ || life_ != type.life_ || level_ != type.level_);
   }
 
-  bool operator>(const ChessType &type) {
+  bool operator>(const ChessType &type) const {
     return ((length_ > type.length_) || ((length_ == type.length_) && (life_ > type.life_)));
   }
 
-  bool operator<(const ChessType &type) {
+  bool operator<(const ChessType &type) const {
     return ((length_ < type.length_) || ((length_ == type.length_) && (life_ < type.life_)));
   }
 
-  bool operator>=(const ChessType &type) {
+  bool operator>=(const ChessType &type) const {
     return ((length_ > type.length_) || ((length_ == type.length_) && (life_ >= type.life_)));
   }
 
-  bool operator<=(const ChessType &type) {
+  bool operator<=(const ChessType &type) const {
     return ((length_ < type.length_) || ((length_ == type.length_) && (life_ <= type.life_)));
   }
 

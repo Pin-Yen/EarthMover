@@ -40,6 +40,18 @@
   top: 0;
 }
 
+.tl-title.game {
+  left: 1vh;
+}
+
+.tl-title.view {
+  left: 16vh;
+}
+
+.tl-title.analyze {
+  left: 31vh;
+}
+
 .tl-sub.game {
   width: 20vh;
 }
@@ -48,16 +60,24 @@
   width: 24vh;
 }
 
+.tl-sub.analyze {
+  width: 24vh;
+}
+
 .tl-title:hover {
   background-color: rgba(20, 0, 60, .1);
 }
 
 .tl-title:hover .tl-sub.game {
-  height: 5.4vh;
+  height: 10.6vh;
 }
 
 .tl-title:hover .tl-sub.view {
   height: 10.6vh;
+}
+
+.tl-title:hover .tl-sub.analyze {
+  height: 5.4vh;
 }
 
 .tl-item {
@@ -101,19 +121,4 @@
   background: -moz-linear-gradient(bottom, #fd6, #fe9);
   background: -o-linear-gradient(bottom, #fd6, #fe9);
   background: -webkit-linear-gradient(top, #fd6, #fe9);
-}
-
-.tl-title.game {
-  left: .5vh;
-}
-
-.tl-title.view {
-  left: 16vh;
-}
-
-.control {
-  background-color: #aaa;
-  height: 6vh;
-  position: relative;
-  z-index: -2;
 }

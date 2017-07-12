@@ -1,6 +1,7 @@
 #ifndef HTTP_SERVER_H_
 #define HTTP_SERVER_H_
 
+#include "ai.hpp"
 #include <string>
 #include <fstream>
 #include <netinet/in.h> /* sockaddr_in*/
@@ -37,6 +38,21 @@ class HttpServer {
 
   /* Plays a point specified in request. */
   bool handlePlay(std::string requestBody);
+
+  /* request AI think */
+  bool handleThink();
+
+  /* undo */
+  void handleUndo(std::string requestBody);
+
+  /* pass */
+  void handlePass();
+
+  /* opponent resign, stop background thread */
+  void handleResign();
+
+  /* returns JSON Monte-Carlo tree to client */
+  void handleVisualize();
 
   /* response a resource specified by "directory" to client, or some http error. */
   void handleResourceRequest(std::string requestBody, std::string directory);
@@ -81,6 +97,8 @@ class HttpServer::HttpResponse
 
   /* sets the response body */
   void setBody(std::ifstream *file);
+
+  void setBody(std::string body);
 
   std::string getHeaderString();
 

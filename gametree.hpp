@@ -2,10 +2,13 @@
 #define GAME_TREE_H
 
 #include "virtualboard.hpp"
+#include "lib/json.hpp"
+
+#include <string>
 
 class GameTree {
  public:
-  static const int CHESSBOARD_DIMEN = 15;
+  static const int CHILD_LENGTH = 225;
 
   GameTree();
   ~GameTree();
@@ -24,14 +27,22 @@ class GameTree {
 
   /* Monty Carlo Tree Search
    * keep searching until reach the max cycle, or stop become true */
-  void MCTS(int maxCycle, bool &stop);
+  void MCTS(int maxCycle, const bool &stop);
 
   /* get the child that has highest playout from current node */
-  void MCTSResult(int &row, int &col) const;
+  int MCTSResult() const;
 
   /* called when a REAL point is played, updates the currentRoot
    * returns 1 if wins after play, -1 if lose */
-  int play(int row, int col);
+  int play(int index);
+
+  /* pass */
+  void pass();
+
+  void undo();
+
+  /* Returns the whole tree in JSON format */
+  std::string getTreeJSON();
 
   /* debugger */
   VirtualBoard* getCurrentBoard() { return currentBoard; }
@@ -54,6 +65,11 @@ class GameTree {
    * back propagation form node, until reach the current node */
   void backProp(Node* node, bool result);
   void backProp(Node* node);
+
+  /* returns the part of the tree below 'node' in JSON format
+   * position: the index of 'node' in its parents child array
+   * whiteTurn : indicates whether the node is white turn */
+  nlohmann::json getSubTreeJSON(Node *node, int position, bool whiteTurn);
 
   Node *root, *currentNode;
 

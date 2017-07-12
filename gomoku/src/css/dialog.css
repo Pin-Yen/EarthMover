@@ -20,7 +20,7 @@
 .dl-body {
   background-color: #FFE;
   bottom: 0;
-  height: 200px;
+  height: 260px;
   left: 0;
   margin: auto;
   position: absolute;
@@ -45,28 +45,35 @@
   position: absolute;
 }
 
-.dl-block.left {
-  height: 100px;
+.dl-block.rule {
+  height: 56px;
   left: 8px;
   padding: 4px;
   top: 12px;
-  width: 138px;
+  width: 284px;
 }
 
-.dl-block.right {
-  height: 100px;
-  right: 8px;
+.dl-block.player-black, .dl-block.player-white {
+  height: 96px;
   padding: 4px;
-  top: 12px;
+  top: 80px;
   width: 138px;
 }
 
-.dl-block.bottom {
+.dl-block.player-black {
+  left: 8px;
+}
+
+.dl-block.player-white {
+  right: 8px;
+}
+
+.dl-block.level {
   height: 40px;
   left: 8px;
   line-height: 40px;
   text-align: center;
-  top: 124px;
+  top: 188px;
   width: 284px;
 }
 

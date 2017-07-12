@@ -9,14 +9,14 @@
   z-index: 1;
 }
 
-.pi-background.black {
+.black .pi-timer-chess-background {
   background: linear-gradient(to bottom, #888, #555, #666, #777, #888, #999);
   background: -moz-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
   background: -o-linear-gradient(bottom, #888, #555, #666, #777, #888, #999);
   background: -webkit-linear-gradient(top, #888, #555, #666, #777, #888, #999);
 }
 
-.pi-background.white {
+.white .pi-timer-chess-background {
   background: linear-gradient(to bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
   background: -moz-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
   background: -o-linear-gradient(bottom, #ccc, #eee, #ccc, #bbb, #aaa, #999);
@@ -30,28 +30,21 @@
 }
 
 .pi-timer {
+  background: #222;
   margin: auto;
   text-align: center;
+  color: white;
   padding: 0;
   position: absolute;
-  width: 65%;
-  bottom: 0;
+  width: 59%;
 }
 
 .pi-timer.opp {
-  right: 5%;
+  left: 28%;
 }
 
 .pi-timer.sel {
-  left: 5%;
-}
-
-.pi-timer.black {
-  color: white;
-}
-
-.pi-timer.white {
-  color: black;
+  right: 28%;
 }
 
 .pi-name {
@@ -70,11 +63,11 @@
 }
 
 .pi-chess.opp {
-  left: 5%;
+  left: 4%;
 }
 
 .pi-chess.sel {
-  right: 5%;
+  right: 4%;
 }
 
 @media screen and (orientation: landscape) {
@@ -109,44 +102,46 @@
     bottom: 2.5vw;
   }
 
-  .pi-background {
+  .pi-timer-chess-background {
     border-radius: 3vw;
-    height: 4vw;
-    left: 10%;
+    height: 3.6vw;
+    left: .5vw;
     position: absolute;
-    width: 80%;
+    width: 12vw;
   }
 
-  .pi-background.opp {
+  .pi-timer-chess-background.opp {
     top: 14vw;
   }
 
-  .pi-background.sel {
+  .pi-timer-chess-background.sel {
     bottom: 14vw;
   }
 
   .pi-timer {
-    font-size: 2.4vw;
-    height: 4vw;
-    line-height: 4vw;
+    border-radius: .4vw;
+    font-size: 2vw;
+    height: 2.8vw;
+    line-height: 2.8vw;
+    top: .4vw;
   }
 
   .pi-name {
     border-width: .4vw;
     font-size: 2vw;
-    left: 5%;
+    left: .5vw;
     line-height: 3.2vw;
     position: absolute;
     text-align: center;
-    width: 92%;
+    width: 12vw;
   }
 
   .pi-name.opp {
-    top: 20vw;
+    top: 19.6vw;
   }
 
   .pi-name.sel {
-    bottom: 20vw;
+    bottom: 19.6vw;
   }
 }
 
@@ -182,7 +177,7 @@
     right: 1vh;
   }
 
-  .pi-background {
+  .pi-timer-chess-background {
     border-radius: 3vh;
     height: 6vh;
     position: absolute;
@@ -190,18 +185,19 @@
     width: 20vh;
   }
 
-  .pi-background.opp {
-    left: 8.5vh;
+  .pi-timer-chess-background.opp {
+    left: 9vh;
   }
 
-  .pi-background.sel {
-    right: 8.5vh;
+  .pi-timer-chess-background.sel {
+    right: 9vh;
   }
 
   .pi-timer {
     font-size: 3.2vh;
-    height: 6vh;
-    line-height: 6vh;
+    height: 4.4vh;
+    top: 0.8vh;
+    line-height: 4.4vh;
   }
 
   .pi-name {

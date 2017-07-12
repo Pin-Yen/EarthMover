@@ -1,7 +1,8 @@
 #include "ai.hpp"
-#include "virtualboard.hpp"
-#include "gomoku/virtualboard.hpp"
-#include "gomoku/freestyle/virtualboard.hpp"
+#include "gomoku/freestyle/virtualboardfreestyle.hpp"
+#include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
+#include "const.hpp"
+
 #include <assert.h>
 #include <iostream>
 
@@ -12,55 +13,34 @@ AI::AI() {
 }
 
 AI::~AI() {
-  if (tree != NULL)
-    delete tree;
-  if (vb != NULL)
-    delete vb;
+  if (tree != NULL) delete tree;
+  if (vb != NULL) delete vb;
 }
 
-void AI::think(int *row, int *col) {
-  if (backgroundThread != NULL) {
-    stopBackgroundThread = true;
-    backgroundThread->join();
-    delete backgroundThread;
-    backgroundThread = NULL;
+int AI::think() {
+  stopBGThread();
+
+  switch (level_) {
+    case 0:
+      tree->MCTS(2000); break;
+    case 1:
+      tree->MCTS(2000, 1000); break;
+    case 2:
+      tree->MCTS(2000, 2000);
   }
 
-  #ifdef DEBUG_MCTS_PROCESS
-    int batch = 100;
-    int batchSize = cycle / batch;
-    int cycles = cycle / batch;
-
-    for (int c = 0; c < cycles; ++c) {
-      tree->MCTS(batchSize);
-      std::cout << "batch " << c << ":\n";
-      tree->MCTSResult(*row, *col);
-    }
-    printf("============================================\n");
-  #else
-    switch (level_) {
-      case 0:
-        tree->MCTS(2000); break;
-      case 1:
-        tree->MCTS(2000, 1000); break;
-      case 2:
-        tree->MCTS(2000, 2000);
-    }
-
-    tree->MCTSResult(*row, *col);
-  #endif
+  return tree->MCTSResult();
 }
 
-bool AI::play(int row, int col, bool triggerBackgroundThread ) {
+int AI::play(int index, bool triggerBackgroundThread) {
   // stop background thinking to avoid memory corruption.
   stopBGThread();
-  bool hasSomeoneWin = tree->play(row, col);
+  int result = tree->play(index);
 
-  if (triggerBackgroundThread) {
+  if (triggerBackgroundThread)
     startBGThread();
-  }
 
-  return hasSomeoneWin;
+  return result;
 }
 
 void AI::startBGThread() {
@@ -88,15 +68,11 @@ void AI::reset(int level, int rule) {
     delete vb;
 
   switch (rule) {
-    case FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
-    //case RENJU_BASIC: vb = new VirtualBoardRenjuBasic(); break;
+    case GOMOKU_FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
+    case GOMOKU_RENJU_BASIC: vb = new VirtualBoardRenjuBasic(); break;
     default: assert(0);
   }
 
   tree->reset(vb);
   level_ = level;
-}
-
-bool AI::whoTurn() {
-  return tree->getCurrentBoard()->whoTurn();
 }

@@ -1,0 +1,48 @@
+.control {
+  background-color: #aaa;
+  height: 6vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.control input {
+  float: left;
+  height: 5vh;
+  margin: 0;
+  outline: none;
+  width: 5vh;
+}
+
+.control input:hover:enabled {
+  background-color: #999;
+}
+
+.control input:active:enabled {
+  border: inset .2vh #bbb;
+}
+
+.control input:disabled {
+  -webkit-filter: opacity(20%);
+  filter: opacity(20%);
+}
+
+.ctrl-replay {
+  height: 5vh;
+  left: 1vh;
+  position: absolute;
+  top: .5vh;
+}
+
+.ctrl-game {
+  height: 5vh;
+  left: 32vh;
+  position: absolute;
+  top: .5vh;
+}
+
+.ctrl-analyze {
+  height: 5vh;
+  left: 48vh;
+  position: absolute;
+  top: .5vh;
+}

@@ -1,7 +1,9 @@
 #ifndef GOMOKU_FREESTYLE_EVALUATOR_H
 #define GOMOKU_FREESTYLE_EVALUATOR_H
-
+#include "../evaluator.hpp"
+#include "../typetree.hpp"
 class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator {
+
  public:
   static inline void init();
 
@@ -16,14 +18,14 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
   static void evaluateScore(ChessType* type[4][2], int *score);
 
  private:
-  class TypeTree;
+  class TypeTreeFreeStyle;
 };
 
-#include "typetree.hpp"
+#include "typetreefreestyle.hpp"
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
-  Evaluator::init();
-  TypeTree::init();
+  OpeningTree::init();
+  TypeTreeFreeStyle::init();
 }
 
 #endif

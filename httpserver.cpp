@@ -1,5 +1,8 @@
 #include "ai.hpp"
+#include "const.hpp"
 #include "httpserver.hpp"
+
+#include "lib/json.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -12,9 +15,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <exception>
 
 #define BUFFER_SIZE 10000
 #define DEBUG_NETWORK
+
+using json = nlohmann::json;
 
 HttpServer::HttpServer() {
   earthMover = new AI();
@@ -87,13 +93,23 @@ void HttpServer::listenConnection() {
       redirect(&directory);
 
       // handle requests according to their directory path
-      if (directory == "/start") {
-        handleStart(requestBody);
-      } else if(directory == "/play") {
+      if (directory == "/play")
         stopGame = handlePlay(requestBody);
-      } else {
+      else if (directory == "/think")
+        stopGame = handleThink();
+      else if (directory == "/start")
+        handleStart(requestBody);
+      else if (directory == "/undo")
+        handleUndo(requestBody);
+      else if (directory == "/pass")
+        handlePass();
+      else if (directory == "/resign")
+        handleResign();
+      else if (directory == "/visualize")
+        handleVisualize();
+      else
         handleResourceRequest(requestBody, directory);
-      }
+
       close(server);
     }
   }
@@ -104,19 +120,24 @@ void HttpServer::redirect(std::string *directory) {
     directory->append("board.html");
   } else if (*directory == "/favicon.ico") {
     // favicon, should replace with EM icon.
-    *directory = std::string("/gomoku/src/chess_white.png");
+    *directory = std::string("/gomoku/src/png/chess_white.png");
   }
 }
 
 void HttpServer::handleStart(std::string requestBody) {
-  int level = atoi(findAttributeInJson(requestBody, "level").c_str());
-  std::string ruleString = findAttributeInJson(requestBody, "rule");
+  json parsedBody = json::parse(requestBody);
 
-  int rule;
-  if (ruleString == "renju_basic")
-    rule = AI::RENJU_BASIC;
-  else if (ruleString == "freestyle")
-    rule = AI::FREESTYLE;
+  int rule, level;
+
+  // extracts game parameters from request
+  try {
+    rule = parsedBody.at("rule");
+    level = parsedBody.at("level");
+  } catch (std::exception& e) {
+    std::cerr << "failed to parse requestBody:\n"<< e.what();
+    HttpResponse response(400);
+    return;
+  }
 
   earthMover->reset(level, rule);
 
@@ -125,53 +146,132 @@ void HttpServer::handleStart(std::string requestBody) {
 }
 
 bool HttpServer::handlePlay(std::string requestBody) {
-  /* extract row & col from encoded request body */
-  int userRow = atoi(findAttributeInJson(requestBody, "row").c_str());
-  int userCol = atoi(findAttributeInJson(requestBody, "col").c_str());
-  bool shouldAiThink = (findAttributeInJson(requestBody, "think") == "true");
+  json parsedBody = json::parse(requestBody);
 
-  bool isWinning = false; // true: winning, false: not winning.
-  bool winnerColor; //true: black, false: white.
+  int row, col;
 
-  // If Ai should play the move specified in the request.
-  if (userRow != -1 && userCol != -1) {
-    // third param: Think in background if not requested to play by the client.
-    isWinning = earthMover->play(userRow, userCol, !shouldAiThink);
+  // extract row & col from request body
+  try {
+    row = parsedBody.at("row");
+    col = parsedBody.at("col");
+  } catch (std::exception& e) {
+    std::cerr << "failed to parse requestBody:\n"<< e.what();
+    HttpResponse response(400);
+    return false;
   }
 
-  int AiRow = -1, AiCol = -1;
-
-  // EM think & play if user's move is not winning & EM's play is requested by the client.
-  if (shouldAiThink & !isWinning) {
-    earthMover->think(&AiRow, &AiCol);
-    isWinning = earthMover->play(AiRow, AiCol, true);
-  }
+  // 1: self winning, -1: opp winning, 0: not winning.
+  // third param: Donot think in background.
+  int winning = earthMover->play(row * 15 + col, false);
 
   // Fill in the response data
   HttpResponse response(200);
-  response.setContentType("application/json")
-          .addJson("row", AiRow)
-          .addJson("col", AiCol);
+  response.setContentType("application/json");
 
-  if (isWinning)
-    response.addJson("winner", earthMover->whoTurn() ? "white" : "black");
-  else
-    response.addJson("winner", "none");
+  /* winning  whoTurn   winner
+   *    0                 -1
+   *    0                 -1
+   *   -1        0         1
+   *   -1        1         0
+   *    1        0         0
+   *    1        1         1 */
+  response.addJson("winner", winning == 0 ? -1 : ((winning == -1) ^ earthMover->whoTurn()));
 
-  std::cout << response.getHeaderString();
-  std::cout << response.getBody();
+  std::cout << response.getHeaderString()
+            << response.getBody();
 
   // Sent response
   send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
   send(server, response.getBody(), response.getBodyLength(), 0);
 
   // Returns true to stop gameloop if someone is winning.
-  return isWinning;
+  return winning != 0;
+}
+
+bool HttpServer::handleThink() {
+  // EM think.
+  int index = earthMover->think();
+
+  // 1: self winning, -1: opp winning, 0: not winning.
+  // third param: Donot think in background.
+
+  //TODO: handle pass
+  int winning = (index == -1 ? 0 : earthMover->play(index, true));
+  if (index == -1) earthMover->pass();
+
+  // Fill in the response data
+  HttpResponse response(200);
+  response.setContentType("application/json")
+          .addJson("row", (index == -1 ? -1 : index / 15))
+          .addJson("col", (index == -1 ? -1 : index % 15));
+
+  /* winning  whoTurn   winner
+   *    0                 -1
+   *    0                 -1
+   *   -1        0         1
+   *   -1        1         0
+   *    1        0         0
+   *    1        1         1 */
+  response.addJson("winner", winning == 0 ? -1 : ((winning == -1) ^ earthMover->whoTurn()));
+
+  std::cout << response.getHeaderString()
+            << response.getBody();
+
+  // Sent response
+  send(server, response.getHeaderString().c_str(), response.getHeaderLength(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
+
+  // Returns true to stop gameloop if someone is winning.
+  return winning != 0;
+}
+
+void HttpServer::handleUndo(std::string requestBody) {
+  json parsedBody = json::parse(requestBody);
+
+  int times;
+
+  // extract row & col from request body
+  try {
+    times = parsedBody.at("times");
+  } catch (std::exception& e) {
+    std::cerr << "failed to parse requestBody:\n"<< e.what();
+    HttpResponse response(400);
+    return;
+  }
+
+  earthMover->undo(times);
+
+  HttpResponse response(204);
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+}
+
+void HttpServer::handlePass() {
+  earthMover->pass();
+
+  HttpResponse response(204);
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+}
+
+void HttpServer::handleResign() {
+  earthMover->resign();
+
+  HttpResponse response(204);
+
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+}
+
+void HttpServer::handleVisualize() {
+  HttpResponse response(200);
+
+  response.setContentType("application/json");
+  response.setBody(earthMover->getTreeJSON());
+
+  send(server, response.getHeaderString().c_str(), response.getHeaderString().length(), 0);
+  send(server, response.getBody(), response.getBodyLength(), 0);
 }
 
 void HttpServer::handleResourceRequest(std::string requestBody, std::string directory) {
-
-  if (! sanitize(directory)) {
+  if (!sanitize(directory)) {
     responseHttpError(403, "Requesting resource from forbidden uri");
   } else {
     // if access to this directory is permitted
@@ -179,7 +279,7 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
     /* use the sub-string from pos=1 to skip the first '/' in directory path */
     resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
 
-    if( !resourceFile.is_open()) {
+    if(!resourceFile.is_open()) {
       responseHttpError(404, "can't open resource file, does the file exist?");
     } else {
       HttpResponse response(200);
@@ -197,7 +297,6 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
       std::cout << "sent!" << std::endl;
         #endif
     }
-
   }
 }
 
@@ -372,6 +471,11 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   file->seekg(0, std::ios_base::beg);
   file->read(binBody, fileLength);
 
+}
+
+void HttpServer::HttpResponse::setBody(std::string body) {
+  bodyLength = body.length();
+  this->body = body;
 }
 
 std::string HttpServer::HttpResponse::getHeaderString(){

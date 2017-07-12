@@ -1,0 +1,189 @@
+#tree-visualize {
+  left: 88vh;
+  background-color: white;
+  bottom: 0;
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+
+#tv-control {
+  background-color: #eee;
+  height: 40px;
+  width: 100%;
+}
+
+#tv-control input {
+  margin: 4px;
+  outline: none;
+  width: 32px;
+}
+
+#tv-branch-parent {
+  font-size: 14px;
+  height: 40px;
+  left: 100px;
+  line-height: 40px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 140px;
+}
+
+#tv-count-parent {
+  font-size: 14px;
+  height: 40px;
+  left: 240px;
+  line-height: 40px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 120px;
+}
+
+#tv-information {
+  height: 40px;
+  left: 360px;
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  width: 360px;
+}
+
+#tv-inf-position {
+  height: 40px;
+  left: 0px;
+  line-height: 40px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 40px;
+}
+
+#tv-inf-count {
+  height: 40px;
+  left: 40px;
+  line-height: 40px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 120px;
+}
+
+#tv-inf-win-rate {
+  height: 40px;
+  left: 160px;
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  width: 200px;
+}
+
+.tv-img {
+  font-size: 14px;
+  height: 26px;
+  line-height: 26px;
+  position: absolute;
+  text-align: center;
+  top: 7px;
+  width: 26px;
+}
+
+.tv-img.white {
+  left: 7px;
+}
+
+.tv-img.black {
+  color: white;
+  right: 7px;
+}
+
+#tv-inf-win-rate-bar {
+  background: linear-gradient(to right,
+      hsl(17, 80%, 50%), hsl(25, 80%, 50%), hsl(30, 80%, 50%), hsl(35, 80%, 50%), hsl(40, 80%, 50%),
+      hsl(44, 80%, 50%), hsl(48, 80%, 50%), hsl(52, 80%, 50%), hsl(56, 80%, 50%), hsl(60, 80%, 50%),
+      hsl(64, 80%, 50%), hsl(68, 80%, 50%), hsl(72, 80%, 50%), hsl(76, 80%, 50%), hsl(80, 80%, 50%),
+      hsl(85, 80%, 50%), hsl(90, 80%, 50%), hsl(95, 80%, 50%), hsl(103, 80%, 50%), hsl(120, 80%, 50%),
+      hsl(137, 80%, 50%), hsl(145, 80%, 50%), hsl(150, 80%, 50%), hsl(155, 80%, 50%), hsl(160, 80%, 50%),
+      hsl(164, 80%, 50%), hsl(168, 80%, 50%), hsl(172, 80%, 50%), hsl(176, 80%, 50%), hsl(180, 80%, 50%),
+      hsl(184, 80%, 50%), hsl(188, 80%, 50%), hsl(192, 80%, 50%), hsl(196, 80%, 50%), hsl(200, 80%, 50%),
+      hsl(205, 80%, 50%));
+  background: -moz-linear-gradient(right,
+      hsl(17, 80%, 50%), hsl(25, 80%, 50%), hsl(30, 80%, 50%), hsl(35, 80%, 50%), hsl(40, 80%, 50%),
+      hsl(44, 80%, 50%), hsl(48, 80%, 50%), hsl(52, 80%, 50%), hsl(56, 80%, 50%), hsl(60, 80%, 50%),
+      hsl(64, 80%, 50%), hsl(68, 80%, 50%), hsl(72, 80%, 50%), hsl(76, 80%, 50%), hsl(80, 80%, 50%),
+      hsl(85, 80%, 50%), hsl(90, 80%, 50%), hsl(95, 80%, 50%), hsl(103, 80%, 50%), hsl(120, 80%, 50%),
+      hsl(137, 80%, 50%), hsl(145, 80%, 50%), hsl(150, 80%, 50%), hsl(155, 80%, 50%), hsl(160, 80%, 50%),
+      hsl(164, 80%, 50%), hsl(168, 80%, 50%), hsl(172, 80%, 50%), hsl(176, 80%, 50%), hsl(180, 80%, 50%),
+      hsl(184, 80%, 50%), hsl(188, 80%, 50%), hsl(192, 80%, 50%), hsl(196, 80%, 50%), hsl(200, 80%, 50%),
+      hsl(205, 80%, 50%));
+  background: -o-linear-gradient(right,
+      hsl(17, 80%, 50%), hsl(25, 80%, 50%), hsl(30, 80%, 50%), hsl(35, 80%, 50%), hsl(40, 80%, 50%),
+      hsl(44, 80%, 50%), hsl(48, 80%, 50%), hsl(52, 80%, 50%), hsl(56, 80%, 50%), hsl(60, 80%, 50%),
+      hsl(64, 80%, 50%), hsl(68, 80%, 50%), hsl(72, 80%, 50%), hsl(76, 80%, 50%), hsl(80, 80%, 50%),
+      hsl(85, 80%, 50%), hsl(90, 80%, 50%), hsl(95, 80%, 50%), hsl(103, 80%, 50%), hsl(120, 80%, 50%),
+      hsl(137, 80%, 50%), hsl(145, 80%, 50%), hsl(150, 80%, 50%), hsl(155, 80%, 50%), hsl(160, 80%, 50%),
+      hsl(164, 80%, 50%), hsl(168, 80%, 50%), hsl(172, 80%, 50%), hsl(176, 80%, 50%), hsl(180, 80%, 50%),
+      hsl(184, 80%, 50%), hsl(188, 80%, 50%), hsl(192, 80%, 50%), hsl(196, 80%, 50%), hsl(200, 80%, 50%),
+      hsl(205, 80%, 50%));
+  background: -webkit-linear-gradient(left,
+      hsl(17, 80%, 50%), hsl(25, 80%, 50%), hsl(30, 80%, 50%), hsl(35, 80%, 50%), hsl(40, 80%, 50%),
+      hsl(44, 80%, 50%), hsl(48, 80%, 50%), hsl(52, 80%, 50%), hsl(56, 80%, 50%), hsl(60, 80%, 50%),
+      hsl(64, 80%, 50%), hsl(68, 80%, 50%), hsl(72, 80%, 50%), hsl(76, 80%, 50%), hsl(80, 80%, 50%),
+      hsl(85, 80%, 50%), hsl(90, 80%, 50%), hsl(95, 80%, 50%), hsl(103, 80%, 50%), hsl(120, 80%, 50%),
+      hsl(137, 80%, 50%), hsl(145, 80%, 50%), hsl(150, 80%, 50%), hsl(155, 80%, 50%), hsl(160, 80%, 50%),
+      hsl(164, 80%, 50%), hsl(168, 80%, 50%), hsl(172, 80%, 50%), hsl(176, 80%, 50%), hsl(180, 80%, 50%),
+      hsl(184, 80%, 50%), hsl(188, 80%, 50%), hsl(192, 80%, 50%), hsl(196, 80%, 50%), hsl(200, 80%, 50%),
+      hsl(205, 80%, 50%));
+  border: solid 1px black;
+  height: 16px;
+  left: 40px;
+  position: absolute;
+  top: 12px;
+  width: 120px;
+}
+
+#tv-inf-win-rate-pointer {
+  background: hsl(103, 80%, 50%);
+  border: solid 1px gray;
+  height: 24px;
+  left: 98px;
+  position: absolute;
+  top: 8px;
+  width: 4px;
+}
+
+#tv-control input:hover {
+  background-color: #ccc;
+}
+
+#tv-control input:active {
+  background-color: #ddd;
+}
+
+#tv-main {
+  bottom: 0;
+  left: 0;
+  overflow: scroll;
+  position: absolute;
+  right: 0;
+  top: 40px;
+}
+
+.node text {
+  cursor: pointer;
+}
+
+.node circle {
+  cursor: pointer;
+}
+
+.node line {
+  cursor: pointer;
+}
+
+.link {
+  fill: none;
+}
