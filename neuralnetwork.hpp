@@ -1,10 +1,10 @@
 #include <vector>
 #include <iostream>
 
-class Network {
+class NeuralNetwork {
  public:
-  Network();
-  ~Network();
+  NeuralNetwork();
+  ~NeuralNetwork();
 
  protected:
   class Neuron {
@@ -27,31 +27,35 @@ class Network {
       double value;
     };
 
-    struct Output{
+    struct Output {
+      Output() {}
       double value;
 
-      Synapse* lowerSynapse[];
+      std::vector<Synapse*> lowerSynapse;
     };
 
     virtual void forward() = 0;
 
     virtual void backProp() = 0;
+
+    virtual double activation(double input) = 0;
+
+    virtual double dActivation(double input) = 0;
   };
 
   class HiddenNeuron : public Neuron {
    public:
-    HiddenNeuron(int upperSize) {
-      synapses_.reserve(upperSize);
-      for (Synapse* synapse : synapses_) synapse = new Synapse();
-      gate_ = new Gate();
-      output_ = new Output();
-    }
+    HiddenNeuron(int upperSize);
 
-    ~HiddenNeuron() {
-      for (Synapse* synapse : synapses_) delete synapse;
-      delete gate_;
-      delete output_;
-    }
+    ~HiddenNeuron();
+
+    virtual void forward() override;
+
+    virtual void backProp() override;
+
+    virtual double activation(double input) override;
+
+    virtual double dActivation(double input) override;
 
    private:
     std::vector<Synapse*> synapses_;
