@@ -3,9 +3,17 @@
 
 class MemoryPool {
  public:
+  MemoryPool() { pool = NULL; };
+  ~MemoryPool() { free(); };
+
+  void init(size_t size);
+
   void *allocate(size_t n);
 
-  void deallocate(void *ptr, size_t n);
+  void free();
+
+ private:
+  char *pool, *next;
 };
 
 #endif

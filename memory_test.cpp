@@ -1,7 +1,11 @@
 #include <time.h>
 #include <iostream>
 
+#include "memorypool.cpp"
+
 using namespace std;
+
+const int BLOCKS = 10000;
 
 class Data {
  public:
@@ -42,7 +46,6 @@ class DataWithPool {
 
  private:
   static DataWithPool *freeStore;
-  static const int BLOCKS = 10000;
 
   DataWithPool *next;
   int data_;
@@ -79,7 +82,6 @@ class DataWithPool2 {
 
  private:
   static DataWithPool2 *freeStore;
-  static const int BLOCKS = 10000;
 
   union {
     DataWithPool2 *next;
@@ -89,21 +91,45 @@ class DataWithPool2 {
 
 DataWithPool2 *DataWithPool2::freeStore = 0;
 
+MemoryPool pool;
+
+class DataUsingPool {
+ public:
+  DataUsingPool(int d): data_(d) {}
+
+  int data() { return data_; }
+
+  static void *operator new(size_t size) {
+    return pool.allocate(size);
+  }
+
+  static void operator delete(void *ptr, size_t size) { }
+
+  //static Pool pool;
+ private:
+
+
+  int data_;
+
+};
+
+
+
 int main() {
   cout << "Data:\n";
   clock_t start, finish;
   start = clock();
-  Data *d[10000];
+  Data *d[BLOCKS];
 
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < BLOCKS; ++i) {
     d[i] = new Data(i);
   }
 
-  for (int i = 0; i < 10; ++i) {
+  for (int i = BLOCKS - 10; i < BLOCKS; ++i) {
     cout << d[i] << " " << d[i]->data() << endl;
   }
 
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < BLOCKS; ++i) {
     delete d[i];
   }
 
@@ -113,17 +139,17 @@ int main() {
   cout << "DataWithPool:\n";
 
   start = clock();
-  DataWithPool *dp[10000];
+  DataWithPool *dp[BLOCKS];
 
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < BLOCKS; ++i) {
     dp[i] = new DataWithPool(i);
   }
 
-  for (int i = 0; i < 10; ++i) {
+  for (int i = BLOCKS - 10; i < BLOCKS; ++i) {
     cout << dp[i] << " " << dp[i]->data() << endl;
   }
 
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < BLOCKS; ++i) {
     delete dp[i];
   }
 
@@ -133,19 +159,43 @@ int main() {
   cout << "DataWithPool2:\n";
 
   start = clock();
-  DataWithPool2 *dp2[10000];
+  DataWithPool2 *dp2[BLOCKS];
 
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < BLOCKS; ++i) {
     dp2[i] = new DataWithPool2(i);
   }
 
-  for (int i = 0; i < 10; ++i) {
+  for (int i = BLOCKS - 10; i < BLOCKS; ++i) {
     cout << dp2[i] << " " << dp2[i]->data() << endl;
   }
 
-  for (int i = 0; i < 10000; ++i) {
+  for (int i = 0; i < BLOCKS; ++i) {
     delete dp2[i];
   }
+
+  finish = clock();
+  cout << "duration: " << (double)(finish - start) / CLOCKS_PER_SEC << endl;
+
+  cout << "DataUsingPool:\n";
+
+  pool.init(sizeof(DataUsingPool) * BLOCKS);
+
+  start = clock();
+  DataUsingPool *du[BLOCKS];
+
+  for (int i = 0; i < BLOCKS; ++i) {
+    du[i] = new DataUsingPool(i);
+  }
+
+  for (int i = BLOCKS - 10; i < BLOCKS; ++i) {
+    cout << du[i] << " " << du[i]->data() << endl;
+  }
+
+  for (int i = 0; i < BLOCKS; ++i) {
+    delete du[i];
+  }
+
+  pool.free();
 
   finish = clock();
   cout << "duration: " << (double)(finish - start) / CLOCKS_PER_SEC << endl;
