@@ -6,7 +6,7 @@ objects = obj/displayboard.o obj/evaluatorfreestyle.o obj/evaluatorrenjubasic.o\
 objects_network = obj/ai.o obj/httpserver.o obj/networkmain.o
 objects_local = obj/main.o
 
-# General compile options (e.g. Those that should be used in every compilation) should be placed here. 
+# General compile options (e.g. Those that should be used in every compilation) should be placed here.
 generalFlags = -std=c++11
 
 specificFlags =
@@ -30,7 +30,7 @@ NetworkDebug : optimizeFlag = -O0 -g
 
 # Local-Debug build. For debugging segfaults.
 # localdebug : specificFlags = -DDEBUG -g
-# localdebug : optimizeFlag = -O0 
+# localdebug : optimizeFlag = -O0
 # localdebug : mkdir $(objects) obj/main.o obj/objectcounter.o
 	# g++ -o EM obj/objectcounter.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
@@ -40,11 +40,11 @@ localtime : optimizeFlag = -O3
 localtime : mkdir $(objects) $(objects_local)
 	g++ -o EM $(objects_local) $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
 
-# Makes 'obj' directory to put the object files in 
-mkdir : 
+# Makes 'obj' directory to put the object files in
+mkdir :
 	if ! [ -d "obj" ]; then mkdir obj; fi
 
-clean : 
+clean :
 	if [ -d "obj" ]; then rm -r obj; fi
 	if [ -e "EM" ]; then rm EM; fi
 #------------------------------------------------------------------------------

@@ -60,9 +60,10 @@ GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
 }
 
 GameTree::Node::~Node() {
+  /*
   for (int i = 0; i < CHILD_LENGTH + 1; ++i)
     if (childNode[i] != NULL)
-      delete childNode[i];
+      delete childNode[i];*/
 
   #ifdef DEBUG
   ObjectCounter::unregisterNode();

@@ -1,6 +1,8 @@
 #ifndef MEMORY_POOL_HPP
 #define MEMORY_POOL_HPP
 
+#include <iostream>
+
 class MemoryPool {
  public:
   MemoryPool() { pool = NULL; };

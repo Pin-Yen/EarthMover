@@ -2,6 +2,7 @@
 #define GAME_TREE_H
 
 #include "virtualboard.hpp"
+#include "memorypool.hpp"
 #include "lib/json.hpp"
 
 #include <string>
@@ -74,6 +75,8 @@ class GameTree {
   Node *root, *currentNode;
 
   VirtualBoard* currentBoard;
+
+  static MemoryPool pool;
 };
 
 #endif

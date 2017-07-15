@@ -1,6 +1,7 @@
 #include "gomoku/chesstype.hpp"
 #include "gomoku/status.hpp"
 #include "virtualboard.hpp"
+#include "memorypool.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
 #include  "lib/json.hpp"
@@ -17,6 +18,8 @@
 
 using json = nlohmann::json;
 
+MemoryPool GameTree::pool;
+
 GameTree::GameTree() {
   root = NULL;
   currentNode = NULL;
@@ -29,6 +32,10 @@ GameTree::~GameTree() {
 }
 
 void GameTree::reset(VirtualBoard* board) {
+  const int MAX_NODE = 200000;
+  pool.free();
+  pool.init(sizeof(Node) * MAX_NODE);
+
   if (root != NULL)
     delete root;
   root = new Node();

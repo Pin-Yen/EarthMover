@@ -10,6 +10,12 @@ class GameTree::Node {
 
   ~Node();
 
+  static void *operator new(size_t size) {
+    return pool.allocate(size);
+  }
+
+  static void operator delete(void *ptr, size_t size) { }
+
   /* update when tie */
   void update() { ++playout_[2]; }
   /* update, result: 0 -> win, 1 -> lose */
