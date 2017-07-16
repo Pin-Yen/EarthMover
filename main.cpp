@@ -7,9 +7,7 @@
 #include "gomoku/point.hpp"
 #include "gomoku/status.hpp"
 #include "gomoku/virtualboardgomoku.hpp"
-// freestyle dependencies
 #include "gomoku/freestyle/virtualboardfreestyle.hpp"
-// renju_basic dependencies
 #include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
 
 

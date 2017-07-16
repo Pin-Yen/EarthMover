@@ -104,10 +104,6 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
           mostTimes = child->totalPlayout();
     }
 
-      //if (currentNode->childNode[i] != NULL)
-        //if (currentNode->childNode[i]->totalPlayout() > mostTimes)
-          //mostTimes = currentNode->childNode[i]->totalPlayout();
-
   } while (mostTimes < minMostTimesCycle);
 
 }
@@ -148,11 +144,6 @@ int GameTree::MCTSResult() const {
         if (child->losing())
           index = i;
     }
-
-      //if (currentNode->childNode[i] != NULL)
-        //if (currentNode->childNode[i]->losing())
-          //index = i;
-
   } else {
     int mostTimes = -1;
     int score;
@@ -174,21 +165,6 @@ int GameTree::MCTSResult() const {
           }
         }
       }
-
-      //if (currentNode->childNode[i] != NULL) {
-
-        /* priority order: playout -> score */
-        //if (currentNode->childNode[i]->totalPlayout() > mostTimes) {
-          //index = i;
-          //mostTimes = currentNode->childNode[i]->totalPlayout();
-          //score = currentBoard->getScore(i);
-        //} else if (currentNode->childNode[i]->totalPlayout() == mostTimes) {
-          //if (currentBoard->getScore(i) > score) {
-            //index = i;
-            //score = currentBoard->getScore(i);
-          //}
-        //}
-      //}
     }
 
     /* pass*/
@@ -236,17 +212,6 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
       else
         return -2;
     }
-    /*
-    if ((*node)->childNode[index] == NULL) {
-      bool parentWinning = board->play(index);
-      (*node)->childNode[index] = new Node(*node, parentWinning);
-      *node = (*node)->childNode[index];
-
-      if (parentWinning)
-        return 0;
-      else
-        return -2;
-    }*/
 
     //*node = (*node)->childNode[index];
     *node = child;
@@ -300,11 +265,6 @@ int GameTree::play(int index) {
     child = currentNode->newChild(index, currentNode, whoWin);
 
   currentNode = child;
-  /*
-  if (currentNode->childNode[index] == NULL)
-    currentNode->childNode[index] = new Node(currentNode, whoWin);
-
-  currentNode = currentNode->childNode[index];*/
 
   return whoWin;
 }
@@ -318,11 +278,6 @@ void GameTree::pass() {
     child = currentNode->newChild(CHILD_LENGTH, currentNode, 0);
 
   currentNode = child;
-  /*
-  if (currentNode->childNode[CHILD_LENGTH] == NULL)
-    currentNode->childNode[CHILD_LENGTH] = new Node(currentNode, 0);
-
-  currentNode = currentNode->childNode[CHILD_LENGTH];*/
 }
 
 void GameTree::undo() {
@@ -332,14 +287,6 @@ void GameTree::undo() {
       currentNode = currentNode->parent();
       return;
     }
-
-    /*
-    if (currentNode->parent()->childNode[i] == currentNode) {
-      currentBoard->undo(i);
-      currentNode = currentNode->parent();
-      return;
-    }
-    */
   }
 }
 
@@ -349,7 +296,7 @@ std::string GameTree::getTreeJSON() {
 
   /* get current node's index */
   for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    if (currentNode->parent()->child(i) /*childNode[i]*/ == currentNode)
+    if (currentNode->parent()->child(i) == currentNode)
       return getSubTreeJSON(currentNode, i, currentBoard->whoTurn()).dump();
 }
 
@@ -372,10 +319,6 @@ json GameTree::getSubTreeJSON(Node* node, int position, bool whiteTurn) {
     if (child != NULL && child->totalPlayout() >= 8) {
       tree["children"].push_back(getSubTreeJSON(child, i, !whiteTurn));
     }
-    /*
-    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() >= 8) {
-      tree["children"].push_back(getSubTreeJSON(node->childNode[i], i, !whiteTurn));
-    }*/
   }
   return tree;
 }

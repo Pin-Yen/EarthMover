@@ -1,7 +1,7 @@
 
 objects = obj/displayboard.o obj/evaluatorfreestyle.o obj/evaluatorrenjubasic.o\
-		  obj/typetreefreestyle.o obj/typetreerenjubasic.o obj/gametree.o\
-		  obj/node.o
+			obj/typetreefreestyle.o obj/typetreerenjubasic.o obj/gametree.o\
+			obj/node.o obj/memorypool.o
 
 objects_network = obj/ai.o obj/httpserver.o obj/networkmain.o
 objects_local = obj/main.o
@@ -113,8 +113,11 @@ obj/typetreerenjubasic.o: gomoku/renju_basic/typetreerenjubasic.cpp \
  gomoku/renju_basic/../typetree.hpp
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
+obj/memorypool.o: memorypool.hpp
+	g++ -c memorypool.cpp -o obj/memorypool.o $(generalFlags) $(specificFlags) $(optimizeFlag)
+
 obj/gametree.o: gametree.cpp gomoku/chesstype.hpp gomoku/status.hpp \
- virtualboard.hpp gametree.hpp node.hpp
+ virtualboard.hpp gametree.hpp node.hpp memorypool.hpp
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/node.o: node.cpp gomoku/chesstype.hpp gomoku/status.hpp virtualboard.hpp \
