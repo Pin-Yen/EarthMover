@@ -1,6 +1,8 @@
 #ifndef GAME_TREE_NODE_H
 #define GAME_TREE_NODE_H
 
+#include <map>
+
 class GameTree::Node {
  public:
   /* consturctor for root */
@@ -54,8 +56,22 @@ class GameTree::Node {
   void clearWinLose() { winning_ = false; losing_ = false; }
 
   /* +1 for pass */
-  Node *childNode[CHILD_LENGTH + 1];
+  //Node *childNode[CHILD_LENGTH + 1];
+
+  Node* child(int index) const {
+    auto child = child_.find(index);
+    return child == child_.end() ? NULL : child->second;
+  }
+
+  Node* newChild(int index, Node *parentNode, int parentWinOrLose) {
+    Node* node = new Node(parentNode, parentWinOrLose);
+    child_.insert(std::pair<int, Node*>(index, node));
+    return node;
+  }
+
  private:
+  std::map<int, Node*> child_;
+
   /* 0 = win, 1 = lose, 2 = total */
   int playout_[3];
 

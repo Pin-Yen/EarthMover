@@ -13,8 +13,8 @@
 
 GameTree::Node::Node() {
   /* initialize all childNodes to NULL */
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    childNode[i] = NULL;
+  //for (int i = 0; i < CHILD_LENGTH + 1; ++i)
+  //  childNode[i] = NULL;
 
   clearPlayout();
   clearWinLose();
@@ -29,8 +29,8 @@ GameTree::Node::Node() {
 
 GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
   /* initialize all childNodes to NULL */
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    childNode[i] = NULL;
+  //for (int i = 0; i < CHILD_LENGTH + 1; ++i)
+  //  childNode[i] = NULL;
 
   clearPlayout();
 
@@ -88,15 +88,17 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
     /* skip if this point is occupied */
     if (score == -1) continue;
 
-    if (childNode[i] != NULL) {
+    Node* childNode = child(i);
+
+    if (childNode != NULL) {
       /* if child node is winning then DO NOT select this point */
-      if (childNode[i]->winning_) {
+      if (childNode->winning_) {
         childWinning = true;
         continue;
       }
 
         /* if there exists a point that wins in all previous simulations, select this point */
-        if (childNode[i]->winRate() == 1) {
+        if (childNode->winRate() == 1) {
           *index = i;
           return -2;
         }
@@ -140,9 +142,10 @@ double GameTree::Node::getUCBValue(int index) const {
   if (playout_[2] == 0)
     return 0;
 
-  if (childNode[index] != NULL) {
-    return (childNode[index]->winRate() +
-            sqrt(0.5 * log10(playout_[2]) / (1 + childNode[index]->totalPlayout())));
+  const Node* childNode = child(index);
+  if (childNode != NULL) {
+    return (childNode->winRate() +
+            sqrt(0.5 * log10(playout_[2]) / (1 + childNode->totalPlayout())));
   } else {
     return (sqrt(0.5 * log10(playout_[2]) / 1));
   }
