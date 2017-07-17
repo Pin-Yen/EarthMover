@@ -30,7 +30,7 @@ class GameTree::Node {
   int selection(int* index, VirtualBoard* board);
 
   /* get the Upper Confidence Bound value form child node */
-  double getUCBValue(int index) const;
+  double getUCBValue(const Node* node) const;
 
   /* get winRate
    * NOTE: the win rate is for the upper layer(parent node)
@@ -40,10 +40,6 @@ class GameTree::Node {
   }
 
   int totalPlayout() const { return playout_[2]; }
-
-  //int winPlayout() const {return playout_[0]; }
-
-  //int losePlayout() const {return playout_[1]; }
 
   Node* parent() const { return parent_; }
 
@@ -55,7 +51,6 @@ class GameTree::Node {
 
   void clearWinLose() { winning_ = false; losing_ = false; }
 
-  /* +1 for pass */
   Node* child(int index) const {
     auto child = child_.find(index);
     return child == child_.end() ? NULL : child->second;

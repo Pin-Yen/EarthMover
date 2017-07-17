@@ -200,7 +200,6 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
     }
 
     /* check if reached leaf */
-
     Node* child = (*node)->child(index);
 
     if (child == NULL) {
