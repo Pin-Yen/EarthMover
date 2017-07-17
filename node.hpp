@@ -8,7 +8,7 @@ class GameTree::Node {
   /* consturctor for root */
   Node();
   /* constructor for node (EXCEPT root node) */
-  Node(Node *parentNode, int parentWinOrLose);
+  Node(Node *parentNode, int index, int parentWinOrLose);
 
   ~Node();
 
@@ -52,26 +52,30 @@ class GameTree::Node {
   void clearWinLose() { winning_ = false; losing_ = false; }
 
   Node* child(int index) const {
-    auto child = child_.find(index);
-    return child == child_.end() ? NULL : child->second;
+    Node* node = child_;
+    for (; node != NULL; node = node->next_) {
+      if (node->index_ == index) break;
+    }
+    return node;
   }
 
   Node* newChild(int index, int parentWinOrLose) {
-    Node* node = new Node(this, parentWinOrLose);
-    child_.insert(std::pair<int, Node*>(index, node));
+    Node* node = new Node(this, index, parentWinOrLose);
+    node->next_ = child_;
+    child_ = node;
     return node;
   }
 
  private:
-  std::map<int, Node*> child_;
+  Node *parent_, *child_, *next_;
+
+  int index_;
 
   /* 0 = win, 1 = lose, 2 = total */
   int playout_[3];
 
   /* represent is current player winning or losing */
   bool winning_, losing_;
-
-  Node *parent_;
 };
 
 #endif

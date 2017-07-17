@@ -12,6 +12,8 @@
 #endif
 
 GameTree::Node::Node() {
+  index_ = -1;
+
   clearPlayout();
   clearWinLose();
 
@@ -23,7 +25,9 @@ GameTree::Node::Node() {
   #endif
 }
 
-GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
+GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose) {
+  index_ = index;
+
   clearPlayout();
 
   /* initiaize parent node */
