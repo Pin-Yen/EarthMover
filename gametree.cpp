@@ -205,7 +205,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
 
     if (child == NULL) {
       bool parentWinning = board->play(index);
-      *node = (*node)->newChild(index, *node, parentWinning);
+      *node = (*node)->newChild(index, parentWinning);
 
       if (parentWinning)
         return 0;
@@ -213,7 +213,6 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
         return -2;
     }
 
-    //*node = (*node)->childNode[index];
     *node = child;
 
     board->play(index);
@@ -262,7 +261,7 @@ int GameTree::play(int index) {
   Node* child = currentNode->child(index);
 
   if (child == NULL)
-    child = currentNode->newChild(index, currentNode, whoWin);
+    child = currentNode->newChild(index, whoWin);
 
   currentNode = child;
 
@@ -275,7 +274,7 @@ void GameTree::pass() {
   Node* child = currentNode->child(CHILD_LENGTH);
 
   if (child == NULL)
-    child = currentNode->newChild(CHILD_LENGTH, currentNode, 0);
+    child = currentNode->newChild(CHILD_LENGTH, 0);
 
   currentNode = child;
 }

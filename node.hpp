@@ -56,15 +56,13 @@ class GameTree::Node {
   void clearWinLose() { winning_ = false; losing_ = false; }
 
   /* +1 for pass */
-  //Node *childNode[CHILD_LENGTH + 1];
-
   Node* child(int index) const {
     auto child = child_.find(index);
     return child == child_.end() ? NULL : child->second;
   }
 
-  Node* newChild(int index, Node *parentNode, int parentWinOrLose) {
-    Node* node = new Node(parentNode, parentWinOrLose);
+  Node* newChild(int index, int parentWinOrLose) {
+    Node* node = new Node(this, parentWinOrLose);
     child_.insert(std::pair<int, Node*>(index, node));
     return node;
   }
