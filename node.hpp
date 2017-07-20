@@ -10,8 +10,6 @@ class GameTree::Node {
   /* constructor for node (EXCEPT root node) */
   Node(Node *parentNode, int index, int parentWinOrLose);
 
-  ~Node();
-
   static void *operator new(size_t size) {
     return pool.allocate(size);
   }

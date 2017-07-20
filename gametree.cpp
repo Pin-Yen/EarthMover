@@ -27,7 +27,7 @@ GameTree::GameTree() {
 }
 
 GameTree::~GameTree() {
-  delete root;
+  pool.free();
   delete currentBoard;
 }
 
@@ -35,10 +35,8 @@ void GameTree::reset(VirtualBoard* board) {
   const int MAX_NODE = 1000000;
   pool.free();
   pool.init(sizeof(Node) * MAX_NODE);
-
-  if (root != NULL)
-    delete root;
   root = new Node();
+
   currentNode = root;
 
   if (currentBoard != NULL)
@@ -276,8 +274,6 @@ void GameTree::undo() {
 std::string GameTree::getTreeJSON() {
   if (currentNode == NULL) return "";
   if (currentNode->parent() == NULL) return "";
-
-  /* get current node's index */
 
   return getSubTreeJSON(currentNode, currentBoard->whoTurn()).dump();
 }

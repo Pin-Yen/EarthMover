@@ -19,10 +19,6 @@ GameTree::Node::Node() {
 
   /* initiaize parent node */
   parent_ = NULL;
-
-  #ifdef DEBUG
-  ObjectCounter::registerNode();
-  #endif
 }
 
 GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose) {
@@ -49,16 +45,6 @@ GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose) {
   /* if is losing, set parent_ to winning */
   if (losing_)
     parent_->winning_ = true;
-
-  #ifdef DEBUG
-  ObjectCounter::registerNode();
-  #endif
-}
-
-GameTree::Node::~Node() {
-  #ifdef DEBUG
-  ObjectCounter::unregisterNode();
-  #endif
 }
 
 int GameTree::Node::selection(int* index, VirtualBoard* board) {
