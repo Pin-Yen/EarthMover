@@ -129,6 +129,21 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   return -2;
 }
 
+GameTree::Node* GameTree::Node::child(int index) const {
+  Node* node = child_;
+  for (; node != NULL; node = node->next_) {
+    if (node->index_ == index) break;
+  }
+  return node;
+}
+
+GameTree::Node* GameTree::Node::newChild(int index, int parentWinOrLose) {
+  Node* node = new Node(this, index, parentWinOrLose);
+  node->next_ = child_;
+  child_ = node;
+  return node;
+}
+
 double GameTree::Node::getUCBValue(const Node* node) const {
   if (playout_[2] == 0)
     return 0;

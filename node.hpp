@@ -29,9 +29,6 @@ class GameTree::Node {
   // FIX: discription of return value not complete.
   int selection(int* index, VirtualBoard* board);
 
-  /* get the Upper Confidence Bound value form child node */
-  double getUCBValue(const Node* node) const;
-
   /* get winRate
    * NOTE: the win rate is for the upper layer(parent node)
    * and, in normal circumstances, only the upper layer will call this function*/
@@ -51,22 +48,33 @@ class GameTree::Node {
 
   void clearWinLose() { winning_ = false; losing_ = false; }
 
-  Node* child(int index) const {
-    Node* node = child_;
-    for (; node != NULL; node = node->next_) {
-      if (node->index_ == index) break;
-    }
-    return node;
-  }
+  int index() const { return index_; }
 
-  Node* newChild(int index, int parentWinOrLose) {
-    Node* node = new Node(this, index, parentWinOrLose);
-    node->next_ = child_;
-    child_ = node;
-    return node;
-  }
+  Node* child(int index) const;
+
+  Node* newChild(int index, int parentWinOrLose);
+
+  class Iterator {
+   public:
+    Iterator(Node* node) :node_(node) {}
+
+    bool operator!=(const Iterator& iter) const { return node_ != NULL; };
+
+    Node* operator*() const { return node_; };
+
+    const Iterator& operator++() { node_ = node_->next_; };
+   private:
+    Node* node_;
+  };
+
+  Iterator begin() const { return Iterator(child_); }
+
+  Iterator end() const { return Iterator(NULL); }
 
  private:
+  /* get the Upper Confidence Bound value form child node */
+  double getUCBValue(const Node* node) const;
+
   Node *parent_, *child_, *next_;
 
   int index_;
