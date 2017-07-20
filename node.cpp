@@ -76,13 +76,14 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   bool checked[CHILD_LENGTH] = {0};
 
   for (Node* childNode : *this) {
+    int i = childNode->index();
+    checked[i] = true;
+
     /* if child node is winning then DO NOT select this point */
     if (childNode->winning_) {
       childWinning = true;
       continue;
     }
-
-    int i = childNode->index();
 
     /* if there exists a point that wins in all previous simulations, select this point */
     if (childNode->winRate() == 1) {
@@ -107,11 +108,9 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
         *index = i;
       }
     }
-
-    checked[i] = true;
   }
 
-  int ucbValue = getUCBValue(NULL);
+  double ucbValue = getUCBValue(NULL);
 
   for (int i = 0; i < CHILD_LENGTH; ++i) {
     if (checked[i]) continue;
