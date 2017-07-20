@@ -73,29 +73,52 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   int scoreSum = board->getScoreSum();
   int same = 1;
 
-  for (int i = 0; i < CHILD_LENGTH; ++i) {
+  bool checked[CHILD_LENGTH] = {0};
+
+  for (Node* childNode : *this) {
+    /* if child node is winning then DO NOT select this point */
+    if (childNode->winning_) {
+      childWinning = true;
+      continue;
+    }
+
+    int i = childNode->index();
+
+    /* if there exists a point that wins in all previous simulations, select this point */
+    if (childNode->winRate() == 1) {
+      *index = i;
+      return -2;
+    }
+
     int score = board->getScore(i);
 
-    /* skip if this point is occupied */
-    if (score == -1) continue;
+    double ucbValue = getUCBValue(childNode);
 
-    Node* childNode = child(i);
+    double value = ((double)score / scoreSum) + ucbValue;
 
-    if (childNode != NULL) {
-      /* if child node is winning then DO NOT select this point */
-      if (childNode->winning_) {
-        childWinning = true;
-        continue;
-      }
+    if (value > max) {
+      same = 1;
 
-      /* if there exists a point that wins in all previous simulations, select this point */
-      if (childNode->winRate() == 1) {
+      max = value;
+      *index = i;
+    } else if (value == max) {
+      ++same;
+      if (((double)rand() / RAND_MAX) <= (1. / same)) {
         *index = i;
-        return -2;
       }
     }
 
-    double ucbValue = getUCBValue(childNode);
+    checked[i] = true;
+  }
+
+  int ucbValue = getUCBValue(NULL);
+
+  for (int i = 0; i < CHILD_LENGTH; ++i) {
+    if (checked[i]) continue;
+
+    int score = board->getScore(i);
+    /* skip if this point is occupied */
+    if (score == -1) continue;
 
     double value = ((double)score / scoreSum) + ucbValue;
 
