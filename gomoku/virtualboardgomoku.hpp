@@ -33,8 +33,8 @@ class VirtualBoardGomoku : public VirtualBoard {
   /* get the sume of every point's score */
   int getScoreSum() const final override;
 
-  /* get the highest score's position, if every point is not empty, return false */
-  bool getHSP(int* index) const final override;
+  /* get the highest score's index, return -1 if no useful point */
+  int getHSI() const final override;
 
   /* get who turn, black = 0, white = 1 */
   bool whoTurn() const final override { return (playNo_ & 1); }
@@ -187,9 +187,9 @@ int VirtualBoardGomoku<StatusLength>::getScoreSum() const {
 }
 
 template <int StatusLength>
-bool VirtualBoardGomoku<StatusLength>::getHSP(int* index) const {
+int VirtualBoardGomoku<StatusLength>::getHSI() const {
   /* current max score, current same score amount */
-  int max = 0, same = 0;
+  int max = 0, same = 0, index = -1;
 
   for (int i = 0; i < CHESSBOARD_DIMEN * CHESSBOARD_DIMEN; ++i) {
     if (point_[0][i]->status() != EMPTY) continue;
@@ -200,18 +200,18 @@ bool VirtualBoardGomoku<StatusLength>::getHSP(int* index) const {
       same = 1;
 
       max = score;
-      *index = i;
+      index = i;
     } else if (score == max) {
       ++same;
       if (((double)rand() / RAND_MAX) <= (1. / same)) {
-        *index = i;
+        index = i;
       }
     }
   }
 
-  /* return false means that there is no useful point(can pass now)
+  /* return -1 means that there is no useful point(can pass now)
    * Not representative of each point is occupied */
-  return (max > 0);
+  return index;
 }
 
 template <int StatusLength>

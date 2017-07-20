@@ -210,10 +210,9 @@ int GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
   /* simulate until reach max depth */
   for (int d = 1; d <= MAX_DEPTH; ++d) {
-    int index;
-    /* return tie(-1) if every point is not empty point */
-    if (!board->getHSP(&index))
-      return -1;
+    int index = board->getHSI();
+    /* return tie(-1) if no useful point */
+    if (index == -1) return -1;
 
     /* if win, return */
     if (board->play(index))
