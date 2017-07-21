@@ -4,18 +4,18 @@
 #include "ai.hpp"
 #include <string>
 #include <fstream>
-#include <netinet/in.h> /* sockaddr_in*/
+#include <netinet/in.h> // sockaddr_in
 
 class HttpServer {
  public:
-  /* constructor
-   * initialize serverAddress and establishes socket connection
-   * set AI reference */
+  // constructor
+  // initialize serverAddress and establishes socket connection
+  // set AI reference
   HttpServer();
 
   ~HttpServer();
 
-  /* listens for client connection, and process the request */
+  // listens for client connection, and process the request
   void listenConnection();
 
  private:
@@ -29,73 +29,71 @@ class HttpServer {
 
   bool isBlackAi, isWhiteAi;
 
-  /* Check if we should redirect the request uri. */
+  // Check if we should redirect the request uri.
   void redirect(std::string *directory);
 
-  /* Initializes a new game according to the settings specified in request.
-   * Clear data of previous game if exist. */
+  // Initializes a new game according to the settings specified in request.
+  // Clear data of previous game if exist.
   void handleStart(std::string requestBody);
 
-  /* Plays a point specified in request. */
+  // Plays a point specified in request.
   bool handlePlay(std::string requestBody);
 
-  /* request AI think */
+  // request AI think
   bool handleThink();
 
-  /* undo */
+  // undo
   void handleUndo(std::string requestBody);
 
-  /* pass */
+  // pass
   void handlePass();
 
-  /* opponent resign, stop background thread */
+  // opponent resign, stop background thread
   void handleResign();
 
-  /* returns JSON Monte-Carlo tree to client */
+  // returns JSON Monte-Carlo tree to client
   void handleVisualize();
 
-  /* response a resource specified by "directory" to client, or some http error. */
+  // response a resource specified by "directory" to client, or some http error.
   void handleResourceRequest(std::string requestBody, std::string directory);
 
-  /* extracts directory from request */
+  // extracts directory from request
   std::string parseRequestDirectory(std::string request);
 
-  /* extracts body from request */
+  // extracts body from request
   std::string parseRequestBody(std::string request);
 
-  /* Returns a error message to client
-   * errorCode: http error code */
+  // Returns a error message to client
+  // errorCode: http error code
   void responseHttpError(int errorCode, const char* message);
 
-  /* checks if the requested uri is permitted
-   * returns false if not permitted */
+  // checks if the requested uri is permitted
+  // returns false if not permitted
   bool sanitize(std::string uri);
 
-  /* given json data, find the value of 'attr' attribute and return string representation of the value */
+  // given json data, find the value of 'attr' attribute and return string representation of the value
   std::string findAttributeInJson(std::string json, const char* rawAttr);
-
 };
 
-class HttpServer::HttpResponse
-{
+class HttpServer::HttpResponse {
  public:
-  /* creates a httpResponse with statusCode = httpResponseCode*/
+  // creates a httpResponse with statusCode = httpResponseCode
   HttpResponse(int httpResponseCode);
 
   ~HttpResponse();
 
-  /* set content-type header according to fileExtension */
+  // set content-type header according to fileExtension
   void setContentTypeByFileExt(std::string fileExtension);
 
-  /* explicitly set content type */
+  // explicitly set content type
   HttpResponse& setContentType(const char* type);
 
-  /* Add JSON {attribute:value} to response body, returns *this for chainning */
+  // Add JSON {attribute:value} to response body, returns *this for chainning
   HttpResponse& addJson(std::string attribute, int value);
 
   HttpResponse& addJson(std::string attribute, const char* value);
 
-  /* sets the response body */
+  // sets the response body
   void setBody(std::ifstream *file);
 
   void setBody(std::string body);

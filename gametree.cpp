@@ -55,7 +55,7 @@ void GameTree::MCTS(int maxCycle) {
     int result = selection(&node, board);
 
     if (result == -2) {
-      /* simulate only if child is not winning */
+      // simulate only if child is not winning
       result = simulation(board);
     }
 
@@ -82,7 +82,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
       int result = selection(&node, board);
 
       if (result == -2) {
-        /* simulate only if child is not winning */
+        // simulate only if child is not winning
         result = simulation(board);
       }
 
@@ -94,7 +94,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
       delete board;
     }
 
-    /* get mostTimes */
+    // get mostTimes
     for (Node* child : *currentNode) {
       if (child->totalPlayout() > mostTimes)
           mostTimes = child->totalPlayout();
@@ -115,7 +115,7 @@ void GameTree::MCTS(int maxCycle, const bool &stop) {
     int result = selection(&node, board);
 
     if (result == -2) {
-      /* simulate only if child is not winning */
+      // simulate only if child is not winning
       result = simulation(board);
     }
 
@@ -155,7 +155,7 @@ int GameTree::MCTSResult() const {
       }
     }
 
-    /* pass*/
+    // pass
     if (mostTimes == -1) {
       std::cout << "pass" << std::endl;
       return -1;
@@ -187,7 +187,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
       return result;
     }
 
-    /* check if reached leaf */
+    // check if reached leaf
     Node* child = (*node)->child(index);
 
     if (child == NULL) {
@@ -208,13 +208,13 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
 
 int GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
-  /* simulate until reach max depth */
+  // simulate until reach max depth
   for (int d = 1; d <= MAX_DEPTH; ++d) {
     int index = board->getHSI();
-    /* return tie(-1) if no useful point */
+    // return tie(-1) if no useful point
     if (index == -1) return -1;
 
-    /* if win, return */
+    // if win, return
     if (board->play(index))
       return (d & 1);
   }

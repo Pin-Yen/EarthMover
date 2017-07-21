@@ -168,13 +168,13 @@ bool HttpServer::handlePlay(std::string requestBody) {
   HttpResponse response(200);
   response.setContentType("application/json");
 
-  /* winning  whoTurn   winner
-   *    0                 -1
-   *    0                 -1
-   *   -1        0         1
-   *   -1        1         0
-   *    1        0         0
-   *    1        1         1 */
+  // winning  whoTurn   winner
+  //    0                 -1
+  //    0                 -1
+  //   -1        0         1
+  //   -1        1         0
+  //    1        0         0
+  //    1        1         1
   response.addJson("winner", winning == 0 ? -1 : ((winning == -1) ^ earthMover->whoTurn()));
 
   std::cout << response.getHeaderString()
@@ -205,13 +205,13 @@ bool HttpServer::handleThink() {
           .addJson("row", (index == -1 ? -1 : index / 15))
           .addJson("col", (index == -1 ? -1 : index % 15));
 
-  /* winning  whoTurn   winner
-   *    0                 -1
-   *    0                 -1
-   *   -1        0         1
-   *   -1        1         0
-   *    1        0         0
-   *    1        1         1 */
+  // winning  whoTurn   winner
+  //    0                 -1
+  //    0                 -1
+  //   -1        0         1
+  //   -1        1         0
+  //    1        0         0
+  //    1        1         1
   response.addJson("winner", winning == 0 ? -1 : ((winning == -1) ^ earthMover->whoTurn()));
 
   std::cout << response.getHeaderString()
@@ -276,7 +276,7 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
   } else {
     // if access to this directory is permitted
     std::ifstream resourceFile;
-    /* use the sub-string from pos=1 to skip the first '/' in directory path */
+    // use the sub-string from pos=1 to skip the first '/' in directory path
     resourceFile.open(directory.substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
 
     if(!resourceFile.is_open()) {
@@ -289,9 +289,9 @@ void HttpServer::handleResourceRequest(std::string requestBody, std::string dire
         #ifdef DEBUG_NETWORK
       std::cout << header << std::endl;
         #endif
-        // send header
+      // send header
       send(server, header.c_str(), header.length(), 0);
-        // send body
+      // send body
       send(server, response.getBody(), response.getBodyLength(), 0);
         #ifdef DEBUG_NETWORK
       std::cout << "sent!" << std::endl;
@@ -337,12 +337,12 @@ void HttpServer::responseHttpError(int errorCode, const char *description = "") 
 
 bool HttpServer::sanitize(std::string uri) {
   if (uri == "/board.html") return true;
-  /* check if the uri is under /gomoku/src/ */
+  // check if the uri is under /gomoku/src/
   std::string allowedRoot("/gomoku/src/");
   if(uri.find(allowedRoot) != 0)
     return false;
 
-  /* check if the uri contains .. */
+  // check if the uri contains ..
   if(uri.find("..") != std::string::npos)
     return false;
 
@@ -358,7 +358,7 @@ std::string HttpServer::findAttributeInJson(std::string json, const char* rawAtt
   assert(endPos != std::string::npos && startPos != std::string::npos);
   std::string value = json.substr(startPos, endPos - startPos);
 
-  /* if the value is string type, erase its qoutation marks */
+  // if the value is string type, erase its qoutation marks
   if (value.front() == '\"' && value.back() == '\"') {
     value.erase(value.length() - 1, 1);
     value.erase(0, 1);
@@ -470,7 +470,6 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
 
   file->seekg(0, std::ios_base::beg);
   file->read(binBody, fileLength);
-
 }
 
 void HttpServer::HttpResponse::setBody(std::string body) {
@@ -479,7 +478,7 @@ void HttpServer::HttpResponse::setBody(std::string body) {
 }
 
 std::string HttpServer::HttpResponse::getHeaderString(){
-  /* set content-length header */
+  // set content-length header
   char temp[30];
   sprintf(temp, "Content-Length: %d", bodyLength);
   contentLength = std::string(temp);
