@@ -10,8 +10,6 @@
 #include "gomoku/freestyle/virtualboardfreestyle.hpp"
 #include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
 
-
-
 #include <time.h>
 #include <assert.h>
 
@@ -29,7 +27,6 @@
 #endif
 
 void start();
-void start_AI();
 
 int main() {
   #ifndef TIME

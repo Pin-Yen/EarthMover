@@ -48,10 +48,13 @@ class GameTree::Node {
 
   int index() const { return index_; }
 
+  /* get child node with specify index */
   Node* child(int index) const;
 
+  /* append a new child, parameters for node's constructor */
   Node* newChild(int index, int parentWinOrLose);
 
+  /* custom iterator, can use foreach loop to iterate node's child */
   class Iterator {
    public:
     Iterator(Node* node) :node_(node) {}
@@ -73,6 +76,7 @@ class GameTree::Node {
   /* get the Upper Confidence Bound value form child node */
   double getUCBValue(const Node* node) const;
 
+  /* parent, child, next node */
   Node *parent_, *child_, *next_;
 
   int index_;

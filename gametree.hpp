@@ -40,6 +40,7 @@ class GameTree {
   /* pass */
   void pass();
 
+  /* undo */
   void undo();
 
   /* Returns the whole tree in JSON format */
