@@ -9,12 +9,10 @@
 AI::AI() {
   tree = new GameTree();
   backgroundThread = NULL;
-  vb = NULL;
 }
 
 AI::~AI() {
   if (tree != NULL) delete tree;
-  if (vb != NULL) delete vb;
 }
 
 int AI::think() {
@@ -64,8 +62,7 @@ void AI::stopBGThread() {
 void AI::reset(int level, int rule) {
   stopBGThread();
 
-  if (vb != NULL)
-    delete vb;
+  VirtualBoard* vb;
 
   switch (rule) {
     case GOMOKU_FREESTYLE: vb = new VirtualBoardFreeStyle(); break;
@@ -75,4 +72,6 @@ void AI::reset(int level, int rule) {
 
   tree->reset(vb);
   level_ = level;
+
+  delete vb;
 }

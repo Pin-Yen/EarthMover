@@ -36,7 +36,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
 
     point[7][7]->setRelScore(1);
   } else {
-    /* using opening */
+    // using opening
     if (playNo <= 4) {
       int row = -1, col = -1;
       OpeningTree::classify(point, &row, &col);
@@ -54,11 +54,11 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
       }
     }
 
-    /* using absloute score */
+    // using absloute score
 
     bool whoTurn = playNo & 1;
 
-    /* get highest score */
+    // get highest score
     int highestScore = -1;
     for (int r = 0; r < 15; ++r)
       for (int c = 0; c < 15; ++c)
@@ -68,7 +68,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
     for (int r = 0; r < 15; ++r)
       for (int c = 0; c < 15; ++c) {
         int score = point[r][c]->absScore(whoTurn);
-        if (score * 8 < highestScore || (playNo < 10 && score < 140))
+        if (score * 8 <= highestScore || (playNo < 10 && score < 140))
           point[r][c]->setRelScore(-1);
         else
           point[r][c]->setRelScore(score);

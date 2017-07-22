@@ -71,7 +71,6 @@ void start() {
   }
   tree->reset(vb);
 
-
   #ifdef ANALYZE
   Log log;
   #endif
@@ -115,13 +114,13 @@ void start() {
     bool validInput = false;
 
     while (!validInput) {
-      /* get user input*/
+      // get user input
       board->getInput(&row, &col);
 
-      /* tries to play at (row, col) */
+      // tries to play at (row, col)
       validInput = board->play(row, col);
 
-      /* handle invalid input */
+      // handle invalid input
       if (!validInput)
         std::cout << "Invalid move\n";
     }
@@ -131,7 +130,7 @@ void start() {
     backgroundThread.join();
     #endif
 
-    /* update tree and handle result */
+    // update tree and handle result
     int winning = tree->play(row * 15 + col);
     switch (winning) {
       case 1 :

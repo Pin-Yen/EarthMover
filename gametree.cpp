@@ -139,19 +139,12 @@ int GameTree::MCTSResult() const {
     }
   } else {
     int mostTimes = -1;
-    int score;
 
     for (Node* child : *currentNode) {
       // priority order: playout -> score
       if (child->totalPlayout() > mostTimes) {
         index = child->index();
         mostTimes = child->totalPlayout();
-        score = currentBoard->getScore(index);
-      } else if (child->totalPlayout() == mostTimes) {
-        if (currentBoard->getScore(child->index()) > score) {
-          index = child->index();
-          score = currentBoard->getScore(index);
-        }
       }
     }
 

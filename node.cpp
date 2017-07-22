@@ -56,7 +56,6 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   bool childWinning = false;
 
   int scoreSum = board->getScoreSum();
-  int same = 1;
 
   // checked index
   bool checked[CHILD_LENGTH] = {0};
@@ -77,46 +76,22 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
       return -2;
     }
 
-    int score = board->getScore(i);
-
-    double ucbValue = getUCBValue(childNode);
-
-    double value = ((double)score / scoreSum) + ucbValue;
+    double value = ((double)board->getScore(i) / scoreSum) + getUCBValue(childNode);
 
     if (value > max) {
-      same = 1;
-
       max = value;
       *index = i;
-    } else if (value == max) {
-      ++same;
-      if (((double)rand() / RAND_MAX) <= (1. / same)) {
-        *index = i;
-      }
     }
   }
 
-  double ucbValue = getUCBValue(NULL);
+  int notCheckedIndex = board->getHSI(checked);
 
-  for (int i = 0; i < CHILD_LENGTH; ++i) {
-    if (checked[i]) continue;
-
-    int score = board->getScore(i);
-    // skip if this point is occupied
-    if (score == -1) continue;
-
-    double value = ((double)score / scoreSum) + ucbValue;
+  if (notCheckedIndex != -1) {
+    double value = ((double)board->getScore(notCheckedIndex) / scoreSum) + getUCBValue(NULL);
 
     if (value > max) {
-      same = 1;
-
       max = value;
-      *index = i;
-    } else if (value == max) {
-      ++same;
-      if (((double)rand() / RAND_MAX) <= (1. / same)) {
-        *index = i;
-      }
+      *index = notCheckedIndex;
     }
   }
 
