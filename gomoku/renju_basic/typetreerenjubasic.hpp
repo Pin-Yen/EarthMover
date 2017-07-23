@@ -21,7 +21,7 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public V
   // Depth First Search
   // parameters of the initial call should be:
   // currentLocation: length/2, move = -1
-  static void dfs(Node *root, STATUS *status, int location, int move, int blackConnect, int whiteConnect,
+  static void dfs(Node *node, STATUS *status, int location, int move, int blackConnect, int whiteConnect,
                   bool blackBlock, bool whiteBlock);
 
   // analyze chesstype, only call by dfs

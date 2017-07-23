@@ -38,7 +38,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
 // connect is used to prevent already exist five while length == 11
 // for example : OOOOO*OOX-- ; --X  *OOOOO
 //               ^^^^^               ^^^^^
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *root, STATUS *status, int location,
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *node, STATUS *status, int location,
                                             int move, bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true
   switch (status[location]) {
@@ -54,15 +54,15 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
       // reached leaf
 
       // set type
-      root->type[0] = typeAnalyze(status, BLACK, true);
-      root->type[1] = typeAnalyze(status, WHITE, true);
+      node->type[0] = typeAnalyze(status, BLACK, true);
+      node->type[1] = typeAnalyze(status, WHITE, true);
 
-      root->leaf = true;
+      node->leaf = true;
 
       return;
     } else {
       // set this node to jump node
-      root->jump = true;
+      node->jump = true;
 
       // jump to middle of the status
       move += 2;
@@ -79,9 +79,9 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
-    root->childNode[i] = new Node();
+    node->childNode[i] = new Node();
     status[location] = s[i];
-    dfs(root->childNode[i], status, location, move, blackBlock, whiteBlock);
+    dfs(node->childNode[i], status, location, move, blackBlock, whiteBlock);
   }
 
   // restore current location to EMPTY
@@ -129,7 +129,6 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
           // if the bound is an empty point
           if (status[checkPoint] == EMPTY) {
             // make a new status array
-
             STATUS newStatus[analyze_length];
 
             // transform from origin status

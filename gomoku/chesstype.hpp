@@ -31,7 +31,7 @@ class ChessType {
     #endif
   }
 
-  ChessType(ChessType *source) {
+  ChessType(const ChessType *source) {
     length_ = source->length_;
     life_ = source->life_;
     level_ = source->level_;

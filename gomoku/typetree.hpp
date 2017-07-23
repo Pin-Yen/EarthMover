@@ -4,6 +4,7 @@
 #ifdef DEBUG
 #include "../objectcounter.hpp"
 #endif
+
 template <int StatusLength>
 template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
@@ -97,20 +98,20 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cla
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *root) {
+ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *node) {
   ChessType *currentType = NULL;
 
-  if (root->leaf) {
-    currentType = root->type;
+  if (node->leaf) {
+    currentType = node->type;
     return currentType;
   }
 
   bool canCut = true;
 
   for (int i = 0; i < 4; ++i)
-    if (root->childNode[i] != NULL) {
+    if (node->childNode[i] != NULL) {
       // if this child node is not NULL, recursion and get return
-      ChessType* returnType = cutSameResultChild(root->childNode[i]);
+      ChessType* returnType = cutSameResultChild(node->childNode[i]);
 
       if (returnType == NULL)
         // if children cannot be cut, then this node also cannot be cut
@@ -124,14 +125,16 @@ ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree
 
   if (!canCut) return NULL;
   // cut this node, free all children and set this node's type
-  root->type[0] = ChessType(currentType[0]);
-  root->type[1] = ChessType(currentType[1]);
+  node->type[0] = ChessType(currentType[0]);
+  node->type[1] = ChessType(currentType[1]);
 
-  root->leaf = true;
+  node->leaf = true;
 
   for (int i = 0; i < 4; ++i)
-    if (root->childNode[i] != NULL)
-      delete root->childNode[i];
+    if (node->childNode[i] != NULL) {
+      delete node->childNode[i];
+      node->childNode[i] = NULL;
+    }
 
   return currentType;
 }
