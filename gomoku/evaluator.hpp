@@ -6,13 +6,11 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
-
   static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
 
   static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
 
  protected:
-
   template <class derivedTypeTree>
   class TypeTree;
 
@@ -32,9 +30,9 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
   if (playNo == 0) {
     for (int r = 0; r < 15; ++r)
       for (int c = 0; c < 15; ++c)
-        point[r][c]->setRelScore(-1);
+        point[r][c]->setScore(-1);
 
-    point[7][7]->setRelScore(1);
+    point[7][7]->setScore(1);
   } else {
     // using opening
     if (playNo <= 4) {
@@ -45,9 +43,9 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
         for (int r = 0; r < 15; ++r) {
           for (int c = 0; c < 15; ++c) {
             if (r == row && c == col)
-              point[r][c]->setRelScore(1);
+              point[r][c]->setScore(1);
             else
-              point[r][c]->setRelScore(-1);
+              point[r][c]->setScore(-1);
           }
         }
         return;
@@ -69,9 +67,9 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
       for (int c = 0; c < 15; ++c) {
         int score = point[r][c]->absScore(whoTurn);
         if (score * 8 <= highestScore || (playNo < 10 && score < 140))
-          point[r][c]->setRelScore(-1);
+          point[r][c]->setScore(-1);
         else
-          point[r][c]->setRelScore(score);
+          point[r][c]->setScore(score);
       }
   }
 }

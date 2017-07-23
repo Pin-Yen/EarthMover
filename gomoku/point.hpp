@@ -10,18 +10,16 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Point {
  public:
-  /* constructor */
   Point();
-
   Point(Point* source);
 
   ~Point();
 
-  /* set the status pointer */
-  /* note: to finish initialize this point, shound call this to write all status pointer */
+  // set the status pointer *
+  // note: to finish initialize this point, shound call this to write all status pointer
   void setDirStatus(int dir, int index, STATUS* status) { dirStatus_[dir][index] = status; }
 
-  /* get the status by diraction, copy the pointer's value to dest */
+  // get the status by diraction, copy the pointer's value to dest
   void getDirStatus(int dir, STATUS* dest) const {
     for (int i = 0; i < StatusLength; ++i)
       dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
@@ -34,22 +32,22 @@ class VirtualBoardGomoku<StatusLength>::Point {
   int* absScore() { return absScore_; }
   int absScore(bool color) const { return absScore_[color]; }
 
-  int getScore() const { return relScore_; }
-  void setScore(int black, int white) { absScore_[0] = black; absScore_[1] = white; }
+  int score() const { return score_; }
+  void setScore(int score) { score_ = score; }
 
-  void setRelScore(int score) { relScore_ = score; }
+  void setAbsScore(int black, int white) { absScore_[0] = black; absScore_[1] = white; }
 
   ChessType* type[4][2];
  private:
-  /* STATUS array pointer, this will point at other point's Status color */
-  /* index: 0→ 1↓ 2↗ 3↘ */
+  // STATUS array pointer, this will point at other point's Status color
+  // index: 0→ 1↓ 2↗ 3↘
   STATUS* dirStatus_[4][StatusLength];
 
-  /* point's status, the target of the other point's STATUS array pointer*/
+  // point's status, the target of the other point's STATUS array pointer
   STATUS status_;
 
   int absScore_[2];
-  int relScore_;
+  int score_;
 };
 
 #include "../virtualboard.hpp"
@@ -77,7 +75,7 @@ VirtualBoardGomoku<StatusLength>::Point::Point(Point* source) {
   status_ = source->status_;
 
   absScore_[0] = source->absScore_[0]; absScore_[1] = source->absScore_[1];
-  relScore_ = source->relScore_;
+  score_ = source->score_;
 
   for (int dir = 0; dir < 4; ++dir)
     for (int i = 0; i < 2; ++i)

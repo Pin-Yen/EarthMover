@@ -177,7 +177,7 @@ VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
 
 template <int StatusLength>
 int VirtualBoardGomoku<StatusLength>::getScore(int index) const {
-  return point_[0][index]->getScore();
+  return point_[0][index]->score();
 }
 
 template <int StatusLength>
@@ -187,7 +187,7 @@ int VirtualBoardGomoku<StatusLength>::getScoreSum() const {
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
       // only add the score if it was positive
-      if ((score = point_[r][c]->getScore()) > 0)
+      if ((score = point_[r][c]->score()) > 0)
         sum += score;
 
   return sum;
@@ -201,7 +201,7 @@ int VirtualBoardGomoku<StatusLength>::getHSI() const {
   for (int i = 0; i < CHESSBOARD_DIMEN * CHESSBOARD_DIMEN; ++i) {
     if (point_[0][i]->status() != EMPTY) continue;
 
-    int score = point_[0][i]->getScore();
+    int score = point_[0][i]->score();
 
     if (score > max) {
       same = 1;
@@ -229,7 +229,7 @@ int VirtualBoardGomoku<StatusLength>::getHSI(bool ignoreIndex[]) const {
   for (int i = 0; i < CHESSBOARD_DIMEN * CHESSBOARD_DIMEN; ++i) {
     if (ignoreIndex[i]) continue;
 
-    int score = point_[0][i]->getScore();
+    int score = point_[0][i]->score();
 
     if (score > max) {
       max = score;
@@ -255,7 +255,7 @@ int VirtualBoardGomoku<StatusLength>::play(int index) {
   point_[0][index]->setStatus(color);
 
   // set score to -1
-  point_[0][index]->setScore(-1, -1);
+  point_[0][index]->setAbsScore(-1, -1);
 
   // index: 0→ 1↓ 2↗ 3↘
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
