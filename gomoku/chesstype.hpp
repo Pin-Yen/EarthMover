@@ -7,7 +7,23 @@
 
 class ChessType {
  public:
+  ChessType(): length_(0), level_(0), life_(0) {
+    #ifdef DEBUG
+    ObjectCounter::registerCT();
+    #endif
+  }
+
   ChessType(char length, char life, char level): length_(length), level_(level), life_(life) {
+    #ifdef DEBUG
+    ObjectCounter::registerCT();
+    #endif
+  }
+
+  ChessType(const ChessType& source) {
+    length_ = source.length_;
+    life_ = source.life_;
+    level_ = source.level_;
+
     #ifdef DEBUG
     ObjectCounter::registerCT();
     #endif

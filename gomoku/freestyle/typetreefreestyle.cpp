@@ -31,16 +31,16 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
 }
 
 
-/* Depth First Search
- * parameters of the initial call should be:
- * location: length / 2, move = -1, connect = 0 */
+// Depth First Search
+// parameters of the initial call should be:
+// location: length / 2, move = -1, connect = 0
 
-/* connect is used to prevent already exist five while length == 11
- * for example : OOOOO*OOX-- ; --X  *OOOOO
- *               ^^^^^               ^^^^^ */
+// connect is used to prevent already exist five while length == 11
+// for example : OOOOO*OOX-- ; --X  *OOOOO
+//               ^^^^^               ^^^^^
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *root, STATUS *status, int location,
                                             int move, bool blackBlock, bool whiteBlock) {
-  /* if status == black or white, set block == true*/
+  // if status == black or white, set block == true
   switch (status[location]) {
     case BLACK:
       blackBlock = true; break;
@@ -51,31 +51,31 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
   if ((blackBlock && whiteBlock) || status[location] == BOUND ||
       location <= 0 || location >= analyze_length - 1) {
     if (move == 1) {
-      /* reached leaf */
+      // reached leaf
 
-      /* set type */
-      root->type[0] = typeAnalyze(status, BLACK, true);
-      root->type[1] = typeAnalyze(status, WHITE, true);
+      // set type
+      root->type[0] = new ChessType(typeAnalyze(status, BLACK, true));
+      root->type[1] = new ChessType(typeAnalyze(status, WHITE, true));
 
-      /* set child node to NULL*/
+      // set child node to NULL
       for (int i = 0; i < 4; ++i)
         root->childNode[i] = NULL;
 
       return;
     } else {
-      /* set this node to jump node */
+      // set this node to jump node
       root->jump = true;
 
-      /* jump to middle of the status */
+      // jump to middle of the status
       move += 2;
       location = analyze_length / 2;
 
-      /* reset block */
+      // reset block
       blackBlock = false; whiteBlock = false;
     }
   }
 
-  /* move location */
+  // move location
   location += move;
 
   root->type[0] = NULL; root->type[1] = NULL;
@@ -88,19 +88,19 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
     dfs(root->childNode[i], status, location, move, blackBlock, whiteBlock);
   }
 
-  /* restore current location to EMPTY
-   * note: without this line, the classification process should still work fine,
-   * but will result in printing out garbage values on EMPTY points */
+  // restore current location to EMPTY
+  // note: without this line, the classification process should still work fine,
+  // but will result in printing out garbage values on EMPTY points
   status[location] = EMPTY;
 }
 
-ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnalyze(
+ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnalyze(
     STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
-  /* check the length of the connection around the analize point
-   * under the following, we call this chess group "center group" (CG)
-   * for example: --X O*OOX-- ; OOOO* O X
-   *                  ^^^^      ^^^^^     */
+  // check the length of the connection around the analize point
+  // under the following, we call this chess group "center group" (CG)
+  // for example: --X O*OOX-- ; OOOO* O X
+  //                  ^^^^      ^^^^^
   for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
       if (status[checkPoint] != color) break;
@@ -109,131 +109,122 @@ ChessType* VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAna
     }
 
   if (connect >= 5) {
-    /* CG's length == 5, return 5 */
-    return new ChessType(5, 0, 0);
+    return ChessType(5, 0, 0); // CG's length >= 5, return 5
   } else {
-    /* CG's length < 5 */
+    // CG's length < 5
 
-    /* play at the analize point */
+    // play at the analize point
     status[analyze_length / 2] = color;
 
-    /* try to find the left and right bound of CG
-     * if it's empty, see this point as new analize point
-     * make a new status array and use recursion analize the status */
-    ChessType *lType = NULL, *rType = NULL;
+    // try to find the left and right bound of CG
+    // if it's empty, see this point as new analize point
+    // make a new status array and use recursion analize the status
+    ChessType lType, rType;
+    bool lInit = false, rInit = false;
     int level = 0;
 
     for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
-        /* if reach CG's bound */
+        // if reach CG's bound
         if (status[checkPoint] != color) {
-          ChessType* type = NULL;
+          ChessType type;
           bool blocked = false;
 
-          /* if the bound is an empty point */
+          // if the bound is an empty point
           if (status[checkPoint] == EMPTY) {
-            /* make a new status array */
+            // make a new status array
 
             STATUS newStatus[analyze_length];
 
-            /* transform from origin status */
+            // transform from origin status
             for (int i = 0; i < analyze_length; ++i) {
               int transformation_index = i - (analyze_length / 2 - checkPoint);
 
               if (transformation_index < 0 || transformation_index >= analyze_length)
-                /* if out of bound, set it to bound */
+                // if out of bound, set it to bound
                 newStatus[i] = BOUND;
               else
                 newStatus[i] = status[transformation_index];
             }
 
-            /* recursion analize */
+            // recursion analize
             type = typeAnalyze(newStatus, color, false);
           } else {
-            /* if the board of CG is not empty, it means blocked */
+            // if the board of CG is not empty, it means blocked
             blocked = true;
-            type = new ChessType(0, 0, 0);
+            type = ChessType(0, 0, 0);
           }
 
           if (move == -1) {
-            /* left type result */
-            if (lType == NULL) {
-              lType = type;
+            // left type result
+            if (!lInit) {
+              lInit = true;
+              lType = ChessType(type);
               if (!checkLevel || blocked) break;
-              if (!lType->life() || lType->length() > 3) break;
+              if (!lType.life() || lType.length() > 3) break;
             } else {
-              if (*lType == *type) {
+              if (lType == type) {
                 ++level;
               } else {
-                delete type;
                 break;
               }
-              delete type;
             }
           } else {
-            /* right type result */
-            if (rType == NULL) {
-              rType = type;
+            // right type result
+            if (!rInit) {
+              rInit = true;
+              rType = ChessType(type);
               if (!checkLevel || blocked) break;
-              if (!rType->life() || rType->length() > 3) break;
-              if (*lType == *rType) {
+              if (!rType.life() || rType.length() > 3) break;
+              if (lType == rType) {
                 ++level;
-              } else if (*lType < *rType) {
+              } else if (lType < rType) {
                 level = 0;
               } else {
                 break;
               }
             } else {
-              if ((*rType == *type) && (*rType >= *lType)) {
+              if ((rType == type) && (rType >= lType)) {
                 ++level;
               } else {
-                delete type;
                 break;
               }
-              delete type;
             }
           }
         }
 
-    /* restore the analize point to empty */
+    // restore the analize point to empty
     status[analyze_length / 2] = EMPTY;
 
-    /* keep lType > rType */
-    if (*lType < *rType)
+    // keep lType > rType
+    if (lType < rType)
       std::swap(lType, rType);
 
-    ChessType *returnType;
-
-    if (lType->length() == 5 && rType->length() == 5) {
-      /* if left and right will both produce 5 after play at analize point
-       * it is a life four type */
-      returnType = new ChessType(4, 1, 0);
-    } else if (lType->length() == 5) {
-      /* if there is only one side produces 5 after play at analize point,
-       * it is a dead four type */
-      returnType = new ChessType(4, 0, 0);
-    } else if (lType->length() == 0) {
-      /* if the longer size produces 0 or forbidden point after play at analize point,
-       * it is a useless point */
-      returnType = new ChessType(0, 0, 0);
+    if (lType.length() == 5 && rType.length() == 5) {
+      // if left and right will both produce 5 after play at analize point
+      // it is a life four type
+      return ChessType(4, 1, 0);
+    } else if (lType.length() == 5) {
+      // if there is only one side produces 5 after play at analize point,
+      // it is a dead four type
+      return ChessType(4, 0, 0);
+    } else if (lType.length() == 0) {
+      // if the longer size produces 0 or forbidden point after play at analize point,
+      // it is a useless point
+      return ChessType(0, 0, 0);
     } else {
-      /* if left length < 4, return left length - 1
-       * (current recursion's result = lower recursion's result - 1) */
+      // if left length < 4, return left length - 1
+      // (current recursion's result = lower recursion's result - 1)
       if (checkLevel) {
-        if (!lType->life() || lType->length() > 3) {
-          returnType = new ChessType(lType->length() - 1, lType->life(), 0);
+        if (!lType.life() || lType.length() > 3) {
+          return ChessType(lType.length() - 1, lType.life(), 0);
         } else {
-          returnType = new ChessType(lType->length() - 1, lType->life(),
-                                     level - (3 - (lType->length() - 1)));
+          return ChessType(lType.length() - 1, lType.life(),
+                           level - (3 - (lType.length() - 1)));
         }
       } else {
-        returnType = new ChessType(lType->length() - 1, lType->life(), 0);
+        return ChessType(lType.length() - 1, lType.life(), 0);
       }
     }
-
-    delete lType;
-    delete rType;
-
-    return returnType;
   }
 }
