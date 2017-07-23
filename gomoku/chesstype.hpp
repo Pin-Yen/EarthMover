@@ -7,11 +7,7 @@
 
 class ChessType {
  public:
-  ChessType(int length, bool life, int level) {
-    length_ = length;
-    life_ = life;
-    level_ = level;
-
+  ChessType(char length, char life, char level): length_(length), level_(level), life_(life) {
     #ifdef DEBUG
     ObjectCounter::registerCT();
     #endif
@@ -31,11 +27,10 @@ class ChessType {
   ~ChessType() { ObjectCounter::unregisterCT(); }
   #endif
 
-  int length() const { return length_; }
-
-  int level() const { return level_; }
-
-  bool life() const { return life_; }
+  // getter
+  char length() const { return length_; }
+  char life() const { return life_; }
+  char level() const { return level_; }
 
   bool operator==(const ChessType &type) const {
     return (length_ == type.length_ && life_ == type.life_ && level_ == type.level_);
@@ -62,8 +57,7 @@ class ChessType {
   }
 
  private:
-  int length_, level_;
-  bool life_;
+  char length_, life_, level_;
 };
 
 #endif
