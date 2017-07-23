@@ -2,9 +2,11 @@
 #define HTTP_SERVER_H_
 
 #include "ai.hpp"
-#include <string>
+
+#include <exception>
 #include <fstream>
 #include <netinet/in.h> /* sockaddr_in*/
+#include <string>
 
 class HttpServer {
  public:
@@ -20,7 +22,6 @@ class HttpServer {
 
  private:
   const int PORT_NUMBER = 1202;
-  class HttpResponse;
 
   int client, server;
   struct sockaddr_in serverAddress;
@@ -76,29 +77,40 @@ class HttpServer {
 
 };
 
-class HttpServer::HttpResponse
+class HttpResponse
 {
  public:
-  /* creates a httpResponse with statusCode = httpResponseCode*/
-  HttpResponse(int httpResponseCode);
+
+  // Creates an empty HTTP response. Can optionally set the status code.
+  HttpResponse(int httpResponseCode = -1);
 
   ~HttpResponse();
 
-  /* set content-type header according to fileExtension */
-  void setContentTypeByFileExt(std::string fileExtension);
+  // Sets the HTTP response status code.
+  HttpResponse& setResponse(int statusCode) {this->statusCode = statusCode; }
 
-  /* explicitly set content type */
+  // Explicitly sets the content type.
   HttpResponse& setContentType(const char* type);
 
-  /* Add JSON {attribute:value} to response body, returns *this for chainning */
-  HttpResponse& addJson(std::string attribute, int value);
+  // Sets content-type header according to fileExtension.
+  HttpResponse& setContentTypeByFileExt(std::string fileExtension);
 
-  HttpResponse& addJson(std::string attribute, const char* value);
+  // Populates the response body from the given file.
+  HttpResponse& setBody(std::ifstream *file);
 
-  /* sets the response body */
-  void setBody(std::ifstream *file);
+  // Popuates the response body from the given string.
+  HttpResponse& setBody(std::string body);
 
-  void setBody(std::string body);
+  // Appends a cookie to the header.
+  HttpResponse& addCookie(const char* name, const char* value);
+
+  // Generates the header string, calcuates contentLength and headerLength.
+  // After calling this, the state becomes STATE_COMPILED, which means this response is
+  // ready to being served to the client. Further attemps to alter the response data are
+  // invalid and will cause the `HTTPResponseException` be thrown.
+  HttpResponse& compile();
+
+  // ** The following methods will throw `HTTPResponseException` if the state is STATE_RAW
 
   std::string getHeaderString();
 
@@ -109,16 +121,43 @@ class HttpServer::HttpResponse
   int getBodyLength();
 
  private:
+  static const unsigned char STATE_RAW = 0;
+  static const unsigned char STATE_COMPILED = 1;
+
+  // Given a status code, returns its description.
+  static const char* status2String(int statusCode);
+
+  std::string header;
+
   int statusCode;
   std::string contentType;
   std::string contentLength;
+  std::string cookies;
+
+  bool isBin;
   char *binBody;
   std::string body;
-  bool isBin;
+
   int bodyLength;
   int headerLength;
 
-  std::string status;
+  // recording the state of this response, should be STATE_RAW or STATE_COMPILED
+  unsigned char state;
+
+  class HttpResponseException : std::exception {
+   public:
+    HTTPResponseException(const char* description, int line, const char* file) {
+      message.append(description).append("\n\tAt line ").append(std::to_string(line))
+      .append(", in ").append(file);
+    }
+
+    virtual const char* what() const noexcept {
+      return message.c_str()
+    }
+
+   private:
+    std::string message;
+  }
 };
 
 #endif

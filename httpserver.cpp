@@ -366,95 +366,48 @@ std::string HttpServer::findAttributeInJson(std::string json, const char* rawAtt
   return value;
 }
 
-HttpServer::HttpResponse::HttpResponse(int httpResponseCode) {
+HttpResponse::HttpResponse(int httpResponseCode = -1) {
+  statusCode = httpResponseCode;
   binBody = NULL;
   isBin = false;
-
-  statusCode = httpResponseCode;
-  status.append("HTTP/1.1 ");
-  status.append(std::to_string(statusCode));
-  status.append(" ");
-
-  switch (statusCode) {
-    case 200: status.append("OK"); break;
-    case 204: status.append("NO CONTENT"); break;
-  }
 }
 
-HttpServer::HttpResponse& HttpServer::HttpResponse::setContentType(const char* type) {
-  contentType.append("Content-Type: ")
-  .append(type);
+HttpResponse::~HttpResponse() {
+  if (binBody != NULL)
+    delete[] binBody;
+}
+
+HttpResponse& HttpResponse::setContentType(const char* type) {
+  if (state == STATE_COMPILED)
+    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+
+  contentType.assign(type);
 
   return *this;
 }
 
-void HttpServer::HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
-  contentType.append("Content-Type: ");
+HttpResponse& HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
+  if (state == STATE_COMPILED)
+    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
 
-  if (fileExtension.compare(".png") == 0)
-    contentType.append("image/png");
-  else if (fileExtension.compare(".js") == 0)
-    contentType.append("application/javascript");
-  else if (fileExtension.compare(".html") == 0)
-    contentType.append("text/html");
-  else if(fileExtension.compare(".css") == 0)
-    contentType.append("text/css");
+  if (fileExtension == ".png")
+    contentType = "image/png";
+  else if (fileExtension == ".js")
+    contentType = "application/javascript";
+  else if (fileExtension == ".html")
+    contentType = "text/html";
+  else if(fileExtension == ".css")
+    contentType = "text/css";
   else
-    std::cout << "unrecognized file type" << std::endl;
-
-}
-
-HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribute, int value) {
-  attribute.insert(0, "\"");
-  attribute.append("\":");
-
-  char valueChar[12];
-  sprintf(valueChar, "%d", value);
-  attribute.append(valueChar);
-
-  int insertPos = body.find('}');
-
-  if (insertPos == std::string::npos) {
-    body.append("{}");
-    insertPos = 1;
-  } else {
-    body.insert(insertPos, ",");
-    ++insertPos;
-  }
-
-  body.insert(insertPos, attribute);
-  bodyLength = body.length();
+    throw HttpResponseException("Unrecognized file type.", __LINE__, __FILE__);
 
   return *this;
 }
 
-HttpServer::HttpResponse& HttpServer::HttpResponse::addJson(std::string attribute, const char* value) {
-  attribute.insert(0, "\"");
-  attribute.append("\":");
+HttpResponse& HttpResponse::setBody(std::ifstream *file) {
+  if (state == STATE_COMPILED)
+    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
 
-  std::string valueString(value);
-
-  valueString.insert(0, "\"");
-  valueString.append("\"");
-  attribute.append(valueString);
-
-  int insertPos = body.find('}');
-
-  if (insertPos == std::string::npos) {
-    body.append("{}");
-    insertPos = 1;
-  } else {
-    body.insert(insertPos, ",");
-    ++insertPos;
-  }
-
-  body.insert(insertPos, attribute);
-  bodyLength = body.length();
-
-  return *this;
-}
-
-void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   isBin = true;
 
   file->seekg(0, std::ios_base::end);
@@ -471,46 +424,113 @@ void HttpServer::HttpResponse::setBody(std::ifstream *file) {
   file->seekg(0, std::ios_base::beg);
   file->read(binBody, fileLength);
 
+  return *this;
 }
 
-void HttpServer::HttpResponse::setBody(std::string body) {
-  bodyLength = body.length();
+HttpResponse& HttpResponse::setBody(std::string body) {
+  if (state == STATE_COMPILED)
+    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+
   this->body = body;
+  bodyLength = body.length();
+
+  reuturn *this;
 }
 
-std::string HttpServer::HttpResponse::getHeaderString(){
-  /* set content-length header */
-  char temp[30];
-  sprintf(temp, "Content-Length: %d", bodyLength);
-  contentLength = std::string(temp);
+HttpResponse& HttpResponse::addCookie(const char* name, const char* value) {
+  if (state == STATE_COMPILED)
+    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
 
-  std::string header;
+  cookies += name;
+  cookies += '=';
+  cookies += value;
+  cookies += ';';
 
-  header.append(status).append("\r\n");
+  reuturn *this;
+}
 
-  if (contentType != "")
-    header.append(contentType).append("\r\n");
+HttpResponse& HttpResponse::compile() {
+  header = "";
 
-  header.append(contentLength).append("\r\n")
-  .append("Connection: closed").append("\r\n")
-  .append("\r\n");
+  // status line
+  header += "HTTP/1.1 ";
+  header += statusCode;
+  header += " ";
+  header += HttpResponse::status2String(statusCode);
+  header += "\r\n";
 
-  headerLength = header.length();
+  // content type
+  header += "Content-Type: ";
+  header += contentType;
+  header += "\r\n";
+
+  // content length
+  header += "Content-Length: ";
+  header += std::to_string(bodyLength);
+  header += "\r\n";
+
+  // cookies
+  if (cookies != "") {
+    header += "Set-Cookie: "
+    header += cookies;
+  }
+
+  // Connection Closed
+  header += "Connection: close\r\n";
+
+
+
+
+  state = STATE_COMPILED;
+  return *this;
+}
+
+std::string HttpResponse::getHeaderString(){
+  if (state != STATE_COMPILED)
+    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+
   return header;
 }
 
-const char* HttpServer::HttpResponse::getBody() {
+const char* HttpResponse::getBody() {
+  if (state != STATE_COMPILED)
+    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+
   if (binBody)
     return binBody;
   else
     return body.c_str();
 }
+int HttpResponse::getHeaderLength() {
+  if (state != STATE_COMPILED)
+    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
 
-int HttpServer::HttpResponse::getBodyLength() {
+  return headerLength;
+}
+
+int HttpResponse::getBodyLength() {
+  if (state != STATE_COMPILED)
+    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+
   return bodyLength;
 }
 
-HttpServer::HttpResponse::~HttpResponse() {
-  if (binBody != NULL)
-    delete[] binBody;
+const char* HttpResponse::status2String(int statusCode) {
+  switch (statusCode) {
+    case 200: return "OK";
+    case 204: return "No Content";
+    case 400: return "Bad Request";
+    // case 401: return "Unauthorized";
+    case 403: return "Forbidden";
+    case 404: return "Not Found";
+    case 500: return "Internal Server Error";
+    case 503: return "Service Unavailable";
+  }
+
+  if (statusCode == -1)
+    throw HttpResponseException("Response status code is not set", __LINE__, __FILE__);
+
+  throw HttpResponseException("Status " + std::to_string(statusCode) + " is not supported", __LINE__\
+    , __FILE__);
 }
+
