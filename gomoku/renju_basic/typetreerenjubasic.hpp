@@ -11,20 +11,21 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public V
  friend class VirtualBoardGomoku<10>::Evaluator::TypeTree< VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic >;
 
  private:
-
   static Node* root;
 
   static bool isInit;
-  /* Constructs a untrimmed typetree (by calling dfs). Should be trimmed before use. */
+
+  // Constructs a untrimmed typetree (by calling dfs). Should be trimmed before use.
   static void plantTree();
 
-  /* Depth First Search
-   * parameters of the initial call should be:
-   * currentLocation: length/2, move = -1 */
-  static void dfs(Node *root, STATUS *status, int location, int move, int blackConnect, int whiteConnect,
+  // Depth First Search
+  // parameters of the initial call should be:
+  // currentLocation: length/2, move = -1
+  static void dfs(Node *node, STATUS *status, int location, int move, int blackConnect, int whiteConnect,
                   bool blackBlock, bool whiteBlock);
 
-  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
+  // analyze chesstype, only call by dfs
+  static ChessType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 
   static const int analyze_length = 11, classify_length = 10;
 };
