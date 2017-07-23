@@ -108,7 +108,7 @@ void start() {
 
     std::thread backgroundThread([tree](int maxCycle, bool &stop)
                                  { tree->MCTS(maxCycle, stop); },
-                                 100000, std::ref(stop));
+                                 0, std::ref(stop));
     #endif
 
     bool validInput = false;

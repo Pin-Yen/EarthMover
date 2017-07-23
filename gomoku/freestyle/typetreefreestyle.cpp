@@ -54,12 +54,10 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
       // reached leaf
 
       // set type
-      root->type[0] = new ChessType(typeAnalyze(status, BLACK, true));
-      root->type[1] = new ChessType(typeAnalyze(status, WHITE, true));
+      root->type[0] = typeAnalyze(status, BLACK, true);
+      root->type[1] = typeAnalyze(status, WHITE, true);
 
-      // set child node to NULL
-      for (int i = 0; i < 4; ++i)
-        root->childNode[i] = NULL;
+      root->leaf = true;
 
       return;
     } else {
@@ -77,8 +75,6 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *roo
 
   // move location
   location += move;
-
-  root->type[0] = NULL; root->type[1] = NULL;
 
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 

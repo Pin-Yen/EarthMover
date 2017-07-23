@@ -52,12 +52,10 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
       // reached leaf
 
       // set type
-      root->type[0] = new ChessType(typeAnalyze(status, BLACK, true));
-      root->type[1] = new ChessType(typeAnalyze(status, WHITE, true));
+      root->type[0] = typeAnalyze(status, BLACK, true);
+      root->type[1] = typeAnalyze(status, WHITE, true);
 
-      // set child node to NULL
-      for (int i = 0; i < 4; ++i)
-        root->childNode[i] = NULL;
+      root->leaf = true;
 
       return;
     } else {
@@ -87,14 +85,11 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
   // move location
   location += move;
 
-  root->type[0] = NULL; root->type[1] = NULL;
-
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
     // if connect == 4, stop playing same color at this point to prevent appearing five
     if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4)) {
-      root->childNode[i] = NULL;
       continue;
     }
 
