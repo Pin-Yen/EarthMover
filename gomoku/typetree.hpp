@@ -8,7 +8,6 @@ template <int StatusLength>
 template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
  public:
-
   // Given a status array, classify its chesstype and returns black's type in type[0], white's type in type[1].
   static void classify(const STATUS *status, ChessType *(type[2]));
 
@@ -39,15 +38,9 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
       #endif
     }
   };
- protected:
-  // Analyze chesstype when reaching leaf in typetree
-  static ChessType* typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
-
  private:
-
   // cut the tree node that all child has same result
   static ChessType* cutSameResultChild(Node *root);
-
 };
 
 #include "chesstype.hpp"

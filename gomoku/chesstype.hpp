@@ -7,6 +7,7 @@
 
 class ChessType {
  public:
+  // default constructor
   ChessType(): length_(0), level_(0), life_(0) {
     #ifdef DEBUG
     ObjectCounter::registerCT();
@@ -19,6 +20,7 @@ class ChessType {
     #endif
   }
 
+  // copy constructor
   ChessType(const ChessType& source) {
     length_ = source.length_;
     life_ = source.life_;

@@ -89,9 +89,8 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
 
   for (int i = 0; i < 4; ++i) {
     // if connect == 4, stop playing same color at this point to prevent appearing five
-    if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4)) {
+    if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4))
       continue;
-    }
 
     root->childNode[i] = new Node();
     status[location] = s[i];
