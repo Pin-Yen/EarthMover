@@ -124,7 +124,7 @@ ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree
 
   if (!canCut) return NULL;
   // cut this node, free all children and set this node's type
-  node->type = ChessType(currentType);
+  node->type = ChessType(*currentType);
 
   node->leaf = true;
 

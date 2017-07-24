@@ -29,12 +29,6 @@ class SingleType {
     #endif
   }
 
-  SingleType(const SingleType *source): length_(source->length_), life_(source->life_), level_(source->level_) {
-    #ifdef DEBUG
-    ObjectCounter::registerCT();
-    #endif
-  }
-
   #ifdef DEBUG
   ~SingleType() { ObjectCounter::unregisterCT(); }
   #endif
@@ -79,11 +73,6 @@ class ChessType {
   ChessType(const ChessType& type) {
     type_[0] = SingleType(type.type_[0]);
     type_[1] = SingleType(type.type_[1]);
-  }
-
-  ChessType(const ChessType* type) {
-    type_[0] = SingleType(type->type_[0]);
-    type_[1] = SingleType(type->type_[1]);
   }
 
   ChessType(const SingleType& type0, const SingleType& type1) {
