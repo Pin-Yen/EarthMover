@@ -34,6 +34,11 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
     }
 
     ~Node() {
+      for (int i = 0; i < 4; ++i)
+        if (childNode[i] != NULL) {
+          delete childNode[i];
+          childNode[i] = NULL;
+        }
       #ifdef DEBUG
       ObjectCounter::unregisterTypeTreeNode();
       #endif
@@ -99,13 +104,10 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cla
 template <int StatusLength>
 template <class DerivedTypeTree>
 ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *node) {
+  if (node->leaf)
+    return node->type;
+
   ChessType *currentType = NULL;
-
-  if (node->leaf) {
-    currentType = node->type;
-    return currentType;
-  }
-
   bool canCut = true;
 
   for (int i = 0; i < 4; ++i)
@@ -129,6 +131,8 @@ ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree
   node->type[1] = ChessType(currentType[1]);
 
   node->leaf = true;
+
+  currentType = node->type;
 
   for (int i = 0; i < 4; ++i)
     if (node->childNode[i] != NULL) {
