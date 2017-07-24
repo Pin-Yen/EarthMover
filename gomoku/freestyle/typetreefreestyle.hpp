@@ -2,6 +2,7 @@
 #define TYPE_TREE_FREESTYLE_H
 
 #include "../typetree.hpp"
+
 #ifdef DEBUG
 #include "../../objectcounter.hpp"
 #endif
@@ -12,7 +13,6 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public Virt
  public:
 
  private:
-
   static bool isInit;
 
   static Node* root;
@@ -27,8 +27,6 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public Virt
 
   // analyze chesstype, only call by dfs
   static ChessType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
-
-  static const int analyze_length = 9, classify_length = 8;
 };
 
 #endif

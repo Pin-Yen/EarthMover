@@ -16,28 +16,22 @@
 VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*
  VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::root = NULL;
 
-
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::isInit = false;
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
-
   // create tree seed
-  STATUS status[analyze_length];
-  for (int i = 0; i < analyze_length; ++i)
+  STATUS status[ANALYZE_LENGTH];
+  for (int i = 0; i < ANALYZE_LENGTH; ++i)
     status[i] = EMPTY;
 
   // grow tree
-  dfs(root, status, analyze_length / 2, -1, false, false);
+  dfs(root, status, ANALYZE_LENGTH / 2, -1, false, false);
 }
 
 
 // Depth First Search
 // parameters of the initial call should be:
 // location: length / 2, move = -1, connect = 0
-
-// connect is used to prevent already exist five while length == 11
-// for example : OOOOO*OOX-- ; --X  *OOOOO
-//               ^^^^^               ^^^^^
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *node, STATUS *status, int location,
                                             int move, bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true
@@ -49,7 +43,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *nod
   }
 
   if ((blackBlock && whiteBlock) || status[location] == BOUND ||
-      location <= 0 || location >= analyze_length - 1) {
+      location <= 0 || location >= ANALYZE_LENGTH - 1) {
     if (move == 1) {
       // reached leaf
 
@@ -66,7 +60,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *nod
 
       // jump to middle of the status
       move += 2;
-      location = analyze_length / 2;
+      location = ANALYZE_LENGTH / 2;
 
       // reset block
       blackBlock = false; whiteBlock = false;
@@ -97,7 +91,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
   // under the following, we call this chess group "center group" (CG)
   // for example: --X O*OOX-- ; OOOO* O X
   //                  ^^^^      ^^^^^
-  for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
+  for (int move = -1, start = ANALYZE_LENGTH / 2 - 1; move <= 1; move += 2, start += 2)
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
       if (status[checkPoint] != color) break;
 
@@ -110,7 +104,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
     // CG's length < 5
 
     // play at the analize point
-    status[analyze_length / 2] = color;
+    status[ANALYZE_LENGTH / 2] = color;
 
     // try to find the left and right bound of CG
     // if it's empty, see this point as new analize point
@@ -119,7 +113,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
     bool lInit = false, rInit = false;
     int level = 0;
 
-    for (int move = -1, start = analyze_length / 2 - 1; move <= 1; move += 2, start += 2)
+    for (int move = -1, start = ANALYZE_LENGTH / 2 - 1; move <= 1; move += 2, start += 2)
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
         // if reach CG's bound
         if (status[checkPoint] != color) {
@@ -129,13 +123,13 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
           // if the bound is an empty point
           if (status[checkPoint] == EMPTY) {
             // make a new status array
-            STATUS newStatus[analyze_length];
+            STATUS newStatus[ANALYZE_LENGTH];
 
             // transform from origin status
-            for (int i = 0; i < analyze_length; ++i) {
-              int transformation_index = i - (analyze_length / 2 - checkPoint);
+            for (int i = 0; i < ANALYZE_LENGTH; ++i) {
+              int transformation_index = i - (ANALYZE_LENGTH / 2 - checkPoint);
 
-              if (transformation_index < 0 || transformation_index >= analyze_length)
+              if (transformation_index < 0 || transformation_index >= ANALYZE_LENGTH)
                 // if out of bound, set it to bound
                 newStatus[i] = BOUND;
               else
@@ -189,7 +183,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
         }
 
     // restore the analize point to empty
-    status[analyze_length / 2] = EMPTY;
+    status[ANALYZE_LENGTH / 2] = EMPTY;
 
     // keep lType > rType
     if (lType < rType)

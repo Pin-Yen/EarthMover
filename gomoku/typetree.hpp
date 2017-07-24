@@ -39,6 +39,8 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
       #endif
     }
   };
+
+  static const int ANALYZE_LENGTH = StatusLength + 1;
  private:
   // cut the tree node that all child has same result
   static ChessType* cutSameResultChild(Node *root);
@@ -75,7 +77,7 @@ template <class DerivedTypeTree>
 void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::classify(const STATUS *status, ChessType *(type[2])) {
   Node* node = DerivedTypeTree::root;
 
-  for (int move = -1, start = DerivedTypeTree::classify_length / 2 - 1; ; move = 1, ++start)
+  for (int move = -1, start = StatusLength / 2 - 1; ; move = 1, ++start)
     for (int checkPoint = start; ; checkPoint += move) {
       // according to the status to enter the child node
       node = node->childNode[status[checkPoint]];

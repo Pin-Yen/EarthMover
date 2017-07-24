@@ -2,6 +2,7 @@
 #define TYPE_TREE_RENJU_BASIC_H
 
 #include "../typetree.hpp"
+
 #ifdef DEBUG
 #include "../../objectcounter.hpp"
 #endif
@@ -11,9 +12,9 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public V
  friend class VirtualBoardGomoku<10>::Evaluator::TypeTree< VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic >;
 
  private:
-  static Node* root;
-
   static bool isInit;
+
+  static Node* root;
 
   // Constructs a untrimmed typetree (by calling dfs). Should be trimmed before use.
   static void plantTree();
@@ -26,8 +27,6 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public V
 
   // analyze chesstype, only call by dfs
   static ChessType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
-
-  static const int analyze_length = 11, classify_length = 10;
 };
 
 #endif
