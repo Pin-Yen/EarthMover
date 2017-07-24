@@ -9,12 +9,12 @@
 #include "typetreefreestyle.hpp"
 #include "../openingtree.hpp"
 
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(STATUS *status, SingleType* type[2]) {
-  TypeTreeFreeStyle::classify(status, type);
+ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(const STATUS *status) {
+  return TypeTreeFreeStyle::classify(status);
 }
 
 // score[0]:black's total score,[1]:white's
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(SingleType* type[4][2], int *score) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType type[4], int *score) {
   // len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},              // 0
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},             // X
@@ -55,17 +55,17 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(SingleType* type[4
     for (int d = 0; d < 4; ++d) {
       // count the types in 4 directions
       ++(count[selfColor]
-              [type[d][selfColor]->length()]
-              [type[d][selfColor]->life()]);
+              [type[d].type_[selfColor].length()]
+              [type[d].type_[selfColor].life()]);
 
       //* add score
-      score[selfColor] += SCORE[type[d][selfColor]->length()]
-                               [type[d][selfColor]->life()]
-                               [type[d][selfColor]->level()]
+      score[selfColor] += SCORE[type[d].type_[selfColor].length()]
+                               [type[d].type_[selfColor].life()]
+                               [type[d].type_[selfColor].level()]
                                [0];
-      score[opponentColor] += SCORE[type[d][selfColor]->length()]
-                                   [type[d][selfColor]->life()]
-                                   [type[d][selfColor]->level()]
+      score[opponentColor] += SCORE[type[d].type_[selfColor].length()]
+                                   [type[d].type_[selfColor].life()]
+                                   [type[d].type_[selfColor].level()]
                                    [1];
     }
   }

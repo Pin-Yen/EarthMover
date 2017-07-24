@@ -12,11 +12,11 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
   // -1 for lose, 0 for nothng, 1 for win
   static int checkWinOrLose(int score) { return score >= SCORE_WIN; }
 
-  static void evaluateType(STATUS *status, SingleType* type[2]);
+  static ChessType evaluateType(const STATUS *status);
 
   // inputs an array of ChessTypes of both players in type[4][2],
   // returns black's score in score[0], white's in score[1]
-  static void evaluateScore(SingleType* type[4][2], int *score);
+  static void evaluateScore(ChessType type[4], int *score);
 
  private:
   class TypeTreeFreeStyle;

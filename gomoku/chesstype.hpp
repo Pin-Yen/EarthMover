@@ -72,4 +72,31 @@ class SingleType {
   int8_t length_, life_, level_;
 };
 
+class ChessType {
+ public:
+  ChessType() {}
+
+  ChessType(const ChessType& type) {
+    type_[0] = SingleType(type.type_[0]);
+    type_[1] = SingleType(type.type_[1]);
+  }
+
+  ChessType(const ChessType* type) {
+    type_[0] = SingleType(type->type_[0]);
+    type_[1] = SingleType(type->type_[1]);
+  }
+
+  ~ChessType() {}
+
+  bool operator==(const ChessType &type) const {
+    return (type_[0] == type.type_[0] && type_[1] == type.type_[1]);
+  }
+
+  bool operator!=(const ChessType &type) const {
+    return (type_[0] != type.type_[0] || type_[1] != type.type_[1]);
+  }
+
+  SingleType type_[2];
+};
+
 #endif

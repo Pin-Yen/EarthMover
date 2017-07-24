@@ -5,12 +5,12 @@
 #include "evaluatorrenjubasic.hpp"
 #include "typetreerenjubasic.hpp"
 
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(STATUS *status, SingleType* type[2]) {
-  TypeTree<VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic>::classify(status, type);
+ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(const STATUS *status) {
+  return TypeTreeRenjuBasic::classify(status);
 }
 
 // score[0]:black's total score,[1]:white's
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(SingleType* type[4][2], int *score) {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType type[4], int *score) {
   // len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},              // 0
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},             // X
@@ -51,26 +51,26 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(SingleType* type
        selfColor = WHITE, opponentColor = BLACK, ++i) {
     for (int d = 0; d < 4; ++d) {
       if (selfColor == BLACK) {
-        if (type[d][selfColor]->length() == -1) {
+        if (type[d].type_[selfColor].length() == -1) {
           forbidden = true;
           continue;
-        } else if (type[d][selfColor]->length() == 5) {
+        } else if (type[d].type_[selfColor].length() == 5) {
           win = true;
         }
       }
       // count the types in 4 directions
       ++(count[selfColor]
-              [type[d][selfColor]->length()]
-              [type[d][selfColor]->life()]);
+              [type[d].type_[selfColor].length()]
+              [type[d].type_[selfColor].life()]);
 
       // add score
-      score[selfColor] += SCORE[type[d][selfColor]->length()]
-                               [type[d][selfColor]->life()]
-                               [type[d][selfColor]->level()]
+      score[selfColor] += SCORE[type[d].type_[selfColor].length()]
+                               [type[d].type_[selfColor].life()]
+                               [type[d].type_[selfColor].level()]
                                [0];
-      score[opponentColor] += SCORE[type[d][selfColor]->length()]
-                                   [type[d][selfColor]->life()]
-                                   [type[d][selfColor]->level()]
+      score[opponentColor] += SCORE[type[d].type_[selfColor].length()]
+                                   [type[d].type_[selfColor].life()]
+                                   [type[d].type_[selfColor].level()]
                                    [1];
     }
   }

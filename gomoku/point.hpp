@@ -37,7 +37,7 @@ class VirtualBoardGomoku<StatusLength>::Point {
 
   void setAbsScore(int black, int white) { absScore_[0] = black; absScore_[1] = white; }
 
-  SingleType* type[4][2];
+  ChessType type[4];
  private:
   // STATUS array pointer, this will point at other point's Status color
   // index: 0→ 1↓ 2↗ 3↘
@@ -61,10 +61,6 @@ template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::Point::Point() {
   status_ = EMPTY;
 
-  for (int dir = 0; dir < 4; ++dir)
-    for (int i = 0; i < 2; ++i)
-      type[dir][i] = NULL;
-
   #ifdef DEBUG
   ObjectCounter::registerPoint();
   #endif
@@ -78,8 +74,7 @@ VirtualBoardGomoku<StatusLength>::Point::Point(Point* source) {
   score_ = source->score_;
 
   for (int dir = 0; dir < 4; ++dir)
-    for (int i = 0; i < 2; ++i)
-      type[dir][i] = new SingleType(source->type[dir][i]);
+    type[dir] = ChessType(source->type[dir]);
 
   #ifdef DEBUG
   ObjectCounter::registerPoint();
@@ -88,10 +83,6 @@ VirtualBoardGomoku<StatusLength>::Point::Point(Point* source) {
 
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::Point::~Point() {
-  for (int dir = 0; dir < 4; ++dir)
-    for (int i = 0; i < 2; ++i)
-      if (type[dir][i] != NULL)
-        delete type[dir][i];
 
   #ifdef DEBUG
   ObjectCounter::unregisterPoint();
