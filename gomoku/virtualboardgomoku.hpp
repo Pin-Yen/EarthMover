@@ -111,9 +111,9 @@ void VirtualBoardGomoku<StatusLength>::init() {
         // get status array
         STATUS status[StatusLength]; point_[r][c]->getDirStatus(d, status);
 
-        point_[r][c]->type[d] = Eva::evaluateType(status);
+        point_[r][c]->type(d) = Eva::evaluateType(status);
       }
-      Eva::evaluateScore(point_[r][c]->type, point_[r][c]->absScore());
+      Eva::evaluateScore(point_[r][c]->type(), point_[r][c]->absScore());
     }
   Eva::evaluateRelativeScore(point_, playNo_);
 
@@ -129,7 +129,7 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(VirtualBoardGomoku<StatusLe
   // copy point
   for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
     for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point_[r][c] = new Point(source->point_[r][c]);
+      point_[r][c] = new Point(*(source->point_[r][c]));
 
   // index: 0→ 1↓ 2↗ 3↘
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -286,9 +286,9 @@ int VirtualBoardGomoku<StatusLength>::play(int index) {
         // get status array
         STATUS status[StatusLength]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
-        point_[checkRow][checkCol]->type[d] = Eva::evaluateType(status);
+        point_[checkRow][checkCol]->type(d) = Eva::evaluateType(status);
 
-        Eva::evaluateScore(point_[checkRow][checkCol]->type,
+        Eva::evaluateScore(point_[checkRow][checkCol]->type(),
                                  point_[checkRow][checkCol]->absScore());
       }
     }
@@ -312,9 +312,9 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
     // get status array
     STATUS status[StatusLength]; point_[0][index]->getDirStatus(d, status);
 
-    point_[0][index]->type[d] = Eva::evaluateType(status);
+    point_[0][index]->type(d) = Eva::evaluateType(status);
 
-    Eva::evaluateScore(point_[0][index]->type,
+    Eva::evaluateScore(point_[0][index]->type(),
                        point_[0][index]->absScore());
   }
 
@@ -347,9 +347,9 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
         // get status array
         STATUS status[StatusLength]; point_[checkRow][checkCol]->getDirStatus(d, status);
 
-        point_[checkRow][checkCol]->type[d] = Eva::evaluateType(status);
+        point_[checkRow][checkCol]->type(d) = Eva::evaluateType(status);
 
-        Eva::evaluateScore(point_[checkRow][checkCol]->type,
+        Eva::evaluateScore(point_[checkRow][checkCol]->type(),
                                  point_[checkRow][checkCol]->absScore());
       }
     }
