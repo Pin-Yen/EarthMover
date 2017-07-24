@@ -10,7 +10,6 @@
 class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public VirtualBoardGomoku<8>::Evaluator::TypeTree<VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle>{
  // Declare base class as friend to use CRTP
  friend class VirtualBoardGomoku<8>::Evaluator::TypeTree< VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle >;
- public:
 
  private:
   static bool isInit;
@@ -26,7 +25,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public Virt
   static void dfs(Node *node, STATUS *status, int location, int move, bool blackBlock, bool whiteBlock);
 
   // analyze chesstype, only call by dfs
-  static ChessType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
+  static SingleType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 };
 
 #endif

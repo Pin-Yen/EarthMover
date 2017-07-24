@@ -10,7 +10,7 @@ template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
  public:
   // Given a status array, classify its chesstype and returns black's type in type[0], white's type in type[1].
-  static void classify(const STATUS *status, ChessType *(type[2]));
+  static void classify(const STATUS *status, SingleType *(type[2]));
 
   static void init();
 
@@ -20,7 +20,7 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
     // 0: black, 1: white, 2:empty 3: bound
     Node *childNode[4];
 
-    ChessType type[2];
+    SingleType type[2];
 
     bool jump, leaf;
 
@@ -48,7 +48,7 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
   static const int ANALYZE_LENGTH = StatusLength + 1;
  private:
   // cut the tree node that all child has same result
-  static ChessType* cutSameResultChild(Node *root);
+  static SingleType* cutSameResultChild(Node *root);
 };
 
 #include "chesstype.hpp"
@@ -79,7 +79,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::ini
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::classify(const STATUS *status, ChessType *(type[2])) {
+void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::classify(const STATUS *status, SingleType *(type[2])) {
   Node* node = DerivedTypeTree::root;
 
   for (int move = -1, start = StatusLength / 2 - 1; ; move = 1, ++start)
@@ -91,8 +91,8 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cla
       if (node->leaf) {
         if (type[0] != NULL) delete type[0];
         if (type[1] != NULL) delete type[1];
-        type[0] = new ChessType(node->type[0]);
-        type[1] = new ChessType(node->type[1]);
+        type[0] = new SingleType(node->type[0]);
+        type[1] = new SingleType(node->type[1]);
 
         return;
       }
@@ -105,17 +105,17 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cla
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *node) {
+SingleType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *node) {
   if (node->leaf)
     return node->type;
 
-  ChessType *currentType = NULL;
+  SingleType *currentType = NULL;
   bool canCut = true;
 
   for (int i = 0; i < 4; ++i)
     if (node->childNode[i] != NULL) {
       // if this child node is not NULL, recursion and get return
-      ChessType* returnType = cutSameResultChild(node->childNode[i]);
+      SingleType* returnType = cutSameResultChild(node->childNode[i]);
 
       if (returnType == NULL)
         // if children cannot be cut, then this node also cannot be cut
@@ -129,8 +129,8 @@ ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree
 
   if (!canCut) return NULL;
   // cut this node, free all children and set this node's type
-  node->type[0] = ChessType(currentType[0]);
-  node->type[1] = ChessType(currentType[1]);
+  node->type[0] = SingleType(currentType[0]);
+  node->type[1] = SingleType(currentType[1]);
 
   node->leaf = true;
 

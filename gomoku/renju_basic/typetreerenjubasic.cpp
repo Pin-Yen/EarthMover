@@ -30,7 +30,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::plantTree(
 // parameters of the initial call should be:
 // location: length / 2, move = -1, connect = 0
 
-// connect is used to prevent already exist five while length == 11
+// connect is used to prevent already exist five
 // for example : OOOOO*OOX-- ; --X  *OOOOO
 //               ^^^^^               ^^^^^
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *node, STATUS *status, int location,
@@ -102,7 +102,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
   status[location] = EMPTY;
 }
 
-ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeAnalyze(
+SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeAnalyze(
     STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
   // check the length of the connection around the analize point
@@ -119,12 +119,12 @@ ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeA
   if (connect > 5) {
     // CG's length > 5, return -1
     if (color == BLACK)
-      return ChessType(-1, 0, 0);
+      return SingleType(-1, 0, 0);
     else
-      return ChessType(5, 0, 0);
+      return SingleType(5, 0, 0);
   } else if (connect == 5) {
     // CG's length == 5, return 5
-    return ChessType(5, 0, 0);
+    return SingleType(5, 0, 0);
   } else {
     // CG's length < 5
 
@@ -134,7 +134,7 @@ ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeA
     // try to find the left and right bound of CG
     // if it's empty, see this point as new analize point
     // make a new status array and use recursion analize the status
-    ChessType lType, rType;
+    SingleType lType, rType;
     bool lInit = false, rInit = false;
     int level = 0;
 
@@ -142,7 +142,7 @@ ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeA
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
         // if reach CG's bound
         if (status[checkPoint] != color) {
-          ChessType type;
+          SingleType type;
           bool blocked = false;
 
           // if the bound is an empty point
@@ -166,7 +166,7 @@ ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeA
           } else {
             // if the board of CG is not empty, it means blocked
             blocked = true;
-            type = ChessType(0, 0, 0);
+            type = SingleType(0, 0, 0);
           }
 
           if (move == -1) {
@@ -218,30 +218,30 @@ ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeA
       // if left and right will both produce 5 after play at analize point
       if (connect == 4)
         // if connect == 4, it is a life four type
-        return ChessType(4, 1, 0);
+        return SingleType(4, 1, 0);
       else
         // it is a forbidden (X X*X X)
-        return ChessType(-1, 0, 0);
+        return SingleType(-1, 0, 0);
     } else if (lType.length() == 5) {
       // if there is only one side produces 5 after play at analize point,
       // it is a dead four type
-      return ChessType(4, 0, 0);
+      return SingleType(4, 0, 0);
     } else if (lType.length() <= 0) {
       // if the longer size produces 0 or forbidden point after play at analize point,
       // it is a useless point
-      return ChessType(0, 0, 0);
+      return SingleType(0, 0, 0);
     } else {
       // if left length < 4, return left length - 1
       // (current recursion's result = lower recursion's result - 1)
       if (checkLevel) {
         if (!lType.life() || lType.length() > 3) {
-          return ChessType(lType.length() - 1, lType.life(), 0);
+          return SingleType(lType.length() - 1, lType.life(), 0);
         } else {
-          return ChessType(lType.length() - 1, lType.life(),
+          return SingleType(lType.length() - 1, lType.life(),
                            level - (3 - (lType.length() - 1)));
         }
       } else {
-        return ChessType(lType.length() - 1, lType.life(), 0);
+        return SingleType(lType.length() - 1, lType.life(), 0);
       }
     }
   }

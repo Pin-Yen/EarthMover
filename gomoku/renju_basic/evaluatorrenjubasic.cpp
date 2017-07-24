@@ -5,12 +5,12 @@
 #include "evaluatorrenjubasic.hpp"
 #include "typetreerenjubasic.hpp"
 
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(STATUS *status, ChessType* type[2]) {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(STATUS *status, SingleType* type[2]) {
   TypeTree<VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic>::classify(status, type);
 }
 
 // score[0]:black's total score,[1]:white's
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType* type[4][2], int *score) {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(SingleType* type[4][2], int *score) {
   // len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},              // 0
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},             // X

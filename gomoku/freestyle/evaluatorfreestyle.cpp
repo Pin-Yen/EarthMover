@@ -9,12 +9,12 @@
 #include "typetreefreestyle.hpp"
 #include "../openingtree.hpp"
 
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(STATUS *status, ChessType* type[2]) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(STATUS *status, SingleType* type[2]) {
   TypeTreeFreeStyle::classify(status, type);
 }
 
 // score[0]:black's total score,[1]:white's
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType* type[4][2], int *score) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(SingleType* type[4][2], int *score) {
   // len, LorD, lev, col
   const int SCORE[6][2][4][2] = {{{{0, 0}, {0, 0}, {0, 0}, {0, 0}},              // 0
                                   {{0, 0}, {0, 0}, {0, 0}, {0, 0}}},             // X

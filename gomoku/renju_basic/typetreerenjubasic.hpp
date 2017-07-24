@@ -19,14 +19,14 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public V
   // Constructs a untrimmed typetree (by calling dfs). Should be trimmed before use.
   static void plantTree();
 
-  // Depth First Search
+  // Depth First Search, given a root and status seed. Grows the tree.
   // parameters of the initial call should be:
   // currentLocation: length/2, move = -1
   static void dfs(Node *node, STATUS *status, int location, int move, int blackConnect, int whiteConnect,
                   bool blackBlock, bool whiteBlock);
 
   // analyze chesstype, only call by dfs
-  static ChessType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
+  static SingleType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 };
 
 #endif

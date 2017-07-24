@@ -84,7 +84,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *nod
   status[location] = EMPTY;
 }
 
-ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnalyze(
+SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnalyze(
     STATUS *status, STATUS color, bool checkLevel) {
   int connect = 1;
   // check the length of the connection around the analize point
@@ -99,7 +99,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
     }
 
   if (connect >= 5) {
-    return ChessType(5, 0, 0); // CG's length >= 5, return 5
+    return SingleType(5, 0, 0); // CG's length >= 5, return 5
   } else {
     // CG's length < 5
 
@@ -109,7 +109,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
     // try to find the left and right bound of CG
     // if it's empty, see this point as new analize point
     // make a new status array and use recursion analize the status
-    ChessType lType, rType;
+    SingleType lType, rType;
     bool lInit = false, rInit = false;
     int level = 0;
 
@@ -117,7 +117,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
       for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
         // if reach CG's bound
         if (status[checkPoint] != color) {
-          ChessType type;
+          SingleType type;
           bool blocked = false;
 
           // if the bound is an empty point
@@ -141,14 +141,14 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
           } else {
             // if the board of CG is not empty, it means blocked
             blocked = true;
-            type = ChessType(0, 0, 0);
+            type = SingleType(0, 0, 0);
           }
 
           if (move == -1) {
             // left type result
             if (!lInit) {
               lInit = true;
-              lType = ChessType(type);
+              lType = SingleType(type);
               if (!checkLevel || blocked) break;
               if (!lType.life() || lType.length() > 3) break;
             } else {
@@ -162,7 +162,7 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
             // right type result
             if (!rInit) {
               rInit = true;
-              rType = ChessType(type);
+              rType = SingleType(type);
               if (!checkLevel || blocked) break;
               if (!rType.life() || rType.length() > 3) break;
               if (lType == rType) {
@@ -192,27 +192,27 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnal
     if (lType.length() == 5 && rType.length() == 5) {
       // if left and right will both produce 5 after play at analize point
       // it is a life four type
-      return ChessType(4, 1, 0);
+      return SingleType(4, 1, 0);
     } else if (lType.length() == 5) {
       // if there is only one side produces 5 after play at analize point,
       // it is a dead four type
-      return ChessType(4, 0, 0);
+      return SingleType(4, 0, 0);
     } else if (lType.length() == 0) {
       // if the longer size produces 0 or forbidden point after play at analize point,
       // it is a useless point
-      return ChessType(0, 0, 0);
+      return SingleType(0, 0, 0);
     } else {
       // if left length < 4, return left length - 1
       // (current recursion's result = lower recursion's result - 1)
       if (checkLevel) {
         if (!lType.life() || lType.length() > 3) {
-          return ChessType(lType.length() - 1, lType.life(), 0);
+          return SingleType(lType.length() - 1, lType.life(), 0);
         } else {
-          return ChessType(lType.length() - 1, lType.life(),
+          return SingleType(lType.length() - 1, lType.life(),
                            level - (3 - (lType.length() - 1)));
         }
       } else {
-        return ChessType(lType.length() - 1, lType.life(), 0);
+        return SingleType(lType.length() - 1, lType.life(), 0);
       }
     }
   }
