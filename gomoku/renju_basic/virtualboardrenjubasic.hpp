@@ -1,10 +1,12 @@
 #ifndef GOMOKU_RENJU_BASIC_VIRTUAL_BOARD_H
 #define GOMOKU_RENJU_BASIC_VIRTUAL_BOARD_H
+
 #include "../virtualboardgomoku.hpp"
+
 class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
  public:
   VirtualBoardRenjuBasic() : VirtualBoardGomoku() {}
-  VirtualBoardRenjuBasic(VirtualBoardRenjuBasic* board) : VirtualBoardGomoku(board) {}
+  VirtualBoardRenjuBasic(const VirtualBoardRenjuBasic& board) : VirtualBoardGomoku(board) {}
 
  private:
   class EvaluatorRenjuBasic;
@@ -12,7 +14,7 @@ class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
   inline VirtualBoardRenjuBasic* create() final override;
 
   VirtualBoardRenjuBasic* clone() final override {
-    return new VirtualBoardRenjuBasic(this);
+    return new VirtualBoardRenjuBasic(*this);
   }
 
   inline int play(int index) final override;
