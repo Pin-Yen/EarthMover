@@ -5,10 +5,6 @@
 #include "evaluatorrenjubasic.hpp"
 #include "typetreerenjubasic.hpp"
 
-ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(const STATUS *status) {
-  return TypeTreeRenjuBasic::classify(status);
-}
-
 // score[0]:black's total score,[1]:white's
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType type[4], int *score) {
   // len, LorD, lev, col
@@ -51,26 +47,26 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType type[4
        selfColor = WHITE, opponentColor = BLACK, ++i) {
     for (int d = 0; d < 4; ++d) {
       if (selfColor == BLACK) {
-        if (type[d].type_[selfColor].length() == -1) {
+        if (type[d].length(selfColor) == -1) {
           forbidden = true;
           continue;
-        } else if (type[d].type_[selfColor].length() == 5) {
+        } else if (type[d].length(selfColor) == 5) {
           win = true;
         }
       }
       // count the types in 4 directions
       ++(count[selfColor]
-              [type[d].type_[selfColor].length()]
-              [type[d].type_[selfColor].life()]);
+              [type[d].length(selfColor)]
+              [type[d].life(selfColor)]);
 
       // add score
-      score[selfColor] += SCORE[type[d].type_[selfColor].length()]
-                               [type[d].type_[selfColor].life()]
-                               [type[d].type_[selfColor].level()]
+      score[selfColor] += SCORE[type[d].length(selfColor)]
+                               [type[d].life(selfColor)]
+                               [type[d].level(selfColor)]
                                [0];
-      score[opponentColor] += SCORE[type[d].type_[selfColor].length()]
-                                   [type[d].type_[selfColor].life()]
-                                   [type[d].type_[selfColor].level()]
+      score[opponentColor] += SCORE[type[d].length(selfColor)]
+                                   [type[d].life(selfColor)]
+                                   [type[d].level(selfColor)]
                                    [1];
     }
   }

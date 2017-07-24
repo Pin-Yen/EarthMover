@@ -9,10 +9,6 @@
 #include "typetreefreestyle.hpp"
 #include "../openingtree.hpp"
 
-ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(const STATUS *status) {
-  return TypeTreeFreeStyle::classify(status);
-}
-
 // score[0]:black's total score,[1]:white's
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType type[4], int *score) {
   // len, LorD, lev, col
@@ -55,17 +51,17 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType type[4],
     for (int d = 0; d < 4; ++d) {
       // count the types in 4 directions
       ++(count[selfColor]
-              [type[d].type_[selfColor].length()]
-              [type[d].type_[selfColor].life()]);
+              [type[d].length(selfColor)]
+              [type[d].life(selfColor)]);
 
       //* add score
-      score[selfColor] += SCORE[type[d].type_[selfColor].length()]
-                               [type[d].type_[selfColor].life()]
-                               [type[d].type_[selfColor].level()]
+      score[selfColor] += SCORE[type[d].length(selfColor)]
+                               [type[d].life(selfColor)]
+                               [type[d].level(selfColor)]
                                [0];
-      score[opponentColor] += SCORE[type[d].type_[selfColor].length()]
-                                   [type[d].type_[selfColor].life()]
-                                   [type[d].type_[selfColor].level()]
+      score[opponentColor] += SCORE[type[d].length(selfColor)]
+                                   [type[d].life(selfColor)]
+                                   [type[d].level(selfColor)]
                                    [1];
     }
   }

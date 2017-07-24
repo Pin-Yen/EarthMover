@@ -50,8 +50,9 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
       // reached leaf
 
       // set type
-      node->type.type_[0] = typeAnalyze(status, BLACK, true);
-      node->type.type_[1] = typeAnalyze(status, WHITE, true);
+      SingleType bType = typeAnalyze(status, BLACK, true),
+                 wType = typeAnalyze(status, WHITE, true);
+      node->type = ChessType(bType, wType);
 
       node->leaf = true;
 

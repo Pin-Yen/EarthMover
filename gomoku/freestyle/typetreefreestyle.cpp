@@ -48,8 +48,9 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *nod
       // reached leaf
 
       // set type
-      node->type.type_[0] = typeAnalyze(status, BLACK, true);
-      node->type.type_[1] = typeAnalyze(status, WHITE, true);
+      SingleType bType = typeAnalyze(status, BLACK, true),
+                 wType = typeAnalyze(status, WHITE, true);
+      node->type = ChessType(bType, wType);
 
       node->leaf = true;
 

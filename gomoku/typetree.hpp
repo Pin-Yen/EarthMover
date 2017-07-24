@@ -9,7 +9,7 @@ template <int StatusLength>
 template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
  public:
-  // Given a status array, classify its chesstype and returns black's type in type[0], white's type in type[1].
+  // Given a status array, classify its chesstype and return it
   static ChessType classify(const STATUS *status);
 
   static void init();

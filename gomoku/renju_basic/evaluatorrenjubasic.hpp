@@ -14,10 +14,10 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::E
   }
 
   // inputs status array in *status.
-  // analyzes both player's chesstype, and stores black's type in type[0], white's in type[1]
-  static ChessType evaluateType(const STATUS *status);
+  // analyzes both player's chesstype, and return it
+  static inline ChessType evaluateType(const STATUS *status);
 
-  // inputs an array of ChessTypes of both players in type[4][2],
+  // inputs an array of ChessTypes in type[4],
   // returns black's score in score[0], white's in score[1]
   static void evaluateScore(ChessType type[4], int *score);
 
@@ -26,9 +26,14 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::E
 };
 
 #include "typetreerenjubasic.hpp"
+
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
   OpeningTree::init();
   TypeTreeRenjuBasic::init();
+}
+
+ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(const STATUS *status) {
+  return TypeTreeRenjuBasic::classify(status);
 }
 
 #endif

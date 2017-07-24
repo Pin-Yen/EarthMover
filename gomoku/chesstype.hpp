@@ -86,7 +86,16 @@ class ChessType {
     type_[1] = SingleType(type->type_[1]);
   }
 
+  ChessType(const SingleType& type0, const SingleType& type1) {
+    type_[0] = SingleType(type0);
+    type_[1] = SingleType(type1);
+  }
+
   ~ChessType() {}
+
+  char length(int i) { return type_[i].length(); }
+  char life(int i) { return type_[i].life(); }
+  char level(int i) { return type_[i].level(); }
 
   bool operator==(const ChessType &type) const {
     return (type_[0] == type.type_[0] && type_[1] == type.type_[1]);
@@ -95,7 +104,7 @@ class ChessType {
   bool operator!=(const ChessType &type) const {
     return (type_[0] != type.type_[0] || type_[1] != type.type_[1]);
   }
-
+ private:
   SingleType type_[2];
 };
 
