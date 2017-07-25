@@ -5,13 +5,32 @@
 #include "status.hpp"
 #include "virtualboardgomoku.hpp"
 
+#ifdef DEBUG
+#include "../objectcounter.hpp"
+#endif
+
 #include <cstddef>
 
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Point {
  public:
-  Point();
-  Point(const Point& source);
+  Point() : status_(EMPTY) {
+    #ifdef DEBUG
+    ObjectCounter::registerPoint();
+    #endif
+  }
+
+  Point(const Point& source)
+      : status_(source.status_),
+        score_(source.score_),
+        absScore_{ source.absScore_[0], source.absScore_[1] },
+        type_{ source.type_[0], source.type_[1],
+               source.type_[2], source.type_[3] } {
+
+    #ifdef DEBUG
+    ObjectCounter::registerPoint();
+    #endif
+  }
 
   ~Point() {
     #ifdef DEBUG
@@ -58,28 +77,5 @@ class VirtualBoardGomoku<StatusLength>::Point {
   int absScore_[2];
   int score_;
 };
-
-#ifdef DEBUG
-#include "../objectcounter.hpp"
-#endif
-
-template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::Point::Point(): status_(EMPTY) {
-  #ifdef DEBUG
-  ObjectCounter::registerPoint();
-  #endif
-}
-
-template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::Point::Point(const Point& source):
-  status_(source.status_),
-  score_(source.score_),
-  absScore_{ source.absScore_[0], source.absScore_[1] },
-  type_{ source.type_[0], source.type_[1], source.type_[2], source.type_[3] } {
-
-  #ifdef DEBUG
-  ObjectCounter::registerPoint();
-  #endif
-}
 
 #endif

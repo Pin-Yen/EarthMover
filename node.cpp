@@ -11,14 +11,13 @@
 #include "objectcounter.hpp"
 #endif
 
-GameTree::Node::Node(): index_(-1), parent_(NULL), winOrLose_(0) {
-  clearPlayout();
-}
+GameTree::Node::Node() : index_(-1), parent_(NULL), winOrLose_(0), playout_{0} {}
 
 GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
-    : index_(index), parent_(parentNode), winOrLose_(-parentWinOrLose) {
-
-  clearPlayout();
+    : index_(index),
+      parent_(parentNode),
+      winOrLose_(-parentWinOrLose),
+      playout_{0} {
 
   // if losing, set parent to winning
   if (losing()) parent_->setWinning();
@@ -91,9 +90,9 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
 }
 
 GameTree::Node* GameTree::Node::child(int index) const {
-  for (Node* node : *this) {
+  for (Node* node : *this)
     if (node->index_ == index) return node;
-  }
+
   return NULL;
 }
 
@@ -106,8 +105,7 @@ GameTree::Node* GameTree::Node::newChild(int index, int parentWinOrLose) {
 }
 
 double GameTree::Node::getUCBValue(const Node* node) const {
-  if (playout_[2] == 0)
-    return 0;
+  if (playout_[2] == 0) return 0;
 
   if (node != NULL) {
     return (node->winRate() +

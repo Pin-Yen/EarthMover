@@ -47,9 +47,6 @@ class GameTree::Node {
   void setWinning() { winOrLose_ = 1; }
   void setLosing() { winOrLose_ = -1; }
 
-  // set all playout to 0
-  void clearPlayout() { playout_[0] = 0; playout_[1] = 0; playout_[2] = 0; }
-
   // get child node with specify index
   Node* child(int index) const;
 
@@ -67,6 +64,7 @@ class GameTree::Node {
     Node* operator*() const { return node_; };
 
     const Iterator& operator++() { node_ = node_->next_; };
+
    private:
     Node* node_;
   };
