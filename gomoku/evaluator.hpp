@@ -6,7 +6,7 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
-  static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[15][15], int playNo);
+  static void evaluateRelativeScore(VirtualBoardGomoku::Point* point[LENGTH], int playNo);
 
   static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
 
@@ -19,35 +19,26 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
 
 #include "chesstype.hpp"
 #include "status.hpp"
-#include "../virtualboard.hpp"
-#include "virtualboardgomoku.hpp"
-#include "point.hpp"
 #include "openingtree.hpp"
 
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
-    VirtualBoardGomoku<StatusLength>::Point* point[15][15], int playNo) {
+    VirtualBoardGomoku<StatusLength>::Point* point[LENGTH], int playNo) {
   if (playNo == 0) {
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c)
-        point[r][c]->setScore(-1);
+    for (int i = 0; i < LENGTH; ++i)
+      point[i]->setScore(-1);
 
-    point[7][7]->setScore(1);
+    point[LENGTH / 2]->setScore(1);
   } else {
     // using opening
     if (playNo <= 4) {
-      int row = -1, col = -1;
-      OpeningTree::classify(point, &row, &col);
+      int index = OpeningTree::classify(point);
 
-      if (row != -1) {
-        for (int r = 0; r < 15; ++r) {
-          for (int c = 0; c < 15; ++c) {
-            if (r == row && c == col)
-              point[r][c]->setScore(1);
-            else
-              point[r][c]->setScore(-1);
-          }
-        }
+      if (index != -1) {
+        for (int i = 0; i < LENGTH; ++i)
+            point[i]->setScore(-1);
+
+        point[index]->setScore(1);
         return;
       }
     }
@@ -58,19 +49,17 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
 
     // get highest score
     int highestScore = -1;
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c)
-        if (point[r][c]->absScore(whoTurn) > highestScore)
-          highestScore = point[r][c]->absScore(whoTurn);
+    for (int i = 0; i < LENGTH; ++i)
+      if (point[i]->absScore(whoTurn) > highestScore)
+        highestScore = point[i]->absScore(whoTurn);
 
-    for (int r = 0; r < 15; ++r)
-      for (int c = 0; c < 15; ++c) {
-        int score = point[r][c]->absScore(whoTurn);
-        if (score * 8 <= highestScore || (playNo < 10 && score < 140))
-          point[r][c]->setScore(-1);
-        else
-          point[r][c]->setScore(score);
-      }
+    for (int i = 0; i < LENGTH; ++i) {
+      int score = point[i]->absScore(whoTurn);
+      if (score * 8 <= highestScore || (playNo < 10 && score < 140))
+        point[i]->setScore(-1);
+      else
+        point[i]->setScore(score);
+    }
   }
 }
 
