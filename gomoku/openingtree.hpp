@@ -181,6 +181,7 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
   int oriRow = 0, oriCol = 0;
   int left = 14, top = 14;
   // set the origin in the lower right corner, find the left and top
+  // "i" is for point index
   for (int r = 0, i = 0; r < DIMEN; ++r)
     for (int c = 0; c < DIMEN; ++c, ++i)
       if (point[i].status() == BLACK || point[i].status() == WHITE) {

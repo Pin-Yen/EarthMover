@@ -115,13 +115,10 @@ template <class Eva>
 void VirtualBoardGomoku<StatusLength>::init() {
   isInit_ = true;
 
-  /*
-  for (int i = 0; i < LENGTH; ++i)
-    point_[i] = Point();*/
-
   // index: 0→ 1↓ 2↗ 3↘
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
 
+  // "i" is for point index
   for (int r = 0, i = 0; r < DIMEN; ++r)
     for (int c = 0; c < DIMEN; ++c, ++i)
       // set each point's status array pointer

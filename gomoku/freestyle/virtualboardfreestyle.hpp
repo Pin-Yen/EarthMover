@@ -11,15 +11,15 @@ class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
  private:
   class EvaluatorFreeStyle;
 
-  inline VirtualBoardFreeStyle* create() final override;
+  inline VirtualBoardFreeStyle* create() final;
 
-  VirtualBoardFreeStyle* clone() final override {
+  VirtualBoardFreeStyle* clone() final {
     return new VirtualBoardFreeStyle(*this);
   }
 
-  inline int play(int index) final override;
+  inline int play(int index) final;
 
-  inline void undo(int index) final override;
+  inline void undo(int index) final;
 };
 
 #include "evaluatorfreestyle.hpp"

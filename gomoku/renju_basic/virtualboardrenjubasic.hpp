@@ -11,15 +11,15 @@ class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
  private:
   class EvaluatorRenjuBasic;
 
-  inline VirtualBoardRenjuBasic* create() final override;
+  inline VirtualBoardRenjuBasic* create() final;
 
-  VirtualBoardRenjuBasic* clone() final override {
+  VirtualBoardRenjuBasic* clone() final {
     return new VirtualBoardRenjuBasic(*this);
   }
 
-  inline int play(int index) final override;
+  inline int play(int index) final;
 
-  inline void undo(int index) final override;
+  inline void undo(int index) final;
 };
 
 #include "evaluatorrenjubasic.hpp"
