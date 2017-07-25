@@ -2,16 +2,16 @@
 #include <string>
 
 HttpRequest::HttpRequest(const char* rawRequest) {
-  string request(rawRequest);
+  std::string request(rawRequest);
 
   // Extract path.
   int pathStart = request.find("/");
-  int pathEnd = request.find(" ", directoryStart);
-  path_ = request.substr(directoryStart, directoryEnd - directoryStart );
+  int pathEnd = request.find(" ", pathStart);
+  path_ = request.substr(pathStart, pathEnd - pathStart );
 
   // Parse cookies.
   int cookieStart = request.find("Cookie ") + 7;
-  int cookieListEnd = request.find(cookieStart, "\r\n");
+  int cookieListEnd = request.find("\r\n", cookieStart);
   while (cookieStart < cookieListEnd) {
     int cookieMiddle = request.find("=", cookieStart);
     int cookieEnd = request.find(";", cookieMiddle);

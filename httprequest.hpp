@@ -1,4 +1,7 @@
+#ifndef HTTP_REQUEST_
+#define HTTP_REQUEST_
 
+#include <fstream>
 #include <string>
 #include <unordered_map>
 
@@ -7,11 +10,12 @@ class HttpRequest
 {
  public:
   HttpRequest(const char* rawRequest);
-  ~HttpRequest();
+  ~HttpRequest(){}
 
   std::string path() { return path_; }
 
   // Returns the cookie value. flavor: the cookie's name.
+  // Returns empty string if not exists.
   std::string cookie(std::string flavor) { return cookieJar_[flavor]; }
 
   std::string body() { return body_; }
@@ -22,5 +26,7 @@ class HttpRequest
   // A map storing cookies.
   stringmap cookieJar_;
   // Request body.
-  string body_;
+  std::string body_;
 };
+
+#endif

@@ -26,7 +26,6 @@ class AI {
 
   /* undo "times" move */
   void undo(int times) {
-    stopBGThread();
     for (int i = 0; i < times; ++i) tree->undo();
   }
 
@@ -34,7 +33,7 @@ class AI {
   void pass() {tree->pass(); }
 
   /* opponent resign*/
-  void resign() { stopBGThread(); }
+  void resign() {}
 
   /* returns true for black ,false for white. */
   bool whoTurn() {return tree->getCurrentBoard()->whoTurn(); }
@@ -42,7 +41,7 @@ class AI {
   std::string getTreeJSON() { return tree->getTreeJSON(); }
 
   // Thinks in background. Stops if `controller` changed to false by other threads.
-  void thinkInBackground(bool* controller)
+  void thinkInBackground(bool* controller);
 
  private:
   /* this thread lets EM thinks in the background when it's the users turn */
@@ -51,7 +50,7 @@ class AI {
   VirtualBoard *vb;
 
   // The max mcts cycle to run in the background.
-  static const int MAX_BACKGROUND_CYCLE_
+  static const int MAX_BACKGROUND_CYCLE_ = 100000;
 
   /* the ai's level */
   int level_;

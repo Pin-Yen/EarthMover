@@ -45,7 +45,6 @@ int AI::play(int index) {
 }
 
 void AI::reset(int level, int rule) {
-  stopBGThread();
 
   if (vb != NULL)
     delete vb;
@@ -61,5 +60,5 @@ void AI::reset(int level, int rule) {
 }
 
 void AI::thinkInBackground(bool* continueThinking) {
-  MCTS(MAX_BACKGROUND_CYCLE_, continueThinking);
+  tree->MCTS(MAX_BACKGROUND_CYCLE_, continueThinking);
 }

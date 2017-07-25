@@ -1,6 +1,7 @@
 #ifndef HTTP_RESPONSE_
 #define HTTP_RESPONSE_
 
+#include <fstream>
 #include <string>
 
 class HttpResponse
@@ -40,7 +41,7 @@ class HttpResponse
 
   std::string getHeaderString();
 
-  int getHeaderLength() { return headerLength_; }
+  int getHeaderLength();
 
   const char* getBody();
 
@@ -72,18 +73,18 @@ class HttpResponse
 
   class HttpResponseException : std::exception {
    public:
-    HTTPResponseException(const char* description, int line, const char* file) {
+    HttpResponseException(const char* description, int line, const char* file) {
       message_.append(description).append("\n\tAt line ").append(std::to_string(line))
       .append(", in ").append(file);
     }
 
     virtual const char* what() const noexcept {
-      return message_.c_str()
+      return message_.c_str();
     }
 
    private:
     std::string message_;
-  }
+  };
 };
 
 #endif

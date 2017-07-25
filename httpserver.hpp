@@ -1,6 +1,7 @@
 #ifndef HTTP_SERVER_
 #define HTTP_SERVER_
 
+#include "ai.hpp"
 #include "httprequest.hpp"
 #include "httpresponse.hpp"
 
@@ -23,15 +24,29 @@ class HttpServer
   HttpRequest readRequest(const int client);
 
   // Dispatch the HttpRequest to handlers.
-  void dispatch(HttpRequest* request);
+  void dispatch(const int client, HttpRequest* request);
 
   // Check if the resource request is legal. returns true if legal, otherwise false.
-  bool HttpServer::sanitize(std::string directory);
+  bool sanitize(std::string directory);
 
   // Sends an HTTP response back to the client.
   void sendResponse(const int client, HttpResponse *response);
 
+  // Generates a random string.
+  std::string sessionIdGenerator();
+
  private:
+
+  void handlePlay(const int client, HttpRequest* request);
+  void handleVisualize(const int client, HttpRequest* request);
+  void handleResign(const int client, HttpRequest* request);
+  void handlePass(const int client, HttpRequest* request);
+  void handleUndo(const int client, HttpRequest* request);
+  void handleThink(const int client, HttpRequest* request);
+  void handleStart(const int client, HttpRequest* request);
+  void handleResourceRequest(const int client, HttpRequest* request);
+
+
   // The limit of pending connections in the queue.
   static const int MAX_CONNECTION_QUEUE_ = 50;
   // The limit of EM instances.
@@ -42,10 +57,10 @@ class HttpServer
   static const int MAX_REQUEST_LENGTH_ = 1500;
 
   // session to id (session is the string of the http cookie, id is for indexing purposes)
-  unordered_map<std::string, int> session2id_;
+  std::unordered_map<std::string, int> session2id_;
 
   // A list storing EarthMover instances.
-  AI emList_[MAX_EM_INSTANCE_];
+  AI* emList_[MAX_EM_INSTANCE_];
 
   // Store threads. Each EM instance will only have at most 1 exclusive thread.
   // Index is the EM instance's id.

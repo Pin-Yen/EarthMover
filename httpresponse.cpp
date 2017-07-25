@@ -1,7 +1,7 @@
 #include "httpresponse.hpp"
 
 
-HttpResponse::HttpResponse(int httpResponseCode = -1) {
+HttpResponse::HttpResponse(int httpResponseCode) {
   statusCode_ = httpResponseCode;
   binBody_ = NULL;
   isBin_ = false;
@@ -16,13 +16,13 @@ HttpResponse& HttpResponse::setContentType(const char* type) {
   if (state_ == STATE_COMPILED_)
     throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
 
-  contentType.assign(type);
+  contentType_.assign(type);
 
   return *this;
 }
 
 HttpResponse& HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
-  if (state == STATE_COMPILED)
+  if (state_ == STATE_COMPILED_)
     throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
 
   if (fileExtension == ".png")
@@ -49,8 +49,6 @@ HttpResponse& HttpResponse::setBody(std::ifstream *file) {
   int fileLength = (int)file->tellg();
   bodyLength_ = fileLength;
 
-  std::cout << "file length: "<<fileLength << std::endl;
-
   if (binBody_ != NULL) {
     delete binBody_;
   }
@@ -69,7 +67,7 @@ HttpResponse& HttpResponse::setBody(std::string body) {
   body_ = body;
   bodyLength_ = body_.length();
 
-  reuturn *this;
+  return *this;
 }
 
 HttpResponse& HttpResponse::addCookie(const char* name, const char* value) {
@@ -81,7 +79,7 @@ HttpResponse& HttpResponse::addCookie(const char* name, const char* value) {
   cookies_ += value;
   cookies_ += ';';
 
-  reuturn *this;
+  return *this;
 }
 
 HttpResponse& HttpResponse::compile() {
@@ -106,7 +104,7 @@ HttpResponse& HttpResponse::compile() {
 
   // cookies
   if (cookies_ != "") {
-    header_ += "Set-Cookie: "
+    header_ += "Set-Cookie: ";
     header_ += cookies_;
   }
 
@@ -151,7 +149,7 @@ int HttpResponse::getBodyLength() {
 }
 
 const char* HttpResponse::status2String(int statusCode) {
-  switch (statusCode_) {
+  switch (statusCode) {
     case 200: return "OK";
     case 204: return "No Content";
     case 400: return "Bad Request";
@@ -162,10 +160,10 @@ const char* HttpResponse::status2String(int statusCode) {
     case 503: return "Service Unavailable";
   }
 
-  if (statusCode_ == -1)
+  if (statusCode == -1)
     throw HttpResponseException("Response status code is not set", __LINE__, __FILE__);
 
-  throw HttpResponseException("Status " + std::to_string(statusCode) + " is not supported", __LINE__\
+  throw HttpResponseException(("Status " + std::to_string(statusCode) + " is not supported").c_str(), __LINE__\
     , __FILE__);
 }
 
