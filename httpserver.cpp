@@ -58,7 +58,7 @@ void HttpServer::run() {
     try {
       // Parse request.
       HttpRequest request = readRequest(client);
-      printf("parsed request: path %s\n", request.path().c_str());
+      printf("request path: %s => ", request.path().c_str());
       // Dispatch parsed request to handlers.
       dispatch(client, &request);
     } catch (HttpResponse::HttpResponseException& e) {
@@ -78,7 +78,6 @@ HttpRequest HttpServer::readRequest(const int client) {
   int requestLength = read(client, buffer, MAX_REQUEST_LENGTH_);
   buffer[requestLength] = '\0';
 
-  printf("%s\n", buffer);
   return HttpRequest(buffer);
 }
 
@@ -105,11 +104,12 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
 }
 
 void HttpServer::sendResponse(const int client, HttpResponse* response) {
-  printf("response:%s\n", response->getHeaderString().c_str());
   // Send header.
   send(client, response->getHeaderString().c_str(), response->getHeaderLength(), 0);
   // Send body.
   send(client, response->getBody(), response->getBodyLength(), 0);
+  close(client);
+  printf("%d\n", response->statusCode());
   return;
 }
 
@@ -340,6 +340,8 @@ void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
       .compile();
 
     sendResponse(client, &response);
+
+    resourceFile.close();
 
   return;
 }

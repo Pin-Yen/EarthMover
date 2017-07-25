@@ -48,7 +48,7 @@ class HttpServer
 
 
   // The limit of pending connections in the queue.
-  static const int MAX_CONNECTION_QUEUE_ = 50;
+  static const int MAX_CONNECTION_QUEUE_ = 70;
   // The limit of EM instances.
   static const int MAX_EM_INSTANCE_ = 3;
   // Specifies the port to listen.

@@ -24,6 +24,9 @@ HttpRequest::HttpRequest(const char* rawRequest) {
   }
 
   // Extract Body.
-  int bodyStart = request.find("\r\n\r\n") + 4;
-  body_ = request.substr(bodyStart, request.length() - bodyStart + 1);
+  int blankLinePos = request.find("\r\n\r\n");
+  if (blankLinePos != std::string::npos) {
+    int bodyStart = request.find("\r\n\r\n") + 4;
+    body_ = request.substr(bodyStart, request.length() - bodyStart + 1);
+  }
 }

@@ -47,6 +47,8 @@ class HttpResponse
 
   int getBodyLength();
 
+  int statusCode() {return statusCode_;}
+
  private:
   static const unsigned char STATE_RAW_ = 0;
   static const unsigned char STATE_COMPILED_ = 1;

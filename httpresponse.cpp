@@ -6,6 +6,7 @@ HttpResponse::HttpResponse(int httpResponseCode) {
   statusCode_ = httpResponseCode;
   binBody_ = NULL;
   isBin_ = false;
+  bodyLength_ = 0;
 }
 
 HttpResponse::~HttpResponse() {
@@ -107,15 +108,17 @@ HttpResponse& HttpResponse::compile() {
   if (cookies_ != "") {
     header_ += "Set-Cookie: ";
     header_ += cookies_;
+    header_ += "\r\n";
   }
 
   // Connection Closed
-  header_ += "Connection: close\r\n";
+  header_ += "Connection: close\r\n\r\n";
 
-
-
+  // Set header length
+  headerLength_ = header_.length();
 
   state_ = STATE_COMPILED_;
+
   return *this;
 }
 
