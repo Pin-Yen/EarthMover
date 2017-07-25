@@ -8,6 +8,8 @@ HttpRequest::HttpRequest(const char* rawRequest) {
   int pathStart = request.find("/");
   int pathEnd = request.find(" ", pathStart);
   path_ = request.substr(pathStart, pathEnd - pathStart );
+  if (path_ == "/")
+    path_ = "/index.html";
 
   // Parse cookies.
   int cookieStart = request.find("Cookie ") + 7;

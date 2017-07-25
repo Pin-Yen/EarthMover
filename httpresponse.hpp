@@ -70,7 +70,7 @@ class HttpResponse
 
   // recording the state of this response, should be STATE_RAW_ or STATE_COMPILED_
   unsigned char state_;
-
+ public:
   class HttpResponseException : std::exception {
    public:
     HttpResponseException(const char* description, int line, const char* file) {

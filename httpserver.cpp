@@ -58,11 +58,13 @@ void HttpServer::run() {
     try {
       // Parse request.
       HttpRequest request = readRequest(client);
+      printf("parsed request: path %s\n", request.path().c_str());
       // Dispatch parsed request to handlers.
       dispatch(client, &request);
-    } catch (std::exception e) {
+    } catch (HttpResponse::HttpResponseException& e) {
       // Return bad request.
       // Just blame the client whatever the problem is XD.
+      std::cerr << e.what() << "\n";
       HttpResponse response(400);
       response.compile();
       sendResponse(client, &response);
@@ -73,8 +75,10 @@ void HttpServer::run() {
 HttpRequest HttpServer::readRequest(const int client) {
   // Read data into buffer.
   char buffer[MAX_REQUEST_LENGTH_];
-  read(client, buffer, MAX_REQUEST_LENGTH_);
+  int requestLength = read(client, buffer, MAX_REQUEST_LENGTH_);
+  buffer[requestLength] = '\0';
 
+  printf("%s\n", buffer);
   return HttpRequest(buffer);
 }
 
@@ -101,6 +105,7 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
 }
 
 void HttpServer::sendResponse(const int client, HttpResponse* response) {
+  printf("response:%s\n", response->getHeaderString().c_str());
   // Send header.
   send(client, response->getHeaderString().c_str(), response->getHeaderLength(), 0);
   // Send body.
@@ -329,18 +334,18 @@ void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
     return;
   }
 
-  HttpResponse response(200);
-  response.setContentTypeByFileExt(request->path().substr(request->path().find_last_of(".")))
-    .setBody(&resourceFile)
-    .compile();
+    HttpResponse response(200);
+    response.setContentTypeByFileExt(request->path().substr(request->path().find_last_of(".")))
+      .setBody(&resourceFile)
+      .compile();
 
-  sendResponse(client, &response);
+    sendResponse(client, &response);
 
   return;
 }
 
 bool HttpServer::sanitize(std::string directory) {
-  if (directory == "/board.html") return true;
+  if (directory == "/index.html") return true;
 
   // check if the directory is under /gomoku/src/
   std::string allowedRoot("/gomoku/src/");

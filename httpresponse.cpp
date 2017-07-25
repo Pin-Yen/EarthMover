@@ -2,6 +2,7 @@
 
 
 HttpResponse::HttpResponse(int httpResponseCode) {
+  state_ = STATE_RAW_;
   statusCode_ = httpResponseCode;
   binBody_ = NULL;
   isBin_ = false;
@@ -87,7 +88,7 @@ HttpResponse& HttpResponse::compile() {
 
   // status line
   header_ += "HTTP/1.1 ";
-  header_ += statusCode_;
+  header_ += std::to_string(statusCode_);
   header_ += " ";
   header_ += HttpResponse::status2String(statusCode_);
   header_ += "\r\n";
