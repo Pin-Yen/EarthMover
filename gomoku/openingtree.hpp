@@ -11,7 +11,7 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
   // initialize opening tree
   static void init();
 
-  static int classify(VirtualBoardGomoku::Point* point[LENGTH]);
+  static int classify(VirtualBoardGomoku::Point point[LENGTH]);
 
  private:
   struct Node {
@@ -175,7 +175,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::insert(char table
 // classify method please refer to insert
 template <int StatusLength>
 int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
-    VirtualBoardGomoku<StatusLength>::Point* point[LENGTH]) {
+    VirtualBoardGomoku<StatusLength>::Point point[LENGTH]) {
   Node* currentNode = root;
 
   int oriRow = 0, oriCol = 0;
@@ -183,7 +183,7 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
   // set the origin in the lower right corner, find the left and top
   for (int r = 0, i = 0; r < DIMEN; ++r)
     for (int c = 0; c < DIMEN; ++c, ++i)
-      if (point[i]->status() == BLACK || point[i]->status() == WHITE) {
+      if (point[i].status() == BLACK || point[i].status() == WHITE) {
         if (r < top)
           top = r;
         if (c < left)
@@ -200,8 +200,8 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
 
   while (true) {
     int curIndex = curRow * DIMEN + curCol;
-    if (point[curIndex]->status() == BLACK || point[curIndex]->status() == WHITE) {
-      STATUS color = point[curIndex]->status();
+    if (point[curIndex].status() == BLACK || point[curIndex].status() == WHITE) {
+      STATUS color = point[curIndex].status();
       if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return -1;
 
       currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];

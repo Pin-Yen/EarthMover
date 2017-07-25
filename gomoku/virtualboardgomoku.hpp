@@ -52,7 +52,7 @@ class VirtualBoardGomoku : public VirtualBoard {
   void pass() { ++playNo_; }
 
   // point array
-  Point* point_[LENGTH];
+  Point point_[LENGTH];
 
   // the total number of plays
   int playNo_;
@@ -78,7 +78,7 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(
 
   // copy point
   for (int i = 0; i < LENGTH; ++i)
-    point_[i] = new Point(*(source.point_[i]));
+    point_[i] = Point(source.point_[i]);
 
   // index: 0→ 1↓ 2↗ 3↘
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -96,9 +96,9 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(
           if (checkRow < 0 || checkRow >= DIMEN ||
               checkCol < 0 || checkCol >= DIMEN)
             // if out of bound, set pointer to NULL
-            point_[i]->setDirStatus(d, index, NULL);
+            point_[i].setDirStatus(d, index, NULL);
           else
-            point_[i]->setDirStatus(d, index, point_[checkRow * DIMEN + checkCol]->statusRef());
+            point_[i].setDirStatus(d, index, point_[checkRow * DIMEN + checkCol].statusRef());
 
           ++index;
         }
@@ -115,9 +115,9 @@ template <class Eva>
 void VirtualBoardGomoku<StatusLength>::init() {
   isInit_ = true;
 
-  // initialize point array
+  /*
   for (int i = 0; i < LENGTH; ++i)
-    point_[i] = new Point();
+    point_[i] = Point();*/
 
   // index: 0→ 1↓ 2↗ 3↘
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -135,9 +135,9 @@ void VirtualBoardGomoku<StatusLength>::init() {
           if (checkRow < 0 || checkRow >= DIMEN ||
               checkCol < 0 || checkCol >= DIMEN)
             // if out of bound, set pointer to NULL
-            point_[i]->setDirStatus(d, index, NULL);
+            point_[i].setDirStatus(d, index, NULL);
           else
-            point_[i]->setDirStatus(d, index, point_[checkRow * DIMEN + checkCol]->statusRef());
+            point_[i].setDirStatus(d, index, point_[checkRow * DIMEN + checkCol].statusRef());
 
           ++index;
         }
@@ -149,11 +149,11 @@ void VirtualBoardGomoku<StatusLength>::init() {
     for (int d = 0; d < 4; ++d) {
         // get status array
       STATUS status[StatusLength];
-      point_[i]->getDirStatus(d, status);
+      point_[i].getDirStatus(d, status);
 
-      point_[i]->type(d) = Eva::evaluateType(status);
+      point_[i].type(d) = Eva::evaluateType(status);
     }
-    Eva::evaluateScore(point_[i]->type(), point_[i]->absScore());
+    Eva::evaluateScore(point_[i].type(), point_[i].absScore());
   }
   Eva::evaluateRelativeScore(point_, playNo_);
 
@@ -164,11 +164,6 @@ void VirtualBoardGomoku<StatusLength>::init() {
 
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
-  if (!isInit_) return;
-
-  for (int i = 0; i < LENGTH; ++i)
-    delete point_[i];
-
   #ifdef DEBUG
   ObjectCounter::unregisterVB();
   #endif
@@ -176,7 +171,7 @@ VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
 
 template <int StatusLength>
 int VirtualBoardGomoku<StatusLength>::getScore(int index) const {
-  return point_[index]->score();
+  return point_[index].score();
 }
 
 template <int StatusLength>
@@ -185,7 +180,7 @@ int VirtualBoardGomoku<StatusLength>::getScoreSum() const {
   int score;
   for (int i = 0; i < LENGTH; ++i)
     // only add the score if it was positive
-    if ((score = point_[i]->score()) > 0)
+    if ((score = point_[i].score()) > 0)
       sum += score;
 
   return sum;
@@ -197,9 +192,9 @@ int VirtualBoardGomoku<StatusLength>::getHSI() const {
   int max = 0, same = 0, index = -1;
 
   for (int i = 0; i < LENGTH; ++i) {
-    if (point_[i]->status() != EMPTY) continue;
+    if (point_[i].status() != EMPTY) continue;
 
-    int score = point_[i]->score();
+    int score = point_[i].score();
 
     if (score > max) {
       same = 1;
@@ -227,7 +222,7 @@ int VirtualBoardGomoku<StatusLength>::getHSI(bool ignoreIndex[]) const {
   for (int i = 0; i < LENGTH; ++i) {
     if (ignoreIndex[i]) continue;
 
-    int score = point_[i]->score();
+    int score = point_[i].score();
 
     if (score > max) {
       max = score;
@@ -243,17 +238,17 @@ int VirtualBoardGomoku<StatusLength>::getHSI(bool ignoreIndex[]) const {
 template <int StatusLength>
 template <class Eva>
 int VirtualBoardGomoku<StatusLength>::play(int index) {
-  int winOrLose = Eva::checkWinOrLose(point_[index]->absScore(playNo_ & 1));
+  int winOrLose = Eva::checkWinOrLose(point_[index].absScore(playNo_ & 1));
   if (winOrLose != 0) return winOrLose;
 
   ++playNo_;
 
   STATUS color = ((playNo_ & 1) ? BLACK : WHITE);
 
-  point_[index]->setStatus(color);
+  point_[index].setStatus(color);
 
   // set score to -1
-  point_[index]->setAbsScore(-1, -1);
+  point_[index].setAbsScore(-1, -1);
 
   // index: 0→ 1↓ 2↗ 3↘
   const int dir[4][2] = {{0, 1}, {1, 0}, {-1, 1}, {1, 1}};
@@ -274,8 +269,8 @@ int VirtualBoardGomoku<StatusLength>::play(int index) {
         const int checkIndex = checkRow * DIMEN + checkCol;
 
         // check if block
-        if (point_[checkIndex]->status() != EMPTY) {
-          block[point_[checkIndex]->status()] = true;
+        if (point_[checkIndex].status() != EMPTY) {
+          block[point_[checkIndex].status()] = true;
 
           if (block[0] & block[1]) break;
 
@@ -284,12 +279,12 @@ int VirtualBoardGomoku<StatusLength>::play(int index) {
 
         // get status array
         STATUS status[StatusLength];
-        point_[checkIndex]->getDirStatus(d, status);
+        point_[checkIndex].getDirStatus(d, status);
 
-        point_[checkIndex]->type(d) = Eva::evaluateType(status);
+        point_[checkIndex].type(d) = Eva::evaluateType(status);
 
-        Eva::evaluateScore(point_[checkIndex]->type(),
-                           point_[checkIndex]->absScore());
+        Eva::evaluateScore(point_[checkIndex].type(),
+                           point_[checkIndex].absScore());
       }
     }
 
@@ -306,16 +301,16 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
   // index == 225 means that previous move is pass
   if (index == DIMEN * DIMEN) return;
 
-  point_[index]->setStatus(EMPTY);
+  point_[index].setStatus(EMPTY);
 
   for (int d = 0; d < 4; ++d) {
     // get status array
     STATUS status[StatusLength];
-    point_[index]->getDirStatus(d, status);
+    point_[index].getDirStatus(d, status);
 
-    point_[index]->type(d) = Eva::evaluateType(status);
+    point_[index].type(d) = Eva::evaluateType(status);
 
-    Eva::evaluateScore(point_[index]->type(), point_[index]->absScore());
+    Eva::evaluateScore(point_[index].type(), point_[index].absScore());
   }
 
   // index: 0→ 1↓ 2↗ 3↘
@@ -337,8 +332,8 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
         const int checkIndex = checkRow * DIMEN + checkCol;
 
         // check if block
-        if (point_[checkIndex]->status() != EMPTY) {
-          block[point_[checkIndex]->status()] = true;
+        if (point_[checkIndex].status() != EMPTY) {
+          block[point_[checkIndex].status()] = true;
 
           if (block[0] & block[1]) break;
 
@@ -347,12 +342,12 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
 
         // get status array
         STATUS status[StatusLength];
-        point_[checkIndex]->getDirStatus(d, status);
+        point_[checkIndex].getDirStatus(d, status);
 
-        point_[checkIndex]->type(d) = Eva::evaluateType(status);
+        point_[checkIndex].type(d) = Eva::evaluateType(status);
 
-        Eva::evaluateScore(point_[checkIndex]->type(),
-                           point_[checkIndex]->absScore());
+        Eva::evaluateScore(point_[checkIndex].type(),
+                           point_[checkIndex].absScore());
       }
     }
 
