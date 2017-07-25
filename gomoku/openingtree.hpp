@@ -1,7 +1,7 @@
 #ifndef OPENING_TREE_H
 #define OPENING_TREE_H
 
-#include "stdlib.h"
+#include <stdlib.h>
 #include <array>
 #include <vector>
 

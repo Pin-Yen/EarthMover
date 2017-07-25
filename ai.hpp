@@ -8,7 +8,6 @@
 
 class AI {
  public:
-
   // cycle: nubmer of MCTS cycles
   AI();
 

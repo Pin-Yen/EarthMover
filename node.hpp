@@ -1,6 +1,8 @@
 #ifndef GAME_TREE_NODE_H
 #define GAME_TREE_NODE_H
 
+#include <stdint.h>
+
 #include <map>
 
 class GameTree::Node {
@@ -9,7 +11,6 @@ class GameTree::Node {
   Node();
   // constructor for node (EXCEPT root node)
   Node(Node *parentNode, int index, int parentWinOrLose);
-
 
   // overload new and delete for memory pool
   // under normal circumstances, all nodes will all nodes will be deleted when restart the game
@@ -79,10 +80,10 @@ class GameTree::Node {
   // parent, child, next node
   Node *parent_, *child_, *next_;
 
-  int index_;
-
   // 0 = win, 1 = lose, 2 = total
   int playout_[3];
+
+  int16_t index_;
 
   // represent is current player winning or losing
   bool winning_, losing_;

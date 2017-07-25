@@ -32,7 +32,7 @@ GameTree::~GameTree() {
 }
 
 void GameTree::reset(VirtualBoard* board) {
-  const int MAX_NODE = 1000000;
+  const int MAX_NODE = 2000000;
   pool.free();
   pool.init(sizeof(Node) * MAX_NODE);
   root = new Node();
