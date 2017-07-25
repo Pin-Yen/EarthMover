@@ -27,8 +27,8 @@ class GameTree {
   void MCTS(int minCycle, int minMostTimesCycle);
 
   /* Monty Carlo Tree Search
-   * keep searching until reach the max cycle, or stop become true */
-  void MCTS(int maxCycle, const bool &stop);
+   * keep searching until reach the max cycle, or continueThinking becomes false */
+  void MCTS(int maxCycle, bool* continueThinking);
 
   /* get the child that has highest playout from current node */
   int MCTSResult() const;

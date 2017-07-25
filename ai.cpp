@@ -18,7 +18,6 @@ AI::~AI() {
 }
 
 int AI::think() {
-  stopBGThread();
 
   switch (level_) {
     case 0:
@@ -32,33 +31,17 @@ int AI::think() {
   return tree->MCTSResult();
 }
 
-int AI::play(int index, bool triggerBackgroundThread) {
-  // stop background thinking to avoid memory corruption.
-  stopBGThread();
-  int result = tree->play(index);
+int AI::play(int index) {
+  int winning = tree->play(index);
+   /* winning  whoTurn   winner
+   *    0                 -1
+   *    0                 -1
+   *   -1        0         1
+   *   -1        1         0
+   *    1        0         0
+   *    1        1         1 */
 
-  if (triggerBackgroundThread)
-    startBGThread();
-
-  return result;
-}
-
-void AI::startBGThread() {
-  stopBackgroundThread = false;
-  GameTree* treeRef = tree;
-
-  backgroundThread = new std::thread([treeRef](int maxCycle, bool &stop)
-                                     { treeRef->MCTS(maxCycle, stop); },
-                                     100000, std::ref(stopBackgroundThread));
-}
-
-void AI::stopBGThread() {
-  if (backgroundThread != NULL) {
-    stopBackgroundThread = true;
-    backgroundThread->join();
-    delete backgroundThread;
-    backgroundThread = NULL;
-  }
+  return winning == 0 ? -1 : ((winning == -1) ^ tree->getCurrentBoard()->whoTurn());
 }
 
 void AI::reset(int level, int rule) {
@@ -75,4 +58,8 @@ void AI::reset(int level, int rule) {
 
   tree->reset(vb);
   level_ = level;
+}
+
+void AI::thinkInBackground(bool* continueThinking) {
+  MCTS(MAX_BACKGROUND_CYCLE_, continueThinking);
 }

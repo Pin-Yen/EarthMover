@@ -1,3 +1,12 @@
+#ifndef HTTP_SERVER_
+#define HTTP_SERVER_
+
+#include "httprequest.hpp"
+#include "httpresponse.hpp"
+
+#include <string>
+#include <thread>
+#include <unordered_map>
 
 class HttpServer
 {
@@ -15,6 +24,9 @@ class HttpServer
 
   // Dispatch the HttpRequest to handlers.
   void dispatch(HttpRequest* request);
+
+  // Check if the resource request is legal. returns true if legal, otherwise false.
+  bool HttpServer::sanitize(std::string directory);
 
   // Sends an HTTP response back to the client.
   void sendResponse(const int client, HttpResponse *response);
@@ -35,7 +47,13 @@ class HttpServer
   // A list storing EarthMover instances.
   AI emList_[MAX_EM_INSTANCE_];
 
+  // Store threads. Each EM instance will only have at most 1 exclusive thread.
+  // Index is the EM instance's id.
+  std::thread threadList_[MAX_EM_INSTANCE_];
+
   // Controllers EMs' threads. `False` will stop the thread.
   bool emThreadController_[MAX_EM_INSTANCE_];
 
 };
+
+#endif
