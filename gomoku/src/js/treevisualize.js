@@ -143,7 +143,7 @@ D3.drawTree = function(treeData) {
     nodeEnter.append('circle')
         .attr('r', 0)
         .style("fill", function(d) {
-          return d.data.whiteTurn ? "#444" : "#ffe";
+          return d.data.whoTurn ? "#444" : "#ffe";
         })
         .style("stroke", function(d) {
           return gradient(d.data.winRate);
@@ -163,7 +163,7 @@ D3.drawTree = function(treeData) {
         .style("fill-opacity", 0);
 
     nodeEnter.append("line")
-        .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
+        .filter(function(d) { return d.data.winOrLose != 0; })
         .attr("x1", 0)
         .attr("x2", 0)
         .attr("y1", 0)
@@ -201,10 +201,10 @@ D3.drawTree = function(treeData) {
       var f = w + "px",
           dy = w * .33 + "px";
 
-      if (d.data.isWinning || d.data.isLosing) {
+      if (d.data.winOrLose != 0) {
         l = w * .44 + "px";
         nl = -w * .44 + "px";
-        s =  d.data.isWinning ? gradient(1) : gradient(0);
+        s = d.data.winOrLose == 1 ? gradient(1) : gradient(0);
       }
 
       var update = d3.select(this).transition(t);
@@ -330,7 +330,7 @@ D3.drawTree = function(treeData) {
         var data = {
           row: Math.floor(d.data.index / 15),
           col: Math.floor(d.data.index % 15),
-          color: d.data.whiteTurn ? 'black' : 'white'
+          color: d.data.whoTurn ? 'black' : 'white'
         }
         evolve.unshift(data);
         d = d.parent;

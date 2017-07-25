@@ -4,17 +4,13 @@
 #include "memorypool.hpp"
 #include "gametree.hpp"
 #include "node.hpp"
-#include  "lib/json.hpp"
+#include "lib/json.hpp"
 
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <tuple>
 #include <vector>
-
-#ifdef ANALYZE
-#include "log.hpp"
-#endif
 
 using json = nlohmann::json;
 
@@ -99,16 +95,14 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
       if (child->totalPlayout() > mostTimes)
           mostTimes = child->totalPlayout();
     }
-
   } while (mostTimes < minMostTimesCycle);
-
 }
 
 void GameTree::MCTS(int maxCycle, const bool &stop) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
-    if (currentNode->winning() || currentNode->losing()) return;
+    if (!currentNode->noWinOrLose()) return;
 
     VirtualBoard* board = currentBoard->clone();
 
@@ -162,8 +156,7 @@ int GameTree::MCTSResult() const {
             << "  best: " << (char)(index % 15 + 65) << index / 15 + 1
             << "  sim: " << child->totalPlayout()
             << "  WinR: " << child->winRate()
-            << "  W: " << currentNode->winning()
-            << "  L: " << currentNode->losing()
+            << "  W/L: " << currentNode->winOrLose()
             << std::endl;
 
   return index;
@@ -270,24 +263,23 @@ std::string GameTree::getTreeJSON() {
   return getSubTreeJSON(currentNode, currentBoard->whoTurn()).dump();
 }
 
-json GameTree::getSubTreeJSON(Node* node, bool whiteTurn) {
+json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
   json tree;
 
   tree["index"] = node->index();
 
   tree["totalCount"] = node->totalPlayout();
 
-  tree["winRate"] = whiteTurn ? node->winRate() : 1 - node->winRate();
-  tree["isWinning"] = whiteTurn ? node->winning() : node->losing();
-  tree["isLosing"] = whiteTurn ? node->losing() : node->winning();
+  tree["winRate"] = whoTurn ? node->winRate() : 1 - node->winRate();
+  tree["winOrLose"] = whoTurn ? node->winOrLose() : -node->winOrLose();
 
-  tree["whiteTurn"] = whiteTurn;
+  tree["whoTurn"] = whoTurn;
 
   tree["children"] = json::array();
 
   for (Node* child : *node) {
     if (child->totalPlayout() >= 8) {
-      tree["children"].push_back(getSubTreeJSON(child, !whiteTurn));
+      tree["children"].push_back(getSubTreeJSON(child, !whoTurn));
     }
   }
   return tree;

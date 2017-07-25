@@ -36,17 +36,19 @@ class GameTree::Node {
   }
 
   // getter
+  Node* parent() const { return parent_; }
   int totalPlayout() const { return playout_[2]; }
   int index() const { return index_; }
-  Node* parent() const { return parent_; }
-  bool winning() const { return winning_; }
-  bool losing() const { return losing_; }
+  int winOrLose() const { return winOrLose_; }
+  bool winning() const { return winOrLose_ > 0; }
+  bool losing() const { return winOrLose_ < 0; }
+  bool noWinOrLose() const { return winOrLose_ == 0; }
+
+  void setWinning() { winOrLose_ = 1; }
+  void setLosing() { winOrLose_ = -1; }
 
   // set all playout to 0
   void clearPlayout() { playout_[0] = 0; playout_[1] = 0; playout_[2] = 0; }
-
-  // set win/lose to false
-  void clearWinLose() { winning_ = false; losing_ = false; }
 
   // get child node with specify index
   Node* child(int index) const;
@@ -86,7 +88,8 @@ class GameTree::Node {
   int16_t index_;
 
   // represent is current player winning or losing
-  bool winning_, losing_;
+  // 1: winning, -1: losing, 0: nothing
+  int8_t winOrLose_;
 };
 
 #endif

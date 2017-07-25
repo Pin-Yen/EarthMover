@@ -11,44 +11,22 @@
 #include "objectcounter.hpp"
 #endif
 
-GameTree::Node::Node() {
-  index_ = -1;
-
+GameTree::Node::Node(): index_(-1), parent_(NULL), winOrLose_(0) {
   clearPlayout();
-  clearWinLose();
-
-  parent_ = NULL;
 }
 
-GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose) {
-  index_ = index;
+GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
+    : index_(index), parent_(parentNode), winOrLose_(-parentWinOrLose) {
 
   clearPlayout();
 
-  parent_ = parentNode;
-
-  // 1 for parent winning, -1 for parent losing
-  switch (parentWinOrLose) {
-    case 1:
-      winning_ = false;
-      losing_ = true;
-      break;
-    case -1:
-      winning_ = true;
-      losing_ = false;
-      break;
-    default:
-      clearWinLose();
-  }
-
   // if losing, set parent to winning
-  if (losing_)
-    parent_->winning_ = true;
+  if (losing()) parent_->setWinning();
 }
 
 int GameTree::Node::selection(int* index, VirtualBoard* board) {
-  if (winning_) return 1;
-  if (losing_) return 0;
+  if (winning()) return 1;
+  if (losing()) return 0;
 
   // current max value
   double max = -1;
@@ -65,7 +43,7 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
     checked[i] = true;
 
     // if child node is winning then DO NOT select this point
-    if (childNode->winning_) {
+    if (childNode->winning()) {
       childWinning = true;
       continue;
     }
@@ -99,8 +77,8 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   if (max == -1) {
     // if every child wins, mark this point as a losing point
     if (childWinning) {
-      losing_ = true;
-      parent_->winning_ = true;
+      setLosing();
+      parent_->setWinning();
 
       return 0;
     }
