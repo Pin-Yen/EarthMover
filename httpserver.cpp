@@ -67,6 +67,7 @@ void HttpServer::run() {
       // Parse request.
       HttpRequest request = readRequest(client);
       std::cerr << "request path: " << request.path() << std::flush;
+
       // Dispatch parsed request to handlers.
       dispatch(client, &request);
     } catch (HttpResponse::HttpResponseException& e) {
@@ -134,7 +135,7 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
 }
 
 void HttpServer::handlePlay(const int client, HttpRequest* request) {
-  int id = session2id_[request->cookie("session")];
+  int id = session2instance_.at(request->cookie("session"));
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
@@ -143,8 +144,9 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
   if (threadList_[id].joinable())
     threadList_[id].join();
 
+
   // Parse request body.
-  json body(request->body());
+  json body = json::parse(request->body());
 
   // Play and get winning status.
   int winning = emList_[id]->play(((int)body["row"]) * 15 + ((int)body["col"]));
@@ -165,7 +167,7 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleVisualize(const int client, HttpRequest* request) {
-  int id = session2id_[request->cookie("session")];
+  int id = session2instance_.at(request->cookie("session"));
 
   // Prepare response.
   HttpResponse response(200);
@@ -180,7 +182,7 @@ void HttpServer::handleVisualize(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleResign(const int client, HttpRequest* request) {
-  int id = session2id_[request->cookie("session")];
+  int id = session2instance_.at(request->cookie("session"));
 
   // Stop background thinking thread, if exists.
   emThreadController_[id] = false;
@@ -200,7 +202,7 @@ void HttpServer::handleResign(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handlePass(const int client, HttpRequest* request) {
-  int id = session2id_[request->cookie("session")];
+  int id = session2instance_.at(request->cookie("session"));
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
@@ -220,7 +222,7 @@ void HttpServer::handlePass(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleUndo(const int client, HttpRequest* request) {
-  int id = session2id_[request->cookie("session")];
+  int id = session2instance_.at(request->cookie("session"));
 
   // Parse request body.
   json body = json::parse(request->body());
@@ -239,9 +241,18 @@ void HttpServer::handleUndo(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleThink(const int client, HttpRequest* request) {
-  int id = session2id_[request->cookie("session")];
+  int id = session2instance_.at(request->cookie("session"));
+
   AI* em = emList_[id];
   bool* controller = &(emThreadController_[id]);
+
+  // Stop previous background thinking threads, if exists
+  if (threadList_[id].joinable()) {
+    *controller = false;
+    threadList_[id].join();
+  }
+
+  *controller = true;
 
   // Spin off the thinking process to a new thread, so that the server (main) thread wont be blocked.
   threadList_[id] = std::thread([this, em, controller, client, request]() {
@@ -290,22 +301,25 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   int instanceId = -1;
 
   try {
-    instanceId = session2id_.at("session");
-  } catch (std::out_of_range e){
+    instanceId = session2instance_.at(sessionId);
+  } catch (std::out_of_range& e){
     // Generate new cookie.
     sessionId = sessionIdGenerator();
+
     // Create new em instance.
     for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
       if (emList_[i] == NULL) {
         emList_[i] = new AI();
         instanceId = i;
+        break;
       }
     }
 
     // Map sessionId to instance id if successfully created instance.
     // Else return 503
-    if (instanceId != -1)
-      session2id_.insert({sessionId, instanceId});
+    if (instanceId != -1) {
+      session2instance_.insert({sessionId, instanceId});
+    }
     else {
       HttpResponse response(503);
       response.compile();
@@ -321,7 +335,7 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
 
   // Reset EM.
   json body = json::parse(request->body());
-  emList_[instanceId]->reset(body["level"], body["rule"]);
+  emList_[instanceId]->reset((int)body["level"], (int)body["rule"]);
 
   // Response
   HttpResponse response(204);

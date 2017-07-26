@@ -58,7 +58,7 @@ class HttpServer
   static const int MAX_REQUEST_LENGTH_ = 1500;
 
   // session to id (session is the string of the http cookie, id is for indexing purposes)
-  std::unordered_map<std::string, int> session2id_;
+  std::unordered_map<std::string, int> session2instance_;
 
   // A list storing EarthMover instances.
   AI* emList_[MAX_EM_INSTANCE_];

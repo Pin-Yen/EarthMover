@@ -12,13 +12,15 @@ HttpRequest::HttpRequest(const char* rawRequest) {
     path_ = "/index.html";
 
   // Parse cookies.
-  int cookieTagStart = request.find("Cookie ");
+  int cookieTagStart = request.find("Cookie: ");
   if (cookieTagStart != std::string::npos) {
-    int cookieStart = cookieTagStart + 7;
+    int cookieStart = cookieTagStart + 8;
     int cookieListEnd = request.find("\r\n", cookieStart);
     while (cookieStart < cookieListEnd) {
       int cookieMiddle = request.find("=", cookieStart);
       int cookieEnd = request.find(";", cookieMiddle);
+      if (cookieEnd == std::string::npos)
+        cookieEnd = cookieListEnd;
       cookieJar_.insert({request.substr(cookieStart, cookieMiddle - cookieStart),
         request.substr(cookieMiddle + 1, cookieEnd - cookieMiddle - 1)});
       cookieStart = cookieEnd + 2; // plus the '; ' at the end of a cookie.
@@ -31,5 +33,13 @@ HttpRequest::HttpRequest(const char* rawRequest) {
   if (blankLinePos != std::string::npos) {
     int bodyStart = blankLinePos + 4;
     body_ = request.substr(bodyStart);
+  }
+}
+
+std::string HttpRequest::cookie(std::string flavor) {
+  try{
+    return cookieJar_.at(flavor);
+  } catch(std::out_of_range& e) {
+    return std::string("");
   }
 }

@@ -18,14 +18,15 @@ AI::~AI() {
 }
 
 int AI::think() {
-
   switch (level_) {
     case 0:
       tree->MCTS(2000); break;
     case 1:
       tree->MCTS(2000, 1000); break;
     case 2:
-      tree->MCTS(2000, 2000);
+      tree->MCTS(2000, 2000); break;
+    default:
+      assert(false);
   }
 
   return tree->MCTSResult();

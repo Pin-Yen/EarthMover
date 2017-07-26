@@ -17,7 +17,7 @@ class HttpRequest
 
   // Returns the cookie value. flavor: the cookie's name.
   // Returns empty string if not exists.
-  std::string cookie(std::string flavor) { return cookieJar_[flavor]; }
+  std::string cookie(std::string flavor);
 
   std::string body() { return body_; }
 

@@ -48,6 +48,7 @@ void GameTree::MCTS(int maxCycle) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
+
     if (currentNode->winning() || currentNode->losing()) return;
 
     VirtualBoard* board = currentBoard->clone();
@@ -107,7 +108,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
 void GameTree::MCTS(int maxCycle, bool* continueThinking) {
   Node* node;
 
-  for (int cycle = 0; cycle < maxCycle && continueThinking; ++cycle) {
+  for (int cycle = 0; cycle < maxCycle && *continueThinking; ++cycle) {
     if (currentNode->winning() || currentNode->losing()) return;
 
     VirtualBoard* board = currentBoard->clone();
@@ -249,7 +250,6 @@ int GameTree::play(int index) {
   if (child == NULL)
     child = currentNode->newChild(index, whoWin);
 
-  assert(child != NULL);
   currentNode = child;
 
   return whoWin;
