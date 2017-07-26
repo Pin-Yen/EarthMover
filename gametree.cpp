@@ -239,7 +239,7 @@ int GameTree::play(int index) {
     child = currentNode_->newChild(index, whoWin);
 
   // delete other children except the child that going to play
-  currentNode->deleteChildrenExcept(child);
+  currentNode_->deleteChildrenExcept(child);
 
   currentNode_ = child;
 
