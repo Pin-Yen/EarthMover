@@ -13,10 +13,8 @@ class GameTree::Node {
   Node(Node *parentNode, int index, int parentWinOrLose);
 
   // overload new and delete for memory pool
-  // under normal circumstances, all nodes will all nodes will be deleted when restart the game
-  // so the action of release memory will be processed in memory pool
   static void *operator new(size_t size) { return pool.allocate(size); }
-  static void operator delete(void *ptr, size_t size) { }
+  static void operator delete(void *ptr, size_t size) { pool.deallocate(ptr, size); }
 
   // update when tie
   void update() { ++playout_[2]; }
@@ -34,6 +32,9 @@ class GameTree::Node {
   double winRate() const {
     return ((playout_[0] + (playout_[2] - playout_[0] - playout_[1]) / 2.0) / (double)playout_[2]);
   }
+
+  void deleteChildren();
+  void deleteChildrenExcept(Node* exceptNode);
 
   // getter
   Node* parent() const { return parent_; }

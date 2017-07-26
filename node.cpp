@@ -11,16 +11,49 @@
 #include "objectcounter.hpp"
 #endif
 
-GameTree::Node::Node() : index_(-1), parent_(NULL), winOrLose_(0), playout_{0} {}
+GameTree::Node::Node() : index_(-1), parent_(NULL), child_(NULL), next_(NULL),
+                         winOrLose_(0), playout_{0} {}
 
 GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
     : index_(index),
       parent_(parentNode),
+      child_(NULL),
+      next_(NULL),
       winOrLose_(-parentWinOrLose),
       playout_{0} {
 
   // if losing, set parent to winning
   if (losing()) parent_->setWinning();
+}
+
+void GameTree::Node::deleteChildren() {
+  Node *child = child_, *next;
+
+  while (child != NULL) {
+    next = child->next_;
+    child->deleteChildren();
+    delete child;
+    child = next;
+  }
+
+  child_ = NULL;
+}
+
+void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
+  Node *child = child_, *next;
+
+  while (child != NULL) {
+    if (child == exceptNode) {
+      child = child->next_;
+    } else {
+      next = child->next_;
+      child->deleteChildren();
+      delete child;
+      child = next;
+    }
+  }
+
+  child_ = exceptNode;
 }
 
 int GameTree::Node::selection(int* index, VirtualBoard* board) {

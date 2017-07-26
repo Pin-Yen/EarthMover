@@ -30,7 +30,7 @@ GameTree::~GameTree() {
 void GameTree::reset(VirtualBoard* board) {
   const int MAX_NODE = 2000000;
   pool.free();
-  pool.init(sizeof(Node) * MAX_NODE);
+  pool.init(sizeof(Node), MAX_NODE);
   root = new Node();
 
   currentNode = root;
@@ -235,6 +235,8 @@ int GameTree::play(int index) {
   if (child == NULL)
     child = currentNode->newChild(index, whoWin);
 
+  currentNode->deleteChildrenExcept(child);
+
   currentNode = child;
 
   return whoWin;
@@ -248,12 +250,15 @@ void GameTree::pass() {
   if (child == NULL)
     child = currentNode->newChild(CHILD_LENGTH, 0);
 
+  currentNode->deleteChildrenExcept(child);
+
   currentNode = child;
 }
 
 void GameTree::undo() {
   currentBoard->undo(currentNode->index());
   currentNode = currentNode->parent();
+  currentNode->deleteChildren();
 }
 
 std::string GameTree::getTreeJSON() {

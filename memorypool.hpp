@@ -8,9 +8,16 @@ class MemoryPool {
   MemoryPool() { pool_ = NULL; };
   ~MemoryPool() { free(); };
 
-  void init(size_t size);
+  // initialize pool
+  // size: each block's size
+  // blocks: amounts of block
+  void init(size_t size, int blocks);
 
-  void *allocate(size_t n);
+  // allocate memory from pool, size was already know in init
+  void *allocate(size_t /*size*/);
+
+  // deallocate memory to pool, size was already know in init
+  void deallocate(void *ptr, size_t /*size*/);
 
   void free();
 
