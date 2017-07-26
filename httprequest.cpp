@@ -13,17 +13,17 @@ HttpRequest::HttpRequest(const char* rawRequest) {
 
   // Parse cookies.
   int cookieTagStart = request.find("Cookie ");
-  if (cookieTagStart <)
-  if (request.find(Cookie) < )
-  int cookieStart = request.find("Cookie ") + 7;
-  int cookieListEnd = request.find("\r\n", cookieStart);
-  while (cookieStart < cookieListEnd) {
-    int cookieMiddle = request.find("=", cookieStart);
-    int cookieEnd = request.find(";", cookieMiddle);
-    cookieJar_.insert({request.substr(cookieStart, cookieMiddle - cookieStart),
-      request.substr(cookieMiddle + 1, cookieEnd - cookieMiddle - 1)});
+  if (cookieTagStart != std::string::npos) {
+    int cookieStart = cookieTagStart + 7;
+    int cookieListEnd = request.find("\r\n", cookieStart);
+    while (cookieStart < cookieListEnd) {
+      int cookieMiddle = request.find("=", cookieStart);
+      int cookieEnd = request.find(";", cookieMiddle);
+      cookieJar_.insert({request.substr(cookieStart, cookieMiddle - cookieStart),
+        request.substr(cookieMiddle + 1, cookieEnd - cookieMiddle - 1)});
+      cookieStart = cookieEnd + 2; // plus the '; ' at the end of a cookie.
+    }
 
-    cookieStart = cookieEnd + 2; // plus the '; ' at the end of a cookie.
   }
 
   // Extract Body.

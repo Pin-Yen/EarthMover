@@ -59,7 +59,6 @@ void HttpServer::run() {
   while(true) {
     // Accepts a new connection.
     int client = accept(socketDescriptor, (struct sockaddr*)&serverAddress, &size);
-    std::cerr << "Accepted " << std::flush;
     if (client < 0)
       std::cerr << "failed to accept\n";
 
@@ -85,8 +84,6 @@ HttpRequest HttpServer::readRequest(const int client) {
   char buffer[MAX_REQUEST_LENGTH_ + 10];
   int totalBytesRead = recv(client, buffer, MAX_REQUEST_LENGTH_, 0);
   buffer[totalBytesRead] = '\0';
-  std::cerr <<" bytes read: " << totalBytesRead << " " << std::flush;
-  std::cout << buffer;
 
   return HttpRequest(buffer);
 }
@@ -119,7 +116,7 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
   // Send body.
   send(client, response->getBody(), response->getBodyLength(), 0);
 
-  // Wait for client's FIN
+  // Wait for client's FIN signal.
   char *useless[10];
   assert(recv(client, useless, 10, 0) == 0);
   assert(close(client) == 0);
