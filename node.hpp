@@ -15,7 +15,7 @@ class GameTree::Node {
   // overload new and delete for memory pool
   // under normal circumstances, all nodes will all nodes will be deleted when restart the game
   // so the action of release memory will be processed in memory pool
-  static void *operator new(size_t size) { return pool.allocate(size); }
+  static void *operator new(size_t size) { return pool_.allocate(size); }
   static void operator delete(void *ptr, size_t size) { }
 
   // update when tie
@@ -42,7 +42,7 @@ class GameTree::Node {
   int winOrLose() const { return winOrLose_; }
   bool winning() const { return winOrLose_ > 0; }
   bool losing() const { return winOrLose_ < 0; }
-  bool noWinOrLose() const { return winOrLose_ == 0; }
+  bool notWinOrLose() const { return winOrLose_ == 0; }
 
   void setWinning() { winOrLose_ = 1; }
   void setLosing() { winOrLose_ = -1; }
