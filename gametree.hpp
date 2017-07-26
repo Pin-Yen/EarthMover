@@ -9,8 +9,6 @@
 
 class GameTree {
  public:
-  static const int CHILD_LENGTH = 225;
-
   GameTree();
   ~GameTree();
 
@@ -46,10 +44,10 @@ class GameTree {
   // Returns the whole tree in JSON format
   std::string getTreeJSON();
 
-  // debugger
-  VirtualBoard* getCurrentBoard() { return currentBoard; }
+  // getter
+  VirtualBoard* getCurrentBoard() { return currentBoard_; }
+
  private:
-  // nested class
   class Node;
 
   // MCTS function
@@ -69,15 +67,13 @@ class GameTree {
   void backProp(Node* node);
 
   // returns the part of the tree below 'node' in JSON format
-  // position: the index of 'node' in its parents child array
-  // whiteTurn : indicates whether the node is white turn
-  nlohmann::json getSubTreeJSON(Node *node, bool whiteTurn);
+  nlohmann::json getSubTreeJSON(Node *node, bool whoTurn);
 
-  Node *root, *currentNode;
+  Node *root_, *currentNode_;
 
-  VirtualBoard* currentBoard;
+  VirtualBoard* currentBoard_;
 
-  static MemoryPool pool;
+  static MemoryPool pool_;
 };
 
 #endif

@@ -13,8 +13,8 @@ class GameTree::Node {
   Node(Node *parentNode, int index, int parentWinOrLose);
 
   // overload new and delete operator for memory pool
-  static void *operator new(size_t size) { return pool.allocate(size); }
-  static void operator delete(void *ptr, size_t size) { pool.deallocate(ptr, size); }
+  static void *operator new(size_t size) { return pool_.allocate(size); }
+  static void operator delete(void *ptr, size_t size) { pool_.deallocate(ptr, size); }
 
   // update when tie
   void update() { ++playout_[2]; }
@@ -44,7 +44,7 @@ class GameTree::Node {
   int winOrLose() const { return winOrLose_; }
   bool winning() const { return winOrLose_ > 0; }
   bool losing() const { return winOrLose_ < 0; }
-  bool noWinOrLose() const { return winOrLose_ == 0; }
+  bool notWinOrLose() const { return winOrLose_ == 0; }
 
   void setWinning() { winOrLose_ = 1; }
   void setLosing() { winOrLose_ = -1; }

@@ -30,7 +30,8 @@ class VirtualBoard {
   virtual int play(int index) = 0;
 
   // pass
-  virtual void pass() = 0;
+  // return -1 if not allow pass, other for the index of the pass
+  virtual int pass() = 0;
 
   // remove chess at "index"
   virtual void undo(int index) = 0;

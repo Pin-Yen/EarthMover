@@ -6,8 +6,6 @@
 template <int StatusLength>
 class VirtualBoardGomoku : public VirtualBoard {
  public:
-  static const int DIMEN = 15, LENGTH = 225;
-
   VirtualBoardGomoku() {}
   // copy constructor
   VirtualBoardGomoku(const VirtualBoardGomoku& source);
@@ -32,6 +30,8 @@ class VirtualBoardGomoku : public VirtualBoard {
  private:
   class Point;
 
+  static const int DIMEN = 15, LENGTH = 225;
+
   // get score at "index"
   inline int getScore(int index) const final;
 
@@ -49,7 +49,8 @@ class VirtualBoardGomoku : public VirtualBoard {
   bool whoTurn() const final { return (playNo_ & 1); }
 
   // pass
-  void pass() { ++playNo_; }
+  // return the index of pass
+  int pass() { ++playNo_; return LENGTH; }
 
   // point array
   Point point_[LENGTH];

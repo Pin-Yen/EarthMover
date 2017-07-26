@@ -73,7 +73,7 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   int scoreSum = board->getScoreSum();
 
   // checked index
-  bool checked[CHILD_LENGTH] = {0};
+  bool checked[225] = {0};
 
   for (Node* childNode : *this) {
     int i = childNode->index();
