@@ -13,46 +13,43 @@ class AI {
 
   ~AI();
 
-  // think of a play, and return it.
+  // Think of a play, and return the index (row * 15 + col), -1 for pass.
   int think();
 
-  // plays a new point
-  // return value: 1: self-winning, -1: opp-winning, 0 no winning
-  // triggerBackgroundThread: true: start bg thread
-  int play(int index, bool triggerBackgroundThread);
+  // Plays a chess. Return value indicates winner after this move,
+  //  -1 => no one,  0 => black, 1 => white.
+  int play(int index);
 
   // resets AI for a new game
   void reset(int level, int rule);
 
   // undo "times" move
   void undo(int times) {
-    stopBGThread();
     for (int i = 0; i < times; ++i) tree->undo();
   }
 
   // opponent pass
-  void pass() { stopBGThread(); tree->pass(); }
+  void pass() {tree->pass(); }
 
   // opponent resign
-  void resign() { stopBGThread(); }
+  void resign() {}
 
   // returns false for black, true for white.
   bool whoTurn() {return tree->getCurrentBoard()->whoTurn(); }
 
   std::string getTreeJSON() { return tree->getTreeJSON(); }
 
+  // Thinks in background. Stops if `controller` changed to false by other threads.
+  void thinkInBackground(bool* controller);
+
  private:
   GameTree *tree;
 
   // this thread lets EM thinks in the background when it's the users turn
   std::thread *backgroundThread;
-  bool stopBackgroundThread;
 
-  // starts background thread
-  void startBGThread();
-
-  // stops background thread
-  void stopBGThread();
+  // The max mcts cycle to run in the background.
+  static const int MAX_BACKGROUND_CYCLE_ = 100000;
 
   // the ai's level
   int level_;

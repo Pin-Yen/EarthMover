@@ -99,10 +99,10 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
   } while (mostTimes < minMostTimesCycle);
 }
 
-void GameTree::MCTS(int maxCycle, const bool &stop) {
+void GameTree::MCTS(int maxCycle, bool* continueThinking) {
   Node* node;
 
-  for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
+  for (int cycle = 0; cycle < maxCycle && *continueThinking; ++cycle) {
     if (!currentNode_->notWinOrLose()) return;
 
     VirtualBoard* board = currentBoard_->clone();

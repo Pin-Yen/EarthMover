@@ -7,5 +7,5 @@ int main() {
 
   HttpServer server;
 
-  server.listenConnection();
+  server.run();
 }

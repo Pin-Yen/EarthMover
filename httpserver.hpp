@@ -1,122 +1,72 @@
-#ifndef HTTP_SERVER_H_
-#define HTTP_SERVER_H_
+#ifndef HTTP_SERVER_
+#define HTTP_SERVER_
 
 #include "ai.hpp"
+#include "httprequest.hpp"
+#include "httpresponse.hpp"
+
 #include <string>
-#include <fstream>
-#include <netinet/in.h> // sockaddr_in
+
+#include <thread>
+#include <unordered_map>
 
 class HttpServer {
  public:
-  // constructor
-  // initialize serverAddress and establishes socket connection
-  // set AI reference
   HttpServer();
 
   ~HttpServer();
 
-  // listens for client connection, and process the request
-  void listenConnection();
+  // starts the HttpServer. (Listens and accepts connections.)
+  void run();
+
+  // Specifies the port to listen.
+  static const int PORTS_[3];
+
+ protected:
+  // Read request from file discriptor `client` and returns a parsed HttpRequest object.
+  HttpRequest readRequest(const int client);
+
+  // Dispatch the HttpRequest to handlers.
+  void dispatch(const int client, HttpRequest* request);
+
+  // Check if the resource request is legal. returns true if legal, otherwise false.
+  bool sanitize(std::string directory);
+
+  // Sends an HTTP response back to the client.
+  void sendResponse(const int client, HttpResponse *response);
+
+  // Generates a random string.
+  std::string sessionIdGenerator();
 
  private:
-  const int PORT_NUMBER = 1202;
-  class HttpResponse;
+  void handlePlay(const int client, HttpRequest* request);
+  void handleVisualize(const int client, HttpRequest* request);
+  void handleResign(const int client, HttpRequest* request);
+  void handlePass(const int client, HttpRequest* request);
+  void handleUndo(const int client, HttpRequest* request);
+  void handleThink(const int client, HttpRequest* request);
+  void handleStart(const int client, HttpRequest* request);
+  void handleResourceRequest(const int client, HttpRequest* request);
 
-  int client, server;
-  struct sockaddr_in serverAddress;
+  // The limit of pending connections in the queue.
+  static const int MAX_CONNECTION_QUEUE_ = 70;
+  // The limit of EM instances.
+  static const int MAX_EM_INSTANCE_ = 3;
+  // Max characters to read in a single request
+  static const int MAX_REQUEST_LENGTH_ = 1500;
 
-  AI *earthMover;
+  // session to id (session is the string of the http cookie, id is for indexing purposes)
+  std::unordered_map<std::string, int> session2instance_;
 
-  bool isBlackAi, isWhiteAi;
+  // A list storing EarthMover instances.
+  AI* emList_[MAX_EM_INSTANCE_];
 
-  // Check if we should redirect the request uri.
-  void redirect(std::string *directory);
+  // Store threads. Each EM instance will only have at most 1 exclusive thread.
+  // Index is the EM instance's id.
+  std::thread threadList_[MAX_EM_INSTANCE_];
 
-  // Initializes a new game according to the settings specified in request.
-  // Clear data of previous game if exist.
-  void handleStart(std::string requestBody);
-
-  // Plays a point specified in request.
-  bool handlePlay(std::string requestBody);
-
-  // request AI think
-  bool handleThink();
-
-  // undo
-  void handleUndo(std::string requestBody);
-
-  // pass
-  void handlePass();
-
-  // opponent resign, stop background thread
-  void handleResign();
-
-  // returns JSON Monte-Carlo tree to client
-  void handleVisualize();
-
-  // response a resource specified by "directory" to client, or some http error.
-  void handleResourceRequest(std::string requestBody, std::string directory);
-
-  // extracts directory from request
-  std::string parseRequestDirectory(std::string request);
-
-  // extracts body from request
-  std::string parseRequestBody(std::string request);
-
-  // Returns a error message to client
-  // errorCode: http error code
-  void responseHttpError(int errorCode, const char* message);
-
-  // checks if the requested uri is permitted
-  // returns false if not permitted
-  bool sanitize(std::string uri);
-
-  // given json data, find the value of 'attr' attribute and return string representation of the value
-  std::string findAttributeInJson(std::string json, const char* rawAttr);
-};
-
-class HttpServer::HttpResponse {
- public:
-  // creates a httpResponse with statusCode = httpResponseCode
-  HttpResponse(int httpResponseCode);
-
-  ~HttpResponse();
-
-  // set content-type header according to fileExtension
-  void setContentTypeByFileExt(std::string fileExtension);
-
-  // explicitly set content type
-  HttpResponse& setContentType(const char* type);
-
-  // Add JSON {attribute:value} to response body, returns *this for chainning
-  HttpResponse& addJson(std::string attribute, int value);
-
-  HttpResponse& addJson(std::string attribute, const char* value);
-
-  // sets the response body
-  void setBody(std::ifstream *file);
-
-  void setBody(std::string body);
-
-  std::string getHeaderString();
-
-  int getHeaderLength() { return headerLength; }
-
-  const char* getBody();
-
-  int getBodyLength();
-
- private:
-  int statusCode;
-  std::string contentType;
-  std::string contentLength;
-  char *binBody;
-  std::string body;
-  bool isBin;
-  int bodyLength;
-  int headerLength;
-
-  std::string status;
+  // Controllers EMs' threads. `False` will stop the thread.
+  bool emThreadController_[MAX_EM_INSTANCE_];
 };
 
 #endif

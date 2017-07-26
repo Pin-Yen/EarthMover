@@ -3,7 +3,7 @@ objects = obj/displayboard.o obj/evaluatorfreestyle.o obj/evaluatorrenjubasic.o\
 			obj/typetreefreestyle.o obj/typetreerenjubasic.o obj/gametree.o\
 			obj/node.o obj/memorypool.o
 
-objects_network = obj/ai.o obj/httpserver.o obj/networkmain.o
+objects_network = obj/ai.o obj/httpserver.o obj/httprequest.o obj/httpresponse.o obj/networkmain.o
 objects_local = obj/main.o
 
 # General compile options (e.g. Those that should be used in every compilation) should be placed here.
@@ -144,8 +144,14 @@ obj/ai.o: ai.cpp ai.hpp gomoku/displayboard.hpp gametree.hpp virtualboard.hpp \
  gomoku/renju_basic/../typetree.hpp const.hpp
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread $< -o $@
 
-obj/httpserver.o: httpserver.cpp ai.hpp gomoku/displayboard.hpp gametree.hpp \
- virtualboard.hpp const.hpp httpserver.hpp
+obj/httpserver.o: httpserver.cpp httpserver.hpp httprequest.hpp \
+ httpresponse.hpp lib/json.hpp
+	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
+
+obj/httpresponse.o: httpresponse.cpp httpresponse.hpp
+	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
+
+obj/httprequest.o: httprequest.cpp httprequest.hpp
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/networkmain.o: networkmain.cpp httpserver.hpp ai.hpp \
