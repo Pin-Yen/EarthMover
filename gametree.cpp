@@ -249,6 +249,7 @@ int GameTree::play(int index) {
   if (child == NULL)
     child = currentNode->newChild(index, whoWin);
 
+  assert(child != NULL);
   currentNode = child;
 
   return whoWin;

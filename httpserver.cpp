@@ -2,6 +2,7 @@
 
 #include "lib/json.hpp"
 
+#include <assert.h>
 #include <arpa/inet.h>
 #include <cstdlib>
 #include <exception>
@@ -65,13 +66,18 @@ void HttpServer::run() {
     try {
       // Parse request.
       HttpRequest request = readRequest(client);
-      std::cerr << "request path: " << request.path() << " => " << std::flush;
+      std::cerr << "request path: " << request.path() << std::flush;
       // Dispatch parsed request to handlers.
       dispatch(client, &request);
     } catch (HttpResponse::HttpResponseException& e) {
       // Return bad request.
       // Just blame the client whatever the problem is XD.
       std::cerr << e.what() << "\n";
+      HttpResponse response(400);
+      response.compile();
+      sendResponse(client, &response);
+    } catch (HttpRequest::BadRequestException& e) {
+      std::cerr << e.what();
       HttpResponse response(400);
       response.compile();
       sendResponse(client, &response);
@@ -83,7 +89,10 @@ HttpRequest HttpServer::readRequest(const int client) {
   // Read data into buffer.
   char buffer[MAX_REQUEST_LENGTH_ + 10];
   int totalBytesRead = recv(client, buffer, MAX_REQUEST_LENGTH_, 0);
+
   buffer[totalBytesRead] = '\0';
+  if (totalBytesRead == 0)
+    throw HttpRequest::BadRequestException("Empty request.");
 
   return HttpRequest(buffer);
 }
@@ -120,7 +129,7 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
   char *useless[10];
   assert(recv(client, useless, 10, 0) == 0);
   assert(close(client) == 0);
-  std::cerr << response->statusCode() << "\n" << std::flush;
+  std::cerr << " => "<< response->statusCode() << "\n" << std::flush;
   return;
 }
 
@@ -281,11 +290,10 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   int instanceId = -1;
 
   try {
-    instanceId = session2id_["session"];
+    instanceId = session2id_.at("session");
   } catch (std::out_of_range e){
     // Generate new cookie.
     sessionId = sessionIdGenerator();
-
     // Create new em instance.
     for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
       if (emList_[i] == NULL) {

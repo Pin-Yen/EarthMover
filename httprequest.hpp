@@ -1,6 +1,7 @@
 #ifndef HTTP_REQUEST_
 #define HTTP_REQUEST_
 
+#include <exception>
 #include <fstream>
 #include <string>
 #include <unordered_map>
@@ -19,6 +20,20 @@ class HttpRequest
   std::string cookie(std::string flavor) { return cookieJar_[flavor]; }
 
   std::string body() { return body_; }
+
+  class BadRequestException : std::exception {
+   public:
+    BadRequestException(const char* description) {
+      message_.assign(description);
+    }
+
+    virtual const char* what() const noexcept {
+      return message_.c_str();
+    }
+
+   private:
+    std::string message_;
+  };
 
  private:
   // The request directory.

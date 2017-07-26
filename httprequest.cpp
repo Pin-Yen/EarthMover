@@ -1,6 +1,6 @@
 #include "httprequest.hpp"
 #include <string>
-
+#include <iostream>
 HttpRequest::HttpRequest(const char* rawRequest) {
   std::string request(rawRequest);
 
@@ -29,7 +29,7 @@ HttpRequest::HttpRequest(const char* rawRequest) {
   // Extract Body.
   int blankLinePos = request.find("\r\n\r\n");
   if (blankLinePos != std::string::npos) {
-    int bodyStart = request.find("\r\n\r\n") + 4;
-    body_ = request.substr(bodyStart, request.length() - bodyStart + 1);
+    int bodyStart = blankLinePos + 4;
+    body_ = request.substr(bodyStart);
   }
 }
