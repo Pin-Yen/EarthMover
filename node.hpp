@@ -12,7 +12,7 @@ class GameTree::Node {
   // constructor for node (EXCEPT root node)
   Node(Node *parentNode, int index, int parentWinOrLose);
 
-  // overload new and delete for memory pool
+  // overload new and delete operator for memory pool
   static void *operator new(size_t size) { return pool.allocate(size); }
   static void operator delete(void *ptr, size_t size) { pool.deallocate(ptr, size); }
 
@@ -33,6 +33,7 @@ class GameTree::Node {
     return ((playout_[0] + (playout_[2] - playout_[0] - playout_[1]) / 2.0) / (double)playout_[2]);
   }
 
+  // delete all children (or except for the "exceptNode")
   void deleteChildren();
   void deleteChildrenExcept(Node* exceptNode);
 

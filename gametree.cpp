@@ -235,6 +235,7 @@ int GameTree::play(int index) {
   if (child == NULL)
     child = currentNode->newChild(index, whoWin);
 
+  // delete other children except the child that going to play
   currentNode->deleteChildrenExcept(child);
 
   currentNode = child;
@@ -250,6 +251,7 @@ void GameTree::pass() {
   if (child == NULL)
     child = currentNode->newChild(CHILD_LENGTH, 0);
 
+  // delete other children except the child that going to play
   currentNode->deleteChildrenExcept(child);
 
   currentNode = child;
@@ -258,12 +260,12 @@ void GameTree::pass() {
 void GameTree::undo() {
   currentBoard->undo(currentNode->index());
   currentNode = currentNode->parent();
+  // delete all children
   currentNode->deleteChildren();
 }
 
 std::string GameTree::getTreeJSON() {
-  if (currentNode == NULL) return "";
-  if (currentNode->parent() == NULL) return "";
+  if (currentNode == NULL || currentNode->parent() == NULL) return "";
 
   return getSubTreeJSON(currentNode, currentBoard->whoTurn()).dump();
 }

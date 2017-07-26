@@ -29,6 +29,8 @@ GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
 void GameTree::Node::deleteChildren() {
   Node *child = child_, *next;
 
+  // recursive delete all child
+  // the next node should be saved before current node is deleted
   while (child != NULL) {
     next = child->next_;
     child->deleteChildren();
@@ -42,6 +44,8 @@ void GameTree::Node::deleteChildren() {
 void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
   Node *child = child_, *next;
 
+  // recursive delete all child except "exceptNode"
+  // the next node should be saved before current node is deleted
   while (child != NULL) {
     if (child == exceptNode) {
       child = child->next_;
@@ -54,6 +58,7 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
   }
 
   child_ = exceptNode;
+  exceptNode->next_ = NULL;
 }
 
 int GameTree::Node::selection(int* index, VirtualBoard* board) {
