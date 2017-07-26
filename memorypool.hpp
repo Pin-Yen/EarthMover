@@ -5,7 +5,7 @@
 
 class MemoryPool {
  public:
-  MemoryPool() { pool = NULL; };
+  MemoryPool() { pool_ = NULL; };
   ~MemoryPool() { free(); };
 
   void init(size_t size);
@@ -15,7 +15,7 @@ class MemoryPool {
   void free();
 
  private:
-  char *pool, *next;
+  char *pool_, *next_;
 };
 
 #endif
