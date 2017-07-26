@@ -113,8 +113,8 @@ obj/typetreerenjubasic.o: gomoku/renju_basic/typetreerenjubasic.cpp \
  gomoku/renju_basic/../typetree.hpp
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
-obj/memorypool.o: memorypool.hpp
-	g++ -c memorypool.cpp -o obj/memorypool.o $(generalFlags) $(specificFlags) $(optimizeFlag)
+obj/memorypool.o: memorypool.cpp memorypool.hpp
+	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/gametree.o: gametree.cpp gomoku/chesstype.hpp gomoku/status.hpp \
  virtualboard.hpp gametree.hpp node.hpp memorypool.hpp
