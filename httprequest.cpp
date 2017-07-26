@@ -12,6 +12,9 @@ HttpRequest::HttpRequest(const char* rawRequest) {
     path_ = "/index.html";
 
   // Parse cookies.
+  int cookieTagStart = request.find("Cookie ");
+  if (cookieTagStart <)
+  if (request.find(Cookie) < )
   int cookieStart = request.find("Cookie ") + 7;
   int cookieListEnd = request.find("\r\n", cookieStart);
   while (cookieStart < cookieListEnd) {

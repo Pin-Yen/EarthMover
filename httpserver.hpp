@@ -19,6 +19,9 @@ class HttpServer
   // starts the HttpServer. (Listens and accepts connections.)
   void run();
 
+  // Specifies the port to listen.
+  static const int PORTS_[3];
+
  protected:
   // Read request from file discriptor `client` and returns a parsed HttpRequest object.
   HttpRequest readRequest(const int client);
@@ -51,8 +54,6 @@ class HttpServer
   static const int MAX_CONNECTION_QUEUE_ = 70;
   // The limit of EM instances.
   static const int MAX_EM_INSTANCE_ = 3;
-  // Specifies the port to listen.
-  static const int PORT_ = 1202;
   // Max characters to read in a single request
   static const int MAX_REQUEST_LENGTH_ = 1500;
 

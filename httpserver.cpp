@@ -6,12 +6,15 @@
 #include <cstdlib>
 #include <exception>
 #include <fstream>
+#include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 using json = nlohmann::json;
+
+const int HttpServer::PORTS_[3] = {1202, 1302, 1602};
 
 HttpServer::HttpServer() {
   for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
@@ -39,10 +42,15 @@ void HttpServer::run() {
   struct sockaddr_in serverAddress;
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_addr.s_addr = htons(INADDR_ANY);
-  serverAddress.sin_port = htons(PORT_);
 
-  if (bind(socketDescriptor, (struct sockaddr*) &serverAddress, sizeof(serverAddress) ) < 0)
-    std::cerr << "failed to bind socket";
+  for (int i = 0; i < 3; ++i) {
+    serverAddress.sin_port = htons(PORTS_[i]);
+
+    if (bind(socketDescriptor, (struct sockaddr*) &serverAddress, sizeof(serverAddress) ) == 0) {
+      std::cerr << "Listening on port " << PORTS_[i] << "\n" << std::flush;
+      break;
+    }
+  }
 
   // Listen to Connections.
   listen(socketDescriptor, MAX_CONNECTION_QUEUE_);
@@ -51,14 +59,14 @@ void HttpServer::run() {
   while(true) {
     // Accepts a new connection.
     int client = accept(socketDescriptor, (struct sockaddr*)&serverAddress, &size);
-
+    std::cerr << "Accepted " << std::flush;
     if (client < 0)
       std::cerr << "failed to accept\n";
 
     try {
       // Parse request.
       HttpRequest request = readRequest(client);
-      printf("request path: %s => ", request.path().c_str());
+      std::cerr << "request path: " << request.path() << " => " << std::flush;
       // Dispatch parsed request to handlers.
       dispatch(client, &request);
     } catch (HttpResponse::HttpResponseException& e) {
@@ -74,9 +82,11 @@ void HttpServer::run() {
 
 HttpRequest HttpServer::readRequest(const int client) {
   // Read data into buffer.
-  char buffer[MAX_REQUEST_LENGTH_];
-  int requestLength = read(client, buffer, MAX_REQUEST_LENGTH_);
-  buffer[requestLength] = '\0';
+  char buffer[MAX_REQUEST_LENGTH_ + 10];
+  int totalBytesRead = recv(client, buffer, MAX_REQUEST_LENGTH_, 0);
+  buffer[totalBytesRead] = '\0';
+  std::cerr <<" bytes read: " << totalBytesRead << " " << std::flush;
+  std::cout << buffer;
 
   return HttpRequest(buffer);
 }
@@ -108,8 +118,12 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
   send(client, response->getHeaderString().c_str(), response->getHeaderLength(), 0);
   // Send body.
   send(client, response->getBody(), response->getBodyLength(), 0);
-  close(client);
-  printf("%d\n", response->statusCode());
+
+  // Wait for client's FIN
+  char *useless[10];
+  assert(recv(client, useless, 10, 0) == 0);
+  assert(close(client) == 0);
+  std::cerr << response->statusCode() << "\n" << std::flush;
   return;
 }
 
