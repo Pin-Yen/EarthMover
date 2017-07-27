@@ -13,8 +13,8 @@ class GameTree::Node {
   Node(Node *parentNode, int index, int parentWinOrLose);
 
   // overload new and delete operator for memory pool
-  static void *operator new(size_t size) { return pool_.allocate(size); }
-  static void operator delete(void *ptr, size_t size) { pool_.deallocate(ptr, size); }
+  static void *operator new(size_t /*size*/) { return pool_.allocate(); }
+  static void operator delete(void *ptr, size_t /*size*/) { pool_.deallocate(ptr); }
 
   // update when tie
   void update() { ++playout_[2]; }

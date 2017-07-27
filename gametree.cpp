@@ -99,7 +99,7 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
   } while (mostTimes < minMostTimesCycle);
 }
 
-void GameTree::MCTS(int maxCycle, bool* continueThinking) {
+void GameTree::MCTS(int maxCycle, const bool* continueThinking) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle && *continueThinking; ++cycle) {

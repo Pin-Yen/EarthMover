@@ -13,11 +13,11 @@ class MemoryPool {
   // blocks: amounts of block
   void init(size_t size, int blocks);
 
-  // allocate memory from pool, size was already known in init
-  void *allocate(size_t /*size*/);
+  // allocate memory from pool
+  void *allocate();
 
-  // deallocate memory to pool, size was already known in init
-  void deallocate(void *ptr, size_t /*size*/);
+  // deallocate memory to pool
+  void deallocate(void *ptr);
 
   // free all memory in pool
   void free();

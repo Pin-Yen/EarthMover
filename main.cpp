@@ -104,11 +104,12 @@ void start() {
     #endif
 
     #ifndef ANALYZE
-    bool stop = false;
+    bool continueThinking = true;
+    bool* controler = &continueThinking;
 
-    std::thread backgroundThread([tree](int maxCycle, bool &stop)
-                                 { tree->MCTS(maxCycle, stop); },
-                                 100000, std::ref(stop));
+    std::thread backgroundThread([tree](int maxCycle, bool* controler)
+                                 { tree->MCTS(maxCycle, controler); },
+                                 100000, controler);
     #endif
 
     bool validInput = false;
@@ -126,7 +127,7 @@ void start() {
     }
 
     #ifndef ANALYZE
-    stop = true;
+    continueThinking = false;
     backgroundThread.join();
     #endif
 

@@ -25,7 +25,7 @@ void MemoryPool::init(size_t size, int blocks) {
             << (size * blocks) / (1024 * 1024) << " mb)\n";
 }
 
-void *MemoryPool::allocate(size_t /*size*/) {
+void *MemoryPool::allocate() {
   // "ptr" point to "next_"
   //  pool_
   //    \    _______ _______ _______ _______
@@ -37,7 +37,7 @@ void *MemoryPool::allocate(size_t /*size*/) {
   //  next_---------------/
   void *ptr = next_;
 
-  // "next_" point to the block that "next_" point into
+  // "next_" point to next of the "next_"
   //  pool_
   //    \    _______ _______ _______ _______
   //     \  |///////|///////|       |       |
@@ -52,7 +52,7 @@ void *MemoryPool::allocate(size_t /*size*/) {
   return ptr;
 }
 
-void MemoryPool::deallocate(void *ptr, size_t /*size*/) {
+void MemoryPool::deallocate(void *ptr) {
   //  pool_
   //    \    _______ _______ _______ _______
   //     \  |///////|///////|///////|       |
