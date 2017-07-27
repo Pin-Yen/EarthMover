@@ -240,6 +240,7 @@ int GameTree::play(int index) {
 
   // delete other children except the child that going to play
   currentNode_->deleteChildrenExcept(child);
+  currentNode_->clear();
 
   currentNode_ = child;
 
@@ -260,6 +261,7 @@ void GameTree::pass() {
 
   // delete other children except the child that going to play
   currentNode_->deleteChildrenExcept(child);
+  currentNode_->clear();
 
   currentNode_ = child;
 }

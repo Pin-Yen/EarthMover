@@ -223,6 +223,9 @@ void HttpServer::handlePass(const int client, HttpRequest* request) {
 void HttpServer::handleUndo(const int client, HttpRequest* request) {
   int id = session2instance_.at(request->cookie("session"));
 
+  // Stop EM's background thinking.
+  emThreadController_[id] = false;
+
   // Parse request body.
   json body = json::parse(request->body());
 
