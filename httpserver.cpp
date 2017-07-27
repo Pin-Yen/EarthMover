@@ -57,7 +57,7 @@ void HttpServer::run() {
   listen(socketDescriptor, MAX_CONNECTION_QUEUE_);
   socklen_t size = sizeof(serverAddress);
 
-  while(true) {
+  while (true) {
     // Accepts a new connection.
     int client = accept(socketDescriptor, (struct sockaddr*)&serverAddress, &size);
     if (client < 0)
@@ -102,17 +102,17 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
   //
   if (request->path() == "/play")
     handlePlay(client, request);
-  else if(request->path() == "/visualize")
+  else if (request->path() == "/visualize")
     handleVisualize(client, request);
-  else if(request->path() == "/resign")
+  else if (request->path() == "/resign")
     handleResign(client, request);
-  else if(request->path() == "/pass")
+  else if (request->path() == "/pass")
     handlePass(client, request);
-  else if(request->path() == "/undo")
+  else if (request->path() == "/undo")
     handleUndo(client, request);
-  else if(request->path() == "/think")
+  else if (request->path() == "/think")
     handleThink(client, request);
-  else if(request->path() == "/start")
+  else if (request->path() == "/start")
     handleStart(client, request);
   else
     handleResourceRequest(client, request);
@@ -156,8 +156,8 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
   // Prepare a response.
   HttpResponse response(200);
   response.setContentType("application/json")
-    .setBody(responseData.dump())
-    .compile();
+      .setBody(responseData.dump())
+      .compile();
 
   // Send response to client.
   sendResponse(client, &response);
@@ -166,13 +166,26 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleVisualize(const int client, HttpRequest* request) {
-  int id = session2instance_.at(request->cookie("session"));
+  int id = -1;
+
+  try {
+    id = session2instance_.at(request->cookie("session"));
+  } catch (std::out_of_range& e) {
+    HttpResponse response(200);
+    response.setContentType("application/json")
+        .setBody("")
+        .compile();
+
+    sendResponse(client, &response);
+
+    return;
+  }
 
   // Prepare response.
   HttpResponse response(200);
   response.setContentType("application/json")
-    .setBody(emList_[id]->getTreeJSON())
-    .compile();
+      .setBody(emList_[id]->getTreeJSON())
+      .compile();
 
   // Send response to client.
   sendResponse(client, &response);
@@ -187,7 +200,6 @@ void HttpServer::handleResign(const int client, HttpRequest* request) {
   emThreadController_[id] = false;
   if (threadList_[id].joinable())
     threadList_[id].join();
-
 
   emList_[id]->resign();
 
@@ -277,11 +289,11 @@ void HttpServer::handleThink(const int client, HttpRequest* request) {
 
     HttpResponse response(200);
     response.setContentType("application/json")
-      .setBody(body.dump())
-      .compile();
+        .setBody(body.dump())
+        .compile();
 
     // Send response;
-    this->sendResponse(client, &response);
+    sendResponse(client, &response);
 
     // Return if game ends.
     if (whoWin != -1) {
@@ -291,20 +303,18 @@ void HttpServer::handleThink(const int client, HttpRequest* request) {
 
     // Think in background.
     em->thinkInBackground(controller);
-
   });
 }
 
 void HttpServer::handleStart(const int client, HttpRequest* request) {
   // Check if the user already have an existing EM instance.
   // If not, create an new instance and set a cookie.
-
   std::string sessionId = request->cookie("session");
   int instanceId = -1;
 
   try {
     instanceId = session2instance_.at(sessionId);
-  } catch (std::out_of_range& e){
+  } catch (std::out_of_range& e) {
     // Generate new cookie.
     sessionId = sessionIdGenerator();
 
@@ -321,8 +331,7 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
     // Else return 503
     if (instanceId != -1) {
       session2instance_.insert({sessionId, instanceId});
-    }
-    else {
+    } else {
       HttpResponse response(503);
       response.compile();
       sendResponse(client, &response);
@@ -341,8 +350,7 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
 
   // Response
   HttpResponse response(204);
-  response.addCookie("session", sessionId.c_str())
-    .compile();
+  response.addCookie("session", sessionId.c_str()).compile();
   sendResponse(client, &response);
 
   return;
@@ -362,7 +370,7 @@ void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
   resourceFile.open(request->path().substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
 
   // If can't open file, return 404.
-  if(!resourceFile.is_open()) {
+  if (!resourceFile.is_open()) {
     HttpResponse response(404);
     response.compile();
     sendResponse(client, &response);
@@ -371,8 +379,8 @@ void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
 
     HttpResponse response(200);
     response.setContentTypeByFileExt(request->path().substr(request->path().find_last_of(".")))
-      .setBody(&resourceFile)
-      .compile();
+        .setBody(&resourceFile)
+        .compile();
 
     sendResponse(client, &response);
 
@@ -386,11 +394,11 @@ bool HttpServer::sanitize(std::string directory) {
 
   // check if the directory is under /gomoku/src/
   std::string allowedRoot("/gomoku/src/");
-  if(directory.find(allowedRoot) != 0)
+  if (directory.find(allowedRoot) != 0)
     return false;
 
   // check if the directory contains ..
-  if(directory.find("..") != std::string::npos)
+  if (directory.find("..") != std::string::npos)
     return false;
 
   return true;
