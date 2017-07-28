@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "../chesstype.h"
 #include "../status.h"
 #include "../../virtualboard.h"
@@ -5,9 +7,6 @@
 #include "virtualboardfreestyle.h"
 #include "../evaluator.h"
 #include "typetreefreestyle.h"
-
-#include <iostream>
-#include <iomanip>
 
 #ifdef DEBUG
 #include "../../objectcounter.h"

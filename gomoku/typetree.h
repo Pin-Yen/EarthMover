@@ -1,6 +1,13 @@
 #ifndef GOMOKU_TYPETREE_H_
 #define GOMOKU_TYPETREE_H_
 
+#include <iomanip>
+#include <iostream>
+
+#include "chesstype.h"
+#include "status.h"
+#include "virtualboardgomoku.h"
+
 #ifdef DEBUG
 #include "../objectcounter.h"
 #endif
@@ -50,18 +57,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
   // cut the tree node that all child has same result
   static ChessType* cutSameResultChild(Node *root);
 };
-
-#include "chesstype.h"
-#include "status.h"
-#include "../virtualboard.h"
-#include "virtualboardgomoku.h"
-
-#include <iostream>
-#include <iomanip>
-
-#ifdef DEBUG
-#include "../objectcounter.h"
-#endif
 
 template <int StatusLength>
 template <class DerivedTypeTree>

@@ -1,11 +1,12 @@
+#include "node.h"
+
+#include <cmath>
+#include <iostream>
+
+#include "gametree.h"
 #include "gomoku/chesstype.h"
 #include "gomoku/status.h"
 #include "virtualboard.h"
-#include "gametree.h"
-#include "node.h"
-
-#include <iostream>
-#include <cmath>
 
 #ifdef DEBUG
 #include "objectcounter.h"

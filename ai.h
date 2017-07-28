@@ -1,10 +1,10 @@
 #ifndef AI_H_
 #define AI_H_
 
-#include "virtualboard.h"
-#include "gametree.h"
 #include <string>
 #include <thread>
+#include "gametree.h"
+#include "virtualboard.h"
 
 class AI {
  public:

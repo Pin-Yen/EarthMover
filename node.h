@@ -2,8 +2,9 @@
 #define NODE_H_
 
 #include <stdint.h>
-
 #include <map>
+
+#include "gametree.h"
 
 class GameTree::Node {
  public:

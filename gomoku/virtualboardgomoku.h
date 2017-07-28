@@ -1,6 +1,9 @@
 #ifndef GOMOKU_VIRTUALBOARD_H_
 #define GOMOKU_VIRTUALBOARD_H_
 
+#include <random>
+#include <iostream>
+
 #include "../virtualboard.h"
 
 template <int StatusLength>
@@ -61,12 +64,8 @@ class VirtualBoardGomoku : public VirtualBoard {
 
 #include "chesstype.h"
 #include "status.h"
-#include "../virtualboard.h"
 #include "evaluator.h"
 #include "point.h"
-
-#include <random>
-#include <iostream>
 
 #ifdef DEBUG
 #include "../objectcounter.h"

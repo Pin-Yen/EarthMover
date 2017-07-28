@@ -1,6 +1,6 @@
-#include "httpserver.h"
-
 #include <iostream>
+
+#include "httpserver.h"
 
 int main() {
   srand((unsigned)time(NULL));

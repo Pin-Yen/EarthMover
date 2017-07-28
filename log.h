@@ -1,10 +1,10 @@
 #ifndef LOG_H_
 #define LOG_H_
 
+#include <assert.h>
 #include <fstream>
 #include <string>
 #include <iostream>
-#include <assert.h>
 
 #define FILE_NAME "gamelog.txt"
 

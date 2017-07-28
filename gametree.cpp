@@ -1,16 +1,17 @@
-#include "gomoku/chesstype.h"
-#include "gomoku/status.h"
-#include "virtualboard.h"
-#include "memorypool.h"
 #include "gametree.h"
-#include "node.h"
-#include "lib/json.h"
 
 #include <algorithm>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <tuple>
 #include <vector>
+
+#include "gomoku/chesstype.h"
+#include "gomoku/status.h"
+#include "lib/json.h"
+#include "memorypool.h"
+#include "node.h"
+#include "virtualboard.h"
 
 using json = nlohmann::json;
 

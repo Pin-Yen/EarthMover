@@ -2,7 +2,10 @@
 #define GOMOKU_OPENINGTREE_H_
 
 #include <stdlib.h>
+#include <algorithm>
 #include <array>
+#include <fstream>
+#include <iostream>
 #include <vector>
 
 template <int StatusLength>
@@ -48,10 +51,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
 #include "virtualboardgomoku.h"
 #include "point.h"
 #include "evaluator.h"
-
-#include <algorithm>
-#include <fstream>
-#include <iostream>
 
 template <int StatusLength>
 bool VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::isInit_ = false;

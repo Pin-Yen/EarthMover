@@ -1,10 +1,11 @@
 #include "ai.h"
-#include "gomoku/freestyle/virtualboardfreestyle.h"
-#include "gomoku/renju_basic/virtualboardrenjubasic.h"
-#include "const.h"
 
 #include <assert.h>
 #include <iostream>
+
+#include "gomoku/freestyle/virtualboardfreestyle.h"
+#include "gomoku/renju_basic/virtualboardrenjubasic.h"
+#include "const.h"
 
 AI::AI() {
   tree = new GameTree();

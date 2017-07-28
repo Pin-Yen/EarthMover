@@ -1,17 +1,17 @@
 #include "httpserver.h"
 
-#include "lib/json.h"
-
-#include <assert.h>
 #include <arpa/inet.h>
-#include <cstdlib>
-#include <exception>
-#include <fstream>
-#include <iostream>
+#include <assert.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cstdlib>
+#include <exception>
+#include <fstream>
+#include <iostream>
+
+#include "lib/json.h"
 
 using json = nlohmann::json;
 

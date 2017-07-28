@@ -1,11 +1,11 @@
 #ifndef GAMETREE_H_
 #define GAMETREE_H_
 
-#include "virtualboard.h"
-#include "memorypool.h"
-#include "lib/json.h"
-
 #include <string>
+
+#include "lib/json.h"
+#include "memorypool.h"
+#include "virtualboard.h"
 
 class GameTree {
  public:

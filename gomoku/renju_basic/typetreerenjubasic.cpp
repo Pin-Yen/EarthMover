@@ -1,11 +1,10 @@
+#include <iostream>
+
 #include "../chesstype.h"
 #include "../status.h"
 #include "virtualboardrenjubasic.h"
 #include "evaluatorrenjubasic.h"
 #include "typetreerenjubasic.h"
-
-#include <iostream>
-#include <iomanip>
 
 #ifdef DEBUG
 #include "../../objectcounter.h"

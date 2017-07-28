@@ -1,14 +1,13 @@
 #ifndef HTTPSERVER_H
 #define HTTPSERVER_H
 
+#include <string>
+#include <thread>
+#include <unordered_map>
+
 #include "ai.h"
 #include "httprequest.h"
 #include "httpresponse.h"
-
-#include <string>
-
-#include <thread>
-#include <unordered_map>
 
 class HttpServer {
  public:

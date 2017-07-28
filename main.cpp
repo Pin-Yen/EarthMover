@@ -1,4 +1,10 @@
-// mutual dependencies
+#include <time.h>
+#include <assert.h>
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <thread>
+
 #include "gametree.h"
 #include "virtualboard.h"
 
@@ -9,14 +15,6 @@
 #include "gomoku/virtualboardgomoku.h"
 #include "gomoku/freestyle/virtualboardfreestyle.h"
 #include "gomoku/renju_basic/virtualboardrenjubasic.h"
-
-#include <time.h>
-#include <assert.h>
-
-#include <iostream>
-#include <string>
-#include <cstdlib>
-#include <thread>
 
 #ifdef DEBUG
 #include "objectcounter.h"
