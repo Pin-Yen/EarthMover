@@ -1,9 +1,9 @@
-#ifndef HTTP_SERVER_
-#define HTTP_SERVER_
+#ifndef HTTPSERVER_H
+#define HTTPSERVER_H
 
-#include "ai.hpp"
-#include "httprequest.hpp"
-#include "httpresponse.hpp"
+#include "ai.h"
+#include "httprequest.h"
+#include "httpresponse.h"
 
 #include <string>
 

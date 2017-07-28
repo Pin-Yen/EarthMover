@@ -1,10 +1,10 @@
-#include "gomoku/chesstype.hpp"
-#include "gomoku/status.hpp"
-#include "virtualboard.hpp"
-#include "memorypool.hpp"
-#include "gametree.hpp"
-#include "node.hpp"
-#include "lib/json.hpp"
+#include "gomoku/chesstype.h"
+#include "gomoku/status.h"
+#include "virtualboard.h"
+#include "memorypool.h"
+#include "gametree.h"
+#include "node.h"
+#include "lib/json.h"
 
 #include <algorithm>
 #include <iostream>

@@ -1,10 +1,10 @@
-#ifndef CHESS_TYPE_H
-#define CHESS_TYPE_H
+#ifndef GOMOKU_CHESSTYPE_H_
+#define GOMOKU_CHESSTYPE_H_
 
 #include <stdint.h>
 
 #ifdef DEBUG
-#include "../objectcounter.hpp"
+#include "../objectcounter.h"
 #endif
 
 class SingleType {
@@ -93,6 +93,7 @@ class ChessType {
   bool operator!=(const ChessType &type) const {
     return (type_[0] != type.type_[0] || type_[1] != type.type_[1]);
   }
+
  private:
   SingleType type_[2];
 };

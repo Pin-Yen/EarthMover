@@ -1,8 +1,8 @@
 #ifndef AI_H_
 #define AI_H_
 
-#include "virtualboard.hpp"
-#include "gametree.hpp"
+#include "virtualboard.h"
+#include "gametree.h"
 #include <string>
 #include <thread>
 

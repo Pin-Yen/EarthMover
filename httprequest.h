@@ -1,5 +1,5 @@
-#ifndef HTTP_REQUEST_
-#define HTTP_REQUEST_
+#ifndef HTTPREQUEST_H_
+#define HTTPREQUEST_H_
 
 #include <exception>
 #include <fstream>

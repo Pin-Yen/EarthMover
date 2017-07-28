@@ -1,7 +1,7 @@
-#include "ai.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
-#include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
-#include "const.hpp"
+#include "ai.h"
+#include "gomoku/freestyle/virtualboardfreestyle.h"
+#include "gomoku/renju_basic/virtualboardrenjubasic.h"
+#include "const.h"
 
 #include <assert.h>
 #include <iostream>

@@ -1,8 +1,8 @@
-#ifndef GOMOKU_FREESTYLE_EVALUATOR_H
-#define GOMOKU_FREESTYLE_EVALUATOR_H
+#ifndef GOMOKU_FREESTYLE_EVALUATORFREESTYLE_H_
+#define GOMOKU_FREESTYLE_EVALUATORFREESTYLE_H_
 
-#include "../evaluator.hpp"
-#include "../typetree.hpp"
+#include "../evaluator.h"
+#include "../typetree.h"
 
 class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator {
  public:
@@ -24,7 +24,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Eva
   class TypeTreeFreeStyle;
 };
 
-#include "typetreefreestyle.hpp"
+#include "typetreefreestyle.h"
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
   OpeningTree::init();

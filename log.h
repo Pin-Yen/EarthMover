@@ -8,15 +8,13 @@
 
 #define FILE_NAME "gamelog.txt"
 
-class Log
-{
-public:
-
-  static void init(){
+class Log {
+ public:
+  static void init() {
     outputFileStream.open(FILE_NAME, std::ofstream::out);
     assert(outputFileStream.is_open());
   }
-  static void closeLog(){
+  static void closeLog() {
     outputFileStream.close();
   }
 
@@ -27,7 +25,6 @@ public:
     outputFileStream << std::fixed;
     outputFileStream.precision(precision);
   }
-
 };
 
 template <typename T>

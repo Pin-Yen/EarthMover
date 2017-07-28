@@ -1,4 +1,4 @@
-#include "displayboard.hpp"
+#include "displayboard.h"
 
 #include <iomanip>
 #include <string>

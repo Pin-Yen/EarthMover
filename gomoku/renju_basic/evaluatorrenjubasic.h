@@ -1,5 +1,5 @@
-#ifndef GOMOKU_RENJU_BASIC_EVALUATOR_RENJU_BASIC_H
-#define GOMOKU_RENJU_BASIC_EVALUATOR_RENJU_BASIC_H
+#ifndef GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_
+#define GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_
 
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::Evaluator {
  public:
@@ -25,7 +25,7 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::E
   class TypeTreeRenjuBasic;
 };
 
-#include "typetreerenjubasic.hpp"
+#include "typetreerenjubasic.h"
 
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
   OpeningTree::init();

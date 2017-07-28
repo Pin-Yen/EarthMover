@@ -1,16 +1,16 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
-#include "../../virtualboard.hpp"
-#include "../virtualboardgomoku.hpp"
-#include "virtualboardfreestyle.hpp"
-#include "../evaluator.hpp"
-#include "typetreefreestyle.hpp"
+#include "../chesstype.h"
+#include "../status.h"
+#include "../../virtualboard.h"
+#include "../virtualboardgomoku.h"
+#include "virtualboardfreestyle.h"
+#include "../evaluator.h"
+#include "typetreefreestyle.h"
 
 #include <iostream>
 #include <iomanip>
 
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../../objectcounter.h"
 #endif
 
 VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*

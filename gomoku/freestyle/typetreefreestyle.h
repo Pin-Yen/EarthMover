@@ -1,10 +1,10 @@
-#ifndef TYPE_TREE_FREESTYLE_H
-#define TYPE_TREE_FREESTYLE_H
+#ifndef GOMOKU_FREESTYLE_TYPETREEFREESTYLE_H_
+#define GOMOKU_FREESTYLE_TYPETREEFREESTYLE_H_
 
-#include "../typetree.hpp"
+#include "../typetree.h"
 
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../../objectcounter.h"
 #endif
 
 class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle : public VirtualBoardGomoku<8>::Evaluator::TypeTree<VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle>{

@@ -1,7 +1,7 @@
-#ifndef GOMOKU_VIRTUAL_BOARD_H
-#define GOMOKU_VIRTUAL_BOARD_H
+#ifndef GOMOKU_VIRTUALBOARD_H_
+#define GOMOKU_VIRTUALBOARD_H_
 
-#include "../virtualboard.hpp"
+#include "../virtualboard.h"
 
 template <int StatusLength>
 class VirtualBoardGomoku : public VirtualBoard {
@@ -59,17 +59,17 @@ class VirtualBoardGomoku : public VirtualBoard {
   int playNo_;
 };
 
-#include "chesstype.hpp"
-#include "status.hpp"
-#include "../virtualboard.hpp"
-#include "evaluator.hpp"
-#include "point.hpp"
+#include "chesstype.h"
+#include "status.h"
+#include "../virtualboard.h"
+#include "evaluator.h"
+#include "point.h"
 
 #include <random>
 #include <iostream>
 
 #ifdef DEBUG
-#include "../objectcounter.hpp"
+#include "../objectcounter.h"
 #endif
 
 template <int StatusLength>

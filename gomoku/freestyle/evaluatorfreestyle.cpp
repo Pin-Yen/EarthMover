@@ -1,13 +1,13 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
-#include "../../virtualboard.hpp"
-#include "../virtualboardgomoku.hpp"
-#include "virtualboardfreestyle.hpp"
-#include "../point.hpp"
-#include "../evaluator.hpp"
-#include "evaluatorfreestyle.hpp"
-#include "typetreefreestyle.hpp"
-#include "../openingtree.hpp"
+#include "../chesstype.h"
+#include "../status.h"
+#include "../../virtualboard.h"
+#include "../virtualboardgomoku.h"
+#include "virtualboardfreestyle.h"
+#include "../point.h"
+#include "../evaluator.h"
+#include "evaluatorfreestyle.h"
+#include "typetreefreestyle.h"
+#include "../openingtree.h"
 
 // score[0]:black's total score,[1]:white's
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(ChessType type[4], int *score) {

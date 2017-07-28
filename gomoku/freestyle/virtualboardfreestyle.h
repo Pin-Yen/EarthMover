@@ -1,7 +1,7 @@
-#ifndef GOMOKU_FREESTYLE_VIRTUAL_BOARD_H
-#define GOMOKU_FREESTYLE_VIRTUAL_BOARD_H
+#ifndef GOMOKU_FREESTYLE_VIRTUALBOARDFREESTYLE_H_
+#define GOMOKU_FREESTYLE_VIRTUALBOARDFREESTYLE_H_
 
-#include "../virtualboardgomoku.hpp"
+#include "../virtualboardgomoku.h"
 
 class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
  public:
@@ -22,7 +22,7 @@ class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
   inline void undo(int index) final;
 };
 
-#include "evaluatorfreestyle.hpp"
+#include "evaluatorfreestyle.h"
 
 VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
   EvaluatorFreeStyle::init();

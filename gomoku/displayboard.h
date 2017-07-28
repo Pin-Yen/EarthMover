@@ -1,5 +1,5 @@
-#ifndef DISPLAYBOARD_H_
-#define DISPLAYBOARD_H_
+#ifndef GOMOKU_DISPLAYBOARD_H_
+#define GOMOKU_DISPLAYBOARD_H_
 
 class DisplayBoard {
  public:

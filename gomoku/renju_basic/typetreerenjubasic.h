@@ -1,10 +1,10 @@
-#ifndef TYPE_TREE_RENJU_BASIC_H
-#define TYPE_TREE_RENJU_BASIC_H
+#ifndef GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_
+#define GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_
 
-#include "../typetree.hpp"
+#include "../typetree.h"
 
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../../objectcounter.h"
 #endif
 
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic : public VirtualBoardGomoku<10>::Evaluator::TypeTree<VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic> {

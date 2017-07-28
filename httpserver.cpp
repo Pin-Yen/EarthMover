@@ -1,6 +1,6 @@
-#include "httpserver.hpp"
+#include "httpserver.h"
 
-#include "lib/json.hpp"
+#include "lib/json.h"
 
 #include <assert.h>
 #include <arpa/inet.h>

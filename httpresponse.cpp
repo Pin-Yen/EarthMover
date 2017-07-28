@@ -1,4 +1,4 @@
-#include "httpresponse.hpp"
+#include "httpresponse.h"
 
 
 HttpResponse::HttpResponse(int httpResponseCode) {

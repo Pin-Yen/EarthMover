@@ -1,9 +1,9 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
-#include "virtualboardrenjubasic.hpp"
-#include "../point.hpp"
-#include "evaluatorrenjubasic.hpp"
-#include "typetreerenjubasic.hpp"
+#include "../chesstype.h"
+#include "../status.h"
+#include "virtualboardrenjubasic.h"
+#include "../point.h"
+#include "evaluatorrenjubasic.h"
+#include "typetreerenjubasic.h"
 
 // score[0]:black's total score,[1]:white's
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(ChessType type[4], int *score) {

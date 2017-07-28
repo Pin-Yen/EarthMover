@@ -1,5 +1,5 @@
-#ifndef VIRTUAL_BOARD_H
-#define VIRTUAL_BOARD_H
+#ifndef VIRTUALBOARD_H_
+#define VIRTUALBOARD_H_
 
 class VirtualBoard {
  public:
@@ -35,6 +35,7 @@ class VirtualBoard {
 
   // remove chess at "index"
   virtual void undo(int index) = 0;
+
  protected:
   bool isInit_ = false;
 };

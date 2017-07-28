@@ -1,9 +1,9 @@
-#ifndef GAME_TREE_H
-#define GAME_TREE_H
+#ifndef GAMETREE_H_
+#define GAMETREE_H_
 
-#include "virtualboard.hpp"
-#include "memorypool.hpp"
-#include "lib/json.hpp"
+#include "virtualboard.h"
+#include "memorypool.h"
+#include "lib/json.h"
 
 #include <string>
 

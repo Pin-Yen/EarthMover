@@ -1,5 +1,5 @@
-#ifndef GAME_TREE_NODE_H
-#define GAME_TREE_NODE_H
+#ifndef NODE_H_
+#define NODE_H_
 
 #include <stdint.h>
 

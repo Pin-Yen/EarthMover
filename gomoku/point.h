@@ -1,12 +1,12 @@
-#ifndef GOMOKU_POINT_H
-#define GOMOKU_POINT_H
+#ifndef GOMOKU_POINT_H_
+#define GOMOKU_POINT_H_
 
-#include "chesstype.hpp"
-#include "status.hpp"
-#include "virtualboardgomoku.hpp"
+#include "chesstype.h"
+#include "status.h"
+#include "virtualboardgomoku.h"
 
 #ifdef DEBUG
-#include "../objectcounter.hpp"
+#include "../objectcounter.h"
 #endif
 
 #include <cstddef>

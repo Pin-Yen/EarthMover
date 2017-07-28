@@ -1,14 +1,14 @@
-#include "../chesstype.hpp"
-#include "../status.hpp"
-#include "virtualboardrenjubasic.hpp"
-#include "evaluatorrenjubasic.hpp"
-#include "typetreerenjubasic.hpp"
+#include "../chesstype.h"
+#include "../status.h"
+#include "virtualboardrenjubasic.h"
+#include "evaluatorrenjubasic.h"
+#include "typetreerenjubasic.h"
 
 #include <iostream>
 #include <iomanip>
 
 #ifdef DEBUG
-#include "../../objectcounter.hpp"
+#include "../../objectcounter.h"
 #endif
 
 bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::isInit = false;

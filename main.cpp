@@ -1,14 +1,14 @@
 // mutual dependencies
-#include "gametree.hpp"
-#include "virtualboard.hpp"
+#include "gametree.h"
+#include "virtualboard.h"
 
-#include "gomoku/chesstype.hpp"
-#include "gomoku/displayboard.hpp"
-#include "gomoku/point.hpp"
-#include "gomoku/status.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
-#include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
+#include "gomoku/chesstype.h"
+#include "gomoku/displayboard.h"
+#include "gomoku/point.h"
+#include "gomoku/status.h"
+#include "gomoku/virtualboardgomoku.h"
+#include "gomoku/freestyle/virtualboardfreestyle.h"
+#include "gomoku/renju_basic/virtualboardrenjubasic.h"
 
 #include <time.h>
 #include <assert.h>
@@ -19,11 +19,11 @@
 #include <thread>
 
 #ifdef DEBUG
-#include "objectcounter.hpp"
+#include "objectcounter.h"
 #endif
 
 #ifdef ANALYZE
-#include "log.hpp"
+#include "log.h"
 #endif
 
 void start();

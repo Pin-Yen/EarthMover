@@ -1,7 +1,7 @@
-#include <iostream>
+#ifndef OBJECTCOUNTER_H_
+#define OBJECTCOUNTER_H_
 
-#ifndef OBJECT_COUNTER_H_
-#define OBJECT_COUNTER_H_
+#include <iostream>
 
 class ObjectCounter {
  public:
@@ -28,11 +28,12 @@ class ObjectCounter {
               << "\ntypetree node: " << typetreeNode << std::endl;
   }
 
- // private:
+  // private:
   static int node;
   static int virtualboard;
   static int point;
   static int chesstype;
   static int typetreeNode;
 };
+
 #endif

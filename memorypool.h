@@ -1,5 +1,5 @@
-#ifndef MEMORY_POOL_HPP
-#define MEMORY_POOL_HPP
+#ifndef MEMORYPOOL_H_
+#define MEMORYPOOL_H_
 
 #include <iostream>
 

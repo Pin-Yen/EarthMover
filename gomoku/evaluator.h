@@ -1,7 +1,7 @@
-#ifndef GOMOKU_EVALUATOR_H
-#define GOMOKU_EVALUATOR_H
+#ifndef GOMOKU_EVALUATOR_H_
+#define GOMOKU_EVALUATOR_H_
 
-#include "virtualboardgomoku.hpp"
+#include "virtualboardgomoku.h"
 
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
@@ -17,9 +17,9 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
   class OpeningTree;
 };
 
-#include "chesstype.hpp"
-#include "status.hpp"
-#include "openingtree.hpp"
+#include "chesstype.h"
+#include "status.h"
+#include "openingtree.h"
 
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(

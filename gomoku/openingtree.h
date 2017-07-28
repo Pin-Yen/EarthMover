@@ -1,5 +1,5 @@
-#ifndef OPENING_TREE_H
-#define OPENING_TREE_H
+#ifndef GOMOKU_OPENINGTREE_H_
+#define GOMOKU_OPENINGTREE_H_
 
 #include <stdlib.h>
 #include <array>
@@ -43,11 +43,11 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
   static bool isInit_;
 };
 
-#include "status.hpp"
-#include "../virtualboard.hpp"
-#include "virtualboardgomoku.hpp"
-#include "point.hpp"
-#include "evaluator.hpp"
+#include "status.h"
+#include "../virtualboard.h"
+#include "virtualboardgomoku.h"
+#include "point.h"
+#include "evaluator.h"
 
 #include <algorithm>
 #include <fstream>

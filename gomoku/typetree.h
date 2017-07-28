@@ -1,8 +1,8 @@
-#ifndef TYPE_TREE_H
-#define TYPE_TREE_H
+#ifndef GOMOKU_TYPETREE_H_
+#define GOMOKU_TYPETREE_H_
 
 #ifdef DEBUG
-#include "../objectcounter.hpp"
+#include "../objectcounter.h"
 #endif
 
 template <int StatusLength>
@@ -51,16 +51,16 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
   static ChessType* cutSameResultChild(Node *root);
 };
 
-#include "chesstype.hpp"
-#include "status.hpp"
-#include "../virtualboard.hpp"
-#include "virtualboardgomoku.hpp"
+#include "chesstype.h"
+#include "status.h"
+#include "../virtualboard.h"
+#include "virtualboardgomoku.h"
 
 #include <iostream>
 #include <iomanip>
 
 #ifdef DEBUG
-#include "../objectcounter.hpp"
+#include "../objectcounter.h"
 #endif
 
 template <int StatusLength>

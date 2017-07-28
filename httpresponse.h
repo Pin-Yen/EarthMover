@@ -1,11 +1,10 @@
-#ifndef HTTP_RESPONSE_
-#define HTTP_RESPONSE_
+#ifndef HTTPRESPONSE_H_
+#define HTTPRESPONSE_H_
 
 #include <fstream>
 #include <string>
 
-class HttpResponse
-{
+class HttpResponse {
  public:
 
   // Creates an empty HTTP response. Can optionally set the status code.
@@ -49,6 +48,21 @@ class HttpResponse
 
   int statusCode() {return statusCode_;}
 
+  class HttpResponseException : std::exception {
+   public:
+    HttpResponseException(const char* description, int line, const char* file) {
+      message_.append(description).append("\n\tAt line ").append(std::to_string(line))
+      .append(", in ").append(file);
+    }
+
+    virtual const char* what() const noexcept {
+      return message_.c_str();
+    }
+
+   private:
+    std::string message_;
+  };
+
  private:
   static const unsigned char STATE_RAW_ = 0;
   static const unsigned char STATE_COMPILED_ = 1;
@@ -72,21 +86,6 @@ class HttpResponse
 
   // recording the state of this response, should be STATE_RAW_ or STATE_COMPILED_
   unsigned char state_;
- public:
-  class HttpResponseException : std::exception {
-   public:
-    HttpResponseException(const char* description, int line, const char* file) {
-      message_.append(description).append("\n\tAt line ").append(std::to_string(line))
-      .append(", in ").append(file);
-    }
-
-    virtual const char* what() const noexcept {
-      return message_.c_str();
-    }
-
-   private:
-    std::string message_;
-  };
 };
 
 #endif

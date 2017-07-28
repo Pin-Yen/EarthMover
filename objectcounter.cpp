@@ -1,4 +1,4 @@
-#include "objectcounter.hpp"
+#include "objectcounter.h"
 
 int ObjectCounter::node = 0;
 int ObjectCounter::point = 0;

@@ -1,7 +1,7 @@
-#ifndef GOMOKU_RENJU_BASIC_VIRTUAL_BOARD_H
-#define GOMOKU_RENJU_BASIC_VIRTUAL_BOARD_H
+#ifndef GOMOKU_RENJU_BASIC_VIRTUALBOARDRENJUBASIC_H_
+#define GOMOKU_RENJU_BASIC_VIRTUALBOARDRENJUBASIC_H_
 
-#include "../virtualboardgomoku.hpp"
+#include "../virtualboardgomoku.h"
 
 class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
  public:
@@ -22,7 +22,7 @@ class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
   inline void undo(int index) final;
 };
 
-#include "evaluatorrenjubasic.hpp"
+#include "evaluatorrenjubasic.h"
 
 VirtualBoardRenjuBasic* VirtualBoardRenjuBasic::create() {
   EvaluatorRenjuBasic::init();

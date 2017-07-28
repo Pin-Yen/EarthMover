@@ -1,14 +1,14 @@
-#include "gomoku/chesstype.hpp"
-#include "gomoku/status.hpp"
-#include "virtualboard.hpp"
-#include "gametree.hpp"
-#include "node.hpp"
+#include "gomoku/chesstype.h"
+#include "gomoku/status.h"
+#include "virtualboard.h"
+#include "gametree.h"
+#include "node.h"
 
 #include <iostream>
 #include <cmath>
 
 #ifdef DEBUG
-#include "objectcounter.hpp"
+#include "objectcounter.h"
 #endif
 
 GameTree::Node::Node() : index_(-1), parent_(NULL), child_(NULL), next_(NULL),
