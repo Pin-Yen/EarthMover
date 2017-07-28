@@ -6,7 +6,8 @@
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Evaluator {
  public:
-  static void evaluateRelativeScore(VirtualBoardGomoku::Point point[LENGTH], int playNo);
+  static void evaluateRelativeScore(VirtualBoardGomoku::Point point[LENGTH],
+                                    int playNo);
 
   static const int SCORE_WIN = 10000000, SCORE_FORBIDDEN = -100;
 

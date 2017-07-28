@@ -38,9 +38,12 @@ class VirtualBoardGomoku<StatusLength>::Point {
     #endif
   }
 
-  // set the status pointer
-  // note: to finish initialize this point, shound call this to write all status pointer
-  void setDirStatus(int dir, int index, const STATUS* status) { dirStatus_[dir][index] = status; }
+  // Set the status pointer.
+  // Note: to finish initialize this point,
+  // shound call this to write all status pointer
+  void setDirStatus(int dir, int index, const STATUS* status) {
+    dirStatus_[dir][index] = status;
+  }
 
   // get the status by diraction, copy the pointer's value to dest
   void getDirStatus(int dir, STATUS* dest) const {
@@ -58,7 +61,10 @@ class VirtualBoardGomoku<StatusLength>::Point {
   int score() const { return score_; }
   void setScore(int score) { score_ = score; }
 
-  void setAbsScore(int black, int white) { absScore_[0] = black; absScore_[1] = white; }
+  void setAbsScore(int black, int white) {
+    absScore_[0] = black;
+    absScore_[1] = white;
+  }
 
   ChessType& type(int index) { return type_[index]; }
   ChessType* type() { return type_; }

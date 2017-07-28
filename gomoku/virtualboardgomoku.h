@@ -88,18 +88,21 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(
     for (int c = 0; c < DIMEN; ++c, ++i)
       // set each point's status array pointer
       for (int d = 0; d < 4; ++d)
-        for (int offset = -(StatusLength / 2), index = 0; offset <= (StatusLength / 2); ++offset) {
+        for (int offset = -(StatusLength / 2), index = 0;
+             offset <= (StatusLength / 2); ++offset) {
           if (offset == 0) continue;
 
           const int checkRow = r + dir[d][0] * offset,
                     checkCol = c + dir[d][1] * offset;
 
           if (checkRow < 0 || checkRow >= DIMEN ||
-              checkCol < 0 || checkCol >= DIMEN)
+              checkCol < 0 || checkCol >= DIMEN) {
             // if out of bound, set pointer to NULL
             point_[i].setDirStatus(d, index, NULL);
-          else
-            point_[i].setDirStatus(d, index, point_[checkRow * DIMEN + checkCol].statusRef());
+          } else {
+            point_[i].setDirStatus(
+                d, index, point_[checkRow * DIMEN + checkCol].statusRef());
+          }
 
           ++index;
         }
@@ -124,7 +127,8 @@ void VirtualBoardGomoku<StatusLength>::init() {
     for (int c = 0; c < DIMEN; ++c, ++i)
       // set each point's status array pointer
       for (int d = 0; d < 4; ++d)
-        for (int offset = -(StatusLength / 2), index = 0; offset <= (StatusLength / 2); ++offset) {
+        for (int offset = -(StatusLength / 2), index = 0;
+             offset <= (StatusLength / 2); ++offset) {
           if (offset == 0) continue;
 
           const int checkRow = r + dir[d][0] * offset,
@@ -135,7 +139,8 @@ void VirtualBoardGomoku<StatusLength>::init() {
             // if out of bound, set pointer to NULL
             point_[i].setDirStatus(d, index, NULL);
           else
-            point_[i].setDirStatus(d, index, point_[checkRow * DIMEN + checkCol].statusRef());
+            point_[i].setDirStatus(
+                d, index, point_[checkRow * DIMEN + checkCol].statusRef());
 
           ++index;
         }

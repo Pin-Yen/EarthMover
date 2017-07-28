@@ -79,19 +79,21 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
     int i = childNode->index();
     checked[i] = true;
 
-    // if child node is winning then DO NOT select this point
+    // If child node is winning then DO NOT select this point.
     if (childNode->winning()) {
       childWinning = true;
       continue;
     }
 
-    // if there exists a point that wins in all previous simulations, select this point
+    // If there exists a point that wins in all previous simulations,
+    // then select this point.
     if (childNode->winRate() == 1) {
       *index = i;
       return -2;
     }
 
-    double value = ((double)board->getScore(i) / scoreSum) + getUCBValue(childNode);
+    double value = static_cast<double>(board->getScore(i)) / scoreSum +
+                   getUCBValue(childNode);
 
     if (value > max) {
       max = value;
@@ -102,7 +104,9 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
   int notCheckedIndex = board->getHSI(checked);
 
   if (notCheckedIndex != -1) {
-    double value = ((double)board->getScore(notCheckedIndex) / scoreSum) + getUCBValue(NULL);
+    double value =
+        static_cast<double>(board->getScore(notCheckedIndex)) / scoreSum +
+        getUCBValue(NULL);
 
     if (value > max) {
       max = value;

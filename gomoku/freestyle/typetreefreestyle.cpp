@@ -13,12 +13,14 @@
 #include "../../objectcounter.h"
 #endif
 
+bool VirtualBoardFreeStyle::EvaluatorFreeStyle::
+    TypeTreeFreeStyle::isInit = false;
+
 VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*
  VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::root = NULL;
 
-bool VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::isInit = false;
-
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::
+    TypeTreeFreeStyle::plantTree() {
   // create tree seed
   STATUS status[ANALYZE_LENGTH];
   for (int i = 0; i < ANALYZE_LENGTH; ++i)
@@ -32,8 +34,9 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::plantTree() {
 // Depth First Search
 // parameters of the initial call should be:
 // location: length / 2, move = -1, connect = 0
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *node, STATUS *status, int location,
-                                            int move, bool blackBlock, bool whiteBlock) {
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(
+    Node *node, STATUS *status, int location,
+    int move, bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true
   switch (status[location]) {
     case BLACK:
@@ -79,28 +82,32 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(Node *nod
     dfs(node->childNode[i], status, location, move, blackBlock, whiteBlock);
   }
 
-  // restore current location to EMPTY
-  // note: without this line, the classification process should still work fine,
-  // but will result in printing out garbage values on EMPTY points
+  // Restore current location to EMPTY.
+  // Note: without this line,
+  // the classification process should still work fine,
+  // but will result in printing out garbage values on EMPTY points.
   status[location] = EMPTY;
 }
 
-SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAnalyze(
-    STATUS *status, STATUS color, bool checkLevel) {
+SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::
+    TypeTreeFreeStyle::typeAnalyze(STATUS *status, STATUS color,
+                                   bool checkLevel) {
   int connect = 1;
   // check the length of the connection around the analize point
   // under the following, we call this chess group "center group" (CG)
   // for example: --X O*OOX-- ; OOOO* O X
   //                  ^^^^      ^^^^^
-  for (int move = -1, start = ANALYZE_LENGTH / 2 - 1; move <= 1; move += 2, start += 2)
+  for (int move = -1, start = ANALYZE_LENGTH / 2 - 1;
+       move <= 1; move += 2, start += 2) {
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
       if (status[checkPoint] != color) break;
 
       ++connect;
     }
+  }
 
   if (connect >= 5) {
-    return SingleType(5, 0, 0); // CG's length >= 5, return 5
+    return SingleType(5, 0, 0);  // CG's length >= 5, return 5
   } else {
     // CG's length < 5
 
@@ -114,8 +121,10 @@ SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAna
     bool lInit = false, rInit = false;
     int level = 0;
 
-    for (int move = -1, start = ANALYZE_LENGTH / 2 - 1; move <= 1; move += 2, start += 2)
-      for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
+    for (int move = -1, start = ANALYZE_LENGTH / 2 - 1;
+         move <= 1; move += 2, start += 2) {
+      for (int count = 0, checkPoint = start;
+           count < 4; ++count, checkPoint += move) {
         // if reach CG's bound
         if (status[checkPoint] != color) {
           SingleType type;
@@ -130,7 +139,8 @@ SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAna
             for (int i = 0; i < ANALYZE_LENGTH; ++i) {
               int transformation_index = i - (ANALYZE_LENGTH / 2 - checkPoint);
 
-              if (transformation_index < 0 || transformation_index >= ANALYZE_LENGTH)
+              if (transformation_index < 0 ||
+                  transformation_index >= ANALYZE_LENGTH)
                 // if out of bound, set it to bound
                 newStatus[i] = BOUND;
               else
@@ -182,6 +192,8 @@ SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAna
             }
           }
         }
+      }
+    }
 
     // restore the analize point to empty
     status[ANALYZE_LENGTH / 2] = EMPTY;
@@ -199,7 +211,8 @@ SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::typeAna
       // it is a dead four type
       return SingleType(4, 0, 0);
     } else if (lType.length() == 0) {
-      // if the longer size produces 0 or forbidden point after play at analize point,
+      // if the longer size produces 0
+      // or forbidden point after play at analize point,
       // it is a useless point
       return SingleType(0, 0, 0);
     } else {

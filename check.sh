@@ -1,1 +1,1 @@
-python ../cpplint.py ~/em/* ~/em/gomoku/* ~/em/gomoku/freestyle/* ~/em/gomoku/renju_basic/*
+python ../cpplint.py --filter=-,+whitespace/line_length ~/em/* ~/em/gomoku/* ~/em/gomoku/freestyle/* ~/em/gomoku/renju_basic/*

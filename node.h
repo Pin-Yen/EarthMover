@@ -14,16 +14,19 @@ class GameTree::Node {
 
   // overload new and delete operator for memory pool
   static void *operator new(size_t /*size*/) { return pool_.allocate(); }
-  static void operator delete(void *ptr, size_t /*size*/) { pool_.deallocate(ptr); }
+  static void operator delete(void *ptr, size_t /*size*/) {
+    pool_.deallocate(ptr);
+  }
 
   // update when tie
   void update() { ++playout_[2]; }
   // update, result: 0 -> win, 1 -> lose
   void update(bool result) { ++playout_[2]; ++playout_[result]; }
 
-  // MCTS function, call by GameTree::selection
-  // select child according to UCBValue and point's score
-  // return -2 if select to leaf and no result yet, 0 for losing, 1 for winning, -1 if chessboard is full
+  // MCTS function, call by GameTree::selection.
+  // Select child according to UCBValue and point's score.
+  // Return -2 if select to leaf and no result yet, 0 for losing,
+  // 1 for winning, -1 if chessboard is full.
   // FIX: discription of return value not complete.
   int selection(int* index, VirtualBoard* board);
 
@@ -31,7 +34,7 @@ class GameTree::Node {
   // NOTE: the win rate is for the upper layer(parent node)
   double winRate() const {
     return ((playout_[0] + (playout_[2] - playout_[0] - playout_[1]) / 2.0) /
-            (double)playout_[2]);
+            static_cast<double>(playout_[2]));
   }
 
   // delete all children (or except for the "exceptNode")

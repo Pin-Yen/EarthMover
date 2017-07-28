@@ -65,7 +65,8 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::init() {
+void VirtualBoardGomoku<StatusLength>::Evaluator::
+    TypeTree<DerivedTypeTree>::init() {
   // check if tree exists
   if (DerivedTypeTree::isInit) return;
   DerivedTypeTree::isInit = true;
@@ -79,7 +80,8 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::ini
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-ChessType VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::classify(const STATUS *status) {
+ChessType VirtualBoardGomoku<StatusLength>::Evaluator::
+    TypeTree<DerivedTypeTree>::classify(const STATUS *status) {
   Node* node = DerivedTypeTree::root;
 
   for (int move = -1, start = StatusLength / 2 - 1; ; move = 1, ++start)
@@ -100,7 +102,8 @@ ChessType VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>
 
 template <int StatusLength>
 template <class DerivedTypeTree>
-ChessType* VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *node) {
+ChessType* VirtualBoardGomoku<StatusLength>::Evaluator
+    ::TypeTree<DerivedTypeTree>::cutSameResultChild(Node *node) {
   if (node->leaf)
     return &(node->type);
 

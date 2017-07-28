@@ -6,7 +6,8 @@
 class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
  public:
   VirtualBoardRenjuBasic() : VirtualBoardGomoku() {}
-  VirtualBoardRenjuBasic(const VirtualBoardRenjuBasic& board) : VirtualBoardGomoku(board) {}
+  VirtualBoardRenjuBasic(
+      const VirtualBoardRenjuBasic& board) : VirtualBoardGomoku(board) {}
 
  private:
   class EvaluatorRenjuBasic;
@@ -32,7 +33,8 @@ VirtualBoardRenjuBasic* VirtualBoardRenjuBasic::create() {
 }
 
 int VirtualBoardRenjuBasic::play(int index) {
-  return VirtualBoardGomoku::play<VirtualBoardRenjuBasic::EvaluatorRenjuBasic>(index);
+  return VirtualBoardGomoku::
+      play<VirtualBoardRenjuBasic::EvaluatorRenjuBasic>(index);
 }
 
 void VirtualBoardRenjuBasic::undo(int index) {

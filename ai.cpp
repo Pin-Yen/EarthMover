@@ -32,15 +32,16 @@ int AI::think() {
 
 int AI::play(int index) {
   int winning = tree->play(index);
-   /* winning  whoTurn   winner
-   *    0                 -1
-   *    0                 -1
-   *   -1        0         1
-   *   -1        1         0
-   *    1        0         0
-   *    1        1         1 */
+  // winning  whoTurn   winner
+  //    0                 -1
+  //    0                 -1
+  //   -1        0         1
+  //   -1        1         0
+  //    1        0         0
+  //    1        1         1
 
-  return winning == 0 ? -1 : ((winning == -1) ^ tree->getCurrentBoard()->whoTurn());
+  return winning == 0 ? -1 :
+      ((winning == -1) ^ tree->getCurrentBoard()->whoTurn());
 }
 
 void AI::reset(int level, int rule) {

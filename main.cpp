@@ -96,7 +96,9 @@ void start() {
 
     #ifdef TIME
     finish = clock();
-    std::cout << "duration: " << (double)(finish - start) / CLOCKS_PER_SEC << std::endl;
+    std::cout << "duration: "
+              << static_cast<double>(finish - start) / CLOCKS_PER_SEC
+              << std::endl;
     #endif
 
     #ifdef DEBUG

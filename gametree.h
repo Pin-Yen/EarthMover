@@ -50,10 +50,12 @@ class GameTree {
  private:
   class Node;
 
-  // MCTS function
-  // keep select the child node from the current node, until reach the leaf or a winning node
-  // puts the result to node,
-  // returns -2 for a no result leaf node, -1 for FULL chessboard, 0 for losing, 1 for winning
+  // MCTS function.
+  // keep select the child node from the current node,
+  // until reach the leaf or a winning node.
+  // Puts the result to node,
+  // returns -2 for a no result leaf node, -1 for FULL chessboard,
+  // 0 for losing, 1 for winning.
   int selection(Node** node, VirtualBoard* board) const;
 
   // MCTS function

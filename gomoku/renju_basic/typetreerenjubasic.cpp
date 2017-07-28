@@ -11,12 +11,14 @@
 #include "../../objectcounter.h"
 #endif
 
-bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::isInit = false;
+bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
+    TypeTreeRenjuBasic::isInit = false;
 
 VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::Node*
  VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::root = NULL;
 
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::plantTree() {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
+    TypeTreeRenjuBasic::plantTree() {
   // create tree seed
   STATUS status[ANALYZE_LENGTH];
   for (int i = 0; i < ANALYZE_LENGTH; ++i)
@@ -33,9 +35,9 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::plantTree(
 // connect is used to prevent already exist five
 // for example : OOOOO*OOX-- ; --X  *OOOOO
 //               ^^^^^               ^^^^^
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *node, STATUS *status, int location,
-                                            int move,  int blackConnect, int whiteConnect,
-                                            bool blackBlock, bool whiteBlock) {
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(
+    Node *node, STATUS *status, int location, int move,
+    int blackConnect, int whiteConnect,bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true*/
   switch (status[location]) {
     case BLACK:
@@ -87,7 +89,8 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
   const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
-    // if connect == 4, stop playing same color at this point to prevent appearing five
+    // if connect == 4,
+    // stop playing same color at this point to prevent appearing five
     if ((i == 0 && blackConnect >= 4) || (i == 1 && whiteConnect >= 4))
       continue;
 
@@ -98,24 +101,28 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(Node *
   }
 
   // restore current location to EMPTY
-  // note: without this line, the classification process should still work fine,
+  // note: without this line,
+  // the classification process should still work fine,
   // but will result in printing out garbage values on EMPTY points
   status[location] = EMPTY;
 }
 
-SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::typeAnalyze(
-    STATUS *status, STATUS color, bool checkLevel) {
+SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
+    TypeTreeRenjuBasic::typeAnalyze(STATUS *status, STATUS color,
+                                    bool checkLevel) {
   int connect = 1;
   // check the length of the connection around the analize point
   // under the following, we call this chess group "center group" (CG)
   // for example: --X O*OOX-- ; OOOO* O X
   //                  ^^^^      ^^^^^
-  for (int move = -1, start = ANALYZE_LENGTH / 2 - 1; move <= 1; move += 2, start += 2)
+  for (int move = -1, start = ANALYZE_LENGTH / 2 - 1;
+       move <= 1; move += 2, start += 2) {
     for (int i = 0, checkPoint = start; i < 4; ++i, checkPoint += move) {
       if (status[checkPoint] != color) break;
 
       ++connect;
     }
+  }
 
   if (connect > 5) {
     // CG's length > 5, return -1
@@ -139,8 +146,10 @@ SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::type
     bool lInit = false, rInit = false;
     int level = 0;
 
-    for (int move = -1, start = ANALYZE_LENGTH / 2 - 1; move <= 1; move += 2, start += 2)
-      for (int count = 0, checkPoint = start; count < 4; ++count, checkPoint += move)
+    for (int move = -1, start = ANALYZE_LENGTH / 2 - 1;
+         move <= 1; move += 2, start += 2) {
+      for (int count = 0, checkPoint = start;
+           count < 4; ++count, checkPoint += move) {
         // if reach CG's bound
         if (status[checkPoint] != color) {
           SingleType type;
@@ -155,7 +164,8 @@ SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::type
             for (int i = 0; i < ANALYZE_LENGTH; ++i) {
               int transformation_index = i - (ANALYZE_LENGTH / 2 - checkPoint);
 
-              if (transformation_index < 0 || transformation_index >= ANALYZE_LENGTH)
+              if (transformation_index < 0 ||
+                  transformation_index >= ANALYZE_LENGTH)
                   // if out of bound, set it to Bound
                 newStatus[i] = BOUND;
               else
@@ -207,6 +217,8 @@ SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::type
             }
           }
         }
+      }
+    }
 
     // restore the analize point to empty
     status[ANALYZE_LENGTH / 2] = EMPTY;
@@ -228,7 +240,8 @@ SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::type
       // it is a dead four type
       return SingleType(4, 0, 0);
     } else if (lType.length() <= 0) {
-      // if the longer size produces 0 or forbidden point after play at analize point,
+      // if the longer size produces 0
+      // or forbidden point after play at analize point,
       // it is a useless point
       return SingleType(0, 0, 0);
     } else {

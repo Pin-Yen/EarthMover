@@ -21,9 +21,10 @@ HttpRequest::HttpRequest(const char* rawRequest) {
       int cookieEnd = request.find(";", cookieMiddle);
       if (cookieEnd == std::string::npos)
         cookieEnd = cookieListEnd;
-      cookieJar_.insert({request.substr(cookieStart, cookieMiddle - cookieStart),
-        request.substr(cookieMiddle + 1, cookieEnd - cookieMiddle - 1)});
-      cookieStart = cookieEnd + 2; // plus the '; ' at the end of a cookie.
+      cookieJar_.insert({
+          request.substr(cookieStart, cookieMiddle - cookieStart),
+          request.substr(cookieMiddle + 1, cookieEnd - cookieMiddle - 1)});
+      cookieStart = cookieEnd + 2;  // plus the '; ' at the end of a cookie.
     }
 
   }

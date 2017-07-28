@@ -39,7 +39,8 @@ class AI {
 
   std::string getTreeJSON() { return tree->getTreeJSON(); }
 
-  // Thinks in background. Stops if `controller` changed to false by other threads.
+  // Thinks in background.
+  // Stops if `controller` changed to false by other threads.
   void thinkInBackground(bool* controller);
 
  private:

@@ -16,14 +16,20 @@ class SingleType {
     #endif
   }
 
-  SingleType(int8_t length, int8_t life, int8_t level): length_(length), life_(life), level_(level) {
+  SingleType(int8_t length, int8_t life, int8_t level)
+      : length_(length),
+        life_(life),
+        level_(level) {
     #ifdef DEBUG
     ObjectCounter::registerCT();
     #endif
   }
 
   // copy constructor
-  SingleType(const SingleType& source): length_(source.length_), life_(source.life_), level_(source.level_) {
+  SingleType(const SingleType& source)
+      : length_(source.length_),
+        life_(source.life_),
+        level_(source.level_) {
     #ifdef DEBUG
     ObjectCounter::registerCT();
     #endif
@@ -39,27 +45,35 @@ class SingleType {
   int8_t level() const { return level_; }
 
   bool operator==(const SingleType &type) const {
-    return (length_ == type.length_ && life_ == type.life_ && level_ == type.level_);
+    return length_ == type.length_ &&
+           life_ == type.life_ &&
+           level_ == type.level_;
   }
 
   bool operator!=(const SingleType &type) const {
-    return (length_ != type.length_ || life_ != type.life_ || level_ != type.level_);
+    return length_ != type.length_ ||
+           life_ != type.life_ ||
+           level_ != type.level_;
   }
 
   bool operator>(const SingleType &type) const {
-    return ((length_ > type.length_) || ((length_ == type.length_) && (life_ > type.life_)));
+    return (length_ > type.length_) ||
+           ((length_ == type.length_) && (life_ > type.life_));
   }
 
   bool operator<(const SingleType &type) const {
-    return ((length_ < type.length_) || ((length_ == type.length_) && (life_ < type.life_)));
+    return (length_ < type.length_) ||
+           ((length_ == type.length_) && (life_ < type.life_));
   }
 
   bool operator>=(const SingleType &type) const {
-    return ((length_ > type.length_) || ((length_ == type.length_) && (life_ >= type.life_)));
+    return (length_ > type.length_) ||
+           ((length_ == type.length_) && (life_ >= type.life_));
   }
 
   bool operator<=(const SingleType &type) const {
-    return ((length_ < type.length_) || ((length_ == type.length_) && (life_ <= type.life_)));
+    return (length_ < type.length_) ||
+           ((length_ == type.length_) && (life_ <= type.life_));
   }
 
  private:

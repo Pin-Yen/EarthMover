@@ -31,12 +31,14 @@ class HttpResponse {
   HttpResponse& addCookie(const char* name, const char* value);
 
   // Generates the header string, calcuates contentLength and headerLength.
-  // After calling this, the state becomes STATE_COMPILED, which means this response is
-  // ready to being served to the client. Further attemps to alter the response data are
+  // After calling this, the state becomes STATE_COMPILED,
+  // which means this response is ready to being served to the client.
+  // Further attemps to alter the response data are
   // invalid and will cause the `HTTPResponseException` be thrown.
   HttpResponse& compile();
 
-  // ** The following methods will throw `HTTPResponseException` if the state is STATE_RAW
+  // ** The following methods will throw `HTTPResponseException`
+  // if the state is STATE_RAW
 
   std::string getHeaderString();
 
@@ -50,9 +52,11 @@ class HttpResponse {
 
   class HttpResponseException : std::exception {
    public:
-    HttpResponseException(const char* description, int line, const char* file) {
-      message_.append(description).append("\n\tAt line ").append(std::to_string(line))
-      .append(", in ").append(file);
+    HttpResponseException(const char* description, int line,
+                          const char* file) {
+      message_.append(description).append("\n\tAt line ")
+          .append(std::to_string(line))
+          .append(", in ").append(file);
     }
 
     virtual const char* what() const noexcept {
@@ -84,7 +88,8 @@ class HttpResponse {
   int bodyLength_;
   int headerLength_;
 
-  // recording the state of this response, should be STATE_RAW_ or STATE_COMPILED_
+  // recording the state of this response,
+  // should be STATE_RAW_ or STATE_COMPILED_
   unsigned char state_;
 };
 

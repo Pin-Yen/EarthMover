@@ -89,7 +89,8 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::init() {
 }
 
 template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::rotate(char table[5][5]) {
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::rotate(
+    char table[5][5]) {
   char temp[5][5];
   // rotate 90 degrees clockwise (row -> col, col -> 4 - row)
   for (int r = 0; r < 5; ++r)
@@ -102,7 +103,8 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::rotate(char table
 }
 
 template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::mirror(char table[5][5]) {
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::mirror(
+    char table[5][5]) {
   char temp[5][5];
   // mirror (row -> col, col -> row)
   for (int r = 0; r < 5; ++r)
@@ -115,10 +117,11 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::mirror(char table
 }
 
 template <int StatusLength>
-void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::insert(char table[5][5]) {
+void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::insert(
+    char table[5][5]) {
   Node* currentNode = root;
 
-  int oriRow = 0, oriCol = 0, curRow, curCol;
+  int oriR = 0, oriC = 0, curR, curC;
   // set the origin in the lower right corner in the table
   // e.g. the origin of the example below is "."
   //   X
@@ -129,45 +132,46 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::insert(char table
   for (int r = 0; r < 5; ++r)
     for (int c = 0; c < 5; ++c)
       if (table[r][c] == 'X' || table[r][c] == 'O') {
-        if (r > oriRow)
-          oriRow = r;
-        if (c > oriCol)
-          oriCol = c;
+        if (r > oriR)
+          oriR = r;
+        if (c > oriC)
+          oriC = c;
       }
 
   // set current point to origin
-  curRow = oriRow; curCol = oriCol;
+  curR = oriR; curC = oriC;
 
   while (true) {
     // if find a occupied point
-    if (table[curRow][curCol] == 'X' || table[curRow][curCol] == 'O') {
-      int color = table[curRow][curCol] == 'X' ? 0 : 1;
+    if (table[curR][curC] == 'X' || table[curR][curC] == 'O') {
+      int color = table[curR][curC] == 'X' ? 0 : 1;
 
       // using vector type to record (origin to current point)
-      if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL)
-        currentNode->childNode[oriRow - curRow][oriCol - curCol][color] = new Node();
-      currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
+      if (currentNode->childNode[oriR - curR][oriC - curC][color] == NULL)
+        currentNode->childNode[oriR - curR][oriC - curC][color] = new Node();
+      currentNode = currentNode->childNode[oriR - curR][oriC - curC][color];
     }
 
     // the insert order is from right to left, from bottom to top
-    --curCol;
-    if (curCol < 0) {
-      if (curRow == 0) break;
-      --curRow;
+    --curC;
+    if (curC < 0) {
+      if (curR == 0) break;
+      --curR;
 
-      curCol = 4;
+      curC = 4;
     }
   }
 
   // record the fifth move
-  for (curRow = 0; curRow < 5; ++curRow)
-    for (curCol = 0; curCol < 5; ++curCol)
-      if (table[curRow][curCol] == 'P') {
+  for (curR = 0; curR < 5; ++curR)
+    for (curC = 0; curC < 5; ++curC)
+      if (table[curR][curC] == 'P') {
         // using vector type to record
-        std::array<int, 2> result = {oriRow - curRow, oriCol - curCol};
+        std::array<int, 2> result = {oriR - curR, oriC - curC};
         // if vector didnot contain this result, add this result into vector
-        if (std::find(currentNode->result.begin(), currentNode->result.end(), result) ==
-            currentNode->result.end())
+        if (std::find(currentNode->result.begin(),
+                      currentNode->result.end(),
+                      result) == currentNode->result.end())
           currentNode->result.push_back(result);
       }
 }
@@ -178,7 +182,7 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
     VirtualBoardGomoku<StatusLength>::Point point[LENGTH]) {
   Node* currentNode = root;
 
-  int oriRow = 0, oriCol = 0;
+  int oriR = 0, oriC = 0;
   int left = 14, top = 14;
   // set the origin in the lower right corner, find the left and top
   // "i" is for point index
@@ -189,37 +193,39 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
           top = r;
         if (c < left)
           left = c;
-        if (r > oriRow)
-          oriRow = r;
-        if (c > oriCol)
-          oriCol = c;
+        if (r > oriR)
+          oriR = r;
+        if (c > oriC)
+          oriC = c;
       }
 
-  if (oriRow - top > 4 || oriCol - left > 4) return -1;
+  if (oriR - top > 4 || oriC - left > 4) return -1;
 
-  int curRow = oriRow, curCol = oriCol;
+  int curR = oriR, curC = oriC;
 
   while (true) {
-    int curIndex = curRow * DIMEN + curCol;
-    if (point[curIndex].status() == BLACK || point[curIndex].status() == WHITE) {
+    int curIndex = curR * DIMEN + curC;
+    if (point[curIndex].status() == BLACK ||
+        point[curIndex].status() == WHITE) {
       STATUS color = point[curIndex].status();
-      if (currentNode->childNode[oriRow - curRow][oriCol - curCol][color] == NULL) return -1;
+      if (currentNode->childNode[oriR - curR][oriC - curC][color] == NULL)
+        return -1;
 
-      currentNode = currentNode->childNode[oriRow - curRow][oriCol - curCol][color];
+      currentNode = currentNode->childNode[oriR - curR][oriC - curC][color];
     }
 
-    --curCol;
-    if (curCol < oriCol - 4 || curCol < 0) {
-      if (curRow == oriRow - 4 || curRow == 0) break;
-      --curRow;
+    --curC;
+    if (curC < oriC - 4 || curC < 0) {
+      if (curR == oriR - 4 || curR == 0) break;
+      --curR;
 
-      curCol = oriCol;
+      curC = oriC;
     }
   }
 
   int index = -1, count = 1;
   for (std::array<int, 2> result : currentNode->result) {
-    int r = oriRow - result[0], c = oriCol - result[1];
+    int r = oriR - result[0], c = oriC - result[1];
     if (r < 4 || r > 10 || c < 4 || c > 10) continue;
 
     if (((double)rand() / RAND_MAX) <= (1. / count)) {

@@ -1,7 +1,8 @@
 #ifndef GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_
 #define GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_
 
-class VirtualBoardRenjuBasic::EvaluatorRenjuBasic : public VirtualBoardGomoku::Evaluator {
+class VirtualBoardRenjuBasic::EvaluatorRenjuBasic :
+    public VirtualBoardGomoku::Evaluator {
  public:
   static inline void init();
 
@@ -32,7 +33,8 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
   TypeTreeRenjuBasic::init();
 }
 
-ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(const STATUS *status) {
+ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(
+    const STATUS *status) {
   return TypeTreeRenjuBasic::classify(status);
 }
 

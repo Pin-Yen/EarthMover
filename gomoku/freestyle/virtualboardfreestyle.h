@@ -6,7 +6,8 @@
 class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
  public:
   VirtualBoardFreeStyle() : VirtualBoardGomoku() {}
-  VirtualBoardFreeStyle(const VirtualBoardFreeStyle& board) : VirtualBoardGomoku(board) {}
+  VirtualBoardFreeStyle(
+      const VirtualBoardFreeStyle& board) : VirtualBoardGomoku(board) {}
 
  private:
   class EvaluatorFreeStyle;
@@ -32,7 +33,8 @@ VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
 }
 
 int VirtualBoardFreeStyle::play(int index) {
-  return VirtualBoardGomoku::play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
+  return VirtualBoardGomoku::
+      play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
 }
 
 void VirtualBoardFreeStyle::undo(int index) {

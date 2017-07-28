@@ -40,14 +40,15 @@ void HttpServer::run() {
     std::cerr << "Failed to open socket.\n";
 
   // Bind socket to address.
-  struct sockaddr_in serverAddress;
+  sockaddr_in serverAddress;
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_addr.s_addr = htons(INADDR_ANY);
 
   for (int i = 0; i < 3; ++i) {
     serverAddress.sin_port = htons(PORTS_[i]);
 
-    if (bind(socketDescriptor, (struct sockaddr*) &serverAddress, sizeof(serverAddress) ) == 0) {
+    if (bind(socketDescriptor, (sockaddr*)&serverAddress,
+             sizeof(serverAddress)) == 0) {
       std::cerr << "Listening on port " << PORTS_[i] << "\n" << std::flush;
       break;
     }
@@ -59,7 +60,7 @@ void HttpServer::run() {
 
   while (true) {
     // Accepts a new connection.
-    int client = accept(socketDescriptor, (struct sockaddr*)&serverAddress, &size);
+    int client = accept(socketDescriptor, (sockaddr*)&serverAddress, &size);
     if (client < 0)
       std::cerr << "failed to accept\n";
 
@@ -122,7 +123,8 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
 
 void HttpServer::sendResponse(const int client, HttpResponse* response) {
   // Send header.
-  send(client, response->getHeaderString().c_str(), response->getHeaderLength(), 0);
+  send(client, response->getHeaderString().c_str(),
+       response->getHeaderLength(), 0);
   // Send body.
   send(client, response->getBody(), response->getBodyLength(), 0);
 
@@ -148,7 +150,8 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
   json body = json::parse(request->body());
 
   // Play and get winning status.
-  int winning = emList_[id]->play(((int)body["row"]) * 15 + ((int)body["col"]));
+  int winning = emList_[id]->play(static_cast<int>(body["row"]) * 15 +
+                                  static_cast<int>(body["col"]));
 
   json responseData;
   responseData["winner"] = winning;
@@ -268,7 +271,8 @@ void HttpServer::handleThink(const int client, HttpRequest* request) {
 
   *controller = true;
 
-  // Spin off the thinking process to a new thread, so that the server (main) thread wont be blocked.
+  // Spin off the thinking process to a new thread,
+  // so that the server (main) thread wont be blocked.
   threadList_[id] = std::thread([this, em, controller, client, request]() {
     // Earth Mover's decision, encoded in a single integer (row * 15 + col).
     int index = em->think();
@@ -297,7 +301,8 @@ void HttpServer::handleThink(const int client, HttpRequest* request) {
 
     // Return if game ends.
     if (whoWin != -1) {
-      // TODO: Tell someone to remove EM instance, or, at least cut down the tree.
+      // TODO: Tell someone to remove EM instance,
+      //       or, at least cut down the tree.
       return;
     }
 
@@ -356,7 +361,8 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   return;
 }
 
-void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
+void HttpServer::handleResourceRequest(const int client,
+                                       HttpRequest* request) {
   // Return 403 forbiddin if illegel.
   if (!sanitize(request->path())) {
     HttpResponse response(403);
@@ -367,7 +373,8 @@ void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
 
   // Open file.
   std::ifstream resourceFile;
-  resourceFile.open(request->path().substr(1).c_str(), std::ios_base::in | std::ios_base::binary);
+  resourceFile.open(request->path().substr(1).c_str(),
+                    std::ios_base::in | std::ios_base::binary);
 
   // If can't open file, return 404.
   if (!resourceFile.is_open()) {
@@ -378,9 +385,10 @@ void HttpServer::handleResourceRequest(const int client, HttpRequest* request) {
   }
 
     HttpResponse response(200);
-    response.setContentTypeByFileExt(request->path().substr(request->path().find_last_of(".")))
-        .setBody(&resourceFile)
-        .compile();
+    response.setContentTypeByFileExt(request->path().substr(request->path()
+                                                    .find_last_of(".")))
+            .setBody(&resourceFile)
+            .compile();
 
     sendResponse(client, &response);
 
@@ -405,7 +413,8 @@ bool HttpServer::sanitize(std::string directory) {
 }
 
 std::string HttpServer::sessionIdGenerator() {
-  char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  char charset[] =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   std::string sessionId;
   for (int i = 0; i < 10; ++i)
     sessionId.push_back(charset[rand() % (sizeof(charset) - 1)]);

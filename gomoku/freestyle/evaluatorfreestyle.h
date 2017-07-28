@@ -4,7 +4,8 @@
 #include "../evaluator.h"
 #include "../typetree.h"
 
-class VirtualBoardFreeStyle::EvaluatorFreeStyle : public VirtualBoardGomoku::Evaluator {
+class VirtualBoardFreeStyle::EvaluatorFreeStyle :
+    public VirtualBoardGomoku::Evaluator {
  public:
   static inline void init();
 
@@ -31,7 +32,8 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
   TypeTreeFreeStyle::init();
 }
 
-ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(const STATUS *status) {
+ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(
+    const STATUS *status) {
   return TypeTreeFreeStyle::classify(status);
 }
 

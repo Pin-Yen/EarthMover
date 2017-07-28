@@ -16,16 +16,21 @@ HttpResponse::~HttpResponse() {
 
 HttpResponse& HttpResponse::setContentType(const char* type) {
   if (state_ == STATE_COMPILED_)
-    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+    throw HttpResponseException(
+          "Data of a compiled response cannot be modified !",
+          __LINE__, __FILE__);
 
   contentType_.assign(type);
 
   return *this;
 }
 
-HttpResponse& HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
+HttpResponse& HttpResponse::setContentTypeByFileExt(
+    std::string fileExtension) {
   if (state_ == STATE_COMPILED_)
-    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+    throw HttpResponseException(
+        "Data of a compiled response cannot be modified !",
+        __LINE__, __FILE__);
 
   if (fileExtension == ".png")
     contentType_ = "image/png";
@@ -43,7 +48,9 @@ HttpResponse& HttpResponse::setContentTypeByFileExt(std::string fileExtension) {
 
 HttpResponse& HttpResponse::setBody(std::ifstream *file) {
   if (state_ == STATE_COMPILED_)
-    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+    throw HttpResponseException(
+        "Data of a compiled response cannot be modified !",
+        __LINE__, __FILE__);
 
   isBin_ = true;
 
@@ -64,7 +71,9 @@ HttpResponse& HttpResponse::setBody(std::ifstream *file) {
 
 HttpResponse& HttpResponse::setBody(std::string body) {
   if (state_ == STATE_COMPILED_)
-    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+    throw HttpResponseException(
+        "Data of a compiled response cannot be modified !",
+        __LINE__, __FILE__);
 
   body_ = body;
   bodyLength_ = body_.length();
@@ -74,7 +83,9 @@ HttpResponse& HttpResponse::setBody(std::string body) {
 
 HttpResponse& HttpResponse::addCookie(const char* name, const char* value) {
   if (state_ == STATE_COMPILED_)
-    throw HttpResponseException("Data of a compiled response cannot be modified !", __LINE__, __FILE__);
+    throw HttpResponseException(
+        "Data of a compiled response cannot be modified !",
+        __LINE__, __FILE__);
 
   cookies_ += name;
   cookies_ += '=';
@@ -124,14 +135,16 @@ HttpResponse& HttpResponse::compile() {
 
 std::string HttpResponse::getHeaderString(){
   if (state_ != STATE_COMPILED_)
-    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+    throw HttpResponseException("Response not compiled yet",
+                                __LINE__, __FILE__);
 
   return header_;
 }
 
 const char* HttpResponse::getBody() {
   if (state_ != STATE_COMPILED_)
-    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+    throw HttpResponseException("Response not compiled yet",
+                                __LINE__, __FILE__);
 
   if (isBin_)
     return binBody_;
@@ -140,14 +153,16 @@ const char* HttpResponse::getBody() {
 }
 int HttpResponse::getHeaderLength() {
   if (state_ != STATE_COMPILED_)
-    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+    throw HttpResponseException("Response not compiled yet",
+                                __LINE__, __FILE__);
 
   return headerLength_;
 }
 
 int HttpResponse::getBodyLength() {
   if (state_ != STATE_COMPILED_)
-    throw HttpResponseException("Response not compiled yet", __LINE__, __FILE__);
+    throw HttpResponseException("Response not compiled yet",
+                                __LINE__, __FILE__);
 
   return bodyLength_;
 }
@@ -165,9 +180,10 @@ const char* HttpResponse::status2String(int statusCode) {
   }
 
   if (statusCode == -1)
-    throw HttpResponseException("Response status code is not set", __LINE__, __FILE__);
+    throw HttpResponseException("Response status code is not set",
+                                __LINE__, __FILE__);
 
-  throw HttpResponseException(("Status " + std::to_string(statusCode) + " is not supported").c_str(), __LINE__\
-    , __FILE__);
+  throw HttpResponseException(
+      ("Status " + std::to_string(statusCode) + " is not supported").c_str(),
+      __LINE__, __FILE__);
 }
-

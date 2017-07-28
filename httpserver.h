@@ -23,13 +23,15 @@ class HttpServer {
   static const int PORTS_[3];
 
  protected:
-  // Read request from file discriptor `client` and returns a parsed HttpRequest object.
+  // Read request from file discriptor `client`
+  // and returns a parsed HttpRequest object.
   HttpRequest readRequest(const int client);
 
   // Dispatch the HttpRequest to handlers.
   void dispatch(const int client, HttpRequest* request);
 
-  // Check if the resource request is legal. returns true if legal, otherwise false.
+  // Check if the resource request is legal.
+  // Returns true if legal, otherwise false.
   bool sanitize(std::string directory);
 
   // Sends an HTTP response back to the client.
@@ -55,7 +57,8 @@ class HttpServer {
   // Max characters to read in a single request
   static const int MAX_REQUEST_LENGTH_ = 1500;
 
-  // session to id (session is the string of the http cookie, id is for indexing purposes)
+  // session to id
+  // (session is the string of the http cookie, id is for indexing purposes)
   std::unordered_map<std::string, int> session2instance_;
 
   // A list storing EarthMover instances.
