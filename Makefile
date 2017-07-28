@@ -21,13 +21,6 @@ NetworkDebug : mkdir $(objects) $(objects_network)
 	 g++ -o EM $(objects) $(objects_network) $(generalFlags) -pthread -O0 -g
 NetworkDebug : optimizeFlag = -O0 -g
 
-
-# Analyze build
-# analyze : specificFlags = -DANALYZE
-# analyze : optimizeFlag = -O3
-# analyze : mkdir $(objects) obj/log.o obj/main.o
-	# g++ -o EM obj/log.o obj/main.o $(objects) $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread
-
 # Local-Debug build. For debugging segfaults.
 # localdebug : specificFlags = -DDEBUG -g
 # localdebug : optimizeFlag = -O0
@@ -179,6 +172,7 @@ obj/main.o: main.cpp gametree.h virtualboard.h gomoku/chesstype.h \
  gomoku/renju_basic/../virtualboardgomoku.h \
  gomoku/renju_basic/evaluatorrenjubasic.h \
  gomoku/renju_basic/typetreerenjubasic.h \
- gomoku/renju_basic/../typetree.h
+ gomoku/renju_basic/../typetree.h \
+ timer.h
 	g++ -c main.cpp -o obj/main.o $(generalFlags) $(optimizeFlag) $(specificFlags)
 

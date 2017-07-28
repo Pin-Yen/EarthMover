@@ -1,4 +1,3 @@
-#include <time.h>
 #include <assert.h>
 #include <iostream>
 #include <string>
@@ -15,13 +14,10 @@
 #include "gomoku/virtualboardgomoku.h"
 #include "gomoku/freestyle/virtualboardfreestyle.h"
 #include "gomoku/renju_basic/virtualboardrenjubasic.h"
+#include "timer.h"
 
 #ifdef DEBUG
 #include "objectcounter.h"
-#endif
-
-#ifdef ANALYZE
-#include "log.h"
 #endif
 
 void start();
@@ -37,15 +33,7 @@ int main() {
   ObjectCounter::printInfo();
   #endif
 
-  #ifdef ANALYZE
-  Log::init();
-  #endif
-
   start();
-
-  #ifdef ANALYZE
-  Log::closeLog();
-  #endif
 
   return 0;
 }
@@ -69,34 +57,25 @@ void start() {
   }
   tree->reset(vb);
 
-  #ifdef ANALYZE
-  Log log;
-  #endif
 
   while (true) {
     int row, col;
 
     bool whoTurn = board->whoTurn();
 
-    #ifdef ANALYZE
-    log << "==== PLAY #" << board->playNo() << " ====\n";
-    #endif
-
     std::cout << "AI searching..." << std::endl;
 
     #ifdef TIME
-    clock_t start, finish;
-    start = clock();
+    Timer timer;
+    timer.start();
     #endif
 
     tree->MCTS(cycle);
     tree->MCTSResult();
 
     #ifdef TIME
-    finish = clock();
-    std::cout << "duration: "
-              << static_cast<double>(finish - start) / CLOCKS_PER_SEC
-              << std::endl;
+    timer.stop();
+    timer.print();
     #endif
 
     #ifdef DEBUG
