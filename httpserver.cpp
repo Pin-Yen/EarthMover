@@ -47,7 +47,7 @@ void HttpServer::run() {
   for (int i = 0; i < 3; ++i) {
     serverAddress.sin_port = htons(PORTS_[i]);
 
-    if (bind(socketDescriptor, (sockaddr*)&serverAddress,
+    if (bind(socketDescriptor, reinterpret_cast<sockaddr*>(&serverAddress),
              sizeof(serverAddress)) == 0) {
       std::cerr << "Listening on port " << PORTS_[i] << "\n" << std::flush;
       break;
@@ -60,7 +60,8 @@ void HttpServer::run() {
 
   while (true) {
     // Accepts a new connection.
-    int client = accept(socketDescriptor, (sockaddr*)&serverAddress, &size);
+    int client = accept(socketDescriptor,
+                        reinterpret_cast<sockaddr*>(&serverAddress), &size);
     if (client < 0)
       std::cerr << "failed to accept\n";
 
@@ -351,7 +352,8 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
 
   // Reset EM.
   json body = json::parse(request->body());
-  emList_[instanceId]->reset((int)body["level"], (int)body["rule"]);
+  emList_[instanceId]->reset(static_cast<int>(body["level"]),
+                             static_cast<int>(body["rule"]));
 
   // Response
   HttpResponse response(204);

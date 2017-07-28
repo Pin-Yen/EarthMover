@@ -7,7 +7,7 @@ HttpRequest::HttpRequest(const char* rawRequest) {
   // Extract path.
   int pathStart = request.find("/");
   int pathEnd = request.find(" ", pathStart);
-  path_ = request.substr(pathStart, pathEnd - pathStart );
+  path_ = request.substr(pathStart, pathEnd - pathStart);
   if (path_ == "/")
     path_ = "/index.html";
 
@@ -26,7 +26,6 @@ HttpRequest::HttpRequest(const char* rawRequest) {
           request.substr(cookieMiddle + 1, cookieEnd - cookieMiddle - 1)});
       cookieStart = cookieEnd + 2;  // plus the '; ' at the end of a cookie.
     }
-
   }
 
   // Extract Body.
@@ -38,7 +37,7 @@ HttpRequest::HttpRequest(const char* rawRequest) {
 }
 
 std::string HttpRequest::cookie(std::string flavor) {
-  try{
+  try {
     return cookieJar_.at(flavor);
   } catch(std::out_of_range& e) {
     return std::string("");

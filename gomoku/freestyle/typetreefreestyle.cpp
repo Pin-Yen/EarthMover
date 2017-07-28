@@ -16,7 +16,8 @@ bool VirtualBoardFreeStyle::EvaluatorFreeStyle::
     TypeTreeFreeStyle::isInit = false;
 
 VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*
- VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::root = NULL;
+    VirtualBoardFreeStyle::EvaluatorFreeStyle::
+    TypeTreeFreeStyle::root = NULL;
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::
     TypeTreeFreeStyle::plantTree() {

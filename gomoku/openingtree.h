@@ -227,7 +227,7 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
     int r = oriR - result[0], c = oriC - result[1];
     if (r < 4 || r > 10 || c < 4 || c > 10) continue;
 
-    if (((double)rand() / RAND_MAX) <= (1. / count)) {
+    if ((static_cast<double>(rand()) / RAND_MAX) <= (1. / count)) {
       index =  r * DIMEN + c;
       ++count;
     }

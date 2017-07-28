@@ -25,7 +25,7 @@ void DisplayBoard::invalidate() const {
 void DisplayBoard::getInput(int *row, int *col) const {
   while (true) {
     std::cout << "enter the coordinate of next move (A1 ~ "
-              << (char)('A' + CHESSBOARD_DIMEN - 1)
+              << static_cast<char>('A' + CHESSBOARD_DIMEN - 1)
               << CHESSBOARD_DIMEN << ") : ";
     std::string input;
     std::cin >> input;
@@ -157,9 +157,10 @@ void DisplayBoard::printBoard(int row, int col, int color) const {
     std::string s = "\n    ";
 
     // if not at the first or last row, print │ between two row
-    if (row > 0 && row < CHESSBOARD_DIMEN)
+    if (row > 0 && row < CHESSBOARD_DIMEN) {
       for (int i = 0; i < CHESSBOARD_DIMEN; ++i)
         s += ((i == 0 || i == CHESSBOARD_DIMEN - 1) ? "   ║" : "   │");
+    }
 
     s += "\n";
     std::cout << s;

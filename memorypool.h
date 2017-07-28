@@ -5,8 +5,8 @@
 
 class MemoryPool {
  public:
-  MemoryPool() { pool_ = NULL; };
-  ~MemoryPool() { free(); };
+  MemoryPool() { pool_ = NULL; }
+  ~MemoryPool() { free(); }
 
   // initialize pool
   // size: each block's size

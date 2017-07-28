@@ -157,7 +157,8 @@ int GameTree::MCTSResult() const {
 
   std::cout << std::fixed << std::setprecision(3)
             << "total sim: " << currentNode_->totalPlayout()
-            << "  best: " << (char)(index % 15 + 65) << index / 15 + 1
+            << "  best: "
+            << static_cast<char>(index % 15 + 65) << index / 15 + 1
             << "  sim: " << child->totalPlayout()
             << "  WinR: " << child->winRate()
             << "  W/L: " << currentNode_->winOrLose()

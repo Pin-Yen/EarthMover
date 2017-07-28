@@ -7,11 +7,10 @@
 #include <unordered_map>
 
 typedef std::unordered_map<std::string, std::string> stringmap;
-class HttpRequest
-{
+class HttpRequest {
  public:
-  HttpRequest(const char* rawRequest);
-  ~HttpRequest(){}
+  explicit HttpRequest(const char* rawRequest);
+  ~HttpRequest() {}
 
   std::string path() { return path_; }
 
@@ -23,7 +22,7 @@ class HttpRequest
 
   class BadRequestException : std::exception {
    public:
-    BadRequestException(const char* description) {
+    explicit BadRequestException(const char* description) {
       message_.assign(description);
     }
 

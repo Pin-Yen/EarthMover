@@ -53,6 +53,7 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
   };
 
   static const int ANALYZE_LENGTH = StatusLength + 1;
+
  private:
   // cut the tree node that all child has same result
   static ChessType* cutSameResultChild(Node *root);

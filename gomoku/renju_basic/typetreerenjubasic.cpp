@@ -14,7 +14,8 @@ bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
     TypeTreeRenjuBasic::isInit = false;
 
 VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::Node*
- VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::root = NULL;
+    VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
+    TypeTreeRenjuBasic::root = NULL;
 
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
     TypeTreeRenjuBasic::plantTree() {
@@ -36,7 +37,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
 //               ^^^^^               ^^^^^
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(
     Node *node, STATUS *status, int location, int move,
-    int blackConnect, int whiteConnect,bool blackBlock, bool whiteBlock) {
+    int blackConnect, int whiteConnect, bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true*/
   switch (status[location]) {
     case BLACK:

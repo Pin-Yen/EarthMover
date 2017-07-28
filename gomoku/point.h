@@ -26,7 +26,6 @@ class VirtualBoardGomoku<StatusLength>::Point {
         absScore_{ source.absScore_[0], source.absScore_[1] },
         type_{ source.type_[0], source.type_[1],
                source.type_[2], source.type_[3] } {
-
     #ifdef DEBUG
     ObjectCounter::registerPoint();
     #endif
@@ -68,6 +67,7 @@ class VirtualBoardGomoku<StatusLength>::Point {
 
   ChessType& type(int index) { return type_[index]; }
   ChessType* type() { return type_; }
+
  private:
   // chess type array
   // index: 0→ 1↓ 2↗ 3↘

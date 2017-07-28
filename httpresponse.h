@@ -6,9 +6,8 @@
 
 class HttpResponse {
  public:
-
   // Creates an empty HTTP response. Can optionally set the status code.
-  HttpResponse(int httpResponseCode = -1);
+  explicit HttpResponse(int httpResponseCode = -1);
 
   ~HttpResponse();
 

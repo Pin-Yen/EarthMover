@@ -205,7 +205,7 @@ int VirtualBoardGomoku<StatusLength>::getHSI() const {
       index = i;
     } else if (score == max) {
       ++same;
-      if (((double)rand() / RAND_MAX) <= (1. / same)) {
+      if ((static_cast<double>(rand()) / RAND_MAX) <= (1. / same)) {
         index = i;
       }
     }

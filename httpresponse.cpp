@@ -38,7 +38,7 @@ HttpResponse& HttpResponse::setContentTypeByFileExt(
     contentType_ = "application/javascript";
   else if (fileExtension == ".html")
     contentType_ = "text/html";
-  else if(fileExtension == ".css")
+  else if (fileExtension == ".css")
     contentType_ = "text/css";
   else
     throw HttpResponseException("Unrecognized file type.", __LINE__, __FILE__);
@@ -55,7 +55,7 @@ HttpResponse& HttpResponse::setBody(std::ifstream *file) {
   isBin_ = true;
 
   file->seekg(0, std::ios_base::end);
-  int fileLength = (int)file->tellg();
+  int fileLength = static_cast<int>(file->tellg());
   bodyLength_ = fileLength;
 
   if (binBody_ != NULL) {
@@ -133,7 +133,7 @@ HttpResponse& HttpResponse::compile() {
   return *this;
 }
 
-std::string HttpResponse::getHeaderString(){
+std::string HttpResponse::getHeaderString() {
   if (state_ != STATE_COMPILED_)
     throw HttpResponseException("Response not compiled yet",
                                 __LINE__, __FILE__);

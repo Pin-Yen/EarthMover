@@ -72,13 +72,13 @@ class GameTree::Node {
   // Usage: for (Node* child : *node)
   class Iterator {
    public:
-    Iterator(Node* node) :node_(node) {}
+    explicit Iterator(Node* node) : node_(node) {}
 
-    bool operator!=(const Iterator& iter) const { return node_ != NULL; };
+    bool operator!=(const Iterator& iter) const { return node_ != NULL; }
 
-    Node* operator*() const { return node_; };
+    Node* operator*() const { return node_; }
 
-    const Iterator& operator++() { node_ = node_->next_; };
+    const Iterator& operator++() { node_ = node_->next_; }
 
    private:
     Node* node_;
