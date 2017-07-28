@@ -38,4 +38,4 @@ ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(
   return TypeTreeRenjuBasic::classify(status);
 }
 
-#endif
+#endif  // GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_

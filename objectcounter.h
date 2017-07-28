@@ -36,4 +36,4 @@ class ObjectCounter {
   static int typetreeNode;
 };
 
-#endif
+#endif  // OBJECTCOUNTER_H_

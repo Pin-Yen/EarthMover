@@ -4,4 +4,4 @@
 // game rule ids
 enum Rules {GOMOKU_FREESTYLE, GOMOKU_RENJU_BASIC};
 
-#endif
+#endif  // CONST_H_

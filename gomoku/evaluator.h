@@ -64,4 +64,4 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
   }
 }
 
-#endif
+#endif  // GOMOKU_EVALUATOR_H_

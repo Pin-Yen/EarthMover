@@ -37,4 +37,4 @@ class DisplayBoard {
   void printBoard(int row, int col, int color) const;
 };
 
-#endif
+#endif  // GOMOKU_DISPLAYBOARD_H_

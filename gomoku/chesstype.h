@@ -112,4 +112,4 @@ class ChessType {
   SingleType type_[2];
 };
 
-#endif
+#endif  // GOMOKU_CHESSTYPE_H_

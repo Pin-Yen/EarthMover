@@ -235,4 +235,4 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
   return index;
 }
 
-#endif
+#endif  // GOMOKU_OPENINGTREE_H_

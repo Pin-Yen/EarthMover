@@ -41,4 +41,4 @@ void VirtualBoardRenjuBasic::undo(int index) {
   VirtualBoardGomoku::undo<VirtualBoardRenjuBasic::EvaluatorRenjuBasic>(index);
 }
 
-#endif
+#endif  // GOMOKU_RENJU_BASIC_VIRTUALBOARDRENJUBASIC_H_

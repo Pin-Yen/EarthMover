@@ -78,4 +78,4 @@ class GameTree {
   static MemoryPool pool_;
 };
 
-#endif
+#endif  // GAMETREE_H_

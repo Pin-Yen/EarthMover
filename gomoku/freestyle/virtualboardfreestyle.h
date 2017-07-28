@@ -41,4 +41,4 @@ void VirtualBoardFreeStyle::undo(int index) {
   VirtualBoardGomoku::undo<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
 }
 
-#endif
+#endif  // GOMOKU_FREESTYLE_VIRTUALBOARDFREESTYLE_H_

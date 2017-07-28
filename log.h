@@ -41,4 +41,4 @@ Log& operator << (Log& log, const T data[]) {
   return log;
 }
 
-#endif
+#endif  // LOG_H_

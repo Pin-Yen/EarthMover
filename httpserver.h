@@ -1,5 +1,5 @@
-#ifndef HTTPSERVER_H
-#define HTTPSERVER_H
+#ifndef HTTPSERVER_H_
+#define HTTPSERVER_H_
 
 #include <string>
 #include <thread>
@@ -71,4 +71,4 @@ class HttpServer {
   bool emThreadController_[MAX_EM_INSTANCE_];
 };
 
-#endif
+#endif  // HTTPSERVER_H_

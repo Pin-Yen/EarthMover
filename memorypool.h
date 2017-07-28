@@ -26,4 +26,4 @@ class MemoryPool {
   char *pool_, *next_;
 };
 
-#endif
+#endif  // MEMORYPOOL_H_

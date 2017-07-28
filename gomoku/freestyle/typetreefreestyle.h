@@ -33,4 +33,4 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle :
   static SingleType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 };
 
-#endif
+#endif  // GOMOKU_FREESTYLE_TYPETREEFREESTYLE_H_

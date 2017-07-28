@@ -92,4 +92,4 @@ class HttpResponse {
   unsigned char state_;
 };
 
-#endif
+#endif  // HTTPRESPONSE_H_

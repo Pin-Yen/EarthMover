@@ -84,4 +84,4 @@ class VirtualBoardGomoku<StatusLength>::Point {
   int score_;
 };
 
-#endif
+#endif  // GOMOKU_POINT_H_

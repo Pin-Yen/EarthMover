@@ -1,5 +1,5 @@
-#ifndef GOMOKU_VIRTUALBOARD_H_
-#define GOMOKU_VIRTUALBOARD_H_
+#ifndef GOMOKU_VIRTUALBOARDGOMOKU_H_
+#define GOMOKU_VIRTUALBOARDGOMOKU_H_
 
 #include <random>
 #include <iostream>
@@ -356,4 +356,4 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
   Eva::evaluateRelativeScore(point_, playNo_);
 }
 
-#endif
+#endif  // GOMOKU_VIRTUALBOARDGOMOKU_H_

@@ -138,4 +138,4 @@ ChessType* VirtualBoardGomoku<StatusLength>::Evaluator
   return currentType;
 }
 
-#endif
+#endif  // GOMOKU_TYPETREE_H_

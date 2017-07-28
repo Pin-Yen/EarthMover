@@ -34,4 +34,4 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic :
   static SingleType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
 };
 
-#endif
+#endif  // GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_

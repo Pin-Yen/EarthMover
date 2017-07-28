@@ -42,4 +42,4 @@ class VirtualBoard {
 
 VirtualBoard::~VirtualBoard() {}
 
-#endif
+#endif  // VIRTUALBOARD_H_

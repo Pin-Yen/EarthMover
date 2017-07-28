@@ -37,4 +37,4 @@ ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(
   return TypeTreeFreeStyle::classify(status);
 }
 
-#endif
+#endif  // GOMOKU_FREESTYLE_EVALUATORFREESTYLE_H_

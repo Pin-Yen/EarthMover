@@ -105,4 +105,4 @@ class GameTree::Node {
   int8_t winOrLose_;
 };
 
-#endif
+#endif  // NODE_H_

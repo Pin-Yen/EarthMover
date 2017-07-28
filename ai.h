@@ -56,4 +56,4 @@ class AI {
   int level_;
 };
 
-#endif
+#endif  // AI_H_

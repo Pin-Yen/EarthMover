@@ -43,4 +43,4 @@ class HttpRequest {
   std::string body_;
 };
 
-#endif
+#endif  // HTTPREQUEST_H_
