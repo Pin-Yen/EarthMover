@@ -1,3 +1,6 @@
+#ifndef NEURALNETWORK_H_
+#define NEURALNETWORK_H_
+
 #include <vector>
 #include <iostream>
 
@@ -12,35 +15,9 @@ class NeuralNetwork {
     Neuron();
     ~Neuron();
 
-    struct Output;
-    struct Synapse {
-      Synapse() { value = rand() / RAND_MAX - 0.5; }
-
-      double value;
-
-      Output* upperOutput;
-    };
-
-    struct Gate {
-      Gate() { value = rand() / RAND_MAX - 0.5; }
-
-      double value;
-    };
-
-    struct Output {
-      Output() {}
-      double value;
-
-      std::vector<Synapse*> lowerSynapse;
-    };
-
     virtual void forward() = 0;
 
     virtual void backProp() = 0;
-
-    virtual double activation(double input) = 0;
-
-    virtual double dActivation(double input) = 0;
   };
 
   class HiddenNeuron : public Neuron {
@@ -53,13 +30,15 @@ class NeuralNetwork {
 
     virtual void backProp() override;
 
-    virtual double activation(double input) override;
+    double activation(double input);
 
-    virtual double dActivation(double input) override;
+    double dActivation(double input);
 
    private:
-    std::vector<Synapse*> synapses_;
-    Gate* gate_;
-    Output* output_;
+    std::vector<double*> synapses_;
+    double gate_;
+    double output_;
   };
 };
+
+#endif  // NEURALNETWORK_H_
