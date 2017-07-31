@@ -1,147 +1,158 @@
-#include "gomoku/chesstype.hpp"
-#include "gomoku/status.hpp"
-#include "virtualboard.hpp"
-#include "gametree.hpp"
-#include "node.hpp"
+#include "node.h"
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
+
+#include "gametree.h"
+#include "gomoku/chesstype.h"
+#include "gomoku/status.h"
+#include "virtualboard.h"
 
 #ifdef DEBUG
-#include "objectcounter.hpp"
+#include "objectcounter.h"
 #endif
 
-GameTree::Node::Node() {
-  /* initialize all childNodes to NULL */
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    childNode[i] = NULL;
+GameTree::Node::Node() : index_(-1), parent_(NULL), child_(NULL), next_(NULL),
+                         winOrLose_(0), playout_{0} {}
 
-  clearPlayout();
-  clearWinLose();
+GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
+    : index_(index),
+      parent_(parentNode),
+      child_(NULL),
+      next_(NULL),
+      winOrLose_(-parentWinOrLose),
+      playout_{0} {
 
-  /* initiaize parent node */
-  parent_ = NULL;
-
-  #ifdef DEBUG
-  ObjectCounter::registerNode();
-  #endif
+  // if losing, set parent to winning
+  if (losing()) parent_->setWinning();
 }
 
-GameTree::Node::Node(Node *parentNode, int parentWinOrLose) {
-  /* initialize all childNodes to NULL */
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    childNode[i] = NULL;
+void GameTree::Node::deleteChildren() {
+  Node *child = child_, *next;
 
-  clearPlayout();
-
-  /* initiaize parent node */
-  parent_ = parentNode;
-
-  switch (parentWinOrLose) {
-    case 1:
-      winning_ = false;
-      losing_ = true;
-      break;
-    case -1:
-      winning_ = true;
-      losing_ = false;
-      break;
-    default:
-      clearWinLose();
+  // recursive delete all child
+  // the next node should be saved before current node is deleted
+  while (child != NULL) {
+    next = child->next_;
+    child->deleteChildren();
+    delete child;
+    child = next;
   }
 
-  /* if is losing, set parent_ to winning */
-  if (losing_)
-    parent_->winning_ = true;
-
-  #ifdef DEBUG
-  ObjectCounter::registerNode();
-  #endif
+  child_ = NULL;
 }
 
-GameTree::Node::~Node() {
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    if (childNode[i] != NULL)
-      delete childNode[i];
+void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
+  Node *child = child_, *next;
 
-  #ifdef DEBUG
-  ObjectCounter::unregisterNode();
-  #endif
+  // recursive delete all child except "exceptNode"
+  // the next node should be saved before current node is deleted
+  while (child != NULL) {
+    if (child == exceptNode) {
+      child = child->next_;
+    } else {
+      next = child->next_;
+      child->deleteChildren();
+      delete child;
+      child = next;
+    }
+  }
+
+  child_ = exceptNode;
+  exceptNode->next_ = NULL;
 }
 
 int GameTree::Node::selection(int* index, VirtualBoard* board) {
-  if (winning_) return 1;
-  if (losing_) return 0;
+  if (winning()) return 1;
+  if (losing()) return 0;
 
-  /* current max value */
+  // current max value
   double max = -1;
 
   bool childWinning = false;
 
   int scoreSum = board->getScoreSum();
-  int same = 1;
 
-  for (int i = 0; i < CHILD_LENGTH; ++i) {
-    int score = board->getScore(i);
+  // checked index
+  bool checked[225] = {0};
 
-    /* skip if this point is occupied */
-    if (score == -1) continue;
+  for (Node* childNode : *this) {
+    int i = childNode->index();
+    checked[i] = true;
 
-    if (childNode[i] != NULL) {
-      /* if child node is winning then DO NOT select this point */
-      if (childNode[i]->winning_) {
-        childWinning = true;
-        continue;
-      }
-
-        /* if there exists a point that wins in all previous simulations, select this point */
-        if (childNode[i]->winRate() == 1) {
-          *index = i;
-          return -2;
-        }
-      }
-
-      double ucbValue = getUCBValue(i);
-
-      double value = ((double)score / scoreSum) + ucbValue;
-
-      if (value > max) {
-        same = 1;
-
-        max = value;
-        *index = i;
-      } else if (value == max) {
-        ++same;
-        if (((double)rand() / RAND_MAX) <= (1. / same)) {
-          *index = i;
-        }
-      }
+    // If child node is winning then DO NOT select this point.
+    if (childNode->winning()) {
+      childWinning = true;
+      continue;
     }
 
-  /* if no point can select */
+    // If there exists a point that wins in all previous simulations,
+    // then select this point.
+    if (childNode->winRate() == 1) {
+      *index = i;
+      return -2;
+    }
+
+    double value = static_cast<double>(board->getScore(i)) / scoreSum +
+                   getUCBValue(childNode);
+
+    if (value > max) {
+      max = value;
+      *index = i;
+    }
+  }
+
+  int notCheckedIndex = board->getHSI(checked);
+
+  if (notCheckedIndex != -1) {
+    double value =
+        static_cast<double>(board->getScore(notCheckedIndex)) / scoreSum +
+        getUCBValue(NULL);
+
+    if (value > max) {
+      max = value;
+      *index = notCheckedIndex;
+    }
+  }
+
+  // if no point can select
   if (max == -1) {
-    /* if every child wins, mark this point as a losing point */
+    // if every child wins, mark this point as a losing point
     if (childWinning) {
-      losing_ = true;
-      parent_->winning_ = true;
+      setLosing();
+      parent_->setWinning();
 
       return 0;
     }
 
-    /* if the chessboard is FULL */
+    // if no useful point
     return -1;
   }
 
   return -2;
 }
 
-double GameTree::Node::getUCBValue(int index) const {
-  if (playout_[2] == 0)
-    return 0;
+GameTree::Node* GameTree::Node::child(int index) const {
+  for (Node* node : *this)
+    if (node->index_ == index) return node;
 
-  if (childNode[index] != NULL) {
-    return (childNode[index]->winRate() +
-            sqrt(0.5 * log10(playout_[2]) / (1 + childNode[index]->totalPlayout())));
+  return NULL;
+}
+
+GameTree::Node* GameTree::Node::newChild(int index, int parentWinOrLose) {
+  Node* node = new Node(this, index, parentWinOrLose);
+  // append node to first
+  node->next_ = child_;
+  child_ = node;
+  return node;
+}
+
+double GameTree::Node::getUCBValue(const Node* node) const {
+  if (playout_[2] == 0) return 0;
+
+  if (node != NULL) {
+    return (node->winRate() +
+            sqrt(0.5 * log10(playout_[2]) / (1 + node->totalPlayout())));
   } else {
     return (sqrt(0.5 * log10(playout_[2]) / 1));
   }

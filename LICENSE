@@ -2,9 +2,9 @@ Copyright (c) 2017 EarthMover contributors. All rights reserved.
 
 The libraries used by EarthMover are:
 
-- JSON for Modern C++, located at lib/json.hpp, is licensed as follows:
+- JSON for Modern C++, located at lib/json.h, is licensed as follows:
   """
-    MIT License 
+    MIT License
 
     Copyright (c) 2013-2017 Niels Lohmann
 
@@ -24,5 +24,5 @@ The libraries used by EarthMover are:
     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE. 
+    SOFTWARE.
   """

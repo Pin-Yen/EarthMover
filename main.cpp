@@ -1,37 +1,26 @@
-// mutual dependencies
-#include "gametree.hpp"
-#include "virtualboard.hpp"
-
-#include "gomoku/chesstype.hpp"
-#include "gomoku/displayboard.hpp"
-#include "gomoku/point.hpp"
-#include "gomoku/status.hpp"
-#include "gomoku/virtualboardgomoku.hpp"
-// freestyle dependencies
-#include "gomoku/freestyle/virtualboardfreestyle.hpp"
-// renju_basic dependencies
-#include "gomoku/renju_basic/virtualboardrenjubasic.hpp"
-
-
-
-#include <time.h>
 #include <assert.h>
-
 #include <iostream>
 #include <string>
 #include <cstdlib>
 #include <thread>
 
-#ifdef DEBUG
-#include "objectcounter.hpp"
-#endif
+#include "gametree.h"
+#include "virtualboard.h"
 
-#ifdef ANALYZE
-#include "log.hpp"
+#include "gomoku/chesstype.h"
+#include "gomoku/displayboard.h"
+#include "gomoku/point.h"
+#include "gomoku/status.h"
+#include "gomoku/virtualboardgomoku.h"
+#include "gomoku/freestyle/virtualboardfreestyle.h"
+#include "gomoku/renju_basic/virtualboardrenjubasic.h"
+#include "timer.h"
+
+#ifdef DEBUG
+#include "objectcounter.h"
 #endif
 
 void start();
-void start_AI();
 
 int main() {
   #ifndef TIME
@@ -44,15 +33,7 @@ int main() {
   ObjectCounter::printInfo();
   #endif
 
-  #ifdef ANALYZE
-  Log::init();
-  #endif
-
   start();
-
-  #ifdef ANALYZE
-  Log::closeLog();
-  #endif
 
   return 0;
 }
@@ -77,32 +58,24 @@ void start() {
   tree->reset(vb);
 
 
-  #ifdef ANALYZE
-  Log log;
-  #endif
-
   while (true) {
     int row, col;
 
     bool whoTurn = board->whoTurn();
 
-    #ifdef ANALYZE
-    log << "==== PLAY #" << board->playNo() << " ====\n";
-    #endif
-
     std::cout << "AI searching..." << std::endl;
 
     #ifdef TIME
-    clock_t start, finish;
-    start = clock();
+    Timer timer;
+    timer.start();
     #endif
 
     tree->MCTS(cycle);
     tree->MCTSResult();
 
     #ifdef TIME
-    finish = clock();
-    std::cout << "duration: " << (double)(finish - start) / CLOCKS_PER_SEC << std::endl;
+    timer.stop();
+    timer.print();
     #endif
 
     #ifdef DEBUG
@@ -110,33 +83,34 @@ void start() {
     #endif
 
     #ifndef ANALYZE
-    bool stop = false;
+    bool continueThinking = true;
+    bool* controler = &continueThinking;
 
-    std::thread backgroundThread([tree](int maxCycle, bool &stop)
-                                 { tree->MCTS(maxCycle, stop); },
-                                 100000, std::ref(stop));
+    std::thread backgroundThread([tree](int maxCycle, bool* controler)
+                                 { tree->MCTS(maxCycle, controler); },
+                                 100000, controler);
     #endif
 
     bool validInput = false;
 
     while (!validInput) {
-      /* get user input*/
+      // get user input
       board->getInput(&row, &col);
 
-      /* tries to play at (row, col) */
+      // tries to play at (row, col)
       validInput = board->play(row, col);
 
-      /* handle invalid input */
+      // handle invalid input
       if (!validInput)
         std::cout << "Invalid move\n";
     }
 
     #ifndef ANALYZE
-    stop = true;
+    continueThinking = false;
     backgroundThread.join();
     #endif
 
-    /* update tree and handle result */
+    // update tree and handle result
     int winning = tree->play(row * 15 + col);
     switch (winning) {
       case 1 :

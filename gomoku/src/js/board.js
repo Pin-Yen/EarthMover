@@ -142,20 +142,25 @@ Board.prototype.draw = function(pos) {
     image = this.image[this.whoTurn(status - 1)].normal;
   }
 
-  this.context.drawImage(image, pos[0] * 35 + 21, pos[1] * 35 + 21, 33, 33);
+  this.drawChess(image, pos[0], pos[1]);
 
   if (this.display.playNumber && status > 0) {
-    if (status == this.displayNo)
-      this.context.fillStyle = 'red';
-    else {
-      this.context.fillStyle = ((status - 1) & 1) ? 'black' : 'white';
-    }
-    this.context.font = '29px Ubuntu';
-    this.context.textAlign = 'center';
+    var color = status == this.displayNo ? 'red' : ((status - 1) & 1) ? 'black' : 'white';
 
-    this.context.fillText(status, pos[0] * 35 + 37, pos[1] * 35 + 47, 27);
+    this.drawNumber(status, color, pos[0], pos[1]);
   }
 }
+
+Board.prototype.drawChess = function(image, x, y) {
+  this.context.drawImage(image, x * 35 + 21, y * 35 + 21, 33, 33);
+};
+
+Board.prototype.drawNumber = function(number, color, x, y) {
+  this.context.fillStyle = color;
+  this.context.font = '29px Ubuntu';
+  this.context.textAlign = 'center';
+  this.context.fillText(number, x * 35 + 37, y * 35 + 47, 27);
+};
 
 // clear the position
 Board.prototype.clear = function(pos) {
@@ -290,10 +295,24 @@ Board.prototype.changeDisplayNo = function(changeAmount) {
 
 Board.prototype.drawAll = function() {
   for (var row = this.status.length - 1; row >= 0; row--)
-    for (var col = this.status[row].length - 1; col >= 0; col--)
-      if (this.status[row][col] > 0) {
-        this.clear([row, col]);
-        if (this.status[row][col] <= this.displayNo)
-          this.draw([row, col]);
-      }
+    for (var col = this.status[row].length - 1; col >= 0; col--) {
+      this.clear([row, col]);
+      if (this.status[row][col] > 0 && this.status[row][col] <= this.displayNo)
+        this.draw([row, col]);
+    }
+};
+
+Board.prototype.drawEvolve = function(evolve) {
+  var playNumber = this.display.playNumber;
+  if (playNumber) {
+    this.display.playNumber = false;
+    this.drawAll();
+  }
+
+  for (var i = evolve.length - 1; i >= 0; i--) {
+    this.drawChess(this.image[evolve[i].color].normal, evolve[i].col, evolve[i].row);
+    this.drawNumber(i + 1, evolve[i].color == 'black' ? 'white' : 'black', evolve[i].col, evolve[i].row);
+  }
+
+  if (playNumber) this.display.playNumber = true;
 };

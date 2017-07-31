@@ -1,56 +1,59 @@
-#include "gomoku/chesstype.hpp"
-#include "gomoku/status.hpp"
-#include "virtualboard.hpp"
-#include "gametree.hpp"
-#include "node.hpp"
-#include  "lib/json.hpp"
+#include "gametree.h"
 
 #include <algorithm>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <tuple>
 #include <vector>
 
-#ifdef ANALYZE
-#include "log.hpp"
-#endif
+#include "gomoku/chesstype.h"
+#include "gomoku/status.h"
+#include "lib/json.h"
+#include "memorypool.h"
+#include "node.h"
+#include "virtualboard.h"
 
 using json = nlohmann::json;
 
+MemoryPool GameTree::pool_;
+
 GameTree::GameTree() {
-  root = NULL;
-  currentNode = NULL;
-  currentBoard = NULL;
+  root_ = NULL;
+  currentNode_ = NULL;
+  currentBoard_ = NULL;
 }
 
 GameTree::~GameTree() {
-  delete root;
-  delete currentBoard;
+  pool_.free();
+  delete currentBoard_;
 }
 
 void GameTree::reset(VirtualBoard* board) {
-  if (root != NULL)
-    delete root;
-  root = new Node();
-  currentNode = root;
+  const int MAX_NODE = 2000000;
 
-  if (currentBoard != NULL)
-    delete currentBoard;
-  currentBoard = board->create();
+  pool_.free();
+  pool_.init(sizeof(Node), MAX_NODE);
+  root_ = new Node();
+
+  currentNode_ = root_;
+
+  if (currentBoard_ != NULL)
+    delete currentBoard_;
+  currentBoard_ = board->create();
 }
 
 void GameTree::MCTS(int maxCycle) {
   Node* node;
 
   for (int cycle = 0; cycle < maxCycle; ++cycle) {
-    if (currentNode->winning() || currentNode->losing()) return;
+    if (!currentNode_->notWinOrLose()) return;
 
-    VirtualBoard* board = currentBoard->clone();
+    VirtualBoard* board = currentBoard_->clone();
 
     int result = selection(&node, board);
 
+    // simulate only if child is not winning
     if (result == -2) {
-      /* simulate only if child is not winning */
       result = simulation(board);
     }
 
@@ -70,14 +73,14 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
 
   do {
     for (int cycle = 0; cycle < minCycle; ++cycle) {
-      if (currentNode->winning() || currentNode->losing()) return;
+      if (!currentNode_->notWinOrLose()) return;
 
-      VirtualBoard* board = currentBoard->clone();
+      VirtualBoard* board = currentBoard_->clone();
 
       int result = selection(&node, board);
 
+      // simulate only if child is not winning
       if (result == -2) {
-        /* simulate only if child is not winning */
         result = simulation(board);
       }
 
@@ -89,28 +92,26 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
       delete board;
     }
 
-    /* get mostTimes */
-    for (int i = 0; i < CHILD_LENGTH; ++i)
-      if (currentNode->childNode[i] != NULL)
-        if (currentNode->childNode[i]->totalPlayout() > mostTimes)
-          mostTimes = currentNode->childNode[i]->totalPlayout();
-
+    // get mostTimes
+    for (Node* child : *currentNode_) {
+      if (child->totalPlayout() > mostTimes)
+          mostTimes = child->totalPlayout();
+    }
   } while (mostTimes < minMostTimesCycle);
-
 }
 
-void GameTree::MCTS(int maxCycle, const bool &stop) {
+void GameTree::MCTS(int maxCycle, const bool* continueThinking) {
   Node* node;
 
-  for (int cycle = 0; cycle < maxCycle && stop == false; ++cycle) {
-    if (currentNode->winning() || currentNode->losing()) return;
+  for (int cycle = 0; cycle < maxCycle && *continueThinking; ++cycle) {
+    if (!currentNode_->notWinOrLose()) return;
 
-    VirtualBoard* board = currentBoard->clone();
+    VirtualBoard* board = currentBoard_->clone();
 
     int result = selection(&node, board);
 
+    // simulate only if child is not winning
     if (result == -2) {
-      /* simulate only if child is not winning */
       result = simulation(board);
     }
 
@@ -121,60 +122,53 @@ void GameTree::MCTS(int maxCycle, const bool &stop) {
 
     delete board;
 
-    if (cycle % 1000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
+    if (cycle % 2000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
   }
 }
 
 int GameTree::MCTSResult() const {
   int index;
 
-  if (currentNode->winning()) {
-    for (int i = 0; i < CHILD_LENGTH; ++i)
-      if (currentNode->childNode[i] != NULL)
-        if (currentNode->childNode[i]->losing())
-          index = i;
-
+  // if is winning, select it
+  if (currentNode_->winning()) {
+    for (Node* child : *currentNode_) {
+      if (child->losing()) index = child->index();
+    }
   } else {
+    // select child that has max playout
     int mostTimes = -1;
-    int score;
 
-    for (int i = 0; i < CHILD_LENGTH; ++i)
-      if (currentNode->childNode[i] != NULL) {
-
-        /* priority order: playout -> score */
-        if (currentNode->childNode[i]->totalPlayout() > mostTimes) {
-          index = i;
-          mostTimes = currentNode->childNode[i]->totalPlayout();
-          score = currentBoard->getScore(i);
-        } else if (currentNode->childNode[i]->totalPlayout() == mostTimes) {
-          if (currentBoard->getScore(i) > score) {
-            index = i;
-            score = currentBoard->getScore(i);
-          }
-        }
+    for (Node* child : *currentNode_) {
+      // priority order: playout -> score
+      if (child->totalPlayout() > mostTimes) {
+        index = child->index();
+        mostTimes = child->totalPlayout();
       }
+    }
 
-    /* pass*/
+    // pass
     if (mostTimes == -1) {
       std::cout << "pass" << std::endl;
       return -1;
     }
   }
 
+  Node* child = currentNode_->child(index);
+
   std::cout << std::fixed << std::setprecision(3)
-            << "total sim: " << currentNode->totalPlayout()
-            << "  best: " << (char)(index % 15 + 65) << index / 15 + 1
-            << "  sim: " << currentNode->childNode[index]->totalPlayout()
-            << "  WinR: " << currentNode->childNode[index]->winRate()
-            << "  W: " << currentNode->winning()
-            << "  L: " << currentNode->losing()
+            << "total sim: " << currentNode_->totalPlayout()
+            << "  best: "
+            << static_cast<char>(index % 15 + 65) << index / 15 + 1
+            << "  sim: " << child->totalPlayout()
+            << "  WinR: " << child->winRate()
+            << "  W/L: " << currentNode_->winOrLose()
             << std::endl;
 
   return index;
 }
 
 int GameTree::selection(Node** node, VirtualBoard* board) const {
-  *node = currentNode;
+  *node = currentNode_;
 
   while (true) {
     int index;
@@ -184,11 +178,12 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
       return result;
     }
 
-    /* check if reached leaf */
-    if ((*node)->childNode[index] == NULL) {
+    // check if reached leaf
+    Node* child = (*node)->child(index);
+
+    if (child == NULL) {
       bool parentWinning = board->play(index);
-      (*node)->childNode[index] = new Node(*node, parentWinning);
-      *node = (*node)->childNode[index];
+      *node = (*node)->newChild(index, parentWinning);
 
       if (parentWinning)
         return 0;
@@ -196,21 +191,21 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
         return -2;
     }
 
-    *node = (*node)->childNode[index];
+    *node = child;
+
     board->play(index);
   }
 }
 
 int GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
-  /* simulate until reach max depth */
+  // simulate until reach max depth
   for (int d = 1; d <= MAX_DEPTH; ++d) {
-    int index;
-    /* return tie(-1) if every point is not empty point */
-    if (!board->getHSP(&index))
-      return -1;
+    int index = board->getHSI();
+    // return tie(-1) if no useful point
+    if (index == -1) return -1;
 
-    /* if win, return */
+    // if win, return
     if (board->play(index))
       return (d & 1);
   }
@@ -220,7 +215,7 @@ int GameTree::simulation(VirtualBoard* board) const {
 
 void GameTree::backProp(Node* node, bool result) {
   // note: cannot use do-while here
-  while (node != currentNode) {
+  while (node != currentNode_) {
     node->update(result);
     node = node->parent();
     result = !result;
@@ -230,7 +225,7 @@ void GameTree::backProp(Node* node, bool result) {
 
 void GameTree::backProp(Node* node) {
   // note: cannot use do-while here
-  while (node != currentNode) {
+  while (node != currentNode_) {
     node->update();
     node = node->parent();
   }
@@ -238,61 +233,71 @@ void GameTree::backProp(Node* node) {
 }
 
 int GameTree::play(int index) {
-  int whoWin = currentBoard->play(index);
+  int whoWin = currentBoard_->play(index);
 
-  if (currentNode->childNode[index] == NULL)
-    currentNode->childNode[index] = new Node(currentNode, whoWin);
+  Node* child = currentNode_->child(index);
 
-  currentNode = currentNode->childNode[index];
+  if (child == NULL)
+    child = currentNode_->newChild(index, whoWin);
+
+  // delete other children except the child that going to play
+  currentNode_->deleteChildrenExcept(child);
+  currentNode_->clear();
+
+  currentNode_ = child;
 
   return whoWin;
 }
 
 void GameTree::pass() {
-  currentBoard->pass();
+  // get the index of pass
+  int index = currentBoard_->pass();
 
-  if (currentNode->childNode[CHILD_LENGTH] == NULL)
-    currentNode->childNode[CHILD_LENGTH] = new Node(currentNode, 0);
+  // return for not allow to pass
+  if (index == -1) return;
 
-  currentNode = currentNode->childNode[CHILD_LENGTH];
+  Node* child = currentNode_->child(index);
+
+  if (child == NULL)
+    child = currentNode_->newChild(index, 0);
+
+  // delete other children except the child that going to play
+  currentNode_->deleteChildrenExcept(child);
+  currentNode_->clear();
+
+  currentNode_ = child;
 }
 
 void GameTree::undo() {
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    if (currentNode->parent()->childNode[i] == currentNode) {
-      currentBoard->undo(i);
-      currentNode = currentNode->parent();
-      return;
-    }
+  currentBoard_->undo(currentNode_->index());
+  currentNode_ = currentNode_->parent();
+  // delete all children
+  currentNode_->deleteChildren();
 }
 
 std::string GameTree::getTreeJSON() {
-  if (currentNode == NULL) return "";
-  if (currentNode->parent() == NULL) return "";
+  if (currentNode_ == NULL || currentNode_->parent() == NULL) return "";
 
-  /* get current node's index */
-  for (int i = 0; i < CHILD_LENGTH + 1; ++i)
-    if (currentNode->parent()->childNode[i] == currentNode)
-      return getSubTreeJSON(currentNode, i, currentBoard->whoTurn()).dump();
+  return getSubTreeJSON(currentNode_, currentBoard_->whoTurn()).dump();
 }
 
-json GameTree::getSubTreeJSON(Node* node, int position, bool whiteTurn) {
+json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
   json tree;
 
-  tree["index"] = position;
+  tree["index"] = node->index();
 
   tree["totalCount"] = node->totalPlayout();
 
-  tree["winRate"] = whiteTurn ? node->winRate() : 1 - node->winRate();
-  tree["isWinning"] = whiteTurn ? node->winning() : node->losing();
-  tree["isLosing"] = whiteTurn ? node->losing() : node->winning();
+  tree["winRate"] = whoTurn ? node->winRate() : 1 - node->winRate();
+  tree["winOrLose"] = whoTurn ? node->winOrLose() : -node->winOrLose();
 
-  tree["whiteTurn"] = whiteTurn;
+  tree["whoTurn"] = whoTurn;
 
   tree["children"] = json::array();
-  for (int i = 0; i < CHILD_LENGTH; ++i) {
-    if (node->childNode[i] != NULL && node->childNode[i]->totalPlayout() >= 8) {
-      tree["children"].push_back(getSubTreeJSON(node->childNode[i], i, !whiteTurn));
+
+  for (Node* child : *node) {
+    if (child->totalPlayout() >= 8) {
+      tree["children"].push_back(getSubTreeJSON(child, !whoTurn));
     }
   }
   return tree;

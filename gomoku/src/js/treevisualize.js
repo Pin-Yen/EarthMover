@@ -143,7 +143,7 @@ D3.drawTree = function(treeData) {
     nodeEnter.append('circle')
         .attr('r', 0)
         .style("fill", function(d) {
-          return d.data.whiteTurn ? "#444" : "#ffe";
+          return d.data.whoTurn ? "#444" : "#ffe";
         })
         .style("stroke", function(d) {
           return gradient(d.data.winRate);
@@ -163,7 +163,7 @@ D3.drawTree = function(treeData) {
         .style("fill-opacity", 0);
 
     nodeEnter.append("line")
-        .filter(function(d) { return d.data.isWinning || d.data.isLosing; })
+        .filter(function(d) { return d.data.winOrLose != 0; })
         .attr("x1", 0)
         .attr("x2", 0)
         .attr("y1", 0)
@@ -201,10 +201,10 @@ D3.drawTree = function(treeData) {
       var f = w + "px",
           dy = w * .33 + "px";
 
-      if (d.data.isWinning || d.data.isLosing) {
+      if (d.data.winOrLose != 0) {
         l = w * .44 + "px";
         nl = -w * .44 + "px";
-        s =  d.data.isWinning ? gradient(1) : gradient(0);
+        s = d.data.winOrLose == 1 ? gradient(1) : gradient(0);
       }
 
       var update = d3.select(this).transition(t);
@@ -324,47 +324,41 @@ D3.drawTree = function(treeData) {
     }
 
     function mouseOver(d) {
-      d3.select('#tv-inf-position')
-          .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
-      d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
-      var winRate = Math.floor(d.data.winRate * 100);
-      d3.select('#tv-inf-win-rate-white').text(100 - winRate);
-      d3.select('#tv-inf-win-rate-black').text(winRate);
-      d3.select('#tv-inf-win-rate-pointer').style('left', function() {
-        return (38 + 120 * d.data.winRate) + "px";
-      })
-      .style('background', function() {
-        return gradient(d.data.winRate);
-      });
+      updateInf(d);
+      var evolve = [];
+      while (d.parent) {
+        var data = {
+          row: Math.floor(d.data.index / 15),
+          col: Math.floor(d.data.index % 15),
+          color: d.data.whoTurn ? 'black' : 'white'
+        }
+        evolve.unshift(data);
+        d = d.parent;
+      }
+      if (evolve.length) board.drawEvolve(evolve);
     }
 
     mouseOut();
 
     function mouseOut() {
-      if (root.children) {
-        var d = root.children[0];
-        d3.select('#tv-inf-position')
-          .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
-        d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
-        var winRate = Math.floor(d.data.winRate * 100);
-        d3.select('#tv-inf-win-rate-white').text(100 - winRate);
-        d3.select('#tv-inf-win-rate-black').text(winRate);
-        d3.select('#tv-inf-win-rate-pointer').style('left', function() {
-          return (38 + 120 * d.data.winRate) + "px";
-        })
-        .style('background', function() {
-          return gradient(d.data.winRate);
-        });
-      } else {
-        d3.select('#tv-inf-position').text('');
-        d3.select('#tv-inf-count').text('');
-        d3.select('#tv-inf-win-rate-white').text('');
-        d3.select('#tv-inf-win-rate-black').text('');
-        d3.select('#tv-inf-win-rate-pointer').style('left', "98px")
-        .style('background', function() {
-          return gradient(.5);
-        });
-      }
+      updateInf(root.children ? root.children[0] : root);
+      board.drawAll();
+    }
+
+    function updateInf(d) {
+      d3.select('#tv-inf-position')
+        .text(String.fromCharCode(65 + d.data.index % 15) + (Math.floor(d.data.index / 15) + 1));
+      d3.select('#tv-inf-count').text('count: ' + d.data.totalCount);
+      var winRate = d.data.winRate;
+      d3.select('#tv-inf-win-rate-pointer').style('left', function() {
+        return (38 + 120 * winRate) + "px";
+      })
+      .style('background', function() {
+        return gradient(winRate);
+      });
+      winRate = Math.floor(winRate * 100);
+      d3.select('#tv-inf-win-rate-white').text(100 - winRate);
+      d3.select('#tv-inf-win-rate-black').text(winRate);
     }
 
     function gradient(level) {
