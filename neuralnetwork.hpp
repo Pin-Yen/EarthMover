@@ -13,29 +13,20 @@ class NeuralNetwork {
   class Neuron {
    public:
     Neuron();
+    Neuron(int upperSize);
     ~Neuron();
 
-    virtual void forward() = 0;
+    void forward();
 
-    virtual void backProp() = 0;
-  };
+    void backProp();
 
-  class HiddenNeuron : public Neuron {
-   public:
-    HiddenNeuron(int upperSize);
-
-    ~HiddenNeuron();
-
-    virtual void forward() override;
-
-    virtual void backProp() override;
-
-    double activation(double input);
-
-    double dActivation(double input);
+   protected:
+    double initValue() {
+      return static_cast<double>(rand()) / RAND_MAX - 0.5;
+    }
 
    private:
-    std::vector<double*> synapses_;
+    double* synapses_;
     double gate_;
     double output_;
   };

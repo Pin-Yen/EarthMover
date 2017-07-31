@@ -1,12 +1,25 @@
 #include "neuralnetwork.hpp"
 
-NeuralNetwork::HiddenNeuron::HiddenNeuron(int upperSize) {
-  synapses_.reserve(upperSize);
-  for (Synapse* synapse : synapses_) synapse = rand() / RAND_MAX - 0.5;
-  gate_ = rand() / RAND_MAX - 0.5;
+NeuralNetwork::Neuron::Neuron(int upperSize) {
+  synapses_ = new double[upperSize];
+  for (int i = 0; i < upperSize; ++i)
+    synapses_[i] = initValue();
+
+  gate_ = initValue();
   output_ = 0.0;
 }
 
-void NeuralNetwork::HiddenNeuron::forward() {
+NeuralNetwork::Neuron::~Neuron() {
+  delete [] synapses_;
+}
+
+void NeuralNetwork::Neuron::forward(Neuron* upperNeurons, int upperSize) {
+  output_ = gate_;
+  for (int i = 0; i < u; ++i) {
+    output_ += upperNeurons[i] * synapses_[i];
+  }
+}
+
+void NeuralNetwork::Neuron::backProp() {
 
 }
