@@ -14,12 +14,19 @@ NeuralNetwork::Neuron::~Neuron() {
 }
 
 void NeuralNetwork::Neuron::forward(Neuron* upperNeurons, int upperSize) {
-  output_ = gate_;
-  for (int i = 0; i < u; ++i) {
-    output_ += upperNeurons[i] * synapses_[i];
+  double value = gate_;
+  for (int i = 0; i < upperSize; ++i) {
+    value += upperNeurons[i] * synapses_[i];
   }
+  output_ = activation(value);
 }
 
-void NeuralNetwork::Neuron::backProp() {
-
+double NeuralNetwork::Neuron::backProp(Neuron* lowerNeurons,
+                                       double* lowerDifference,
+                                       int lowerSize) {
+  double error = 0.0;
+  for (int i = 0; i < lowerSize; ++i) {
+    error += lowerDifference[i] * lowerNeurons.synapses_[i];
+  }
+  return dActivation(error);
 }

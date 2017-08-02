@@ -16,16 +16,19 @@ class NeuralNetwork {
     Neuron(int upperSize);
     ~Neuron();
 
-    void forward();
+    void forward(Neuron* upperNeurons, int upperSize);
 
-    void backProp();
+    double backProp(Neuron* lowerNeurons, int lowerSize);
 
    protected:
     double initValue() {
-      return static_cast<double>(rand()) / RAND_MAX - 0.5;
+      return static_cast<double>(rand()) / RAND_MAX;
     }
 
    private:
+    double activation(double input) { return input > 0.0 ? input : 0.0; }
+    double dActivation(double input) { return input > 0.0 ? 1.0 : 0.0; }
+
     double* synapses_;
     double gate_;
     double output_;
