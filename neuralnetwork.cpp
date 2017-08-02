@@ -1,32 +1,37 @@
-#include "neuralnetwork.hpp"
+#include "neuralnetwork.h"
+
+NeuralNetwork::Neuron::Neuron() {
+  synapses_ = NULL;
+}
 
 NeuralNetwork::Neuron::Neuron(int upperSize) {
   synapses_ = new double[upperSize];
   for (int i = 0; i < upperSize; ++i)
-    synapses_[i] = initValue();
+    setSynapse(i, initValue());
 
-  gate_ = initValue();
-  output_ = 0.0;
+  setGate(initValue());
+  setOutput(0.0);
 }
 
 NeuralNetwork::Neuron::~Neuron() {
-  delete [] synapses_;
+  if (synapses_ != NULL) delete [] synapses_;
 }
 
 void NeuralNetwork::Neuron::forward(Neuron* upperNeurons, int upperSize) {
-  double value = gate_;
+  double value = gate();
   for (int i = 0; i < upperSize; ++i) {
-    value += upperNeurons[i] * synapses_[i];
+    value += upperNeurons[i].output() * getSynapse(i);
   }
-  output_ = activation(value);
+  setOutput(activation(value));
 }
 
 double NeuralNetwork::Neuron::backProp(Neuron* lowerNeurons,
                                        double* lowerDifference,
-                                       int lowerSize) {
+                                       int lowerSize,
+                                       int currentIndex) {
   double error = 0.0;
   for (int i = 0; i < lowerSize; ++i) {
-    error += lowerDifference[i] * lowerNeurons.synapses_[i];
+    error += lowerDifference[i] * lowerNeurons[i].getSynapse(currentIndex);
   }
   return dActivation(error);
 }
