@@ -1,5 +1,17 @@
 #include "neuralnetwork.h"
 
+NeuralNetwork::~NeuralNetwork() {
+  if (neurons_ != NULL) {
+    // TODO
+  }
+}
+
+void NeuralNetwork::init(const int size[], int depth) {
+  neurons_ = new Neuron*[depth];
+
+  // TODO
+}
+
 NeuralNetwork::Neuron::Neuron() {
   synapses_ = NULL;
 }

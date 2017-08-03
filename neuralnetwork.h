@@ -5,8 +5,12 @@
 
 class NeuralNetwork {
  public:
-  NeuralNetwork();
+  NeuralNetwork() { neurons_ = NULL; }
   ~NeuralNetwork();
+
+  void init(const int size[], int depth);
+
+  void train();
 
  protected:
   class Neuron {
@@ -44,12 +48,17 @@ class NeuralNetwork {
 
   class OutputNeuron : public Neuron {
    public:
-    OutputNeuron() : Neuron();
-    OutputNeuron(int upperSize) : Neuron(upperSize);
+    OutputNeuron() : Neuron() {}
+    OutputNeuron(int upperSize) : Neuron(upperSize) {}
     ~OutputNeuron();
+
+    double backProp(double expectedOutput) { return value() - expectedOutput; }
 
     double output() { return Neuron::output(); }
   };
+
+ private:
+  Neuron** neurons_;
 };
 
 #endif  // NEURALNETWORK_H_
