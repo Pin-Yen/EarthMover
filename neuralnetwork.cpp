@@ -1,15 +1,24 @@
 #include "neuralnetwork.h"
 
+#include <vector>
+
 NeuralNetwork::~NeuralNetwork() {
   if (neurons_ != NULL) {
-    // TODO
+    for (int i = 0, n = networkStruct_.size(); i < n; ++i) {
+      delete neurons_[i];
+    }
+    delete neurons_;
   }
 }
 
-void NeuralNetwork::init(const int size[], int depth) {
-  neurons_ = new Neuron*[depth];
+void NeuralNetwork::init(int inputSize, const std::vector<int> &networkStruct)
+    : networkStruct_(networkStruct) {
+  int size = networkStruct.size();
+  neurons_ = new Neoron*[size];
 
-  // TODO
+  neurons_[0] = new Neuron(inputSize);
+  for (int i = 1; i < size; ++i)
+    neurons_[i] = new Neuron(networkStruct[i - 1]);
 }
 
 NeuralNetwork::Neuron::Neuron() {
@@ -21,7 +30,7 @@ NeuralNetwork::Neuron::Neuron(int upperSize) {
   for (int i = 0; i < upperSize; ++i)
     setSynapse(i, initValue());
 
-  setGate(initValue());
+  setGate(-initValue());
   setOutput(0.0);
 }
 
@@ -31,19 +40,19 @@ NeuralNetwork::Neuron::~Neuron() {
 
 void NeuralNetwork::Neuron::forward(Neuron* upperNeurons, int upperSize) {
   double value = gate();
-  for (int i = 0; i < upperSize; ++i) {
+  for (int i = 0; i < upperSize; ++i)
     value += upperNeurons[i].output() * getSynapse(i);
-  }
+
   setOutput(activation(value));
 }
 
-double NeuralNetwork::Neuron::backProp(Neuron* lowerNeurons,
-                                       double* lowerDifference,
-                                       int lowerSize,
-                                       int currentIndex) {
+double NeuralNetwork::Neuron::back(Neuron* lowerNeurons,
+                                   double* lowerDifference,
+                                   int lowerSize,
+                                   int currentIndex) {
   double error = 0.0;
-  for (int i = 0; i < lowerSize; ++i) {
+  for (int i = 0; i < lowerSize; ++i)
     error += lowerDifference[i] * lowerNeurons[i].getSynapse(currentIndex);
-  }
+
   return dActivation(error);
 }

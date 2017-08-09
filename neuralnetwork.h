@@ -2,27 +2,31 @@
 #define NEURALNETWORK_H_
 
 #include <iostream>
+#include <vector>
 
 class NeuralNetwork {
  public:
   NeuralNetwork() { neurons_ = NULL; }
   ~NeuralNetwork();
 
-  void init(const int size[], int depth);
+  void init(int inputSize, const std::vector<int> &networkStruct);
 
   void train();
 
  protected:
+  // base neuron
   class Neuron {
    public:
     Neuron();
     Neuron(int upperSize);
     ~Neuron();
 
+    // forwer propagation, and store the output
     void forward(Neuron* upperNeurons, int upperSize);
 
-    double backProp(Neuron* lowerNeurons, double* lowerDifference,
-                    int lowerSize, int currentIndex);
+    // back propagation, and return the error
+    double back(Neuron* lowerNeurons, double* lowerError,
+                int lowerSize, int currentIndex);
 
    protected:
     double initValue() {
@@ -52,13 +56,15 @@ class NeuralNetwork {
     OutputNeuron(int upperSize) : Neuron(upperSize) {}
     ~OutputNeuron();
 
-    double backProp(double expectedOutput) { return value() - expectedOutput; }
+    // override back propagation
+    double back(double expectedOutput) { return value() - expectedOutput; }
 
     double output() { return Neuron::output(); }
   };
 
  private:
   Neuron** neurons_;
+  std::vector<int> networkStruct_;
 };
 
 #endif  // NEURALNETWORK_H_
