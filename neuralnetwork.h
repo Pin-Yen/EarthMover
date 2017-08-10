@@ -9,16 +9,9 @@ class NeuralNetwork {
   NeuralNetwork() { neurons_ = NULL; }
   ~NeuralNetwork();
 
-  enum Type { INPUT, HIDDEN, OUTPUT };
+  enum Type { NORMAL, OUTPUT };
 
-  void init(int inputSize, const std::vector<LayerInf> &networkStruct);
-
-  void train(double input[], int output[], int cycle,
-             double rate, double error);
-
-  void forward();
-
-  // Each layer's information
+  // Each layer's information.
   // type: this layer's neuron type
   // length: length of this layer
   struct LayerInf {
@@ -26,17 +19,43 @@ class NeuralNetwork {
     int length;
   };
 
+  // Training data.
+  struct Data {
+    double* input;
+    int* output;
+  };
+
+  // Init all network.
+  void init(int inputSize, int networkDepth, const LayerInf* networkStruct);
+
+  // Training netowrk.
+  void train(const Data data[], int dataAmount, int cycle,
+             double rate, double allowError);
+
+  // Get network output for corresponding input.
+  void output(const double inputs[], double* output) const;
+
  protected:
   class Neuron;
-  class InputNeuron;
-  class HiddenNeuron;
   class OutputNeuron;
 
+  // Allocate a neuron array and return it
+  // type: neuron's type, length: neuron array's length
   Neuron* neuronArrayMaker(Type type, int length);
 
  private:
+  void forward(const double inputs[], double** outputs) const;
+
+  void back(const int expectedOutputs[],
+            double** outputs, double** errors) const;
+
+  void fix(const double inputs[], double** outputs,
+           double** errors, double rate);
+
   Neuron** neurons_;
-  std::vector<LayerInf> networkStruct_;
+  LayerInf* networkStruct_;
+  int networkDepth_;
+  int inputSize_;
 };
 
 #endif  // NEURALNETWORK_H_

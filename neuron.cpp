@@ -1,33 +1,49 @@
 #include "neuron.h"
 
-NeuralNetwork::Neuron::~HiddenNeuron() {
+NeuralNetwork::Neuron::~Neuron() {
   if (synapses_ != NULL) delete [] synapses_;
 }
 
-void NeuralNetwork::HiddenNeuron::init(int upperSize) {
+void NeuralNetwork::Neuron::init(int upperSize) {
   synapses_ = new double[upperSize];
   for (int i = 0; i < upperSize; ++i)
     setSynapse(i, initValue());
 
   setGate(-initValue());
-  setOutput(0.0);
 }
 
-void NeuralNetwork::HiddenNeuron::forward(Neuron* upperNeurons, int upperSize) {
+double NeuralNetwork::Neuron::forward(const double upperOutputs[],
+                                      int upperSize) const {
   double value = gate();
   for (int i = 0; i < upperSize; ++i)
-    value += upperNeurons[i].output() * getSynapse(i);
+    value += upperOutputs[i] * synapse(i);
 
-  setOutput(activation(value));
+  return activation(value);
 }
 
-double NeuralNetwork::HiddenNeuron::back(Neuron* lowerNeurons,
-                                         double* lowerDifference,
-                                         int lowerSize,
-                                         int currentIndex) {
-  double error = 0.0;
+double NeuralNetwork::Neuron::back(const Neuron lowerNeurons[],
+                                   const double lowerErrors[],
+                                   int lowerSize,
+                                   double currentOutput,
+                                   int currentIndex) const {
+  double error = .0;
   for (int i = 0; i < lowerSize; ++i)
-    error += lowerDifference[i] * lowerNeurons[i].getSynapse(currentIndex);
+    error += lowerErrors[i] * lowerNeurons[i].synapse(currentIndex);
 
-  return dActivation(error);
+  return error * dActivation(currentOutput);
+}
+
+void NeuralNetwork::Neuron::fix(const double upperOutputs[],
+                                int upperSize,
+                                double currentError,
+                                double rate) {
+  fixGate(rate * currentError);
+  for (int i = 0; i < upperSize; ++i)
+    fixSynapse(i, rate * currentError * upperOutputs[i]);
+}
+
+double NeuralNetwork::OutputNeuron::back(double currentOutput,
+                                         int expectedOutput) const {
+  double error = expectedOutput - currentOutput;
+  return error * dActivation(currentOutput);
 }
