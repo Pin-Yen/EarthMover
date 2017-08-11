@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "neuralnetwork.cpp"
 #include "neuron.cpp"
@@ -8,27 +9,32 @@ int main() {
 
   NeuralNetwork::LayerInf networkStruct[3];
   networkStruct[0].type = NeuralNetwork::NORMAL;
-  networkStruct[0].length = 20;
-  networkStruct[1].type = NeuralNetwork::OUTPUT;
-  networkStruct[1].length = 1;
+  networkStruct[0].length = 10;
+  networkStruct[1].type = NeuralNetwork::NORMAL;
+  networkStruct[1].length = 5;
+  networkStruct[2].type = NeuralNetwork::OUTPUT;
+  networkStruct[2].length = 1;
 
-  network.init(2, 2, networkStruct);
+  network.init(2, 3, networkStruct);
 
   NeuralNetwork::Data data[4];
+
+  // XOR data
+  double input[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+  int output[4][1] = {{0}, {1}, {1}, {0}};
   for (int i = 0; i < 4; ++i) {
-    data[i].input = new double[2];
-    data[i].output = new int[1];
+    data[i].input = input[i];
+    data[i].output = output[i];
   }
-  data[0].input[0] = 0; data[0].input[1] = 0; data[0].output[0] = 0;
-  data[1].input[0] = 1; data[1].input[1] = 0; data[1].output[0] = 1;
-  data[2].input[0] = 0; data[2].input[1] = 1; data[2].output[0] = 1;
-  data[3].input[0] = 1; data[3].input[1] = 1; data[3].output[0] = 0;
 
-  network.train(data, 4, 10000, 1, .00001);
+  network.train(data, 4, 100000, 1);
 
-  double output[1];
+  double networkOutput[1];
+  std::cout << std::fixed << std::setprecision(3) << "result:\n";
   for (int i = 0; i < 4; ++i) {
-    network.output(data[i].input, output);
-    std::cout << i << ": " << output[0] << std::endl;
+    network.output(data[i].input, networkOutput);
+    std::cout << "input: [" << static_cast<int>(data[i].input[0])
+              << ", " << static_cast<int>(data[i].input[1])
+              << "], output: [" << networkOutput[0] << "]" << std::endl;
   }
 }

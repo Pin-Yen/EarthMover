@@ -29,8 +29,7 @@ class NeuralNetwork {
   void init(int inputSize, int networkDepth, const LayerInf* networkStruct);
 
   // Training netowrk.
-  void train(const Data data[], int dataAmount, int cycle,
-             double rate, double allowError);
+  void train(const Data data[], int dataAmount, int cycle, double rate);
 
   // Get network output for corresponding input.
   void output(const double inputs[], double* output) const;

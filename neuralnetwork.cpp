@@ -32,11 +32,11 @@ void NeuralNetwork::init(int inputSize, int networkDepth,
                                    networkStruct[i].length);
   }
 
-  // Init all neuron in first layer (input layer).
+  // Init all neuron in first layer.
   for (int i = 0; i < networkStruct[0].length; ++i) {
     neurons_[0][i].init(inputSize);
   }
-  // Init all neuron except first layer (input layer).
+  // Init all neuron except first layer.
   for (int i = 1; i < networkDepth; ++i) {
     for (int j = 0; j < networkStruct[i].length; ++j) {
       neurons_[i][j].init(networkStruct[i - 1].length);
@@ -44,8 +44,8 @@ void NeuralNetwork::init(int inputSize, int networkDepth,
   }
 }
 
-void NeuralNetwork::train(const Data data[], int dataAmount, int cycle,
-                          double rate, double allowError) {
+void NeuralNetwork::train(const Data data[], int dataAmount,
+                          int cycle, double rate) {
   int dataIndex = 0;
   int outputIndex = networkDepth_ - 1;
 
@@ -129,13 +129,14 @@ void NeuralNetwork::forward(const double inputs[], double** outputs) const {
 void NeuralNetwork::back(const int expectedOutputs[],
                          double** outputs, double** errors) const {
   int outputIndex = networkDepth_ - 1;
+  // Output layer.
   for (int i = 0; i < networkStruct_[outputIndex].length; ++i) {
     errors[outputIndex][i] = static_cast<OutputNeuron&>(
         neurons_[outputIndex][i]).back(outputs[outputIndex][i],
                                        expectedOutputs[i]);
-    //std::cout << "E::" << errors[outputIndex][i] << std::endl;
   }
-  for (int i = 0; i < outputIndex; ++i) {
+  // Other layer.
+  for (int i = outputIndex - 1; i >= 0; --i) {
     for (int j = 0; j < networkStruct_[i].length; ++j) {
       errors[i][j] = neurons_[i][j].back(neurons_[i + 1], errors[i + 1],
           networkStruct_[i + 1].length, outputs[i][j], j);
@@ -147,13 +148,15 @@ void NeuralNetwork::fix(const double inputs[],
                         double** outputs,
                         double** errors,
                         double rate) {
+  // First layer.
   for (int i = 0; i < networkStruct_[0].length; ++i) {
     neurons_[0][i].fix(inputs, inputSize_, errors[0][i], rate);
   }
+  // Other layer.
   for (int i = 1; i < networkDepth_; ++i) {
     for (int j = 0; j < networkStruct_[i].length; ++j) {
       neurons_[i][j].fix(outputs[i - 1], networkStruct_[i - 1].length,
-                         errors[i - 1][j], rate);
+                         errors[i][j], rate);
     }
   }
 }
