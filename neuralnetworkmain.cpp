@@ -7,15 +7,17 @@
 int main() {
   NeuralNetwork network;
 
-  NeuralNetwork::LayerInf networkStruct[3];
-  networkStruct[0].type = NeuralNetwork::NORMAL;
-  networkStruct[0].length = 10;
-  networkStruct[1].type = NeuralNetwork::NORMAL;
-  networkStruct[1].length = 5;
-  networkStruct[2].type = NeuralNetwork::OUTPUT;
-  networkStruct[2].length = 1;
+  NeuralNetwork::LayerInf networkStruct[4];
+  networkStruct[0].type = NeuralNetwork::INPUT;
+  networkStruct[0].length = 2;
+  networkStruct[1].type = NeuralNetwork::HIDDEN;
+  networkStruct[1].length = 10;
+  networkStruct[2].type = NeuralNetwork::HIDDEN;
+  networkStruct[2].length = 5;
+  networkStruct[3].type = NeuralNetwork::OUTPUT;
+  networkStruct[3].length = 1;
 
-  network.init(2, 3, networkStruct);
+  network.init(4, networkStruct);
 
   NeuralNetwork::Data data[4];
 
@@ -28,13 +30,8 @@ int main() {
   }
 
   network.train(data, 4, 100000, 1);
-
-  double networkOutput[1];
-  std::cout << std::fixed << std::setprecision(3) << "result:\n";
+  std::cout << std::fixed << std::setprecision(3);
   for (int i = 0; i < 4; ++i) {
-    network.output(data[i].input, networkOutput);
-    std::cout << "input: [" << static_cast<int>(data[i].input[0])
-              << ", " << static_cast<int>(data[i].input[1])
-              << "], output: [" << networkOutput[0] << "]" << std::endl;
+    network.predict(data[i].input);
   }
 }

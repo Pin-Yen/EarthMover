@@ -9,7 +9,7 @@ class NeuralNetwork {
   NeuralNetwork() { neurons_ = NULL; }
   ~NeuralNetwork();
 
-  enum Type { NORMAL, OUTPUT };
+  enum Type { INPUT, HIDDEN, OUTPUT };
 
   // Each layer's information.
   // type: this layer's neuron type
@@ -26,35 +26,34 @@ class NeuralNetwork {
   };
 
   // Init all network.
-  void init(int inputSize, int networkDepth, const LayerInf* networkStruct);
+  void init(int networkDepth, const LayerInf* networkStruct);
 
   // Training netowrk.
   void train(const Data data[], int dataAmount, int cycle, double rate);
 
-  // Get network output for corresponding input.
-  void output(const double inputs[], double* output) const;
+  // Print network output for corresponding input.
+  void predict(const double inputs[]);
 
  protected:
   class Neuron;
+  class InputNeuron;
+  class HiddenNeuron;
   class OutputNeuron;
 
   // Allocate a neuron array and return it
   // type: neuron's type, length: neuron array's length
-  Neuron* neuronArrayMaker(Type type, int length);
+  Neuron** neuronArrayMaker(Type type, int length);
 
  private:
-  void forward(const double inputs[], double** outputs) const;
+  void forward(const double inputs[]);
 
-  void back(const int expectedOutputs[],
-            double** outputs, double** errors) const;
+  void back(const int expectedOutputs[]);
 
-  void fix(const double inputs[], double** outputs,
-           double** errors, double rate);
+  void fix(double rate);
 
-  Neuron** neurons_;
-  LayerInf* networkStruct_;
-  int networkDepth_;
-  int inputSize_;
+  Neuron*** neurons_;
+  LayerInf* nnStruct_;
+  int nnDepth_;
 };
 
 #endif  // NEURALNETWORK_H_

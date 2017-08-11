@@ -1,10 +1,10 @@
 #include "neuron.h"
 
-NeuralNetwork::Neuron::~Neuron() {
+NeuralNetwork::HiddenNeuron::~HiddenNeuron() {
   if (synapses_ != NULL) delete [] synapses_;
 }
 
-void NeuralNetwork::Neuron::init(int upperSize) {
+void NeuralNetwork::HiddenNeuron::init(int upperSize) {
   synapses_ = new double[upperSize];
   for (int i = 0; i < upperSize; ++i)
     setSynapse(i, initValue());
@@ -12,38 +12,34 @@ void NeuralNetwork::Neuron::init(int upperSize) {
   setGate(-initValue());
 }
 
-double NeuralNetwork::Neuron::forward(const double upperOutputs[],
-                                      int upperSize) const {
+void NeuralNetwork::HiddenNeuron::forward(Neuron** upperNeurons,
+                                          int upperSize) {
   double value = gate();
   for (int i = 0; i < upperSize; ++i)
-    value += upperOutputs[i] * synapse(i);
+    value += upperNeurons[i]->output() * synapse(i);
 
-  return activation(value);
+  setOutput(activation(value));
 }
 
-double NeuralNetwork::Neuron::back(const Neuron lowerNeurons[],
-                                   const double lowerErrors[],
-                                   int lowerSize,
-                                   double currentOutput,
-                                   int currentIndex) const {
+void NeuralNetwork::HiddenNeuron::back(Neuron** lowerNeurons,
+                                       int lowerSize,
+                                       int currentIndex) {
   double error = .0;
   for (int i = 0; i < lowerSize; ++i)
-    error += lowerErrors[i] * lowerNeurons[i].synapse(currentIndex);
+    error += static_cast<HiddenNeuron*>(lowerNeurons[i])->error() *
+        static_cast<HiddenNeuron*>(lowerNeurons[i])->synapse(currentIndex);
 
-  return error * dActivation(currentOutput);
+  setError(error * dActivation(output()));
 }
 
-void NeuralNetwork::Neuron::fix(const double upperOutputs[],
-                                int upperSize,
-                                double currentError,
-                                double rate) {
-  fixGate(rate * currentError);
+void NeuralNetwork::HiddenNeuron::fix(Neuron** upperNeurons,
+                                      int upperSize,
+                                      double rate) {
+  fixGate(rate * error());
   for (int i = 0; i < upperSize; ++i)
-    fixSynapse(i, rate * currentError * upperOutputs[i]);
+    fixSynapse(i, rate * error() * upperNeurons[i]->output());
 }
 
-double NeuralNetwork::OutputNeuron::back(double currentOutput,
-                                         int expectedOutput) const {
-  double error = expectedOutput - currentOutput;
-  return error * dActivation(currentOutput);
+void NeuralNetwork::OutputNeuron::back(int expectedOutput) {
+  setError((expectedOutput - output()) * dActivation(output()));
 }

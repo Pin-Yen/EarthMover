@@ -7,166 +7,141 @@
 
 NeuralNetwork::~NeuralNetwork() {
   if (neurons_ != NULL) {
-    for (int i = 0, n = networkDepth_; i < n; ++i) {
+    for (int i = 0, n = nnDepth_; i < n; ++i) {
       delete neurons_[i];
+      // TODO
     }
     delete neurons_;
   }
 }
 
-void NeuralNetwork::init(int inputSize, int networkDepth,
-                         const LayerInf* networkStruct) {
-  inputSize_ = inputSize;
-  networkDepth_ = networkDepth;
+void NeuralNetwork::init(int networkDepth, const LayerInf* nnStruct) {
+  nnDepth_ = networkDepth;
 
-  networkStruct_ = new LayerInf[networkDepth_];
+  nnStruct_ = new LayerInf[nnDepth_];
   for (int i = 0; i < networkDepth; ++i) {
-    networkStruct_[i] = networkStruct[i];
+    nnStruct_[i] = nnStruct[i];
   }
 
   // Allocate all neurons.
-  neurons_ = new Neuron*[networkDepth];
+  neurons_ = new Neuron**[networkDepth];
 
   for (int i = 0; i < networkDepth; ++i) {
-    neurons_[i] = neuronArrayMaker(networkStruct[i].type,
-                                   networkStruct[i].length);
+    neurons_[i] = neuronArrayMaker(nnStruct[i].type,
+                                   nnStruct[i].length);
   }
 
-  // Init all neuron in first layer.
-  for (int i = 0; i < networkStruct[0].length; ++i) {
-    neurons_[0][i].init(inputSize);
-  }
   // Init all neuron except first layer.
   for (int i = 1; i < networkDepth; ++i) {
-    for (int j = 0; j < networkStruct[i].length; ++j) {
-      neurons_[i][j].init(networkStruct[i - 1].length);
+    for (int j = 0; j < nnStruct[i].length; ++j) {
+      neurons_[i][j]->init(nnStruct[i - 1].length);
     }
   }
+
 }
 
 void NeuralNetwork::train(const Data data[], int dataAmount,
                           int cycle, double rate) {
   int dataIndex = 0;
-  int outputIndex = networkDepth_ - 1;
-
-  // Error array and output array for each neuron.
-  double** errors = new double*[outputIndex];
-  double** outputs = new double*[outputIndex];
-  for (int i = 0; i < networkDepth_; ++i) {
-    errors[i] = new double[networkStruct_[i].length];
-    outputs[i] = new double[networkStruct_[i].length];
-  }
+  int outputIndex = nnDepth_ - 1;
 
   for (int i = 0; i < cycle; ++i) {
     // Forward prop and back prop.
-    forward(data[dataIndex].input, outputs);
-    back(data[dataIndex].output, outputs, errors);
+    forward(data[dataIndex].input);
+    back(data[dataIndex].output);
 
     // Calculate error, break if less then allow value.
     if (i % 1111 == 0) {
       double outputError = .0;
-      for (int i = 0; i < networkStruct_[outputIndex].length; ++i)
-        outputError += abs(errors[outputIndex][i]);
+      for (int i = 0; i < nnStruct_[outputIndex].length; ++i)
+        outputError += abs(
+            static_cast<OutputNeuron*>(neurons_[outputIndex][i])->error());
 
       std::cout << "cycle " << i << ", error: " << outputError << std::endl;
       //if (outputError <= allowError) break;
     }
 
     // Fix the neuron's weight.
-    fix(data[dataIndex].input, outputs, errors, rate);
+    fix(rate);
 
     // To next data.
     ++dataIndex;
     if (dataIndex == dataAmount) dataIndex = 0;
   }
-
-  // Delete error and output array.
-  for (int i = 0; i < networkDepth_; ++i) {
-    delete [] errors[i];
-    delete [] outputs[i];
-  }
-
-  delete [] errors;
-  delete [] outputs;
 }
 
-void NeuralNetwork::output(const double inputs[], double* output) const {
-  int outputIndex = networkDepth_ - 1;
+void NeuralNetwork::predict(const double inputs[]) {
+  forward(inputs);
 
-  double** outputs = new double*[outputIndex];
-  for (int i = 0; i < networkDepth_; ++i) {
-    outputs[i] = new double[networkStruct_[i].length];
+  // Print result.
+  std::cout << "input: [" << static_cast<int>(inputs[0]);
+  for (int i = 1; i < nnStruct_[0].length; ++i) {
+    std::cout << ", " << static_cast<int>(inputs[i]);
   }
-
-  // Forward prop.
-  forward(inputs, outputs);
-
-  // Copy output.
-  for (int i = 0; i < networkStruct_[outputIndex].length; ++i) {
-    output[i] = outputs[outputIndex][i];
+  std::cout << "], output: ["
+      << static_cast<OutputNeuron*>(neurons_[nnDepth_ - 1][0])->output();
+  for (int i = 1; i < nnStruct_[nnDepth_ - 1].length; ++i) {
+    std::cout << ", "
+        << static_cast<OutputNeuron*>(neurons_[nnDepth_ - 1][i])->output();
   }
-
-  // Delete output array.
-  for (int i = 0; i < networkDepth_; ++i)
-    delete [] outputs[i];
-  delete [] outputs;
+  std::cout << "]" << std::endl;
 }
 
-void NeuralNetwork::forward(const double inputs[], double** outputs) const {
-  // First layer
-  for (int i = 0; i < networkStruct_[0].length; ++i)
-    outputs[0][i] = neurons_[0][i].forward(inputs, inputSize_);
+void NeuralNetwork::forward(const double inputs[]) {
+  // Input layer.
+  for (int i = 0; i < nnStruct_[0].length; ++i)
+    static_cast<InputNeuron*>(neurons_[0][i])->setOutput(inputs[i]);
 
   // Other layer
-  for (int i = 1; i < networkDepth_; ++i) {
-    for (int j = 0; j < networkStruct_[i].length; ++j) {
-      outputs[i][j] = neurons_[i][j].forward(outputs[i - 1],
-                                             networkStruct_[i - 1].length);
+  for (int i = 1; i < nnDepth_; ++i) {
+    for (int j = 0; j < nnStruct_[i].length; ++j) {
+      neurons_[i][j]->forward(neurons_[i - 1], nnStruct_[i - 1].length);
     }
   }
 }
 
-void NeuralNetwork::back(const int expectedOutputs[],
-                         double** outputs, double** errors) const {
-  int outputIndex = networkDepth_ - 1;
+void NeuralNetwork::back(const int expectedOutputs[]) {
+  int outputIndex = nnDepth_ - 1;
   // Output layer.
-  for (int i = 0; i < networkStruct_[outputIndex].length; ++i) {
-    errors[outputIndex][i] = static_cast<OutputNeuron&>(
-        neurons_[outputIndex][i]).back(outputs[outputIndex][i],
-                                       expectedOutputs[i]);
+  for (int i = 0; i < nnStruct_[outputIndex].length; ++i) {
+    static_cast<OutputNeuron*>(neurons_[outputIndex][i])->back(
+        expectedOutputs[i]);
   }
   // Other layer.
-  for (int i = outputIndex - 1; i >= 0; --i) {
-    for (int j = 0; j < networkStruct_[i].length; ++j) {
-      errors[i][j] = neurons_[i][j].back(neurons_[i + 1], errors[i + 1],
-          networkStruct_[i + 1].length, outputs[i][j], j);
+  for (int i = outputIndex - 1; i > 0; --i) {
+    for (int j = 0; j < nnStruct_[i].length; ++j) {
+      neurons_[i][j]->back(neurons_[i + 1],
+                           nnStruct_[i + 1].length, j);
     }
   }
 }
 
-void NeuralNetwork::fix(const double inputs[],
-                        double** outputs,
-                        double** errors,
-                        double rate) {
-  // First layer.
-  for (int i = 0; i < networkStruct_[0].length; ++i) {
-    neurons_[0][i].fix(inputs, inputSize_, errors[0][i], rate);
-  }
-  // Other layer.
-  for (int i = 1; i < networkDepth_; ++i) {
-    for (int j = 0; j < networkStruct_[i].length; ++j) {
-      neurons_[i][j].fix(outputs[i - 1], networkStruct_[i - 1].length,
-                         errors[i][j], rate);
+void NeuralNetwork::fix(double rate) {
+  for (int i = 1; i < nnDepth_; ++i) {
+    for (int j = 0; j < nnStruct_[i].length; ++j) {
+      neurons_[i][j]->fix(neurons_[i - 1], nnStruct_[i - 1].length, rate);
     }
   }
 }
 
-NeuralNetwork::Neuron* NeuralNetwork::neuronArrayMaker(Type type, int length) {
+NeuralNetwork::Neuron** NeuralNetwork::neuronArrayMaker(Type type, int length) {
+  Neuron** temp = new Neuron*[length];
   switch (type) {
-    case NORMAL:
-      return new Neuron[length];
+    case INPUT:
+      for (int i = 0; i < length; ++i) {
+        temp[i] = new InputNeuron();
+      }
+      return temp;
+    case HIDDEN:
+      for (int i = 0; i < length; ++i) {
+        temp[i] = new HiddenNeuron();
+      }
+      return temp;
     case OUTPUT:
-      return new OutputNeuron[length];
+      for (int i = 0; i < length; ++i) {
+        temp[i] = new OutputNeuron();
+      }
+      return temp;
     default:
       return NULL;
   }
