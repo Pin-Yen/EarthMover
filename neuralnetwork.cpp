@@ -43,14 +43,16 @@ void NeuralNetwork::init(int nnDepth, const LayerInf* nnStruct) {
 
 void NeuralNetwork::train(const Data data[], int dataAmount,
                           int cycle, double allowError,
-                          int batchSize, double rate) {
+                          int batchSize, double rate, double momentRate) {
   const int PRINT_ERROR_CYCLE = 10000;
   int dataIndex = 0;
   int outputIndex = nnDepth_ - 1;
 
   double outputError = .0;
 
+  clearFixValue();
   for (int i = 0; i < cycle; ++i) {
+    updateMoment(momentRate);
     clearFixValue();
 
     for (int b = 0; b < batchSize; ++b) {
@@ -144,6 +146,14 @@ void NeuralNetwork::calculateFix(double rate, int batchSize) {
     for (int j = 0; j < nnStruct_[i].length; ++j) {
       neurons_[i][j]->calculateFix(
           neurons_[i - 1], rate, batchSize);
+    }
+  }
+}
+
+void NeuralNetwork::updateMoment(double rate) {
+  for (int i = 1; i < nnDepth_; ++i) {
+    for (int j = 0; j < nnStruct_[i].length; ++j) {
+      neurons_[i][j]->updateMoment(rate);
     }
   }
 }

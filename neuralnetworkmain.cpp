@@ -29,8 +29,8 @@ int main() {
 
   std::cout << std::fixed << std::setprecision(6);
   // Train network,
-  // args is: data, dataAmount, cycle, allowError, batchSize, rate.
-  network.train(data, 4, 1000000, .0005, 4, 5.0);
+  // args is: data, dataAmount, cycle, allowError, batchSize, rate, momentRate.
+  network.train(data, 4, 1000000, .0005, 4, 5.0, .5);
 
   std::cout << std::fixed << std::setprecision(3);
   for (int i = 0; i < 4; ++i) {

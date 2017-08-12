@@ -39,6 +39,8 @@ class NeuralNetwork::Neuron {
 
   virtual void clearFixValue() = 0;
 
+  virtual void updateMoment(double rate) = 0;
+
   // Getter.
   double output() const { return output_; }
 
@@ -48,7 +50,7 @@ class NeuralNetwork::Neuron {
   }
 
   // Setter.
-  void setOutput(double value) { output_ = value; }
+  void setOutput(double val) { output_ = val; }
 
  private:
   double output_;
@@ -63,7 +65,7 @@ class NeuralNetwork::InputNeuron final : public NeuralNetwork::Neuron {
   virtual ~InputNeuron() {}
 
   // setter
-  void setOutput(double value) { Neuron::setOutput(value); }
+  void setOutput(double val) { Neuron::setOutput(val); }
 
  private:
   virtual void init(int) final {}
@@ -72,6 +74,7 @@ class NeuralNetwork::InputNeuron final : public NeuralNetwork::Neuron {
   virtual void calculateFix(Neuron**, double, int) final {}
   virtual void fix() final {}
   virtual void clearFixValue() final {}
+  virtual void updateMoment(double) final {};
 };
 
 // Hidden neuron, contains dynamic synapse array, gate.
@@ -99,22 +102,37 @@ class NeuralNetwork::HiddenNeuron : public NeuralNetwork::Neuron {
 
   virtual void clearFixValue() override;
 
- protected:
-  // fix synapse, gate by fixValue.
-  void fixSynapse(int index) { synapses_[index] += fixSynapseValues_[index]; }
-  void fixGate() { gate_ += fixGateValue_; }
+  virtual void updateMoment(double rate) override;
 
-  void changeFixSynapseValue(int index, double value) {
-    fixSynapseValues_[index] += value;
+ protected:
+  // Fix synapse and gate by fixValue and moment.
+  void fixSynapse(int index) {
+    synapseFixValues_[index] += synapseMoments_[index];
+    synapses_[index] += synapseFixValues_[index];
   }
-  void changeFixGateValue(double value) {
-    fixGateValue_ += value;
+  void fixGate() {
+    gateFixValue_ += gateMoments_;
+    gate_ += gateFixValue_;
   }
+
+  // Change synapses and gate's fix value.
+  void changeSynapseFixValue(int index, double val) {
+    synapseFixValues_[index] += val;
+  }
+  void changeGateFixValue(double val) {
+    gateFixValue_ += val;
+  }
+
+  // Update moment.
+  void updateSynapseMoment(int index, double rate) {
+    synapseMoments_[index] = synapseFixValues_[index] * rate;
+  }
+  void updateGateMoment(double rate) { gateMoments_ = gateFixValue_ * rate; }
 
   // setter
-  void setSynapse(int index, double value) { synapses_[index] = value; }
-  void setGate(double value) { gate_ = value; }
-  void setError(double value) { error_ = value; }
+  void setSynapse(int index, double val) { synapses_[index] = val; }
+  void setGate(double val) { gate_ = val; }
+  void setError(double val) { error_ = val; }
 
   // getter
   double synapse(int index) const { return synapses_[index]; }
@@ -130,9 +148,11 @@ class NeuralNetwork::HiddenNeuron : public NeuralNetwork::Neuron {
   }
  public:
   double* synapses_;
-  double* fixSynapseValues_;
+  double* synapseMoments_;
+  double* synapseFixValues_;
   double gate_;
-  double fixGateValue_;
+  double gateMoments_;
+  double gateFixValue_;
   double error_;
 
   int upperSize_;

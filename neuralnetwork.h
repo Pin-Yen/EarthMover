@@ -30,7 +30,7 @@ class NeuralNetwork {
 
   // Training netowrk.
   void train(const Data data[], int dataAmount, int cycle,
-             double allowError, int batchSize, double rate);
+             double allowError, int batchSize, double rate, double momentRate);
 
   // Print network output for corresponding input.
   void predict(const double inputs[]);
@@ -53,6 +53,8 @@ class NeuralNetwork {
   void back(const int expectedOutputs[]);
 
   void calculateFix(double rate, int batchSize);
+
+  void updateMoment(double rate);
 
   void fix();
 
