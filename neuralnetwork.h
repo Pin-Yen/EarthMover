@@ -9,7 +9,7 @@ class NeuralNetwork {
   NeuralNetwork() { neurons_ = NULL; }
   ~NeuralNetwork();
 
-  enum Type { INPUT, HIDDEN, OUTPUT };
+  enum Type { INPUT, HIDDEN, OUTPUT, CONVOLUTION };
 
   // Each layer's information.
   // type: this layer's neuron type
@@ -26,7 +26,7 @@ class NeuralNetwork {
   };
 
   // Init all network.
-  void init(int networkDepth, const LayerInf* networkStruct);
+  void init(int networkDepth, const LayerInf* networkStruct, int** args);
 
   // Training netowrk.
   void train(const Data data[], int dataAmount, int cycle,
@@ -40,10 +40,13 @@ class NeuralNetwork {
   class InputNeuron;
   class HiddenNeuron;
   class OutputNeuron;
+  class ConvolutionNeuron;
 
-  // Allocate a neuron array and return it
-  // type: neuron's type, length: neuron array's length
-  Neuron** neuronArrayMaker(Type type, int length);
+  // Allocate a neuron and return it
+  // type: neuron's type.
+  // args: args for neuron's constructor, each type of neuron may need
+  // different kinds of args.
+  Neuron* neuronMaker(Type type, const int* args);
 
  private:
   void clearFixValue();

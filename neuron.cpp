@@ -1,25 +1,28 @@
 #include "neuron.h"
 
 // HiddenNeuron
-NeuralNetwork::HiddenNeuron::~HiddenNeuron() {
-  if (synapses_ != NULL) delete [] synapses_;
-}
-
-void NeuralNetwork::HiddenNeuron::init(int upperSize) {
-  upperSize_ = upperSize;
-
-  synapses_ = new double[upperSize];
-  for (int i = 0; i < upperSize; ++i)
+NeuralNetwork::HiddenNeuron::HiddenNeuron(const int* args)
+    : upperSize_(args[0]) {
+  synapses_ = new double[upperSize_];
+  for (int i = 0; i < upperSize_; ++i)
     setSynapse(i, initValue());
 
-  synapseFixValues_ = new double[upperSize]();
-  synapseMoments_ = new double[upperSize]();
+  synapseFixValues_ = new double[upperSize_]();
+  synapseMoments_ = new double[upperSize_]();
 
-  setGate(-initValue());
+  setBias(-initValue());
+}
+
+NeuralNetwork::HiddenNeuron::~HiddenNeuron() {
+  if (synapses_ != NULL) {
+    delete [] synapses_;
+    delete [] synapseFixValues_;
+    delete [] synapseMoments_;
+  }
 }
 
 void NeuralNetwork::HiddenNeuron::forward(Neuron** upperNeurons) {
-  double value = gate();
+  double value = bias();
   for (int i = 0; i < upperSize_; ++i)
     value += upperNeurons[i]->output() * synapse(i);
 
@@ -41,7 +44,7 @@ void NeuralNetwork::HiddenNeuron::calculateFix(Neuron** upperNeurons,
                                                double rate,
                                                int batchSize) {
   rate /= batchSize;
-  changeGateFixValue(rate * error());
+  changeBiasFixValue(rate * error());
   for (int i = 0; i < upperSize_; ++i)
     changeSynapseFixValue(i, rate * error() * upperNeurons[i]->output());
 }
@@ -50,21 +53,21 @@ void NeuralNetwork::HiddenNeuron::fix() {
   for (int i = 0; i < upperSize_; ++i) {
     fixSynapse(i);
   }
-  fixGate();
+  fixBias();
 }
 
 void NeuralNetwork::HiddenNeuron::updateMoment(double rate) {
   for (int i = 0; i < upperSize_; ++i) {
     updateSynapseMoment(i, rate);
   }
-  updateGateMoment(rate);
+  updateBiasMoment(rate);
 }
 
 void NeuralNetwork::HiddenNeuron::clearFixValue() {
   for (int i = 0; i < upperSize_; ++i) {
     synapseFixValues_[i] = .0;
   }
-  gateFixValue_ = .0;
+  biasFixValue_ = .0;
 }
 // End of HiddenNeuron
 
@@ -72,3 +75,12 @@ void NeuralNetwork::HiddenNeuron::clearFixValue() {
 void NeuralNetwork::OutputNeuron::back(int expectedOutput) {
   setError((expectedOutput - output()) * dActivation(output()));
 }
+// End of outputNeuron
+
+// Convolution neuron
+NeuralNetwork::ConvolutionNeuron::ConvolutionNeuron(const int* args)
+    : HiddenNeuron(args),
+      convolutionWidth_(args[1]) {
+
+}
+

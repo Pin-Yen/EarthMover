@@ -15,7 +15,11 @@ int main() {
   networkStruct[2].type = NeuralNetwork::OUTPUT;
   networkStruct[2].length = 2;
 
-  network.init(3, networkStruct);
+  int* args[3] = {NULL, new int[1], new int[1]};
+  args[1][0] = 2;
+  args[2][0] = 10;
+
+  network.init(3, networkStruct, args);
 
   NeuralNetwork::Data data[4];
 

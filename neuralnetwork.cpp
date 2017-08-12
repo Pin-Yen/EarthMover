@@ -14,29 +14,26 @@ NeuralNetwork::~NeuralNetwork() {
       delete neurons_[i];
     }
     delete neurons_;
+    delete [] nnStruct_;
   }
 }
 
-void NeuralNetwork::init(int nnDepth, const LayerInf* nnStruct) {
+void NeuralNetwork::init(int nnDepth, const LayerInf* nnStruct, int** args) {
   nnDepth_ = nnDepth;
 
   nnStruct_ = new LayerInf[nnDepth_];
-  for (int i = 0; i < nnDepth; ++i) {
+  for (int i = 0; i < nnDepth_; ++i) {
     nnStruct_[i] = nnStruct[i];
   }
 
   // Allocate all neurons.
-  neurons_ = new Neuron**[nnDepth];
+  neurons_ = new Neuron**[nnDepth_];
 
-  for (int i = 0; i < nnDepth; ++i) {
-    neurons_[i] = neuronArrayMaker(nnStruct[i].type,
-                                   nnStruct[i].length);
-  }
-
-  // Init all neuron except first layer.
-  for (int i = 1; i < nnDepth; ++i) {
-    for (int j = 0; j < nnStruct[i].length; ++j) {
-      neurons_[i][j]->init(nnStruct[i - 1].length);
+  for (int i = 0; i < nnDepth_; ++i) {
+    int length = nnStruct_[i].length;
+    neurons_[i] = new Neuron*[length];
+    for (int j = 0; j < length; ++j) {
+      neurons_[i][j] = neuronMaker(nnStruct_[i].type, args[i]);
     }
   }
 }
@@ -166,24 +163,16 @@ void NeuralNetwork::fix() {
   }
 }
 
-NeuralNetwork::Neuron** NeuralNetwork::neuronArrayMaker(Type type, int length) {
-  Neuron** temp = new Neuron*[length];
+NeuralNetwork::Neuron* NeuralNetwork::neuronMaker(Type type, const int* args) {
   switch (type) {
     case INPUT:
-      for (int i = 0; i < length; ++i) {
-        temp[i] = new InputNeuron();
-      }
-      return temp;
+      return new InputNeuron();
     case HIDDEN:
-      for (int i = 0; i < length; ++i) {
-        temp[i] = new HiddenNeuron();
-      }
-      return temp;
+      return new HiddenNeuron(args);
     case OUTPUT:
-      for (int i = 0; i < length; ++i) {
-        temp[i] = new OutputNeuron();
-      }
-      return temp;
+      return new OutputNeuron(args);
+    case CONVOLUTION:
+      return new ConvolutionNeuron(args);
     default:
       return NULL;
   }

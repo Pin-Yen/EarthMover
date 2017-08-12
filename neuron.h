@@ -1,6 +1,6 @@
 // Neuron inheritance structure
 //
-// (basic abstract neuron)   (+synapses and gate)  (+public output getter)
+// (basic abstract neuron)   (+synapses and bias)  (+public output getter)
 //         Neuron -------------- HiddenNeuron -------- OutputNeuron
 //                     |
 //                     |    (+public output setter)
@@ -20,9 +20,6 @@ class NeuralNetwork::Neuron {
  public:
   Neuron() {}
   virtual ~Neuron() {}
-
-  // Init neuron.
-  virtual void init(int upperSize) = 0;
 
   // Forwer propagation.
   virtual void forward(Neuron** upperNeurons) = 0;
@@ -68,7 +65,6 @@ class NeuralNetwork::InputNeuron final : public NeuralNetwork::Neuron {
   void setOutput(double val) { Neuron::setOutput(val); }
 
  private:
-  virtual void init(int) final {}
   virtual void forward(Neuron**) final {}
   virtual void back(Neuron**, int, int) final {}
   virtual void calculateFix(Neuron**, double, int) final {}
@@ -81,11 +77,9 @@ class NeuralNetwork::InputNeuron final : public NeuralNetwork::Neuron {
 // Activation using ReLU.
 class NeuralNetwork::HiddenNeuron : public NeuralNetwork::Neuron {
  public:
-  HiddenNeuron() { synapses_ = NULL; }
+  HiddenNeuron() {}
+  HiddenNeuron(const int* args);
   virtual ~HiddenNeuron();
-
-  // init neuron
-  virtual void init(int upperSize) final;
 
   // forwer propagation, and store the output
   virtual void forward(Neuron** upperNeurons) final;
@@ -110,33 +104,33 @@ class NeuralNetwork::HiddenNeuron : public NeuralNetwork::Neuron {
     synapseFixValues_[index] += synapseMoments_[index];
     synapses_[index] += synapseFixValues_[index];
   }
-  void fixGate() {
-    gateFixValue_ += gateMoments_;
-    gate_ += gateFixValue_;
+  void fixBias() {
+    biasFixValue_ += biasMoments_;
+    bias_ += biasFixValue_;
   }
 
   // Change synapses and gate's fix value.
   void changeSynapseFixValue(int index, double val) {
     synapseFixValues_[index] += val;
   }
-  void changeGateFixValue(double val) {
-    gateFixValue_ += val;
+  void changeBiasFixValue(double val) {
+    biasFixValue_ += val;
   }
 
   // Update moment.
   void updateSynapseMoment(int index, double rate) {
     synapseMoments_[index] = synapseFixValues_[index] * rate;
   }
-  void updateGateMoment(double rate) { gateMoments_ = gateFixValue_ * rate; }
+  void updateBiasMoment(double rate) { biasMoments_ = biasFixValue_ * rate; }
 
   // setter
   void setSynapse(int index, double val) { synapses_[index] = val; }
-  void setGate(double val) { gate_ = val; }
+  void setBias(double val) { bias_ = val; }
   void setError(double val) { error_ = val; }
 
   // getter
   double synapse(int index) const { return synapses_[index]; }
-  double gate() const { return gate_; }
+  double bias() const { return bias_; }
   double error() const { return error_; }
 
  private:
@@ -150,9 +144,9 @@ class NeuralNetwork::HiddenNeuron : public NeuralNetwork::Neuron {
   double* synapses_;
   double* synapseMoments_;
   double* synapseFixValues_;
-  double gate_;
-  double gateMoments_;
-  double gateFixValue_;
+  double bias_;
+  double biasMoments_;
+  double biasFixValue_;
   double error_;
 
   int upperSize_;
@@ -162,7 +156,8 @@ class NeuralNetwork::HiddenNeuron : public NeuralNetwork::Neuron {
 // Activation using sigmoid to fix the output range from 0 to 1.
 class NeuralNetwork::OutputNeuron final : public NeuralNetwork::HiddenNeuron {
  public:
-  OutputNeuron() : HiddenNeuron() {}
+  OutputNeuron() {}
+  OutputNeuron(const int* args) : HiddenNeuron(args) {}
   virtual ~OutputNeuron() {}
 
   // back propagation
@@ -177,6 +172,17 @@ class NeuralNetwork::OutputNeuron final : public NeuralNetwork::HiddenNeuron {
   virtual double dActivation(double input) const {
     return input * (1 - input);
   }
+};
+
+// Convolution Neuron
+class NeuralNetwork::ConvolutionNeuron : public NeuralNetwork::HiddenNeuron {
+ public:
+  ConvolutionNeuron() {}
+  ConvolutionNeuron(const int* args);
+  ~ConvolutionNeuron() {};
+
+ private:
+  int convolutionWidth_;
 };
 
 #endif  // NEURON_H_
