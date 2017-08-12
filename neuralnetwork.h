@@ -29,7 +29,8 @@ class NeuralNetwork {
   void init(int networkDepth, const LayerInf* networkStruct);
 
   // Training netowrk.
-  void train(const Data data[], int dataAmount, int cycle, double rate);
+  void train(const Data data[], int dataAmount, int cycle,
+             double allowError, int batchSize, double rate);
 
   // Print network output for corresponding input.
   void predict(const double inputs[]);
@@ -45,11 +46,15 @@ class NeuralNetwork {
   Neuron** neuronArrayMaker(Type type, int length);
 
  private:
+  void clearFixValue();
+
   void forward(const double inputs[]);
 
   void back(const int expectedOutputs[]);
 
-  void fix(double rate);
+  void calculateFix(double rate, int batchSize);
+
+  void fix();
 
   Neuron*** neurons_;
   LayerInf* nnStruct_;
