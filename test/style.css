@@ -1,0 +1,14 @@
+.board {
+  bottom: 0;
+  display: inline-block;
+  height: 80%;
+  margin: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+input {
+  width: 36px;
+}
