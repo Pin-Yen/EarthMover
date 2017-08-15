@@ -1,43 +1,86 @@
+#include <assert.h>
 #include <iostream>
-#include <iomanip>
+#include <string>
+#include <cstdlib>
 
-#include "neuralnetwork.cpp"
-#include "neuron.cpp"
+#include "gomoku/displayboard.cpp"
 
-int main() {
-  NeuralNetwork network;
+#include "lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
+using namespace tiny_dnn;
 
-  NeuralNetwork::LayerInf networkStruct[3];
-  networkStruct[0].type = NeuralNetwork::INPUT;
-  networkStruct[0].length = 2;
-  networkStruct[1].type = NeuralNetwork::HIDDEN;
-  networkStruct[1].length = 10;
-  networkStruct[2].type = NeuralNetwork::OUTPUT;
-  networkStruct[2].length = 2;
+void nnPredict(network<sequential> *nn,
+               int board[15][15], bool blackTurn, int* row, int* col) {
+  int input[900] = {0};
 
-  int* args[3] = {NULL, new int[1], new int[1]};
-  args[1][0] = 2;
-  args[2][0] = 10;
-
-  network.init(3, networkStruct, args);
-
-  NeuralNetwork::Data data[4];
-
-  // XOR data
-  double input[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-  int output[4][2] = {{0, 1}, {1, 0}, {1, 0}, {0, 1}};
-  for (int i = 0; i < 4; ++i) {
-    data[i].input = input[i];
-    data[i].output = output[i];
+  // Input feature
+  // Black
+  for (int r = 0; r < 15; ++r) {
+    for (int c = 0; c < 15; ++c) {
+      if (board[r][c] == 1) input[r * 15 + c] = 1;
+    }
+  }
+  // White
+  for (int r = 0; r < 15; ++r) {
+    for (int c = 0; c < 15; ++c) {
+      if (board[r][c] == -1) input[225 + r * 15 + c] = 1;
+    }
+  }
+  // Empty
+  for (int r = 0; r < 15; ++r) {
+    for (int c = 0; c < 15; ++c) {
+      if (board[r][c] == 0) input[450 + r * 15 + c] = 1;
+    }
+  }
+  // BlackTurn
+  for (int r = 0; r < 15; ++r) {
+    for (int c = 0; c < 15; ++c) {
+      if (blackTurn) input[675 + r * 15 + c] = 1;
+    }
   }
 
-  std::cout << std::fixed << std::setprecision(6);
-  // Train network,
-  // args is: data, dataAmount, cycle, allowError, batchSize, rate, momentRate.
-  network.train(data, 4, 1000000, .0005, 4, 5.0, .5);
+  vec_t result = nn->predict(input);
+  double maxVal = 0.0;
+  for (int r = 0; r < 15; ++r) {
+    for (int c = 0; c < 15; ++c) {
+      if (result[r * 15 + c] > maxVal) {
+        maxVal = result[r * 15 + c];
+        *row = r;
+        *col = c;
+      }
+    }
+  }
+}
 
-  std::cout << std::fixed << std::setprecision(3);
-  for (int i = 0; i < 4; ++i) {
-    network.predict(data[i].input);
+int main() {
+  network<sequential> nn;
+
+  nn.load("nn");
+  std::cout << "load nn" << std::endl;
+
+  DisplayBoard* board = new DisplayBoard();
+  int nnBoard[15][15] = {0};
+  while (true) {
+    int row, col;
+
+    bool whoTurn = board->whoTurn();
+
+    nnPredict(&nn, nnBoard, !whoTurn, &row, &col);
+    std::cout << "Best: "
+              << static_cast<char>(col + 65) << row + 1 << std::endl;
+
+    bool validInput = false;
+
+    while (!validInput) {
+      // get user input
+      board->getInput(&row, &col);
+
+      // tries to play at (row, col)
+      validInput = board->play(row, col);
+
+      // handle invalid input
+      if (!validInput)
+        std::cout << "Invalid move\n";
+    }
+    nnBoard[row][col] = whoTurn ? -1 : 1;
   }
 }
