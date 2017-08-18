@@ -3,9 +3,9 @@
 #include <string>
 #include <cstdlib>
 
-#include "../gomoku/displayboard.cpp"
+#include "../../gomoku/displayboard.cpp"
 
-#include "../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
+#include "../../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
 using namespace tiny_dnn;
 
 void nnPredict(network<sequential> *nn,

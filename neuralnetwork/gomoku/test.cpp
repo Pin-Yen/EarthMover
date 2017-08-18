@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
+#include "../../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
 using namespace tiny_dnn;
 
 int main() {

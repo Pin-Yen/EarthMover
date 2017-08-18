@@ -1,10 +1,6 @@
 #include <fstream>
 #include <iostream>
 
-#include "../lib/json.h"
-
-using json = nlohmann::json;
-
 void ioMaker(const int board[15][15], bool blackTurn,
              const int output[15][15]);
 int randomRotateMirror(int table[15][15]);
