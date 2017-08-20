@@ -123,7 +123,7 @@ def main():
             count += 1
 
             # Print input/output info
-            print('Input:', str(inputCounter),
+            print('Input', str(inputCounter),
                   'Output', str(outputCounter), end = '\r')
 
     outputFile.close()
