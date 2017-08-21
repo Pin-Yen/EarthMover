@@ -15,7 +15,7 @@ class Compare(object):
         self.match(self.player1, self.player2)
 
       else:
-        self.match(self.player1, self.player2)
+        self.match(self.player2, self.player1)
 
   def match(self, black, white):
     """
@@ -51,12 +51,12 @@ class Compare(object):
       # If Game ends, record the result
       if whoWin != const.RESULT_NONE:
         if whoWin == const.RESULT_BLACK_WIN:
-          black.incrementWin()
+          black.incrementWin(const.BLACK)
           white.incrementLose()
         elif whoWin == const.RESULT_WHITE_WIN:
-          white.incrementWin()
+          white.incrementWin(const.WHITE)
           black.incrementLose()
-        elif whoWin == RESULT_TIE:
+        elif whoWin == const.RESULT_TIE:
           black.incrementTie()
           white.incrementTie()
 

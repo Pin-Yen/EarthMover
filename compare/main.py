@@ -11,8 +11,8 @@ def main():
   args = parseArgs()
 
   # execute AIs
-  subprocess.Popen(['../' + args['program1'], str(args['port1'])], bufsize=0, stdout = subprocess.PIPE)
-  subprocess.Popen(['../' + args['program2'], str(args['port2'])], bufsize=0, stdout = subprocess.PIPE)
+  process1 = subprocess.Popen(['../' + args['program1'], str(args['port1'])], bufsize=0, stdout = subprocess.PIPE)
+  process2 = subprocess.Popen(['../' + args['program2'], str(args['port2'])], bufsize=0, stdout = subprocess.PIPE)
 
   time.sleep(3)
   # create player
@@ -23,6 +23,10 @@ def main():
   # compare
   comp = compare.Compare(player1, player2, args['rounds'])
   comp.run()
+
+  # terminate AI programs
+  process1.terminate()
+  process2.terminate()
 
   # print result
   printResult(args, player1, player2)
@@ -46,6 +50,13 @@ def parseArgs():
 
   return vars(parser.parse_args())
 
+def percent(numerator,denominator):
+    """
+    Calculates percentage of (numerator/ denominator) to the first precision
+    returns a string with '%' appended
+    """
+    return '{:.0f}'.format(numerator/denominator * 100) + '%'
+
 def printResult(args, player1, player2):
   rounds = args['rounds']
 
@@ -56,12 +67,17 @@ def printResult(args, player1, player2):
   print('---------------------------------------')
 
   # print header
-  print('{:10}{:>6}{:>6}{:>6}{:>6}'.format("Name","level", "WinR", "LoseR", "TieR"))
+  print('{:10}{:>6}{:>6}{:>6}{:>6}{:>9}{:>9}'.format("Name","level", "WinR", "LoseR", "TieR", "BlackWin", "WhiteWin"))
 
   for player in [player1, player2]:
-    print('{name:10}{level:6}{winrate:6.1f}{loserate:6.1f}{tierate:6.1f}'\
-      .format(name=args['program1'], level=player.level, winrate=player.winCount/rounds * 100\
-        , loserate=player.loseCount/rounds * 100, tierate=player.tieCount/rounds * 100))
+    print('{name:10}{level:6}{winrate:>6}{loserate:>6}{tierate:>6}{blackWinR:>9}{whiteWinR:>9}'\
+      .format(name=args['program1'], level=player.level\
+        , winrate=percent(player.winCount,rounds)\
+        , loserate=percent(player.loseCount, rounds)\
+        , tierate=percent(player.tieCount, rounds)\
+        , blackWinR=percent(player.blackWinCount, rounds)\
+        , whiteWinR=percent(player.whiteWinCount, rounds)))
+
 
 if __name__ == '__main__':
   main()

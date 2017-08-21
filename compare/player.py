@@ -12,6 +12,9 @@ class Player(object):
     self.winCount = 0
     self.loseCount = 0
     self.tieCount = 0
+
+    self.blackWinCount = 0
+    self.whiteWinCount = 0
     self.sessionCookie = None
 
     self.init()
@@ -90,8 +93,14 @@ class Player(object):
     pass
     # shut down EM session.
 
-  def incrementWin(self):
+  def incrementWin(self, color):
     self.winCount += 1
+    if color == const.BLACK:
+      self.blackWinCount += 1
+    elif color == const.WHITE:
+      self.whiteWinCount += 1
+    else:
+      raise ValueError()
 
   def incrementLose(self):
     self.loseCount += 1
