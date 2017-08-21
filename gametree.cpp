@@ -69,9 +69,7 @@ void GameTree::MCTS(int maxCycle) {
 void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
   Node* node;
 
-  int mostTimes = -1;
-
-  do {
+  while (true) {
     for (int cycle = 0; cycle < minCycle; ++cycle) {
       if (!currentNode_->notWinOrLose()) return;
 
@@ -93,11 +91,15 @@ void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
     }
 
     // get mostTimes
+    int mostTimes = 0;
+
     for (Node* child : *currentNode_) {
       if (child->totalPlayout() > mostTimes)
-          mostTimes = child->totalPlayout();
+        mostTimes = child->totalPlayout();
     }
-  } while (mostTimes < minMostTimesCycle);
+    // mostTimes == 0 means that no useful point(can pass now)
+    if (mostTimes >= minMostTimesCycle || mostTimes == 0) return;
+  }
 }
 
 void GameTree::MCTS(int maxCycle, const bool* continueThinking) {
@@ -122,7 +124,7 @@ void GameTree::MCTS(int maxCycle, const bool* continueThinking) {
 
     delete board;
 
-    if (cycle % 2000 == 0) std::cout << "\rbackground: " << cycle << std::flush;
+    if (cycle % 2000 == 0) std::cerr << "\rbackground: " << cycle;
   }
 }
 
