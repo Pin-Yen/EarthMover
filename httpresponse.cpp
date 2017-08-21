@@ -99,7 +99,7 @@ HttpResponse& HttpResponse::compile() {
   header_ = "";
 
   // status line
-  header_ += "HTTP/1.1 ";
+  header_ += "HTTP/1.0 ";
   header_ += std::to_string(statusCode_);
   header_ += " ";
   header_ += HttpResponse::status2String(statusCode_);

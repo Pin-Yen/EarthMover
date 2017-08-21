@@ -15,6 +15,8 @@
 #include "gomoku/freestyle/virtualboardfreestyle.h"
 #include "gomoku/renju_basic/virtualboardrenjubasic.h"
 #include "timer.h"
+// HACK
+#include <assert.h>
 
 #ifdef DEBUG
 #include "objectcounter.h"
@@ -23,6 +25,7 @@
 void start();
 
 int main() {
+  assert(0);
   #ifndef TIME
   #ifndef DEBUG
   srand((unsigned)time(NULL));

@@ -15,9 +15,8 @@
 
 using json = nlohmann::json;
 
-const int HttpServer::PORTS_[3] = {1202, 1302, 1602};
-
-HttpServer::HttpServer() {
+HttpServer::HttpServer(int port) {
+  port_ = port;
   for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
     emList_[i] = NULL;
     emThreadController_[i] = NULL;
@@ -43,15 +42,13 @@ void HttpServer::run() {
   sockaddr_in serverAddress;
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_addr.s_addr = htons(INADDR_ANY);
+  serverAddress.sin_port = htons(port_);
 
-  for (int i = 0; i < 3; ++i) {
-    serverAddress.sin_port = htons(PORTS_[i]);
-
-    if (bind(socketDescriptor, reinterpret_cast<sockaddr*>(&serverAddress),
+  if (bind(socketDescriptor, reinterpret_cast<sockaddr*>(&serverAddress),
              sizeof(serverAddress)) == 0) {
-      std::cerr << "Listening on port " << PORTS_[i] << "\n" << std::flush;
-      break;
-    }
+      std::cerr << "Listening on port " << port_ << "\n" << std::flush;
+  } else {
+    std::cerr << "Port " << port_ << " not available, please use another port\n" << std::flush;
   }
 
   // Listen to Connections.
@@ -90,14 +87,39 @@ void HttpServer::run() {
 
 HttpRequest HttpServer::readRequest(const int client) {
   // Read data into buffer.
+  std::string rawRequest;
   char buffer[MAX_REQUEST_LENGTH_ + 10];
-  int totalBytesRead = recv(client, buffer, MAX_REQUEST_LENGTH_, 0);
+  int totalBytesRead = 0, newReadBytes = 0;
 
-  buffer[totalBytesRead] = '\0';
+  // Read until the whole header is read.
+  do {
+    newReadBytes = recv(client, buffer, MAX_REQUEST_LENGTH_, 0);
+    totalBytesRead += newReadBytes;
+    buffer[newReadBytes] = '\0';
+    rawRequest += buffer;
+  } while (rawRequest.find("\r\n\r\n") == std::string::npos && newReadBytes != 0);
+
   if (totalBytesRead == 0)
     throw HttpRequest::BadRequestException("Empty request.");
 
-  return HttpRequest(buffer);
+
+  HttpRequest request(rawRequest);
+
+  int bodyStartPos = rawRequest.find("\r\n\r\n") + 4;
+  std::string body = rawRequest.substr(bodyStartPos);
+
+  while(body.length() < request.contentLength()) {
+    newReadBytes = recv(client, buffer, MAX_REQUEST_LENGTH_, 0);
+    totalBytesRead += newReadBytes;
+    buffer[newReadBytes] = '\0';
+    body += buffer;
+  }
+
+  // Add body to request
+  request.addBody(body);
+
+
+  return request;
 }
 
 void HttpServer::dispatch(const int client, HttpRequest* request) {
@@ -316,6 +338,7 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   // Check if the user already have an existing EM instance.
   // If not, create an new instance and set a cookie.
   std::string sessionId = request->cookie("session");
+
   int instanceId = -1;
 
   try {
@@ -360,7 +383,12 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   response.addCookie("session", sessionId.c_str()).compile();
   sendResponse(client, &response);
 
+
   return;
+}
+
+void HttpServer::handleQuit(const int client, HttpRequest* request) {
+
 }
 
 void HttpServer::handleResourceRequest(const int client,

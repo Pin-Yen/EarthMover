@@ -9,7 +9,7 @@
 typedef std::unordered_map<std::string, std::string> stringmap;
 class HttpRequest {
  public:
-  explicit HttpRequest(const char* rawRequest);
+  explicit HttpRequest(std::string rawRequest);
   ~HttpRequest() {}
 
   std::string path() { return path_; }
@@ -20,6 +20,9 @@ class HttpRequest {
 
   std::string body() { return body_; }
 
+  int contentLength() { return contentLength_; }
+  // Add the body.
+  void addBody(std::string body) { body_ = body; }
   class BadRequestException : std::exception {
    public:
     explicit BadRequestException(const char* description) {
@@ -39,6 +42,8 @@ class HttpRequest {
   std::string path_;
   // A map storing cookies.
   stringmap cookieJar_;
+
+  int contentLength_;
   // Request body.
   std::string body_;
 };
