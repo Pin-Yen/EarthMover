@@ -26,12 +26,14 @@ def outputData(board, blackTurn, output, file, counter):
         for row in range(15):
             for col in range(15):
                 file.write(str(input[feature][row][col]))
+                file.write(' ')
             file.write('\n')
         file.write('\n')
 
     for row in range(15):
         for col in range(15):
             file.write(str(output[row][col]))
+            file.write(' ')
         file.write('\n')
     file.write('\n')
 
