@@ -1,10 +1,9 @@
 # About
 EarthMover is a gomoku (five in a row) AI program. 
 
-The strategy currently adapted by EarthMover is Monte-Carlo Tree Search (MCTS).
+The strategy currently adapted by EarthMover is Monte-Carlo Tree Search (MCTS). We are also expirementing with different methods. 
 
-EarthMover's architecture is based on the client-server model. The client is a webpage displayed on a browser. Requests made by the client
-are transmitted via HTTP to the server, which runs the MCTS process and then replys the client with its decisions.
+EarthMover's architecture is based on the client-server model. The client is a webpage displayed on a browser. Requests made by the client (browser) are transmitted via HTTP to the server, which runs the MCTS process and then replys the client with its decisions.
 
 # How to install and run
 ## Requirements
@@ -15,6 +14,7 @@ are transmitted via HTTP to the server, which runs the MCTS process and then rep
 ## Install and run
 1. Clone or download the repository.
 2. cd into the project directory and run `make` on terminal
-3. Run `./EM` on terminal. You should see the messsage `Listening on port 1202`. (Or alternatively on 1302 or 1602)
-4. Open your favorite browser and navigate to localhost:1202 (or 1302, 1602. Depends on which port EM is listening on.)
+3. Run `./EM <port-number>` on terminal. Port-number should be larger than 1024.
+You should see the messsage `Listening on port <port-number>` on success.
+4. Open your favorite browser and navigate to localhost:<port-number>
 5. Voila ! You can now challenge EarthMover.
