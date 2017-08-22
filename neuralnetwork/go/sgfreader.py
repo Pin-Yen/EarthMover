@@ -171,7 +171,7 @@ def main():
     # This constant value is the probability of
     # select current board to be one of the training data,
     # it's used to prevent over fitting.
-    SELECT_RATE = 0.02  # 2% board will be used
+    SELECT_RATE = .02  # 2% board will be used
 
     # Counter
     inputCounter = 0
@@ -227,12 +227,10 @@ def main():
                     rotateMirror(output, randomMirrorRotateSeed)
 
                     # Output input output data to 'outputFile'
-                    outputData(board, nextMove[2], output,
+                    outputData(copyBoard, nextMove[2], output,
                                outputFile, outputCounter)
 
                 play(board, data[i])
-
-
 
             # Print input/output info
             print('Input', str(inputCounter),
