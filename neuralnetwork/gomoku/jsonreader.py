@@ -89,7 +89,7 @@ def main():
             continue
 
         board = [[0] * 15 for _ in range(15)]
-        count = 0
+        blackTurn = True
         for move in jsonData[game]['record']:
             if move == None:
                 continue
@@ -114,19 +114,19 @@ def main():
                 rotateMirror(output, randomMirrorRotateSeed)
 
                 # Output input output data to 'outputFile'
-                blackTurn = (count & 1 == 0)
                 outputData(copyBoard, blackTurn, output,
                            outputFile, outputCounter)
 
             # Update board, black: -1, white: 1.
-            board[row][col] = 1 if count & 1 == 1 else -1
-            count += 1
+            board[row][col] = -1 if blackTurn else 1
+            blackTurn = not blackTurn
 
             # Print input/output info
             print('Input', str(inputCounter),
                   'Output', str(outputCounter), end = '\r')
 
     outputFile.close()
+    print('Input', str(inputCounter), 'Output', str(outputCounter))
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

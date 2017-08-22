@@ -14,7 +14,7 @@ int main() {
 
   network<sequential> nn;
   if (mode == 'N' || mode == 'n') {
-    nn << convolutional_layer<leaky_relu>(15, 15, 5, 4, 16, padding::same)
+    nn << convolutional_layer<leaky_relu>(15, 15, 5, 3, 16, padding::same)
        << convolutional_layer<leaky_relu>(15, 15, 3, 16, 16, padding::same)
        << convolutional_layer<leaky_relu>(15, 15, 3, 16, 16, padding::same)
        << convolutional_layer<leaky_relu>(15, 15, 3, 16, 16, padding::same)
