@@ -10,6 +10,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <cerrno>
 
 #include "lib/json.h"
 
@@ -153,7 +154,14 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
 
   // Wait for client's FIN signal.
   char *useless[10];
-  assert(recv(client, useless, 10, 0) == 0);
+  if (recv(client, useless, 10, 0) != 0) {
+    std::cerr << "Not receiving client's FIN signal\n";
+    std::cerr << strerror(errno);
+  }
+  if (close(client) != 0) {
+    std::cerr << "Failed to close connection\n";
+    std::cerr << strerror(errno);
+  }
   assert(close(client) == 0);
   std::cerr << " => "<< response->statusCode() << "\n" << std::flush;
   return;
