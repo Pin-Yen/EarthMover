@@ -162,7 +162,6 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
     std::cerr << "Failed to close connection\n";
     std::cerr << strerror(errno);
   }
-  assert(close(client) == 0);
   std::cerr << " => "<< response->statusCode() << "\n" << std::flush;
   return;
 }

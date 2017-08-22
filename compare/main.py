@@ -11,8 +11,8 @@ def main():
   args = parseArgs()
 
   # execute AIs
-  process1 = subprocess.Popen(['../' + args['program1'], str(args['port1'])], bufsize=0, stdout = subprocess.PIPE)
-  process2 = subprocess.Popen(['../' + args['program2'], str(args['port2'])], bufsize=0, stdout = subprocess.PIPE)
+  process1 = subprocess.Popen(['./' + args['program1'], str(args['port1'])], cwd='../', bufsize=0, stdout = subprocess.PIPE)
+  process2 = subprocess.Popen(['./' + args['program2'], str(args['port2'])], cwd='../', bufsize=0, stdout = subprocess.PIPE)
 
   time.sleep(3)
   # create player
