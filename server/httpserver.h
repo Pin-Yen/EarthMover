@@ -11,15 +11,12 @@
 
 class HttpServer {
  public:
-  HttpServer();
+  HttpServer(int port);
 
   ~HttpServer();
 
   // starts the HttpServer. (Listens and accepts connections.)
   void run();
-
-  // Specifies the port to listen.
-  static const int PORTS_[3];
 
  protected:
   // Read request from file discriptor `client`
@@ -47,6 +44,7 @@ class HttpServer {
   void handleUndo(const int client, HttpRequest* request);
   void handleThink(const int client, HttpRequest* request);
   void handleStart(const int client, HttpRequest* request);
+  void handleQuit(const int client, HttpRequest* request);
   void handleResourceRequest(const int client, HttpRequest* request);
 
   // The limit of pending connections in the queue.
@@ -55,6 +53,9 @@ class HttpServer {
   static const int MAX_EM_INSTANCE_ = 3;
   // Max characters to read in a single request
   static const int MAX_REQUEST_LENGTH_ = 1500;
+
+  // specifies which port to use.
+  int port_;
 
   // session to id
   // (session is the string of the http cookie, id is for indexing purposes)

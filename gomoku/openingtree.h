@@ -1,6 +1,7 @@
 #ifndef GOMOKU_OPENINGTREE_H_
 #define GOMOKU_OPENINGTREE_H_
 
+#include <assert.h>
 #include <stdlib.h>
 #include <algorithm>
 #include <array>
@@ -65,6 +66,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::init() {
   isInit_ = true;
 
   std::ifstream file("gomoku/opening.txt");
+  assert(file.good());
 
   float openingAmout;
   while (file >> openingAmout) {
