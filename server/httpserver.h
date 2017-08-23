@@ -5,7 +5,7 @@
 #include <thread>
 #include <unordered_map>
 
-#include "ai.h"
+#include "../ai.h"
 #include "httprequest.h"
 #include "httpresponse.h"
 

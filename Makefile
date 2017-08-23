@@ -137,17 +137,17 @@ obj/ai.o: ai.cpp ai.h gomoku/displayboard.h gametree.h virtualboard.h \
  gomoku/renju_basic/../typetree.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) -pthread $< -o $@
 
-obj/httpserver.o: httpserver.cpp httpserver.h httprequest.h \
- httpresponse.h lib/json.h
+obj/httpserver.o: server/httpserver.cpp server/httpserver.h server/httprequest.h \
+ server/httpresponse.h lib/json.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
-obj/httpresponse.o: httpresponse.cpp httpresponse.h
+obj/httpresponse.o: server/httpresponse.cpp server/httpresponse.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
-obj/httprequest.o: httprequest.cpp httprequest.h
+obj/httprequest.o: server/httprequest.cpp server/httprequest.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
-obj/networkmain.o: networkmain.cpp httpserver.h ai.h \
+obj/networkmain.o: networkmain.cpp server/httpserver.h ai.h \
  gomoku/displayboard.h gametree.h virtualboard.h\
  lib/json.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
