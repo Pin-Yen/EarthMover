@@ -18,3 +18,18 @@ EarthMover's architecture is based on the client-server model. The client is a w
 You should see the messsage `Listening on port <port-number>` on success.
 4. Open your favorite browser and navigate to localhost:<port-number>
 5. Voila ! You can now challenge EarthMover.
+
+# File structure
+- **compare/** : Contains a python script that can compare the strength of two different versions of EM.
+- **server/** : HTTP Server related code.
+- **neuralnetwork/** : Expiremental. Using neural networks to train EM.
+- **gomoku/** : Contains the evaluate function & other game-specific code.
+  - **src/** : front end code & resources.
+  - filenames related to 'evaluator' : evaluates the score of the given chesstype.
+  - filenames related to 'typetree" : classify the chess type (whether it's a live 3 or dead 4, etc.)
+- **lib/** : Third party libraries.
+- **networkmain.cpp** : The enrty point (`main` function).
+- **ai.h, ai.cpp** : A high level interface to gametree's MCTS process.
+- **gametree.h, gametree.cpp** : Performs the MCTS process.
+- **node.h, node.cpp** : The component of MCTS tree.
+- **Some other files...**
