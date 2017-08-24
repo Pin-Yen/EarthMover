@@ -79,7 +79,7 @@ def noLiberty(board, row, col, selColor, group):
     group.append([row, col])
 
     # Calculate opponent's liberty around the playing point
-    d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+    d = [[0, 1], [1, 0], [0, -1], [-1, 0]]
     for i in range(4):
         checkRow = row + d[i][0]
         checkCol = col + d[i][1]
@@ -171,7 +171,7 @@ def main():
     # This constant value is the probability of
     # select current board to be one of the training data,
     # it's used to prevent over fitting.
-    SELECT_RATE = .02  # 2% board will be used
+    SELECT_RATE = .01  # 2% board will be used
 
     # Counter
     inputCounter = 0
@@ -233,7 +233,7 @@ def main():
                 play(board, data[i])
 
             # Print input/output info
-            if inputCounter % 10 == 0:
+            if inputCounter % 100 == 0:
                 print('Input', str(inputCounter),
                       'Output', str(outputCounter), end = '\r')
 

@@ -26,18 +26,30 @@ int main(int argc, char const *argv[]) {
   std::cout << "Loading training data...\n";
   int trainingAmount = loadData("cnndata.txt", &input, &output);
 
+  std::vector<vec_t> testInput, testOutput;
+  std::cout << "Loading testing data...\n";
+  int testingAmount = loadData("cnntestdata.txt", &testInput, &testOutput);
+
   // Create network.
   network<sequential> nn;
   if (mode == 'N' || mode == 'n') {
     std::cout << "Creating new network... ";
     nn << conv<leaky_relu>(19, 19, 5, 3, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
+       << batch_norm(19 * 19, 16)
        << conv<softmax>(19, 19, 3, 16, 1, padding::same);
     std::cout << "done" << std::endl;
   } else {
@@ -67,21 +79,27 @@ int main(int argc, char const *argv[]) {
       },
       // called for each epoch
       [&]() {
-        std::cout << "Epoch " << count;
+        std::cout << "Epoch " << ++count;
         int correct = 0;
         for (int i = 0; i < trainingAmount; i += 10) {
           if (output[i][nn.predict_label(input[i])] == 1)
             ++correct;
         }
         std::cout << "\ncorrect rate in 10 precent of training data: "
-                  << static_cast<double>(correct) / (trainingAmount / 10)
+                  << static_cast<double>(correct) / (trainingAmount / 10);
+        correct = 0;
+        for (int i = 0; i < testingAmount; ++i) {
+          if (testOutput[i][nn.predict_label(testInput[i])] == 1)
+            ++correct;
+        }
+        std::cout << "\ncorrect rate in testing data: "
+                  << static_cast<double>(correct) / testingAmount
                   << std::endl;
 
         if (count % 10 == 0 && count > 0) {
           nn.save("nn");
           std::cout << "saved nn" << std::endl;
         }
-        ++count;
       });
 
   nn.save("nn");
