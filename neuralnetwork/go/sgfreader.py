@@ -233,9 +233,12 @@ def main():
                 play(board, data[i])
 
             # Print input/output info
-            print('Input', str(inputCounter),
-                  'Output', str(outputCounter), end = '\r')
+            if inputCounter % 10 == 0:
+                print('Input', str(inputCounter),
+                      'Output', str(outputCounter), end = '\r')
 
+    print('Input', str(inputCounter),
+          'Output', str(outputCounter), end = '\r')
     outputFile.close()
 
 if __name__ == '__main__':

@@ -54,7 +54,7 @@
 #define CNN_USE_EXCEPTIONS
 
 /**
- * comment out if you want tiny-dnn to be quiet 
+ * comment out if you want tiny-dnn to be quiet
  */
 #define CNN_USE_STDOUT
 
@@ -73,7 +73,7 @@
 #ifdef CNN_USE_OMP
 #define CNN_TASK_SIZE 100
 #else
-#define CNN_TASK_SIZE 8
+#define CNN_TASK_SIZE 16
 #endif
 
 #if !defined(_MSC_VER) && !defined(_WIN32) && !defined(WIN32)
