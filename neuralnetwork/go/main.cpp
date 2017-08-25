@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 
+#include "../../timer.h"
 #include "../../go/displayboard.cpp"
 
 #include "../../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
@@ -42,21 +43,37 @@ int nnPredict(network<sequential> *nn,
   return nn->predict_label(in);
 }
 
+void printNN(const network<sequential> &nn) {
+  for (int i = 0; i < nn.depth(); ++i) {
+    if (nn[i]->layer_type() != "conv") continue;
+    nn[i]->output_to_image().write("layers" + std::to_string(i) + ".png");
+  }
+}
+
 int main() {
   network<sequential> nn;
 
   nn.load("nn");
   std::cout << "load nn" << std::endl;
 
+  image<> img = nn.at<conv<leaky_relu>>(0).weight_to_image();
+  img.write("filter0.png");
+
   DisplayBoard* board = new DisplayBoard();
+
+
 
   int nnBoard[19][19];
   while (true) {
     board->getBoard(nnBoard);
-    int index = nnPredict(&nn, nnBoard, !board->whoTurn());
 
-    image<> img = nn[nn.depth() - 1]->output_to_image();
-    img.write("output.png");
+    Timer t;
+    t.start();
+    int index = nnPredict(&nn, nnBoard, !board->whoTurn());
+    t.stop();
+    t.print();
+
+    printNN(nn);
 
     int row = index / 19,
         col = index % 19;

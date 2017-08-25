@@ -171,7 +171,7 @@ def main():
     # This constant value is the probability of
     # select current board to be one of the training data,
     # it's used to prevent over fitting.
-    SELECT_RATE = .01  # 2% board will be used
+    SELECT_RATE = .01  # 1% board will be used
 
     # Counter
     inputCounter = 0
@@ -232,13 +232,13 @@ def main():
 
                 play(board, data[i])
 
-            # Print input/output info
-            if inputCounter % 100 == 0:
-                print('Input', str(inputCounter),
-                      'Output', str(outputCounter), end = '\r')
+                # Print input/output info
+                if inputCounter % 1000 == 0:
+                    print('Input', str(inputCounter),
+                          'Output', str(outputCounter), end = '\r')
 
     print('Input', str(inputCounter),
-          'Output', str(outputCounter), end = '\r')
+          'Output', str(outputCounter))
     outputFile.close()
 
 if __name__ == '__main__':

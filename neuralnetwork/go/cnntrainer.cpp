@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -17,40 +18,41 @@ int main(int argc, char const *argv[]) {
   // Check the rationality of args.
   if (!checkArgs(argc, argv)) return 1;
 
-  // Get args.
-  char mode = argv[1][0];
-  int batchSize = std::stoi(argv[2]);
-  int epochSize = std::stoi(argv[3]);
-
+  // Load data
   std::vector<vec_t> input, output;
   std::cout << "Loading training data...\n";
-  int trainingAmount = loadData("cnndata.txt", &input, &output);
+  int trainingAmount = loadData(argv[3], &input, &output);
 
   std::vector<vec_t> testInput, testOutput;
   std::cout << "Loading testing data...\n";
-  int testingAmount = loadData("cnntestdata.txt", &testInput, &testOutput);
+  int testingAmount = loadData(argv[4], &testInput, &testOutput);
+
+  // Get args.
+  char mode = argv[1][0];
+  int batchSize = std::stoi(argv[5]);
+  int epochSize = std::stoi(argv[6]);
 
   // Create network.
   network<sequential> nn;
   if (mode == 'N' || mode == 'n') {
     std::cout << "Creating new network... ";
-    nn << conv<leaky_relu>(19, 19, 5, 3, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<leaky_relu>(19, 19, 3, 16, 16, padding::same)
-       << batch_norm(19 * 19, 16)
-       << conv<softmax>(19, 19, 3, 16, 1, padding::same);
+    nn << conv<leaky_relu>(19, 19, 5, 3, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
+       << batch_norm(19 * 19, 48)
+       << conv<softmax>(19, 19, 3, 48, 1, padding::same);
     std::cout << "done" << std::endl;
   } else {
     std::cout << "Loading origin network.... ";
@@ -70,7 +72,7 @@ int main(int argc, char const *argv[]) {
               << std::endl;
   }
 
-  int count = 0;
+  int currentEpoch = 0;
   adagrad opt;
   nn.fit<mse>(opt, input, output, batchSize, epochSize,
       // called for each mini-batch
@@ -79,24 +81,24 @@ int main(int argc, char const *argv[]) {
       },
       // called for each epoch
       [&]() {
-        std::cout << "Epoch " << ++count;
+        std::cout << "Epoch " << ++currentEpoch;
         int correct = 0;
         for (int i = 0; i < trainingAmount; i += 10) {
           if (output[i][nn.predict_label(input[i])] == 1)
             ++correct;
         }
-        std::cout << "\ncorrect rate in 10 precent of training data: "
+        std::cout << "\nAccuracy in 10 precent of training data: "
                   << static_cast<double>(correct) / (trainingAmount / 10);
         correct = 0;
         for (int i = 0; i < testingAmount; ++i) {
           if (testOutput[i][nn.predict_label(testInput[i])] == 1)
             ++correct;
         }
-        std::cout << "\ncorrect rate in testing data: "
+        std::cout << "\nAccuracy in test data: "
                   << static_cast<double>(correct) / testingAmount
                   << std::endl;
 
-        if (count % 10 == 0 && count > 0) {
+        if (currentEpoch % 5 == 0 && currentEpoch > 0) {
           nn.save("nn");
           std::cout << "saved nn" << std::endl;
         }
@@ -104,20 +106,14 @@ int main(int argc, char const *argv[]) {
 
   nn.save("nn");
   std::cout << "saved nn" << std::endl;
-
-  // visualize activations of recent input
-  //image<> img = nn[nn.depth() - 1]->output_to_image();
-  //img.write("output.png");
-
-  image<> img = nn.at<conv<leaky_relu>>(0).weight_to_image();
-  img.write("layer0.png");
 }
 
 bool checkArgs(int argc, char const *argv[]) {
   const std::string usage =
-      "Usage ./cnntrainer keep_training batch_size epoch_size";
+      "Usage ./cnntrainer keep_training filters training_data test_data "
+      "batch_size epoch_size";
 
-  if (argc != 4) {
+  if (argc != 7) {
     std::cout << usage << std::endl;
     return false;
   }
@@ -138,11 +134,18 @@ bool checkArgs(int argc, char const *argv[]) {
   int value = std::stoi(argv[2]);
   if (value <= 0) {
     std::cout << usage
+              << "\nfilters must be grater then 0"<< std::endl;
+    return false;
+  }
+
+  value = std::stoi(argv[5]);
+  if (value <= 0) {
+    std::cout << usage
               << "\nbatch must be grater then 0"<< std::endl;
     return false;
   }
 
-  value = std::stoi(argv[3]);
+  value = std::stoi(argv[6]);
   if (value <= 0) {
     std::cout << usage
               << "\nepoch must be grater then 0"<< std::endl;
@@ -156,6 +159,7 @@ int loadData(const std::string fileName,
              std::vector<vec_t> *input,
              std::vector<vec_t> *output) {
   std::ifstream file(fileName);
+  assert(file.good());
   int count;
   while (file >> count) {
     std::cout << "reading the " << count << "th data.\r" << std::flush;
