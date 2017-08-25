@@ -21,16 +21,16 @@ int main(int argc, char const *argv[]) {
   // Load data
   std::vector<vec_t> input, output;
   std::cout << "Loading training data...\n";
-  int trainingAmount = loadData(argv[3], &input, &output);
+  int trainingAmount = loadData(argv[2], &input, &output);
 
   std::vector<vec_t> testInput, testOutput;
   std::cout << "Loading testing data...\n";
-  int testingAmount = loadData(argv[4], &testInput, &testOutput);
+  int testingAmount = loadData(argv[3], &testInput, &testOutput);
 
   // Get args.
   char mode = argv[1][0];
-  int batchSize = std::stoi(argv[5]);
-  int epochSize = std::stoi(argv[6]);
+  int batchSize = std::stoi(argv[4]);
+  int epochSize = std::stoi(argv[5]);
 
   // Create network.
   network<sequential> nn;
@@ -110,10 +110,10 @@ int main(int argc, char const *argv[]) {
 
 bool checkArgs(int argc, char const *argv[]) {
   const std::string usage =
-      "Usage ./cnntrainer keep_training filters training_data test_data "
+      "Usage ./cnntrainer keep_training training_data test_data "
       "batch_size epoch_size";
 
-  if (argc != 7) {
+  if (argc != 6) {
     std::cout << usage << std::endl;
     return false;
   }
@@ -131,21 +131,14 @@ bool checkArgs(int argc, char const *argv[]) {
     return false;
   }
 
-  int value = std::stoi(argv[2]);
-  if (value <= 0) {
-    std::cout << usage
-              << "\nfilters must be grater then 0"<< std::endl;
-    return false;
-  }
-
-  value = std::stoi(argv[5]);
+  value = std::stoi(argv[4]);
   if (value <= 0) {
     std::cout << usage
               << "\nbatch must be grater then 0"<< std::endl;
     return false;
   }
 
-  value = std::stoi(argv[6]);
+  value = std::stoi(argv[5]);
   if (value <= 0) {
     std::cout << usage
               << "\nepoch must be grater then 0"<< std::endl;
