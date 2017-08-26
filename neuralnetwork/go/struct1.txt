@@ -1,0 +1,17 @@
+conv 5 3 48
+bn 48
+conv 3 48 48
+bn 48
+conv 3 48 48
+bn 48
+conv 3 48 48
+bn 48
+conv 3 48 48
+bn 48
+conv 3 48 48
+bn 48
+conv 3 48 48
+bn 48
+conv 3 48 48
+bn 48
+conv_softmax 48

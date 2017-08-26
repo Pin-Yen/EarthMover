@@ -137,8 +137,8 @@ def play(board, key):
 # Check this game's player rank.
 # Both player;s rank should be 5d+.
 def checkRank(data):
-    whiteIndex = data.find('WR')
-    blackIndex = data.find('BR')
+    whiteIndex = data.find('WR[')
+    blackIndex = data.find('BR[')
     if whiteIndex == -1 or  blackIndex == -1:
         return False
     whiteRank = int(data[whiteIndex + 3 : whiteIndex + 4])
@@ -148,7 +148,7 @@ def checkRank(data):
     return True
 
 def getHandicap(data):
-    index = data.find('HA')
+    index = data.find('HA[')
     if index == -1:
         return 0
     while data[index] != '[':
@@ -156,7 +156,7 @@ def getHandicap(data):
     return int(data[index + 1 : index + 2])
 
 def getAddBlack(data, num):
-    index = data.find('AB')
+    index = data.find('AB[')
     add = []
     for i in range(num):
         while data[index] != '[':
@@ -171,7 +171,7 @@ def main():
     # This constant value is the probability of
     # select current board to be one of the training data,
     # it's used to prevent over fitting.
-    SELECT_RATE = .01  # 1% board will be used
+    SELECT_RATE = .025  # 2.5% board will be used
 
     # Counter
     inputCounter = 0

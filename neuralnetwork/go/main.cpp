@@ -61,8 +61,6 @@ int main() {
 
   DisplayBoard* board = new DisplayBoard();
 
-
-
   int nnBoard[19][19];
   while (true) {
     board->getBoard(nnBoard);

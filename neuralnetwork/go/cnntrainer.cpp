@@ -14,6 +14,8 @@ int loadData(const std::string fileName,
              std::vector<vec_t> *input,
              std::vector<vec_t> *output);
 
+void createNN(network<sequential> &nn, std::string fileName);
+
 int main(int argc, char const *argv[]) {
   // Check the rationality of args.
   if (!checkArgs(argc, argv)) return 1;
@@ -21,38 +23,22 @@ int main(int argc, char const *argv[]) {
   // Load data
   std::vector<vec_t> input, output;
   std::cout << "Loading training data...\n";
-  int trainingAmount = loadData(argv[2], &input, &output);
+  int trainingAmount = loadData(argv[3], &input, &output);
 
   std::vector<vec_t> testInput, testOutput;
   std::cout << "Loading testing data...\n";
-  int testingAmount = loadData(argv[3], &testInput, &testOutput);
+  int testingAmount = loadData(argv[4], &testInput, &testOutput);
 
   // Get args.
   char mode = argv[1][0];
-  int batchSize = std::stoi(argv[4]);
-  int epochSize = std::stoi(argv[5]);
+  int batchSize = std::stoi(argv[5]);
+  int epochSize = std::stoi(argv[6]);
 
   // Create network.
   network<sequential> nn;
   if (mode == 'N' || mode == 'n') {
     std::cout << "Creating new network... ";
-    nn << conv<leaky_relu>(19, 19, 5, 3, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<leaky_relu>(19, 19, 3, 48, 48, padding::same)
-       << batch_norm(19 * 19, 48)
-       << conv<softmax>(19, 19, 3, 48, 1, padding::same);
+    createNN(nn, argv[2]);
     std::cout << "done" << std::endl;
   } else {
     std::cout << "Loading origin network.... ";
@@ -72,48 +58,66 @@ int main(int argc, char const *argv[]) {
               << std::endl;
   }
 
-  int currentEpoch = 0;
+  int currentEpoch = 0, currentBatch = 0;
   adagrad opt;
   nn.fit<mse>(opt, input, output, batchSize, epochSize,
       // called for each mini-batch
       [&]() {
-        //
+        std::cout << "Mini batch " << ++currentBatch;
+        int correct = 0, amount = trainingAmount / 100;
+        for (int i = 0; i < trainingAmount; i += 100) {
+          if (output[i][nn.predict_label(input[i])] == 1)
+            ++correct;
+        }
+        std::cout << "\nAccuracy in 1 precent of train data: "
+                  << correct << "/" << amount << ", "
+                  << static_cast<double>(correct) / amount;
+        correct = 0;
+        amount = testingAmount / 10;
+        for (int i = 0; i < testingAmount; i += 10) {
+          if (testOutput[i][nn.predict_label(testInput[i])] == 1)
+            ++correct;
+        }
+
+        std::cout << "\nAccuracy in 10 precent of test data: "
+                  << correct << "/" << amount << ", "
+                  << static_cast<double>(correct) / amount
+                  << std::endl;
       },
       // called for each epoch
       [&]() {
         std::cout << "Epoch " << ++currentEpoch;
-        int correct = 0;
+        int correct = 0, amount = trainingAmount / 10;
         for (int i = 0; i < trainingAmount; i += 10) {
           if (output[i][nn.predict_label(input[i])] == 1)
             ++correct;
         }
-        std::cout << "\nAccuracy in 10 precent of training data: "
-                  << static_cast<double>(correct) / (trainingAmount / 10);
+        std::cout << "\nAccuracy in 10 precent of train data: "
+                  << correct << "/" << amount << ", "
+                  << static_cast<double>(correct) / amount;
         correct = 0;
+        amount = testingAmount;
         for (int i = 0; i < testingAmount; ++i) {
           if (testOutput[i][nn.predict_label(testInput[i])] == 1)
             ++correct;
         }
+
         std::cout << "\nAccuracy in test data: "
-                  << static_cast<double>(correct) / testingAmount
+                  << correct << "/" << amount << ", "
+                  << static_cast<double>(correct) / amount
                   << std::endl;
 
-        if (currentEpoch % 5 == 0 && currentEpoch > 0) {
-          nn.save("nn");
-          std::cout << "saved nn" << std::endl;
-        }
+        nn.save("nn_epoch" + std::to_string(currentEpoch));
+        std::cout << "saved nn" << std::endl;
       });
-
-  nn.save("nn");
-  std::cout << "saved nn" << std::endl;
 }
 
 bool checkArgs(int argc, char const *argv[]) {
   const std::string usage =
-      "Usage ./cnntrainer keep_training training_data test_data "
-      "batch_size epoch_size";
+      "Usage ./cnntrainer keep_training cnn_structure "
+      "training_data test_data batch_size epoch_size";
 
-  if (argc != 6) {
+  if (argc != 7) {
     std::cout << usage << std::endl;
     return false;
   }
@@ -131,14 +135,14 @@ bool checkArgs(int argc, char const *argv[]) {
     return false;
   }
 
-  value = std::stoi(argv[4]);
+  int value = std::stoi(argv[5]);
   if (value <= 0) {
     std::cout << usage
               << "\nbatch must be grater then 0"<< std::endl;
     return false;
   }
 
-  value = std::stoi(argv[5]);
+  value = std::stoi(argv[6]);
   if (value <= 0) {
     std::cout << usage
               << "\nepoch must be grater then 0"<< std::endl;
@@ -175,4 +179,36 @@ int loadData(const std::string fileName,
   file.close();
 
   return count;
+}
+
+void createNN(network<sequential> &nn, std::string fileName) {
+  std::ifstream file(fileName);
+  assert(file.good());
+
+  std::string layer;
+  int layerCount = 0;
+  std::cout << "Reading nn structure...\n";
+  while (file >> layer) {
+    std::cout << "Layer " << ++layerCount << ": " << layer << "\n";
+    if (layer == "conv") {  // Convolution layer.
+      int filterSize, inputChannel, outputChannel;
+      file >> filterSize;
+      file >> inputChannel;
+      file >> outputChannel;
+      nn << conv<leaky_relu>(
+          19, 19, filterSize, inputChannel, outputChannel, padding::same);
+    } else if (layer == "conv_softmax") {
+      int inputChannel;
+      file >> inputChannel;
+      nn << conv<softmax>(
+          19, 19, 1, inputChannel, 1, padding::same);
+    } else if (layer == "bn") {  // Batch normalization layer.
+      int input;
+      file >> input;
+      nn << batch_norm(19 * 19, input);
+    } else {
+      assert(0);
+    }
+  }
+  file.close();
 }
