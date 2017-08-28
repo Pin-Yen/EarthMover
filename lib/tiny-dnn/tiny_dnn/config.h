@@ -58,7 +58,7 @@
  * Enable Image API support.
  * Currently we use stb by default.
  **/
-// #define DNN_USE_IMAGE_API
+ #define DNN_USE_IMAGE_API
 
 /**
  * Enable Gemmlowp support.
@@ -76,7 +76,7 @@
 #ifdef CNN_USE_OMP
 #define CNN_TASK_SIZE 100
 #else
-#define CNN_TASK_SIZE 8
+#define CNN_TASK_SIZE 16
 #endif
 
 namespace tiny_dnn {

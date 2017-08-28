@@ -8,6 +8,8 @@
 
 #include "../../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
 using namespace tiny_dnn;
+using namespace tiny_dnn::layers;
+using namespace tiny_dnn::activation;
 
 int nnPredict(network<sequential> *nn,
               const int board[19][19], bool blackTurn) {
@@ -56,8 +58,7 @@ int main() {
   nn.load("nn");
   std::cout << "load nn" << std::endl;
 
-  image<> img = nn.at<conv<leaky_relu>>(0).weight_to_image();
-  img.write("filter0.png");
+  nn.at<conv>(0).weight_to_image() .write("filter0.png");
 
   DisplayBoard* board = new DisplayBoard();
 
