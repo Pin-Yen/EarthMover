@@ -7,6 +7,7 @@
 #include "../../lib/tiny-dnn/tiny_dnn/tiny_dnn.h"
 using namespace tiny_dnn;
 using namespace tiny_dnn::layers;
+using namespace tiny_dnn::activation;
 
 bool checkArgs(int argc, char const *argv[]);
 
@@ -22,11 +23,11 @@ int main(int argc, char const *argv[]) {
 
   // Load data
   std::vector<vec_t> input, output;
-  std::cout << "Loading training data...\n";
+  std::cout << "Loading train data...\n";
   int trainingAmount = loadData(argv[3], &input, &output);
 
   std::vector<vec_t> testInput, testOutput;
-  std::cout << "Loading testing data...\n";
+  std::cout << "Loading test data...\n";
   int testingAmount = loadData(argv[4], &testInput, &testOutput);
 
   // Get args.
@@ -63,26 +64,28 @@ int main(int argc, char const *argv[]) {
   nn.fit<mse>(opt, input, output, batchSize, epochSize,
       // called for each mini-batch
       [&]() {
-        std::cout << "Mini batch " << ++currentBatch;
-        int correct = 0, amount = trainingAmount / 100;
-        for (int i = 0; i < trainingAmount; i += 100) {
-          if (output[i][nn.predict_label(input[i])] == 1)
-            ++correct;
-        }
-        std::cout << "\nAccuracy in 1 precent of train data: "
-                  << correct << "/" << amount << ", "
-                  << static_cast<double>(correct) / amount;
-        correct = 0;
-        amount = testingAmount / 10;
-        for (int i = 0; i < testingAmount; i += 10) {
-          if (testOutput[i][nn.predict_label(testInput[i])] == 1)
-            ++correct;
-        }
+        if (++currentBatch % 100 == 0) {
+          std::cout << "Mini batch " << currentBatch;
+          int correct = 0, amount = trainingAmount / 100;
+          for (int i = 0; i < trainingAmount; i += 100) {
+            if (output[i][nn.predict_label(input[i])] == 1)
+              ++correct;
+          }
+          std::cout << "\nAccuracy in 1% of train data: "
+                    << correct << "/" << amount << ", "
+                    << static_cast<double>(correct) / amount;
+          correct = 0;
+          amount = testingAmount / 10;
+          for (int i = 0; i < testingAmount; i += 10) {
+            if (testOutput[i][nn.predict_label(testInput[i])] == 1)
+              ++correct;
+          }
 
-        std::cout << "\nAccuracy in 10 precent of test data: "
-                  << correct << "/" << amount << ", "
-                  << static_cast<double>(correct) / amount
-                  << std::endl;
+          std::cout << "\nAccuracy in 10% of test data: "
+                    << correct << "/" << amount << ", "
+                    << static_cast<double>(correct) / amount
+                    << std::endl;
+        }
       },
       // called for each epoch
       [&]() {
@@ -92,7 +95,7 @@ int main(int argc, char const *argv[]) {
           if (output[i][nn.predict_label(input[i])] == 1)
             ++correct;
         }
-        std::cout << "\nAccuracy in 10 precent of train data: "
+        std::cout << "\nAccuracy in 10% of train data: "
                   << correct << "/" << amount << ", "
                   << static_cast<double>(correct) / amount;
         correct = 0;
@@ -191,21 +194,17 @@ void createNN(network<sequential> &nn, std::string fileName) {
   while (file >> layer) {
     std::cout << "Layer " << ++layerCount << ": " << layer << "\n";
     if (layer == "conv") {  // Convolution layer.
-      int filterSize, inputChannel, outputChannel;
-      file >> filterSize;
-      file >> inputChannel;
-      file >> outputChannel;
-      nn << conv<leaky_relu>(
-          19, 19, filterSize, inputChannel, outputChannel, padding::same);
-    } else if (layer == "conv_softmax") {
-      int inputChannel;
-      file >> inputChannel;
-      nn << conv<softmax>(
-          19, 19, 1, inputChannel, 1, padding::same);
+      int filterSize, inChannel, outChannel;
+      file >> filterSize >> inChannel >> outChannel;
+      nn << conv(19, 19, filterSize, inChannel, outChannel, padding::same);
     } else if (layer == "bn") {  // Batch normalization layer.
       int input;
       file >> input;
       nn << batch_norm(19 * 19, input);
+    } else if (layer == "leaky_relu") {
+      nn << leaky_relu();
+    } else if (layer == "softmax") {
+      nn << softmax();
     } else {
       assert(0);
     }
