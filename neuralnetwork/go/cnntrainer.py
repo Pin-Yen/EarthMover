@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import random
 
 class Network(object):
     def __init__(self, depth=10, width=48):
@@ -7,6 +8,7 @@ class Network(object):
         # Network's depth and width.
         self.depth = depth
         self.width = width
+        self.miniBatch = 0
 
     # Set up network structure.
     def setUp(self):
@@ -68,7 +70,8 @@ class Network(object):
     # Train network.
     def train(self, trainData, testData=None, batchSize=128):
         for i in range(trainData.dataSize // batchSize):
-            print('mini batch ' + str(i), end='\r')
+            self.miniBatch += 1
+            print('mini batch ' + str(self.miniBatch), end='\r')
             # Get in/out data.
             x, y = trainData.getBatch(i, batchSize)
             self.sess.run([self.opt], {self.x: x, self.y: y})
@@ -78,13 +81,13 @@ class Network(object):
                 summ = self.sess.run(self.merged,
                         {self.x: x, self.y: y})
 
-                self.trainWriter.add_summary(summ, i)
+                self.trainWriter.add_summary(summ, self.miniBatch)
                 if testData != None:
-                    testX, testY = testData.getBatch(0, 128)
+                    testX, testY = testData.getBatch(0, 256)
                     testSumm = self.sess.run(self.merged,
                         {self.x: testX, self.y: testY})
 
-                    self.testWriter.add_summary(testSumm, i)
+                    self.testWriter.add_summary(testSumm, self.miniBatch)
 
 
     # Save/Load network.
@@ -141,7 +144,6 @@ class Data(object):
                 # Print inf
                 if dataSize % 10000 == 0:
                     print('Reading the', dataSize, 'th data.', sep=' ', end='\r')
-                    break
 
         self.dataSize = dataSize
         print('Finish reading', dataSize, 'data.', sep=' ')
@@ -159,12 +161,17 @@ class Data(object):
         self.output = []
         self.dataSize = 0
 
+    def shuffleData(self):
+        data = list(zip(self.input, self.output))
+        random.shuffle(data)
+        self.input, self.output = zip(*data)
+
 
 def main():
     testData = Data()
-    testData.loadData('testdata.txt')
+    testData.loadData('data_2863_01.txt')
     data = Data()
-    data.loadData('data1.txt')
+    data.loadData('data_135724_025.txt')
 
     nn = Network()
     nn.setUp()
@@ -172,6 +179,8 @@ def main():
     for i in range(10):
         nn.train(data, testData)
         nn.save()
+        data.shuffleData()
+
 
 
 if __name__ == '__main__':
