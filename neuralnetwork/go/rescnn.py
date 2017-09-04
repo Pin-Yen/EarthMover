@@ -26,12 +26,23 @@ class Network(object):
 
         # Hidden layer.
         current_layer = bn1
-        for i in range(2, self.depth + 1):
+        for i in range(2, self.depth, 2):
             with tf.name_scope('Layer' + str(i)):
-                conv = tf.layers.conv2d(current_layer, self.width, 3,
+                conv1 = tf.layers.conv2d(current_layer, self.width, 3,
                                         padding='same', activation=tf.nn.relu,
                                         name='conv' + str(i))
-                bn = tf.layers.batch_normalization(conv, name='bn' + str(i))
+            with tf.name_scope('Layer' + str(i + 1)):
+                conv2 = tf.layers.conv2d(conv1, self.width, 3,
+                                        padding='same', name='conv' + str(i + 1))
+                add = tf.nn.relu(current_layer + conv2)
+                bn = tf.layers.batch_normalization(add, name='bn' + str(i + 1))
+            current_layer = bn
+
+        with tf.name_scope('Layer' + str(self.depth)):
+            conv = tf.layers.conv2d(current_layer, self.width, 3,
+                                    padding='same', activation=tf.nn.relu,
+                                    name='conv' + str(self.depth))
+            bn = tf.layers.batch_normalization(conv, name='bn' + str(self.depth))
             current_layer = bn
 
         # Last layer.

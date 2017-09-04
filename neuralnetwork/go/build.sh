@@ -1,1 +1,0 @@
-g++ -std=c++14 -I../../lib/tiny-dnn -pthread -O3 cnntrainer.cpp -o cnntrainer

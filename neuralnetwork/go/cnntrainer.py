@@ -1,5 +1,5 @@
 import cnn
-
+import board as b
 import random
 
 class Data(object):
@@ -7,39 +7,35 @@ class Data(object):
         self.data = []
         self.data_size = 0
 
+    # Read data from 'path'.
+    # If 'max_data > 0, will only read up to 'max_data'.
     def load_data(self, path, max_data=0):
         print('Reading data from ' + path)
         data_size = 0
+        board = b.Board()
         with open(path, 'r') as f:
             while f.readline().rstrip() != '':
-                x = []
-                y = []
                 data_size += 1
-                features = []
 
-                # Get input data
-                for i in range(3):
-                    # Three feautre map.
-                    dx=[]
-                    for l in range(19):
-                        line = f.readline().rstrip()
-                        dx.append([int(data) for data in line.split()])
-                    # Append 19x19 input to feature map.
-                    features.append(dx)
-                    f.readline()
-                # Reshape data([3x19x19]->[19x19x3])
-                for r in range(19):
-                    row = []
-                    for c in range(19):
-                        row.append([features[0][r][c], features[1][r][c], features[2][r][c]])
-                    x.append(row)
-
-                # Get output data
-                for l in range(19):
+                # Read data to board.
+                for row in range(19):
                     line = f.readline().rstrip()
-                    for data in line.split():
-                        y.append(int(data))
-                f.readline()
+                    col = 0
+                    for data in line:
+                        board.board[row][col] = data
+                        col += 1
+
+                # Read information.
+                # (last_row, lost_col, next_row, next_col, who_turn)
+                inf = f.readline().split(',')
+                #board.last_move = [int(inf[0]), int(inf[1])]
+                board.black_turn = (inf[4] == 'b')
+
+                # Get input data.
+                x = board.nn_input_data()
+                # Create output data.
+                y = [0] * 361
+                y[int(inf[2]) * 19 + int(inf[3])] = 1
 
                 # Append data.
                 self.data.append((x, y))
@@ -112,7 +108,7 @@ def main():
     network.init_var()
 
     data_list = []
-    for i in range(1, 6):
+    for i in range(1, 7):
         data_list.append('data' + str(i) + '.txt')
     train_multi_input(network, data_list, 'testdata.txt', 32)
 

@@ -1,9 +1,0 @@
-conv 5 3 48 leaky_relu bn 48
-conv 3 48 48 leaky_relu bn 48
-conv 3 48 48 leaky_relu bn 48
-conv 3 48 32 leaky_relu bn 32
-conv 3 32 32 leaky_relu bn 32
-conv 3 32 32 leaky_relu bn 32
-conv 3 32 32 leaky_relu bn 32
-conv 3 32 16 leaky_relu bn 16
-conv 1 16 1 softmax
