@@ -250,7 +250,6 @@ void HttpServer::handlePass(const int client, HttpRequest* request) {
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
-
   // Wait till the background thinking thread has stopped.
   if (threadList_[id].joinable())
     threadList_[id].join();
@@ -270,6 +269,9 @@ void HttpServer::handleUndo(const int client, HttpRequest* request) {
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
+  // Wait till the background thinking thread has stopped.
+  if (threadList_[id].joinable())
+    threadList_[id].join();
 
   // Parse request body.
   json body = json::parse(request->body());
