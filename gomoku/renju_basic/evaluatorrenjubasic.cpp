@@ -95,7 +95,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(
       score[selfColor] += SCORE_DEAD4LIVE3[ATTACK];
     } else if (count[opponentColor][4][DEAD] >= 2) {
       // opponent muliy-4
-      if (selfColor = BLACK)
+      if (selfColor == BLACK)
         score[selfColor] += SCORE_DOUBLE4[DEFENSE];
     } else if (count[opponentColor][4][DEAD] > 0 &&
                count[opponentColor][3][LIVE] > 0) {

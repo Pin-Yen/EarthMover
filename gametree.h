@@ -16,19 +16,23 @@ class GameTree {
   void reset(VirtualBoard* board);
 
   // Monty Carlo Tree Search.
-  // Keep searching until reach 'maxCycle'.
-  void mcts(int maxCycle);
+  // Keep searching until reach 'cycle'.
+  // Return false if the search ends prematurely.
+  bool mcts(int cycle);
 
   // Monty Carlo Tree Search.
-  // Keep searching until the point that select most times reach 'minCount'.
-  // Using batch searching.
+  // Stop if the point that count most times > 'minCount',
+  // will check it after each batch.
   void mcts(int batch, int minCount);
 
   // Monty Carlo Tree Search.
-  // Keep searching until reach the max cycle,
-  // or continueThinking becomes false.
+  // Keep searching until continueThinking becomes false,
+  void mcts(const bool* continueThinking);
+  // or reach the max cycle.
   void mcts(int maxCycle, const bool* continueThinking);
 
+  // Monty Carlo Tree Search.
+  // Line 26's muith-thread version.
   void mcts(int threadAmount, int batch, int minCount);
 
   // get the child that has highest playout from current node
