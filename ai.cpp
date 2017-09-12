@@ -19,16 +19,16 @@ AI::~AI() {
 int AI::think() {
   switch (level_) {
     case 0:
-      tree->MCTS(3000); break;
+      tree->mcts(3000, 1500); break;
     case 1:
-      tree->MCTS(3000, 1500); break;
+      tree->mcts(3000, 3000); break;
     case 2:
-      tree->MCTS(3000, 3000); break;
+      tree->mcts(4, 3000, 3000); break;
     default:
       assert(false);
   }
 
-  return tree->MCTSResult();
+  return tree->mctsResult();
 }
 
 int AI::play(int index) {
@@ -61,5 +61,5 @@ void AI::reset(int level, int rule) {
 }
 
 void AI::thinkInBackground(bool* continueThinking) {
-  tree->MCTS(MAX_BACKGROUND_CYCLE_, continueThinking);
+  tree->mcts(MAX_BACKGROUND_CYCLE_, continueThinking);
 }

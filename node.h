@@ -13,10 +13,23 @@ class GameTree::Node {
   // constructor for node (EXCEPT root node)
   Node(Node *parentNode, int index, int parentWinOrLose);
 
+  // Constructor for Copy data from another node.
+  Node(Node *parentNode, const Node *source);
+
   // overload new and delete operator for memory pool
-  static void *operator new(size_t /*size*/) { return pool_.allocate(); }
-  static void operator delete(void *ptr, size_t /*size*/) {
-    pool_.deallocate(ptr);
+  //static void *operator new(size_t /*size*/) { return pool_.allocate(); }
+  //static void operator delete(void *ptr, size_t /*size*/) {
+  //  pool_.deallocate(ptr);
+  //}
+
+  void merge(Node* mergedNode) {
+    for (int i = 0; i < 3; ++i) {
+      playout_[i] += mergedNode->playout_[i];
+    }
+
+    if (notWinOrLose() && !mergedNode->notWinOrLose()) {
+      winOrLose_ = mergedNode->winOrLose_;
+    }
   }
 
   // update when tie
@@ -50,6 +63,8 @@ class GameTree::Node {
     winOrLose_ = 0;
   }
 
+  bool hasChild() const { return child_ != NULL; }
+
   // getter
   Node* parent() const { return parent_; }
   int totalPlayout() const { return playout_[2]; }
@@ -67,6 +82,8 @@ class GameTree::Node {
 
   // append a new child and return it, parameters for node's constructor
   Node* newChild(int index, int parentWinOrLose);
+
+  Node* newChild(Node* source);
 
   // custom iterator, iterates over node's child
   // Usage: for (Node* child : *node)

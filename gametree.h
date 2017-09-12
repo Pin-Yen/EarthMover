@@ -15,21 +15,24 @@ class GameTree {
   // clear the whole gametree
   void reset(VirtualBoard* board);
 
-  // Monty Carlo Tree Search
-  // keep searching until reach the max cycle
-  void MCTS(int maxCycle);
+  // Monty Carlo Tree Search.
+  // Keep searching until reach 'maxCycle'.
+  void mcts(int maxCycle);
 
-  // Monty Carlo Tree Search
-  // keep searching until total select times reach "minCycle"
-  // and the point that select most times reach "minMostTimesCycle"
-  void MCTS(int minCycle, int minMostTimesCycle);
+  // Monty Carlo Tree Search.
+  // Keep searching until the point that select most times reach 'minCount'.
+  // Using batch searching.
+  void mcts(int batch, int minCount);
 
-  /* Monty Carlo Tree Search
-   * keep searching until reach the max cycle, or continueThinking becomes false */
-  void MCTS(int maxCycle, const bool* continueThinking);
+  // Monty Carlo Tree Search.
+  // Keep searching until reach the max cycle,
+  // or continueThinking becomes false.
+  void mcts(int maxCycle, const bool* continueThinking);
+
+  void mcts(int threadAmount, int batch, int minCount);
 
   // get the child that has highest playout from current node
-  int MCTSResult() const;
+  int mctsResult() const;
 
   // called when a REAL point is played, updates the currentRoot
   // returns 1 if wins after play, -1 if lose
@@ -68,6 +71,18 @@ class GameTree {
   void backProp(Node* node, bool result);
   void backProp(Node* node);
 
+  // Copy all children in 'srcNode' to 'destNode'.
+  void copyAllChildren(Node* srcNode, Node* destNode);
+
+  // Copy a new GameTree and return it, new tree's root is current node.
+  GameTree* copyTree();
+
+  // Merge all children in 'mergedNode' into 'mergingNode'
+  void mergeAllChildren(Node* mergingNode, Node* mergedNode);
+
+  // Merge 'tree' into this.
+  void mergeTree(GameTree* tree);
+
   // returns the part of the tree below 'node' in JSON format
   nlohmann::json getSubTreeJSON(Node *node, bool whoTurn);
 
@@ -75,7 +90,7 @@ class GameTree {
 
   VirtualBoard* currentBoard_;
 
-  static MemoryPool pool_;
+  //static MemoryPool pool_;
 };
 
 #endif  // GAMETREE_H_
