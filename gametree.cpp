@@ -92,44 +92,99 @@ void GameTree::mcts(int batch, int minCount) {
   }
 }
 
-void GameTree::mcts(int maxCycle, const bool* continueThinking) {
+void GameTree::mcts(int maxCycle, const bool* thinking) {
   int batchCycle = maxCycle / 1000;
-  for (int i = 0; i < batchCycle && *continueThinking; ++i) {
+  for (int i = 0; i < batchCycle && *thinking; ++i) {
     if (!mcts(1000)) return;
   }
 }
 
-void GameTree::mcts(const bool* continueThinking) {
-  const int BATCH = 1000;
-  while (*continueThinking) {
+void GameTree::mcts(const bool* thinking) {
+  while (*thinking) {
     if (!mcts(1000)) return;
   }
 }
 
 void GameTree::mcts(int threadAmount, int batch, int minCount) {
+  // Maek sure more then one thread.
   assert(threadAmount > 1);
-  std::thread** threads = new std::thread*[threadAmount - 1];
 
-  GameTree** trees = new GameTree*[threadAmount - 1];
-  for (int i = 0; i < threadAmount - 1; ++i) {
+  int extraThreadAmount = threadAmount - 1;
+  // Create threads and trees.
+  std::thread** threads = new std::thread*[extraThreadAmount];
+  GameTree** trees = new GameTree*[extraThreadAmount];
+  for (int i = 0; i < extraThreadAmount; ++i) {
     trees[i] = copyTree();
   }
-  bool continueThinking = true;
-  bool* controler = &continueThinking;
-  for (int i = 0; i < threadAmount - 1; ++i) {
-    threads[i] = new std::thread([trees, i](bool* controler)
-                                 { trees[i]->mcts(controler); },(controler));
+
+  // Copy origin tree.
+  const GameTree* originTree = copyTree();
+
+  // Extra thread thinking.
+  bool thinking = true;
+  bool* controler = &thinking;
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i] = new std::thread([trees, i, controler]
+                                 { trees[i]->mcts(controler); });
   }
+
+  // Origin thread thinking.
   mcts(batch, minCount);
 
-  *controler = false;
-  for (int i = 0; i < threadAmount - 1; ++i) {
+  // Stop extra thread.
+  thinking = false;
+
+  // Join and delete thread.
+  for (int i = 0; i < extraThreadAmount; ++i) {
     threads[i]->join();
-    mergeTree(trees[i]);
     delete threads[i];
-    delete trees[i];
   }
   delete [] threads;
+
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    minusTree(trees[i], originTree);
+    mergeTree(trees[i]);
+    delete trees[i];
+  }
+  delete [] trees;
+}
+
+void GameTree::mcts(int threadAmount, int maxCycle, const bool* thinking) {
+  // Maek sure more then one thread.
+  assert(threadAmount > 1);
+
+  int extraThreadAmount = threadAmount - 1;
+  // Create threads and trees.
+  std::thread** threads = new std::thread*[extraThreadAmount];
+  GameTree** trees = new GameTree*[extraThreadAmount];
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    trees[i] = copyTree();
+  }
+
+  // Copy origin tree.
+  const GameTree* originTree = copyTree();
+
+  // Extra thread thinking.
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i] = new std::thread([trees, i, maxCycle, thinking]
+                                 { trees[i]->mcts(maxCycle, thinking); });
+  }
+
+  // Origin thread thinking.
+  mcts(maxCycle, thinking);
+
+  // Join and delete thread.
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i]->join();
+    delete threads[i];
+  }
+  delete [] threads;
+
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    minusTree(trees[i], originTree);
+    mergeTree(trees[i]);
+    delete trees[i];
+  }
   delete [] trees;
 }
 
@@ -265,7 +320,28 @@ GameTree* GameTree::copyTree() {
   return tree;
 }
 
-void GameTree::mergeAllChildren(Node* mergingNode, Node* mergedNode) {
+void GameTree::minusTree(GameTree* beMinusTree, const GameTree* minusTree) {
+  beMinusTree->root_->minus(minusTree->root_);
+  minusAllChildren(beMinusTree->root_, minusTree->root_);
+}
+
+void GameTree::minusAllChildren(Node* beMinusNode, const Node* minusNode) {
+  for (Node* minusChild : *minusNode) {
+    Node* beMinusChild = beMinusNode->child(minusChild->index());
+    beMinusChild->minus(minusChild);
+
+    if (minusChild->hasChild()) {
+      minusAllChildren(beMinusChild, minusChild);
+    }
+  }
+}
+
+void GameTree::mergeTree(GameTree* tree) {
+  currentNode_->merge(tree->root_);
+  mergeAllChildren(currentNode_, tree->root_);
+}
+
+void GameTree::mergeAllChildren(Node* mergingNode, const Node* mergedNode) {
   for (Node* mergedChild : *mergedNode) {
     Node* mergingChild = mergingNode->child(mergedChild->index());
     if (mergingChild != NULL) {
@@ -278,11 +354,6 @@ void GameTree::mergeAllChildren(Node* mergingNode, Node* mergedNode) {
       mergeAllChildren(mergingChild, mergedChild);
     }
   }
-}
-
-void GameTree::mergeTree(GameTree* tree) {
-  currentNode_->merge(tree->root_);
-  mergeAllChildren(currentNode_, tree->root_);
 }
 
 int GameTree::play(int index) {

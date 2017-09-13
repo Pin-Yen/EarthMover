@@ -166,13 +166,29 @@ GameTree::Node* GameTree::Node::newChild(Node* source) {
   return node;
 }
 
+void GameTree::Node::minus(const Node* node) {
+  for (int i = 0; i < 3; ++i) {
+    playout_[i] -= node->playout_[i];
+  }
+}
+
+void GameTree::Node::merge(const Node* node) {
+  for (int i = 0; i < 3; ++i) {
+    playout_[i] += node->playout_[i];
+  }
+
+  if (notWinOrLose() && !node->notWinOrLose()) {
+    winOrLose_ = node->winOrLose_;
+  }
+}
+
 double GameTree::Node::getUCBValue(const Node* node) const {
   if (playout_[2] == 0) return 0;
 
   if (node != NULL) {
     return (node->winRate() +
-            sqrt(0.5 * log10(playout_[2]) / (1 + node->totalPlayout())));
+            sqrt(.5 * log(playout_[2]) / (1 + node->totalPlayout())));
   } else {
-    return (sqrt(0.5 * log10(playout_[2]) / 1));
+    return (sqrt(.5 * log(playout_[2]) / 1));
   }
 }

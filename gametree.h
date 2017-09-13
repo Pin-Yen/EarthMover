@@ -26,14 +26,16 @@ class GameTree {
   void mcts(int batch, int minCount);
 
   // Monty Carlo Tree Search.
-  // Keep searching until continueThinking becomes false,
+  // Keep searching until 'thinking' becomes false,
   void mcts(const bool* continueThinking);
-  // or reach the max cycle.
-  void mcts(int maxCycle, const bool* continueThinking);
+  // or reach the 'maxCycle'.
+  void mcts(int maxCycle, const bool* thinking);
 
   // Monty Carlo Tree Search.
-  // Line 26's muith-thread version.
+  // Line 26's multi-thread version.
   void mcts(int threadAmount, int batch, int minCount);
+  // Line 32's multi-thread version.
+  void mcts(int threadAmount, int maxCycle, const bool* thinking);
 
   // get the child that has highest playout from current node
   int mctsResult() const;
@@ -81,11 +83,15 @@ class GameTree {
   // Copy a new GameTree and return it, new tree's root is current node.
   GameTree* copyTree();
 
-  // Merge all children in 'mergedNode' into 'mergingNode'
-  void mergeAllChildren(Node* mergingNode, Node* mergedNode);
-
-  // Merge 'tree' into this.
+  // Merge all tree into this.
   void mergeTree(GameTree* tree);
+
+  // Merge all children in 'mergedNode' into 'mergingNode'
+  void mergeAllChildren(Node* mergingNode, const Node* mergedNode);
+
+  void minusTree(GameTree* beMinusTree, const GameTree* minusTree);
+
+  void minusAllChildren(Node* beMinusNode, const Node* minusNode);
 
   // returns the part of the tree below 'node' in JSON format
   nlohmann::json getSubTreeJSON(Node *node, bool whoTurn);

@@ -22,15 +22,9 @@ class GameTree::Node {
   //  pool_.deallocate(ptr);
   //}
 
-  void merge(Node* mergedNode) {
-    for (int i = 0; i < 3; ++i) {
-      playout_[i] += mergedNode->playout_[i];
-    }
+  void minus(const Node* node);
 
-    if (notWinOrLose() && !mergedNode->notWinOrLose()) {
-      winOrLose_ = mergedNode->winOrLose_;
-    }
-  }
+  void merge(const Node* node);
 
   // update when tie
   void update() { ++playout_[2]; }
