@@ -31,23 +31,23 @@ class GameTree::Node {
 
   void merge(const Node* node);
 
-  // update when tie
-  void update() { ++playout_[2]; }
-  // update, result: 0 -> win, 1 -> lose
-  void update(bool result) { ++playout_[2]; ++playout_[result]; }
+  // Update playout.
+  void update(SearchStatus result) {
+    ++totalPlayout_;
+    if (result == WIN) ++winPlayout_;
+    if (result == LOSE) ++losePlayout_;
+  }
 
   // MCTS function, call by GameTree::selection.
-  // Select child according to UCBValue and point's score.
-  // Return -2 if select to leaf and no result yet, 0 for losing,
-  // 1 for winning, -1 if chessboard is full.
-  // FIX: discription of return value not complete.
-  int selection(int* index, VirtualBoard* board);
+  // Select child according to UCBValue and point's score, and return status.
+  std::pair<GameTree::SearchStatus, GameTree::Node*> selection(
+      VirtualBoard* board, MemoryPool* pool);
 
   // get winRate
   // NOTE: the win rate is for the upper layer(parent node)
   double winRate() const {
-    return ((playout_[0] + (playout_[2] - playout_[0] - playout_[1]) / 2.0) /
-            static_cast<double>(playout_[2]));
+    return ((winPlayout_ + (totalPlayout_ - winPlayout_ - losePlayout_) / 2.) /
+            static_cast<double>(totalPlayout_));
   }
 
   // delete all children (or except for the "exceptNode")
@@ -56,9 +56,9 @@ class GameTree::Node {
 
   // clear playout and winLose
   void clear() {
-    playout_[0] = 0;
-    playout_[1] = 0;
-    playout_[2] = 0;
+    totalPlayout_ = 0;
+    winPlayout_ = 0;
+    losePlayout_ = 0;
     winOrLose_ = 0;
   }
 
@@ -66,7 +66,7 @@ class GameTree::Node {
 
   // getter
   Node* parent() const { return parent_; }
-  int totalPlayout() const { return playout_[2]; }
+  int totalPlayout() const { return totalPlayout_; }
   int index() const { return index_; }
   int winOrLose() const { return winOrLose_; }
   bool winning() const { return winOrLose_ > 0; }
@@ -111,8 +111,7 @@ class GameTree::Node {
   // parent, child, next node
   Node *parent_, *child_, *next_;
 
-  // 0 = win, 1 = lose, 2 = total
-  int playout_[3];
+  int totalPlayout_, winPlayout_, losePlayout_;
 
   int16_t index_;
 

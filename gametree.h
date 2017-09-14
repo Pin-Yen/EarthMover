@@ -2,6 +2,7 @@
 #define GAMETREE_H_
 
 #include <string>
+#include <utility>
 
 #include "lib/json.h"
 #include "memorypool.h"
@@ -59,23 +60,21 @@ class GameTree {
  private:
   class Node;
 
+  enum SearchStatus { LOSE = -1, TIE = 0, WIN = 1, UNKNOWN, LEAF };
+
   // MCTS function.
-  // keep select the child node from the current node,
+  // Keep select the child node from the current node,
   // until reach the leaf or a winning node.
-  // Puts the result to node,
-  // returns -2 for a no result leaf node, -1 for FULL chessboard,
-  // 0 for losing, 1 for winning.
-  int selection(Node** node, VirtualBoard* board);
+  // Return status and selectde node.
+  std::pair<SearchStatus, Node*> selection(VirtualBoard* board);
+
+  // MCTS function.
+  // Simulate the game at most maxDepth move, and return status.
+  SearchStatus simulation(VirtualBoard* board) const;
 
   // MCTS function
-  // simulate the game at most maxDepth move,
-  // and return who win (black = 0, white = 1, tie = -1)
-  int simulation(VirtualBoard* board) const;
-
-  // MCTS function
-  // back propagation form node, until reach the current node
-  void backProp(Node* node, bool result);
-  void backProp(Node* node);
+  // Back propagation form leaf, until reach the current node.
+  void backProp(Node* node, SearchStatus result);
 
   // Copy all children in 'srcNode' to 'destNode'.
   void copyAllChildren(const Node* srcNode, Node* destNode);

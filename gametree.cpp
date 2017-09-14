@@ -40,24 +40,21 @@ void GameTree::init(VirtualBoard* board) {
 }
 
 bool GameTree::mcts(int cycle) {
-  Node* node;
-
   for (int i = 0; i < cycle; ++i) {
     if (!currentNode_->notWinOrLose()) return false;
 
     VirtualBoard* board = currentBoard_->clone();
 
-    int result = selection(&node, board);
+    std::pair<SearchStatus, Node*> result = selection(board);
+    SearchStatus status = result.first;
+    Node* node = result.second;
 
     // simulate only if child is not winning
-    if (result == -2) {
-      result = simulation(board);
+    if (status == LEAF) {
+      status = simulation(board);
     }
 
-    if (result == -1)
-      backProp(node);
-    else
-      backProp(node, result);
+    backProp(node, status);
 
     delete board;
   }
@@ -232,69 +229,63 @@ int GameTree::mctsResult() const {
   return index;
 }
 
-int GameTree::selection(Node** node, VirtualBoard* board) {
-  *node = currentNode_;
+std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::selection(
+    VirtualBoard* board) {
+  Node* node = currentNode_;
 
   while (true) {
-    int index;
+    //int index;
 
-    int result = (*node)->selection(&index, board);
-    if (result != -2) {
-      return result;
-    }
 
+    std::pair<SearchStatus, Node*> result = node->selection(board, &pool_);
+
+    if (result.first != UNKNOWN) return result;
+
+    node = result.second;
     // check if reached leaf
-    Node* child = (*node)->child(index);
-
+    //Node* child = (*node)->child(index);
+    /*
     if (child == NULL) {
       bool parentWinning = board->play(index);
       *node = (*node)->newChild(index, parentWinning, &pool_);
 
       if (parentWinning)
-        return 0;
+        return WIN;
       else
-        return -2;
-    }
+        return UNKNOWN;
+    }*/
 
-    *node = child;
+    //*node = child;
 
-    board->play(index);
+    //board->play(index);
   }
 }
 
-int GameTree::simulation(VirtualBoard* board) const {
+GameTree::SearchStatus GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
   // simulate until reach max depth
-  for (int d = 1; d <= MAX_DEPTH; ++d) {
+  for (int d = 0; d < MAX_DEPTH; ++d) {
     int index = board->getHSI();
-    // return tie(-1) if no useful point
-    if (index == -1) return -1;
+    // return tie if no useful point
+    if (index == -1) return TIE;
 
     // if win, return
-    if (board->play(index))
-      return (d & 1);
+    if (board->play(index)) {
+      return (d & 1) ? WIN : LOSE;
+    }
   }
 
-  return -1;
+  return TIE;
 }
 
-void GameTree::backProp(Node* node, bool result) {
-  // note: cannot use do-while here
+void GameTree::backProp(Node* node, SearchStatus result) {
   while (node != currentNode_) {
     node->update(result);
     node = node->parent();
-    result = !result;
+    // reverse result (WIN <-> LOSE)
+    result = static_cast<SearchStatus>(-static_cast<int>(result));
   }
   node->update(result);
-}
-
-void GameTree::backProp(Node* node) {
-  // note: cannot use do-while here
-  while (node != currentNode_) {
-    node->update();
-    node = node->parent();
-  }
-  node->update();
 }
 
 void GameTree::copy(const GameTree* source) {

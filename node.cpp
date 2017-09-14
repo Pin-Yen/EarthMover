@@ -12,8 +12,15 @@
 #include "objectcounter.h"
 #endif
 
-GameTree::Node::Node() : index_(-1), parent_(NULL), child_(NULL), next_(NULL),
-                         winOrLose_(0), playout_{0} {}
+GameTree::Node::Node()
+    : index_(-1),
+      parent_(NULL),
+      child_(NULL),
+      next_(NULL),
+      winOrLose_(0),
+      totalPlayout_(0),
+      winPlayout_(0),
+      losePlayout_(0) {}
 
 GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
     : index_(index),
@@ -21,7 +28,9 @@ GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
       child_(NULL),
       next_(NULL),
       winOrLose_(-parentWinOrLose),
-      playout_{0} {
+      totalPlayout_(0),
+      winPlayout_(0),
+      losePlayout_(0) {
 
   // if losing, set parent to winning
   if (losing()) parent_->setWinning();
@@ -32,11 +41,10 @@ GameTree::Node::Node(Node *parentNode, const Node *source)
       parent_(parentNode),
       child_(NULL),
       next_(NULL),
-      winOrLose_(source->winOrLose_) {
-  for (int i = 0; i < 3; ++i) {
-    playout_[i] = source->playout_[i];
-  }
-}
+      winOrLose_(source->winOrLose_),
+      totalPlayout_(source->totalPlayout_),
+      winPlayout_(source->winPlayout_),
+      losePlayout_(source->losePlayout_) {}
 
 void GameTree::Node::deleteChildren(MemoryPool* pool) {
   Node *child = child_, *next;
@@ -73,9 +81,10 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode, MemoryPool* pool) {
   exceptNode->next_ = NULL;
 }
 
-int GameTree::Node::selection(int* index, VirtualBoard* board) {
-  if (winning()) return 1;
-  if (losing()) return 0;
+std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::Node::selection(
+  VirtualBoard* board, MemoryPool* pool) {
+  if (winning()) return std::make_pair(LOSE, this);
+  if (losing()) return std::make_pair(WIN, this);
 
   // current max value
   double max = -1;
@@ -86,6 +95,8 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
 
   // checked index
   bool checked[225] = {0};
+
+  Node* node;
 
   for (Node* childNode : *this) {
     int i = childNode->index();
@@ -100,8 +111,10 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
     // If there exists a point that wins in all previous simulations,
     // then select this point.
     if (childNode->winRate() == 1) {
-      *index = i;
-      return -2;
+      board->play(i);
+      return std::make_pair(UNKNOWN, childNode);
+      //*index = i;
+      //return UNKNOWN;
     }
 
     double value = static_cast<double>(board->getScore(i)) / scoreSum +
@@ -109,7 +122,8 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
 
     if (value > max) {
       max = value;
-      *index = i;
+      node = childNode;
+      //*index = i;
     }
   }
 
@@ -121,8 +135,14 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
         getUCBValue(NULL);
 
     if (value > max) {
-      max = value;
-      *index = notCheckedIndex;
+      bool parentWinning = board->play(notCheckedIndex);
+      node = newChild(notCheckedIndex, parentWinning, pool);
+
+      if (parentWinning) {
+        return std::make_pair(WIN, node);
+      } else {
+        return std::make_pair(LEAF, node);
+      }
     }
   }
 
@@ -133,14 +153,15 @@ int GameTree::Node::selection(int* index, VirtualBoard* board) {
       setLosing();
       parent_->setWinning();
 
-      return 0;
+      return std::make_pair(WIN, this); //WIN;
     }
 
     // if no useful point
-    return -1;
+    return std::make_pair(TIE, this); //TIE;
   }
 
-  return -2;
+  board->play(node->index());
+  return std::make_pair(UNKNOWN, node); //UNKNOWN;
 }
 
 GameTree::Node* GameTree::Node::child(int index) const {
@@ -168,15 +189,15 @@ GameTree::Node* GameTree::Node::newChild(Node* source, MemoryPool* pool) {
 }
 
 void GameTree::Node::minus(const Node* node) {
-  for (int i = 0; i < 3; ++i) {
-    playout_[i] -= node->playout_[i];
-  }
+  totalPlayout_ -= node->totalPlayout_;
+  winPlayout_ -= node->winPlayout_;
+  losePlayout_ -= node->losePlayout_;
 }
 
 void GameTree::Node::merge(const Node* node) {
-  for (int i = 0; i < 3; ++i) {
-    playout_[i] += node->playout_[i];
-  }
+  totalPlayout_ += node->totalPlayout_;
+  winPlayout_ += node->winPlayout_;
+  losePlayout_ += node->losePlayout_;
 
   if (notWinOrLose() && !node->notWinOrLose()) {
     winOrLose_ = node->winOrLose_;
@@ -184,12 +205,12 @@ void GameTree::Node::merge(const Node* node) {
 }
 
 double GameTree::Node::getUCBValue(const Node* node) const {
-  if (playout_[2] == 0) return 0;
+  if (totalPlayout_ == 0) return 0;
 
   if (node != NULL) {
     return (node->winRate() +
-            sqrt(.5 * log(playout_[2]) / (1 + node->totalPlayout())));
+            sqrt(.5 * log(totalPlayout_) / (1 + node->totalPlayout())));
   } else {
-    return (sqrt(.5 * log(playout_[2]) / 1));
+    return (sqrt(.5 * log(totalPlayout_) / 1));
   }
 }
