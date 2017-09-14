@@ -55,7 +55,7 @@ void start() {
     case 1: vb = new VirtualBoardFreeStyle(); break;
     case 2: vb = new VirtualBoardRenjuBasic(); break;
   }
-  tree->reset(vb);
+  tree->init(vb);
 
 
   while (true) {
@@ -70,8 +70,8 @@ void start() {
     timer.start();
     #endif
 
-    tree->MCTS(cycle);
-    tree->MCTSResult();
+    tree->mcts(4, 3200, 3200);
+    tree->mctsResult();
 
     #ifdef TIME
     timer.stop();
@@ -87,7 +87,7 @@ void start() {
     bool* controler = &continueThinking;
 
     std::thread backgroundThread([tree](int maxCycle, bool* controler)
-                                 { tree->MCTS(maxCycle, controler); },
+                                 { tree->mcts(maxCycle, controler); },
                                  100000, controler);
     #endif
 

@@ -27,22 +27,33 @@ GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
   if (losing()) parent_->setWinning();
 }
 
-void GameTree::Node::deleteChildren() {
+GameTree::Node::Node(Node *parentNode, const Node *source)
+    : index_(source->index_),
+      parent_(parentNode),
+      child_(NULL),
+      next_(NULL),
+      winOrLose_(source->winOrLose_) {
+  for (int i = 0; i < 3; ++i) {
+    playout_[i] = source->playout_[i];
+  }
+}
+
+void GameTree::Node::deleteChildren(MemoryPool* pool) {
   Node *child = child_, *next;
 
   // recursive delete all child
   // the next node should be saved before current node is deleted
   while (child != NULL) {
     next = child->next_;
-    child->deleteChildren();
-    delete child;
+    child->deleteChildren(pool);
+    operator delete(child, pool);
     child = next;
   }
 
   child_ = NULL;
 }
 
-void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
+void GameTree::Node::deleteChildrenExcept(Node* exceptNode, MemoryPool* pool) {
   Node *child = child_, *next;
 
   // recursive delete all child except "exceptNode"
@@ -52,8 +63,8 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
       child = child->next_;
     } else {
       next = child->next_;
-      child->deleteChildren();
-      delete child;
+      child->deleteChildren(pool);
+      operator delete(child, pool);
       child = next;
     }
   }
@@ -139,12 +150,37 @@ GameTree::Node* GameTree::Node::child(int index) const {
   return NULL;
 }
 
-GameTree::Node* GameTree::Node::newChild(int index, int parentWinOrLose) {
-  Node* node = new Node(this, index, parentWinOrLose);
+GameTree::Node* GameTree::Node::newChild(
+    int index, int parentWinOrLose, MemoryPool* pool) {
+  Node* node = new(pool) Node(this, index, parentWinOrLose);
   // append node to first
   node->next_ = child_;
   child_ = node;
   return node;
+}
+
+GameTree::Node* GameTree::Node::newChild(Node* source, MemoryPool* pool) {
+  Node* node = new(pool) Node(this, source);
+  // append node to first
+  node->next_ = child_;
+  child_ = node;
+  return node;
+}
+
+void GameTree::Node::minus(const Node* node) {
+  for (int i = 0; i < 3; ++i) {
+    playout_[i] -= node->playout_[i];
+  }
+}
+
+void GameTree::Node::merge(const Node* node) {
+  for (int i = 0; i < 3; ++i) {
+    playout_[i] += node->playout_[i];
+  }
+
+  if (notWinOrLose() && !node->notWinOrLose()) {
+    winOrLose_ = node->winOrLose_;
+  }
 }
 
 double GameTree::Node::getUCBValue(const Node* node) const {
@@ -152,8 +188,8 @@ double GameTree::Node::getUCBValue(const Node* node) const {
 
   if (node != NULL) {
     return (node->winRate() +
-            sqrt(0.5 * log10(playout_[2]) / (1 + node->totalPlayout())));
+            sqrt(.5 * log(playout_[2]) / (1 + node->totalPlayout())));
   } else {
-    return (sqrt(0.5 * log10(playout_[2]) / 1));
+    return (sqrt(.5 * log(playout_[2]) / 1));
   }
 }

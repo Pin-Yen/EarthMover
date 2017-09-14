@@ -1,8 +1,11 @@
 #include "gametree.h"
 
+#include <assert.h>
+
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <thread>
 #include <tuple>
 #include <vector>
 
@@ -15,25 +18,19 @@
 
 using json = nlohmann::json;
 
-MemoryPool GameTree::pool_;
-
-GameTree::GameTree() {
-  root_ = NULL;
-  currentNode_ = NULL;
-  currentBoard_ = NULL;
-}
+GameTree::GameTree() : root_(NULL), currentNode_(NULL), currentBoard_(NULL) {}
 
 GameTree::~GameTree() {
   pool_.free();
-  delete currentBoard_;
+  if (currentBoard_ != NULL) delete currentBoard_;
 }
 
-void GameTree::reset(VirtualBoard* board) {
-  const int MAX_NODE = 2000000;
+void GameTree::init(VirtualBoard* board) {
+  const int MAX_NODE = 1000000;
 
   pool_.free();
   pool_.init(sizeof(Node), MAX_NODE);
-  root_ = new Node();
+  root_ = new(&pool_) Node();
 
   currentNode_ = root_;
 
@@ -42,11 +39,11 @@ void GameTree::reset(VirtualBoard* board) {
   currentBoard_ = board->create();
 }
 
-void GameTree::MCTS(int maxCycle) {
+bool GameTree::mcts(int cycle) {
   Node* node;
 
-  for (int cycle = 0; cycle < maxCycle; ++cycle) {
-    if (!currentNode_->notWinOrLose()) return;
+  for (int i = 0; i < cycle; ++i) {
+    if (!currentNode_->notWinOrLose()) return false;
 
     VirtualBoard* board = currentBoard_->clone();
 
@@ -64,71 +61,133 @@ void GameTree::MCTS(int maxCycle) {
 
     delete board;
   }
+  return true;
 }
 
-void GameTree::MCTS(int minCycle, int minMostTimesCycle) {
+void GameTree::mcts(int batch, int minCount) {
   Node* node;
 
   while (true) {
-    for (int cycle = 0; cycle < minCycle; ++cycle) {
-      if (!currentNode_->notWinOrLose()) return;
-
-      VirtualBoard* board = currentBoard_->clone();
-
-      int result = selection(&node, board);
-
-      // simulate only if child is not winning
-      if (result == -2) {
-        result = simulation(board);
-      }
-
-      if (result == -1)
-        backProp(node);
-      else
-        backProp(node, result);
-
-      delete board;
-    }
+    if (!mcts(batch)) return;
 
     // get mostTimes
     int mostTimes = 0;
 
     for (Node* child : *currentNode_) {
-      if (child->totalPlayout() > mostTimes)
+      if (child->totalPlayout() > mostTimes) {
         mostTimes = child->totalPlayout();
+      }
     }
+
     // mostTimes == 0 means that no useful point(can pass now)
-    if (mostTimes >= minMostTimesCycle || mostTimes == 0) return;
+    if (mostTimes >= minCount || mostTimes == 0) return;
   }
 }
 
-void GameTree::MCTS(int maxCycle, const bool* continueThinking) {
-  Node* node;
-
-  for (int cycle = 0; cycle < maxCycle && *continueThinking; ++cycle) {
-    if (!currentNode_->notWinOrLose()) return;
-
-    VirtualBoard* board = currentBoard_->clone();
-
-    int result = selection(&node, board);
-
-    // simulate only if child is not winning
-    if (result == -2) {
-      result = simulation(board);
-    }
-
-    if (result == -1)
-      backProp(node);
-    else
-      backProp(node, result);
-
-    delete board;
-
-    if (cycle % 2000 == 0) std::cerr << "\rbackground: " << cycle;
+void GameTree::mcts(int maxCycle, const bool* thinking) {
+  int batchCycle = maxCycle / 1000;
+  for (int i = 0; i < batchCycle && *thinking; ++i) {
+    if (!mcts(1000)) return;
   }
 }
 
-int GameTree::MCTSResult() const {
+void GameTree::mcts(const bool* thinking) {
+  while (*thinking) {
+    if (!mcts(1000)) return;
+  }
+}
+
+void GameTree::mcts(int threadAmount, int batch, int minCount) {
+  // Maek sure more then one thread.
+  assert(threadAmount > 1);
+
+  int extraThreadAmount = threadAmount - 1;
+  // Create threads and trees.
+  std::thread** threads = new std::thread*[extraThreadAmount];
+  GameTree** trees = new GameTree*[extraThreadAmount];
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    trees[i] = new GameTree();
+    trees[i]->copy(this);
+  }
+
+  // Copy origin tree.
+  GameTree* originTree = new GameTree();
+  originTree->copy(this);
+
+  // Extra thread thinking.
+  bool thinking = true;
+  bool* controler = &thinking;
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i] = new std::thread([trees, i, controler]
+                                 { trees[i]->mcts(controler); });
+  }
+
+  // Origin thread thinking.
+  mcts(batch, minCount);
+
+  // Stop extra thread.
+  thinking = false;
+
+  // Join and delete thread.
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i]->join();
+    delete threads[i];
+  }
+  delete [] threads;
+
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    minusTree(trees[i], originTree);
+    mergeTree(trees[i]);
+    delete trees[i];
+  }
+  delete [] trees;
+  delete originTree;
+}
+
+void GameTree::mcts(int threadAmount, int maxCycle, const bool* thinking) {
+  // Maek sure more then one thread.
+  assert(threadAmount > 1);
+
+  int extraThreadAmount = threadAmount - 1;
+  // Create threads and trees.
+  std::thread** threads = new std::thread*[extraThreadAmount];
+  GameTree** trees = new GameTree*[extraThreadAmount];
+
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    trees[i] = new GameTree();
+    trees[i]->copy(this);
+  }
+
+  // Copy origin tree.
+  GameTree* originTree = new GameTree();
+  originTree->copy(this);
+
+  // Extra thread thinking.
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i] = new std::thread([trees, i, maxCycle, thinking]
+                                 { trees[i]->mcts(maxCycle, thinking); });
+  }
+
+  // Origin thread thinking.
+  mcts(maxCycle, thinking);
+
+  // Join and delete thread.
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    threads[i]->join();
+    delete threads[i];
+  }
+  delete [] threads;
+
+  for (int i = 0; i < extraThreadAmount; ++i) {
+    minusTree(trees[i], originTree);
+    mergeTree(trees[i]);
+    delete trees[i];
+  }
+  delete [] trees;
+  delete originTree;
+}
+
+int GameTree::mctsResult() const {
   int index;
 
   // if is winning, select it
@@ -176,7 +235,7 @@ int GameTree::MCTSResult() const {
   return index;
 }
 
-int GameTree::selection(Node** node, VirtualBoard* board) const {
+int GameTree::selection(Node** node, VirtualBoard* board) {
   *node = currentNode_;
 
   while (true) {
@@ -192,7 +251,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
 
     if (child == NULL) {
       bool parentWinning = board->play(index);
-      *node = (*node)->newChild(index, parentWinning);
+      *node = (*node)->newChild(index, parentWinning, &pool_);
 
       if (parentWinning)
         return 0;
@@ -241,16 +300,71 @@ void GameTree::backProp(Node* node) {
   node->update();
 }
 
+void GameTree::copy(const GameTree* source) {
+  const int MAX_NODE = 400000;
+  pool_.init(sizeof(Node), MAX_NODE);
+
+  root_ = new(&pool_) Node(NULL, source->currentNode_);
+  currentNode_ = root_;
+  currentBoard_ = source->currentBoard_->clone();
+  copyAllChildren(source->currentNode_, currentNode_);
+}
+
+void GameTree::copyAllChildren(const Node* srcNode, Node* destNode) {
+  for (Node* child : *srcNode) {
+    Node* destChild = destNode->newChild(child, &pool_);
+    if (child->hasChild()) {
+      copyAllChildren(child, destChild);
+    }
+  }
+}
+
+void GameTree::minusTree(GameTree* beMinusTree, const GameTree* minusTree) {
+  beMinusTree->root_->minus(minusTree->root_);
+  minusAllChildren(beMinusTree->root_, minusTree->root_);
+}
+
+void GameTree::minusAllChildren(Node* beMinusNode, const Node* minusNode) {
+  for (Node* minusChild : *minusNode) {
+    Node* beMinusChild = beMinusNode->child(minusChild->index());
+    beMinusChild->minus(minusChild);
+
+    if (minusChild->hasChild()) {
+      minusAllChildren(beMinusChild, minusChild);
+    }
+  }
+}
+
+void GameTree::mergeTree(GameTree* tree) {
+  currentNode_->merge(tree->root_);
+  mergeAllChildren(currentNode_, tree->root_);
+}
+
+void GameTree::mergeAllChildren(Node* mergingNode, const Node* mergedNode) {
+  for (Node* mergedChild : *mergedNode) {
+    Node* mergingChild = mergingNode->child(mergedChild->index());
+    if (mergingChild != NULL) {
+      mergingChild->merge(mergedChild);
+    } else {
+      mergingChild = mergingNode->newChild(mergedChild, &pool_);
+    }
+
+    if (mergedChild->hasChild()) {
+      mergeAllChildren(mergingChild, mergedChild);
+    }
+  }
+}
+
 int GameTree::play(int index) {
   int whoWin = currentBoard_->play(index);
 
   Node* child = currentNode_->child(index);
 
   if (child == NULL)
-    child = currentNode_->newChild(index, whoWin);
+    child = currentNode_->newChild(index, whoWin, &pool_);
 
   // delete other children except the child that going to play
-  currentNode_->deleteChildrenExcept(child);
+  currentNode_->deleteChildrenExcept(child, &pool_);
   currentNode_->clear();
 
   currentNode_ = child;
@@ -268,10 +382,10 @@ void GameTree::pass() {
   Node* child = currentNode_->child(index);
 
   if (child == NULL)
-    child = currentNode_->newChild(index, 0);
+    child = currentNode_->newChild(index, 0, &pool_);
 
   // delete other children except the child that going to play
-  currentNode_->deleteChildrenExcept(child);
+  currentNode_->deleteChildrenExcept(child, &pool_);
   currentNode_->clear();
 
   currentNode_ = child;
@@ -281,7 +395,7 @@ void GameTree::undo() {
   currentBoard_->undo(currentNode_->index());
   currentNode_ = currentNode_->parent();
   // delete all children
-  currentNode_->deleteChildren();
+  currentNode_->deleteChildren(&pool_);
 }
 
 std::string GameTree::getTreeJSON() {
