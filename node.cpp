@@ -113,8 +113,6 @@ std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::Node::selection(
     if (childNode->winRate() == 1) {
       board->play(i);
       return std::make_pair(UNKNOWN, childNode);
-      //*index = i;
-      //return UNKNOWN;
     }
 
     double value = static_cast<double>(board->getScore(i)) / scoreSum +
@@ -123,7 +121,6 @@ std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::Node::selection(
     if (value > max) {
       max = value;
       node = childNode;
-      //*index = i;
     }
   }
 
@@ -153,15 +150,15 @@ std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::Node::selection(
       setLosing();
       parent_->setWinning();
 
-      return std::make_pair(WIN, this); //WIN;
+      return std::make_pair(WIN, this);
     }
 
     // if no useful point
-    return std::make_pair(TIE, this); //TIE;
+    return std::make_pair(TIE, this);
   }
 
   board->play(node->index());
-  return std::make_pair(UNKNOWN, node); //UNKNOWN;
+  return std::make_pair(UNKNOWN, node);
 }
 
 GameTree::Node* GameTree::Node::child(int index) const {

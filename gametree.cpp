@@ -234,30 +234,9 @@ std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::selection(
   Node* node = currentNode_;
 
   while (true) {
-    //int index;
-
-
     std::pair<SearchStatus, Node*> result = node->selection(board, &pool_);
-
     if (result.first != UNKNOWN) return result;
-
     node = result.second;
-    // check if reached leaf
-    //Node* child = (*node)->child(index);
-    /*
-    if (child == NULL) {
-      bool parentWinning = board->play(index);
-      *node = (*node)->newChild(index, parentWinning, &pool_);
-
-      if (parentWinning)
-        return WIN;
-      else
-        return UNKNOWN;
-    }*/
-
-    //*node = child;
-
-    //board->play(index);
   }
 }
 

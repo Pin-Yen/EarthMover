@@ -63,17 +63,16 @@ class GameTree {
   enum SearchStatus { LOSE = -1, TIE = 0, WIN = 1, UNKNOWN, LEAF };
 
   // MCTS function.
-  // Keep select the child node from the current node,
-  // until reach the leaf or a winning node.
+  // Keep select the child node until reach a leaf or a winning node.
   // Return status and selectde node.
   std::pair<SearchStatus, Node*> selection(VirtualBoard* board);
 
   // MCTS function.
-  // Simulate the game at most maxDepth move, and return status.
+  // Simulate the game and return status.
   SearchStatus simulation(VirtualBoard* board) const;
 
   // MCTS function
-  // Back propagation form leaf, until reach the current node.
+  // Back propagation form leaf to current node.
   void backProp(Node* node, SearchStatus result);
 
   // Copy all children in 'srcNode' to 'destNode'.

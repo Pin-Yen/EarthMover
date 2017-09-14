@@ -39,7 +39,8 @@ class GameTree::Node {
   }
 
   // MCTS function, call by GameTree::selection.
-  // Select child according to UCBValue and point's score, and return status.
+  // Select child according to UCBValue and point's score.
+  // Return selected node and status.
   std::pair<GameTree::SearchStatus, GameTree::Node*> selection(
       VirtualBoard* board, MemoryPool* pool);
 
