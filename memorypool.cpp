@@ -1,5 +1,6 @@
 #include "memorypool.h"
 
+#include <assert.h>
 #include <iostream>
 
 void MemoryPool::init(size_t size, int blocks) {
@@ -20,6 +21,8 @@ void MemoryPool::init(size_t size, int blocks) {
     char** ptr = reinterpret_cast<char**>(&(pool_[size * i]));
     *ptr = &pool_[size * (i + 1)];
   }
+  char** ptr = reinterpret_cast<char**>(&(pool_[size * (blocks - 1)]));
+  *ptr = NULL;
 
   std::cout << "create a memory pool contains " << size * blocks << " bytes ("
             << (size * blocks) / (1024 * 1024) << " mb)\n";
@@ -36,6 +39,7 @@ void *MemoryPool::allocate() {
   //  ptr  ----------------/
   //  next_---------------/
   void *ptr = next_;
+  assert(ptr != NULL); // Memory pool is full.
 
   // "next_" point to next of the "next_"
   //  pool_

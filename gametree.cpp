@@ -26,7 +26,7 @@ GameTree::~GameTree() {
 }
 
 void GameTree::init(VirtualBoard* board) {
-  const int MAX_NODE = 1000000;
+  const int MAX_NODE = 800000;
 
   pool_.free();
   pool_.init(sizeof(Node), MAX_NODE);
@@ -121,10 +121,8 @@ void GameTree::mcts(int threadAmount, int batch, int minCount) {
     threads[i] = new std::thread([trees, i, controler]
                                  { trees[i]->mcts(controler); });
   }
-
   // Origin thread thinking.
   mcts(batch, minCount);
-
   // Stop extra thread.
   thinking = false;
 
@@ -177,7 +175,6 @@ void GameTree::mcts(int threadAmount, int maxCycle, const bool* thinking) {
     delete threads[i];
   }
   delete [] threads;
-
   for (int i = 0; i < extraThreadAmount; ++i) {
     minusTree(trees[i], originTree);
     mergeTree(trees[i]);
@@ -301,10 +298,10 @@ void GameTree::backProp(Node* node) {
 }
 
 void GameTree::copy(const GameTree* source) {
-  const int MAX_NODE = 400000;
+  const int MAX_NODE = 320000;
   pool_.init(sizeof(Node), MAX_NODE);
 
-  root_ = new(&pool_) Node(NULL, source->currentNode_);
+  root_ = new(&pool_) Node(source->currentNode_->parent(), source->currentNode_);
   currentNode_ = root_;
   currentBoard_ = source->currentBoard_->clone();
   copyAllChildren(source->currentNode_, currentNode_);
@@ -384,7 +381,7 @@ void GameTree::pass() {
   if (child == NULL)
     child = currentNode_->newChild(index, 0, &pool_);
 
-  // delete other children except the child that going to play
+  // Delete other children except the child that going to play.
   currentNode_->deleteChildrenExcept(child, &pool_);
   currentNode_->clear();
 
@@ -394,7 +391,13 @@ void GameTree::pass() {
 void GameTree::undo() {
   currentBoard_->undo(currentNode_->index());
   currentNode_ = currentNode_->parent();
-  // delete all children
+
+  // Note: In some rare case, this node will leave some data
+  // that child return when mcts, and may cause seg fault,
+  // so clear this node's data is necessary.
+  currentNode_->clear();
+
+  // Delete all children.
   currentNode_->deleteChildren(&pool_);
 }
 
