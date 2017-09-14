@@ -12,8 +12,8 @@ class GameTree {
   GameTree();
   ~GameTree();
 
-  // clear the whole gametree
-  void reset(VirtualBoard* board);
+  // Initialize GameTree.
+  void init(VirtualBoard* board);
 
   // Monty Carlo Tree Search.
   // Keep searching until reach 'cycle'.
@@ -65,7 +65,7 @@ class GameTree {
   // Puts the result to node,
   // returns -2 for a no result leaf node, -1 for FULL chessboard,
   // 0 for losing, 1 for winning.
-  int selection(Node** node, VirtualBoard* board) const;
+  int selection(Node** node, VirtualBoard* board);
 
   // MCTS function
   // simulate the game at most maxDepth move,
@@ -78,10 +78,10 @@ class GameTree {
   void backProp(Node* node);
 
   // Copy all children in 'srcNode' to 'destNode'.
-  void copyAllChildren(Node* srcNode, Node* destNode);
+  void copyAllChildren(const Node* srcNode, Node* destNode);
 
-  // Copy a new GameTree and return it, new tree's root is current node.
-  GameTree* copyTree();
+  // Copy tree, new tree's root is the current node of 'source'.
+  void copy(const GameTree* source);
 
   // Merge all tree into this.
   void mergeTree(GameTree* tree);
@@ -100,7 +100,7 @@ class GameTree {
 
   VirtualBoard* currentBoard_;
 
-  //static MemoryPool pool_;
+  MemoryPool pool_;
 };
 
 #endif  // GAMETREE_H_

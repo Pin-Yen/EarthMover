@@ -55,7 +55,7 @@ void start() {
     case 1: vb = new VirtualBoardFreeStyle(); break;
     case 2: vb = new VirtualBoardRenjuBasic(); break;
   }
-  tree->reset(vb);
+  tree->init(vb);
 
 
   while (true) {
@@ -70,7 +70,7 @@ void start() {
     timer.start();
     #endif
 
-    tree->mcts(cycle);
+    tree->mcts(4, 3200, 3200);
     tree->mctsResult();
 
     #ifdef TIME

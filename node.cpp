@@ -38,22 +38,22 @@ GameTree::Node::Node(Node *parentNode, const Node *source)
   }
 }
 
-void GameTree::Node::deleteChildren() {
+void GameTree::Node::deleteChildren(MemoryPool* pool) {
   Node *child = child_, *next;
 
   // recursive delete all child
   // the next node should be saved before current node is deleted
   while (child != NULL) {
     next = child->next_;
-    child->deleteChildren();
-    delete child;
+    child->deleteChildren(pool);
+    operator delete(child, pool);
     child = next;
   }
 
   child_ = NULL;
 }
 
-void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
+void GameTree::Node::deleteChildrenExcept(Node* exceptNode, MemoryPool* pool) {
   Node *child = child_, *next;
 
   // recursive delete all child except "exceptNode"
@@ -63,8 +63,8 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode) {
       child = child->next_;
     } else {
       next = child->next_;
-      child->deleteChildren();
-      delete child;
+      child->deleteChildren(pool);
+      operator delete(child, pool);
       child = next;
     }
   }
@@ -150,16 +150,17 @@ GameTree::Node* GameTree::Node::child(int index) const {
   return NULL;
 }
 
-GameTree::Node* GameTree::Node::newChild(int index, int parentWinOrLose) {
-  Node* node = new Node(this, index, parentWinOrLose);
+GameTree::Node* GameTree::Node::newChild(
+    int index, int parentWinOrLose, MemoryPool* pool) {
+  Node* node = new(pool) Node(this, index, parentWinOrLose);
   // append node to first
   node->next_ = child_;
   child_ = node;
   return node;
 }
 
-GameTree::Node* GameTree::Node::newChild(Node* source) {
-  Node* node = new Node(this, source);
+GameTree::Node* GameTree::Node::newChild(Node* source, MemoryPool* pool) {
+  Node* node = new(pool) Node(this, source);
   // append node to first
   node->next_ = child_;
   child_ = node;

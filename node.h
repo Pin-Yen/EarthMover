@@ -17,10 +17,15 @@ class GameTree::Node {
   Node(Node *parentNode, const Node *source);
 
   // overload new and delete operator for memory pool
-  //static void *operator new(size_t /*size*/) { return pool_.allocate(); }
-  //static void operator delete(void *ptr, size_t /*size*/) {
-  //  pool_.deallocate(ptr);
-  //}
+  static void *operator new(size_t) = delete;
+  static void operator delete(void *ptr) = delete;
+
+  static void *operator new(size_t /*size*/, MemoryPool* pool) {
+    return pool->allocate();
+  }
+  static void operator delete(void *ptr, MemoryPool* pool) {
+    pool->deallocate(ptr);
+  }
 
   void minus(const Node* node);
 
@@ -46,8 +51,8 @@ class GameTree::Node {
   }
 
   // delete all children (or except for the "exceptNode")
-  void deleteChildren();
-  void deleteChildrenExcept(Node* exceptNode);
+  void deleteChildren(MemoryPool* pool);
+  void deleteChildrenExcept(Node* exceptNode, MemoryPool* pool);
 
   // clear playout and winLose
   void clear() {
@@ -75,9 +80,9 @@ class GameTree::Node {
   Node* child(int index) const;
 
   // append a new child and return it, parameters for node's constructor
-  Node* newChild(int index, int parentWinOrLose);
+  Node* newChild(int index, int parentWinOrLose, MemoryPool* pool);
 
-  Node* newChild(Node* source);
+  Node* newChild(Node* source, MemoryPool* pool);
 
   // custom iterator, iterates over node's child
   // Usage: for (Node* child : *node)

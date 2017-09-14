@@ -54,7 +54,7 @@ void AI::reset(int level, int rule) {
     default: assert(0);
   }
 
-  tree->reset(vb);
+  tree->init(vb);
   level_ = level;
 
   delete vb;

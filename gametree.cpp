@@ -18,27 +18,19 @@
 
 using json = nlohmann::json;
 
-//MemoryPool GameTree::pool_;
-
-GameTree::GameTree() {
-  root_ = NULL;
-  currentNode_ = NULL;
-  currentBoard_ = NULL;
-}
+GameTree::GameTree() : root_(NULL), currentNode_(NULL), currentBoard_(NULL) {}
 
 GameTree::~GameTree() {
-  //pool_.free();
+  pool_.free();
   if (currentBoard_ != NULL) delete currentBoard_;
-  if (root_ != NULL) root_->deleteChildren();
 }
 
-void GameTree::reset(VirtualBoard* board) {
-  const int MAX_NODE = 2000000;
+void GameTree::init(VirtualBoard* board) {
+  const int MAX_NODE = 1000000;
 
-  if (root_ != NULL) root_->deleteChildren();
-  //pool_.free();
-  //pool_.init(sizeof(Node), MAX_NODE);
-  root_ = new Node();
+  pool_.free();
+  pool_.init(sizeof(Node), MAX_NODE);
+  root_ = new(&pool_) Node();
 
   currentNode_ = root_;
 
@@ -114,11 +106,13 @@ void GameTree::mcts(int threadAmount, int batch, int minCount) {
   std::thread** threads = new std::thread*[extraThreadAmount];
   GameTree** trees = new GameTree*[extraThreadAmount];
   for (int i = 0; i < extraThreadAmount; ++i) {
-    trees[i] = copyTree();
+    trees[i] = new GameTree();
+    trees[i]->copy(this);
   }
 
   // Copy origin tree.
-  const GameTree* originTree = copyTree();
+  GameTree* originTree = new GameTree();
+  originTree->copy(this);
 
   // Extra thread thinking.
   bool thinking = true;
@@ -147,6 +141,7 @@ void GameTree::mcts(int threadAmount, int batch, int minCount) {
     delete trees[i];
   }
   delete [] trees;
+  delete originTree;
 }
 
 void GameTree::mcts(int threadAmount, int maxCycle, const bool* thinking) {
@@ -157,12 +152,15 @@ void GameTree::mcts(int threadAmount, int maxCycle, const bool* thinking) {
   // Create threads and trees.
   std::thread** threads = new std::thread*[extraThreadAmount];
   GameTree** trees = new GameTree*[extraThreadAmount];
+
   for (int i = 0; i < extraThreadAmount; ++i) {
-    trees[i] = copyTree();
+    trees[i] = new GameTree();
+    trees[i]->copy(this);
   }
 
   // Copy origin tree.
-  const GameTree* originTree = copyTree();
+  GameTree* originTree = new GameTree();
+  originTree->copy(this);
 
   // Extra thread thinking.
   for (int i = 0; i < extraThreadAmount; ++i) {
@@ -186,6 +184,7 @@ void GameTree::mcts(int threadAmount, int maxCycle, const bool* thinking) {
     delete trees[i];
   }
   delete [] trees;
+  delete originTree;
 }
 
 int GameTree::mctsResult() const {
@@ -236,7 +235,7 @@ int GameTree::mctsResult() const {
   return index;
 }
 
-int GameTree::selection(Node** node, VirtualBoard* board) const {
+int GameTree::selection(Node** node, VirtualBoard* board) {
   *node = currentNode_;
 
   while (true) {
@@ -252,7 +251,7 @@ int GameTree::selection(Node** node, VirtualBoard* board) const {
 
     if (child == NULL) {
       bool parentWinning = board->play(index);
-      *node = (*node)->newChild(index, parentWinning);
+      *node = (*node)->newChild(index, parentWinning, &pool_);
 
       if (parentWinning)
         return 0;
@@ -301,23 +300,23 @@ void GameTree::backProp(Node* node) {
   node->update();
 }
 
-void GameTree::copyAllChildren(Node* srcNode, Node* destNode) {
+void GameTree::copy(const GameTree* source) {
+  const int MAX_NODE = 400000;
+  pool_.init(sizeof(Node), MAX_NODE);
+
+  root_ = new(&pool_) Node(NULL, source->currentNode_);
+  currentNode_ = root_;
+  currentBoard_ = source->currentBoard_->clone();
+  copyAllChildren(source->currentNode_, currentNode_);
+}
+
+void GameTree::copyAllChildren(const Node* srcNode, Node* destNode) {
   for (Node* child : *srcNode) {
-    Node* destChild = destNode->newChild(child);
+    Node* destChild = destNode->newChild(child, &pool_);
     if (child->hasChild()) {
       copyAllChildren(child, destChild);
     }
   }
-}
-
-GameTree* GameTree::copyTree() {
-  GameTree* tree = new GameTree();
-  tree->root_ = new Node(currentNode_->parent(), currentNode_);
-  tree->currentNode_ = tree->root_;
-  tree->currentBoard_ = currentBoard_->clone();
-  copyAllChildren(currentNode_, tree->root_);
-
-  return tree;
 }
 
 void GameTree::minusTree(GameTree* beMinusTree, const GameTree* minusTree) {
@@ -347,7 +346,7 @@ void GameTree::mergeAllChildren(Node* mergingNode, const Node* mergedNode) {
     if (mergingChild != NULL) {
       mergingChild->merge(mergedChild);
     } else {
-      mergingChild = mergingNode->newChild(mergedChild);
+      mergingChild = mergingNode->newChild(mergedChild, &pool_);
     }
 
     if (mergedChild->hasChild()) {
@@ -362,10 +361,10 @@ int GameTree::play(int index) {
   Node* child = currentNode_->child(index);
 
   if (child == NULL)
-    child = currentNode_->newChild(index, whoWin);
+    child = currentNode_->newChild(index, whoWin, &pool_);
 
   // delete other children except the child that going to play
-  currentNode_->deleteChildrenExcept(child);
+  currentNode_->deleteChildrenExcept(child, &pool_);
   currentNode_->clear();
 
   currentNode_ = child;
@@ -383,10 +382,10 @@ void GameTree::pass() {
   Node* child = currentNode_->child(index);
 
   if (child == NULL)
-    child = currentNode_->newChild(index, 0);
+    child = currentNode_->newChild(index, 0, &pool_);
 
   // delete other children except the child that going to play
-  currentNode_->deleteChildrenExcept(child);
+  currentNode_->deleteChildrenExcept(child, &pool_);
   currentNode_->clear();
 
   currentNode_ = child;
@@ -396,7 +395,7 @@ void GameTree::undo() {
   currentBoard_->undo(currentNode_->index());
   currentNode_ = currentNode_->parent();
   // delete all children
-  currentNode_->deleteChildren();
+  currentNode_->deleteChildren(&pool_);
 }
 
 std::string GameTree::getTreeJSON() {
