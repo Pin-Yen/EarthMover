@@ -81,80 +81,75 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode, MemoryPool* pool) {
 
 std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
   VirtualBoard* board, MemoryPool* pool) {
-  if (winning()) return std::make_pair(LOSE, this);
-  if (losing()) return std::make_pair(WIN, this);
+  if (winning()) return std::make_pair(LOSE, this);  // Parent lose.
+  if (losing()) return std::make_pair(WIN, this);    // Parent Win.
 
   // current max value
   double max = -1;
 
   bool childWinning = false;
 
-  int scoreSum = board->getScoreSum();
+  double scoreSum = board->getScoreSum();
 
   // checked index
   bool checked[225] = {0};
 
   Node* node;
 
-  for (Node* childNode : *this) {
-    int i = childNode->index();
+  for (Node* child : *this) {
+    int i = child->index();
     checked[i] = true;
 
     // If child node is winning then DO NOT select this point.
-    if (childNode->winning()) {
+    if (child->winning()) {
       childWinning = true;
       continue;
     }
 
     // If there exists a point that wins in all previous simulations,
     // then select this point.
-    if (childNode->winRate() == 1) {
+    if (child->winRate() == 1) {
       board->play(i);
-      return std::make_pair(UNKNOWN, childNode);
+      return std::make_pair(UNKNOWN, child);
     }
 
-    double value = static_cast<double>(board->getScore(i)) / scoreSum +
-                   getUCBValue(childNode);
+    double val = board->getScore(i) / scoreSum + getUCBValue(child);
 
-    if (value > max) {
-      max = value;
-      node = childNode;
-    }
-  }
-
-  int notCheckedIndex = board->getHSI(checked);
-
-  if (notCheckedIndex != -1) {
-    double value =
-        static_cast<double>(board->getScore(notCheckedIndex)) / scoreSum +
-        getUCBValue(NULL);
-
-    if (value > max) {
-      GameStatus status = board->play(notCheckedIndex);
-      node = newChild(notCheckedIndex, status, pool);
-
-      if (status == WINNING) {
-        return std::make_pair(WIN, node);
-      } else {
-        return std::make_pair(LEAF, node);
-      }
+    if (val > max) {
+      max = val;
+      node = child;
     }
   }
 
-  // if no point can select
+  int uncheckIndex = board->getHSI(checked);
+
+  if (uncheckIndex != -1) {
+    double val = board->getScore(uncheckIndex) / scoreSum + getUCBValue(NULL);
+
+    if (val > max) {
+      GameStatus status = board->play(uncheckIndex);
+      node = newChild(uncheckIndex, status, pool);
+
+      return status == WINNING ? std::make_pair(LOSE, this) :  // Parent lose.
+                                 std::make_pair(LEAF, node);   // Leaf node.
+    }
+  }
+
+  // If no point selected.
   if (max == -1) {
-    // if every child wins, mark this point as a losing point
+    // If every child wins, this point is a losing point.
     if (childWinning) {
       setLosing();
       parent_->setWinning();
 
-      return std::make_pair(WIN, this);
+      return std::make_pair(WIN, this);  // Parent win.
     }
 
-    // if no useful point
+    // If no useful point, return tie.
     return std::make_pair(TIE, this);
   }
 
+  // Return selected node.
   board->play(node->index());
   return std::make_pair(UNKNOWN, node);
 }
