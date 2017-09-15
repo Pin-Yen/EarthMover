@@ -70,14 +70,20 @@ void HttpServer::run() {
 
       // Dispatch parsed request to handlers.
       dispatch(client, &request);
-    } catch (HttpResponse::HttpResponseException& e) {
+    } catch(const HttpRequest::EmptyRequestException e){
+      // close the connection if recieved empty request.
+      std::cerr << "empty request => ignored\n";
+      if (close(client) != 0)
+        std::cerr << "Failed to close socket after receiving empty response\n";
+
+    } catch (const HttpResponse::HttpResponseException e) {
       // Return bad request.
       // Just blame the client whatever the problem is XD.
       std::cerr << e.what() << "\n";
       HttpResponse response(400);
       response.compile();
       sendResponse(client, &response);
-    } catch (HttpRequest::BadRequestException& e) {
+    } catch (const HttpRequest::BadRequestException e) {
       std::cerr << e.what();
       HttpResponse response(400);
       response.compile();
@@ -101,7 +107,7 @@ HttpRequest HttpServer::readRequest(const int client) {
   } while (rawRequest.find("\r\n\r\n") == std::string::npos && newReadBytes != 0);
 
   if (totalBytesRead == 0)
-    throw HttpRequest::BadRequestException("Empty request.");
+    throw HttpRequest::EmptyRequestException("Empty request.");
 
 
   HttpRequest request(rawRequest);
@@ -147,10 +153,13 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
 
 void HttpServer::sendResponse(const int client, HttpResponse* response) {
   // Send header.
+  std::cerr << "# entered sendResponse\n";
   send(client, response->getHeaderString().c_str(),
        response->getHeaderLength(), 0);
+  std::cerr << "# header sent\n";
   // Send body.
   send(client, response->getBody(), response->getBodyLength(), 0);
+  std::cerr << "# body sent\n";
 
   // Wait for client's FIN signal.
   char *useless[10];
@@ -158,6 +167,8 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
     std::cerr << "Not receiving client's FIN signal\n";
     std::cerr << strerror(errno);
   }
+  std::cerr << "# received FIN\n";
+
   if (close(client) != 0) {
     std::cerr << "Failed to close connection\n";
     std::cerr << strerror(errno);

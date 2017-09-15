@@ -23,6 +23,7 @@ class HttpRequest {
   int contentLength() { return contentLength_; }
   // Add the body.
   void addBody(std::string body) { body_ = body; }
+
   class BadRequestException : std::exception {
    public:
     explicit BadRequestException(const char* description) {
@@ -35,6 +36,22 @@ class HttpRequest {
 
    private:
     std::string message_;
+  };
+
+  class EmptyRequestException : std::exception
+  {
+   public:
+    explicit EmptyRequestException(const char* description) {
+      message_.assign(description);
+    }
+
+    virtual const char* what() const noexcept {
+      return message_.c_str();
+    }
+
+   private:
+    std::string message_;
+
   };
 
  private:
