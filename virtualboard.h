@@ -1,6 +1,8 @@
 #ifndef VIRTUALBOARD_H_
 #define VIRTUALBOARD_H_
 
+#include "const.h"
+
 class VirtualBoard {
  public:
   virtual inline ~VirtualBoard() = 0;
@@ -27,7 +29,7 @@ class VirtualBoard {
 
   // puts a new chess at "index"
   // returns 1 if wins after play, -1 if lose
-  virtual int play(int index) = 0;
+  virtual GameStatus play(int index) = 0;
 
   // pass
   // return -1 if not allow pass, other for the index of the pass

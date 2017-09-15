@@ -18,7 +18,7 @@ class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
     return new VirtualBoardFreeStyle(*this);
   }
 
-  inline int play(int index) final;
+  inline GameStatus play(int index) final;
 
   inline void undo(int index) final;
 };
@@ -32,7 +32,7 @@ VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
   return temp;
 }
 
-int VirtualBoardFreeStyle::play(int index) {
+GameStatus VirtualBoardFreeStyle::play(int index) {
   return VirtualBoardGomoku::
       play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
 }

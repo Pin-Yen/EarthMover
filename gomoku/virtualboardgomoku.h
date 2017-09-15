@@ -24,7 +24,7 @@ class VirtualBoardGomoku : public VirtualBoard {
   // puts a new chess at "index",
   // returns 1 if wins after play, -1 if lose
   template <class Eva>
-  int play(int index);
+  GameStatus play(int index);
 
   // remove chess at "index"
   template <class Eva>
@@ -239,9 +239,9 @@ int VirtualBoardGomoku<StatusLength>::getHSI(bool ignoreIndex[]) const {
 
 template <int StatusLength>
 template <class Eva>
-int VirtualBoardGomoku<StatusLength>::play(int index) {
-  int winOrLose = Eva::checkWinOrLose(point_[index].absScore(playNo_ & 1));
-  if (winOrLose != 0) return winOrLose;
+GameStatus VirtualBoardGomoku<StatusLength>::play(int index) {
+  GameStatus status = Eva::checkWinOrLose(point_[index].absScore(playNo_ & 1));
+  if (status != NOTHING) return status;
 
   ++playNo_;
 
@@ -292,7 +292,7 @@ int VirtualBoardGomoku<StatusLength>::play(int index) {
 
   Eva::evaluateRelativeScore(point_, playNo_);
 
-  return 0;
+  return NOTHING;
 }
 
 template <int StatusLength>

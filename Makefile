@@ -60,7 +60,7 @@ obj/evaluatorfreestyle.o: gomoku/freestyle/evaluatorfreestyle.cpp \
  gomoku/freestyle/evaluatorfreestyle.h \
  gomoku/freestyle/../evaluator.h gomoku/freestyle/../typetree.h \
  gomoku/freestyle/typetreefreestyle.h gomoku/freestyle/../point.h \
- gomoku/freestyle/../openingtree.h
+ gomoku/freestyle/../openingtree.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/typetreefreestyle.o: gomoku/freestyle/typetreefreestyle.cpp \
@@ -75,7 +75,7 @@ obj/typetreefreestyle.o: gomoku/freestyle/typetreefreestyle.cpp \
  gomoku/freestyle/virtualboardfreestyle.h \
  gomoku/freestyle/evaluatorfreestyle.h \
  gomoku/freestyle/../evaluator.h gomoku/freestyle/../typetree.h \
- gomoku/freestyle/typetreefreestyle.h
+ gomoku/freestyle/typetreefreestyle.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/evaluatorrenjubasic.o: gomoku/renju_basic/evaluatorrenjubasic.cpp \
@@ -89,7 +89,7 @@ obj/evaluatorrenjubasic.o: gomoku/renju_basic/evaluatorrenjubasic.cpp \
  gomoku/renju_basic/../point.h gomoku/renju_basic/../openingtree.h \
  gomoku/renju_basic/evaluatorrenjubasic.h \
  gomoku/renju_basic/typetreerenjubasic.h \
- gomoku/renju_basic/../typetree.h gomoku/renju_basic/../point.h
+ gomoku/renju_basic/../typetree.h gomoku/renju_basic/../point.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/typetreerenjubasic.o: gomoku/renju_basic/typetreerenjubasic.cpp \
@@ -103,18 +103,18 @@ obj/typetreerenjubasic.o: gomoku/renju_basic/typetreerenjubasic.cpp \
  gomoku/renju_basic/../point.h gomoku/renju_basic/../openingtree.h \
  gomoku/renju_basic/evaluatorrenjubasic.h \
  gomoku/renju_basic/typetreerenjubasic.h \
- gomoku/renju_basic/../typetree.h
+ gomoku/renju_basic/../typetree.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/memorypool.o: memorypool.cpp memorypool.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/gametree.o: gametree.cpp gomoku/chesstype.h gomoku/status.h \
- virtualboard.h gametree.h node.h memorypool.h
+ virtualboard.h gametree.h node.h memorypool.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 obj/node.o: node.cpp gomoku/chesstype.h gomoku/status.h virtualboard.h \
- gametree.h node.h
+ gametree.h node.h const.h
 	g++ -c $(generalFlags) $(specificFlags) $(optimizeFlag) $< -o $@
 
 # The obj files below aren't required in every kind of build, so they aren't included in the 'objects' variable.

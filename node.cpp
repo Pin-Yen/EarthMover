@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 
+#include "const.h"
 #include "gametree.h"
 #include "gomoku/chesstype.h"
 #include "gomoku/status.h"
@@ -17,34 +18,31 @@ GameTree::Node::Node()
       parent_(NULL),
       child_(NULL),
       next_(NULL),
-      winOrLose_(0),
-      totalPlayout_(0),
-      winPlayout_(0),
-      losePlayout_(0) {}
+      gameStatus_(NOTHING),
+      count_(0),
+      winLoseCount_(0) {}
 
-GameTree::Node::Node(Node *parentNode, int index, int parentWinOrLose)
+GameTree::Node::Node(Node *parent, int index, GameStatus parentStatus)
     : index_(index),
-      parent_(parentNode),
+      parent_(parent),
       child_(NULL),
       next_(NULL),
-      winOrLose_(-parentWinOrLose),
-      totalPlayout_(0),
-      winPlayout_(0),
-      losePlayout_(0) {
+      gameStatus_(static_cast<GameStatus>(-static_cast<int>(parentStatus))),
+      count_(0),
+      winLoseCount_(0) {
 
   // if losing, set parent to winning
   if (losing()) parent_->setWinning();
 }
 
-GameTree::Node::Node(Node *parentNode, const Node *source)
+GameTree::Node::Node(Node *parent, const Node *source)
     : index_(source->index_),
-      parent_(parentNode),
+      parent_(parent),
       child_(NULL),
       next_(NULL),
-      winOrLose_(source->winOrLose_),
-      totalPlayout_(source->totalPlayout_),
-      winPlayout_(source->winPlayout_),
-      losePlayout_(source->losePlayout_) {}
+      gameStatus_(source->gameStatus_),
+      count_(source->count_),
+      winLoseCount_(source->winLoseCount_) {}
 
 void GameTree::Node::deleteChildren(MemoryPool* pool) {
   Node *child = child_, *next;
@@ -81,7 +79,7 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode, MemoryPool* pool) {
   exceptNode->next_ = NULL;
 }
 
-std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::Node::selection(
+std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
   VirtualBoard* board, MemoryPool* pool) {
   if (winning()) return std::make_pair(LOSE, this);
   if (losing()) return std::make_pair(WIN, this);
@@ -132,10 +130,10 @@ std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::Node::selection(
         getUCBValue(NULL);
 
     if (value > max) {
-      bool parentWinning = board->play(notCheckedIndex);
-      node = newChild(notCheckedIndex, parentWinning, pool);
+      GameStatus status = board->play(notCheckedIndex);
+      node = newChild(notCheckedIndex, status, pool);
 
-      if (parentWinning) {
+      if (status == WINNING) {
         return std::make_pair(WIN, node);
       } else {
         return std::make_pair(LEAF, node);
@@ -169,8 +167,8 @@ GameTree::Node* GameTree::Node::child(int index) const {
 }
 
 GameTree::Node* GameTree::Node::newChild(
-    int index, int parentWinOrLose, MemoryPool* pool) {
-  Node* node = new(pool) Node(this, index, parentWinOrLose);
+    int index, GameStatus parentStatus, MemoryPool* pool) {
+  Node* node = new(pool) Node(this, index, parentStatus);
   // append node to first
   node->next_ = child_;
   child_ = node;
@@ -186,28 +184,26 @@ GameTree::Node* GameTree::Node::newChild(Node* source, MemoryPool* pool) {
 }
 
 void GameTree::Node::minus(const Node* node) {
-  totalPlayout_ -= node->totalPlayout_;
-  winPlayout_ -= node->winPlayout_;
-  losePlayout_ -= node->losePlayout_;
+  count_ -= node->count_;
+  winLoseCount_ -= node->winLoseCount_;
 }
 
 void GameTree::Node::merge(const Node* node) {
-  totalPlayout_ += node->totalPlayout_;
-  winPlayout_ += node->winPlayout_;
-  losePlayout_ += node->losePlayout_;
+  count_ += node->count_;
+  winLoseCount_ += node->winLoseCount_;
 
   if (notWinOrLose() && !node->notWinOrLose()) {
-    winOrLose_ = node->winOrLose_;
+    gameStatus_ = node->gameStatus_;
   }
 }
 
 double GameTree::Node::getUCBValue(const Node* node) const {
-  if (totalPlayout_ == 0) return 0;
+  if (count_ == 0) return 0;
 
   if (node != NULL) {
     return (node->winRate() +
-            sqrt(.5 * log(totalPlayout_) / (1 + node->totalPlayout())));
+            sqrt(.5 * log(count_) / (1 + node->count_)));
   } else {
-    return (sqrt(.5 * log(totalPlayout_) / 1));
+    return (sqrt(.5 * log(count_) / 1));
   }
 }

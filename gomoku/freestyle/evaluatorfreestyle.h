@@ -11,7 +11,9 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle :
 
   // check win lor lose (call by virtualboard::play)
   // -1 for lose, 0 for nothng, 1 for win
-  static int checkWinOrLose(int score) { return score >= SCORE_WIN; }
+  static GameStatus checkWinOrLose(int score) {
+    return score >= SCORE_WIN ? WINNING : NOTHING;
+  }
 
   // inputs status array in *status.
   // analyzes both player's chesstype, and return it

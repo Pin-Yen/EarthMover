@@ -9,6 +9,7 @@
 #include <tuple>
 #include <vector>
 
+#include "const.h"
 #include "gomoku/chesstype.h"
 #include "gomoku/status.h"
 #include "lib/json.h"
@@ -71,8 +72,8 @@ void GameTree::mcts(int batch, int minCount) {
     int mostTimes = 0;
 
     for (Node* child : *currentNode_) {
-      if (child->totalPlayout() > mostTimes) {
-        mostTimes = child->totalPlayout();
+      if (child->count() > mostTimes) {
+        mostTimes = child->count();
       }
     }
 
@@ -195,14 +196,14 @@ int GameTree::mctsResult() const {
 
     for (Node* child : *currentNode_) {
       // priority order: playout -> score
-      if (child->totalPlayout() > mostTimes) {
+      if (child->count() > mostTimes) {
         index = child->index();
-        mostTimes = child->totalPlayout();
+        mostTimes = child->count();
         score = currentBoard_->getScore(index);
-      } else if (child->totalPlayout() == mostTimes) {
+      } else if (child->count() == mostTimes) {
         if (currentBoard_->getScore(child->index()) > score) {
           index = child->index();
-          mostTimes = child->totalPlayout();
+          mostTimes = child->count();
           score = currentBoard_->getScore(index);
         }
       }
@@ -218,18 +219,18 @@ int GameTree::mctsResult() const {
   Node* child = currentNode_->child(index);
 
   std::cout << std::fixed << std::setprecision(3)
-            << "total sim: " << currentNode_->totalPlayout()
+            << "total sim: " << currentNode_->count()
             << "  best: "
             << static_cast<char>(index % 15 + 65) << index / 15 + 1
-            << "  sim: " << child->totalPlayout()
+            << "  sim: " << child->count()
             << "  WinR: " << child->winRate()
-            << "  W/L: " << currentNode_->winOrLose()
+            << "  W/L: " << currentNode_->gameStatus()
             << std::endl;
 
   return index;
 }
 
-std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::selection(
+std::pair<SearchStatus, GameTree::Node*> GameTree::selection(
     VirtualBoard* board) {
   Node* node = currentNode_;
 
@@ -240,7 +241,7 @@ std::pair<GameTree::SearchStatus, GameTree::Node*> GameTree::selection(
   }
 }
 
-GameTree::SearchStatus GameTree::simulation(VirtualBoard* board) const {
+SearchStatus GameTree::simulation(VirtualBoard* board) const {
   const int MAX_DEPTH = 50;
   // simulate until reach max depth
   for (int d = 0; d < MAX_DEPTH; ++d) {
@@ -322,13 +323,13 @@ void GameTree::mergeAllChildren(Node* mergingNode, const Node* mergedNode) {
   }
 }
 
-int GameTree::play(int index) {
-  int whoWin = currentBoard_->play(index);
+GameStatus GameTree::play(int index) {
+  GameStatus status = currentBoard_->play(index);
 
   Node* child = currentNode_->child(index);
 
   if (child == NULL)
-    child = currentNode_->newChild(index, whoWin, &pool_);
+    child = currentNode_->newChild(index, status, &pool_);
 
   // delete other children except the child that going to play
   currentNode_->deleteChildrenExcept(child, &pool_);
@@ -336,7 +337,7 @@ int GameTree::play(int index) {
 
   currentNode_ = child;
 
-  return whoWin;
+  return status;
 }
 
 void GameTree::pass() {
@@ -349,7 +350,7 @@ void GameTree::pass() {
   Node* child = currentNode_->child(index);
 
   if (child == NULL)
-    child = currentNode_->newChild(index, 0, &pool_);
+    child = currentNode_->newChild(index, NOTHING, &pool_);
 
   // Delete other children except the child that going to play.
   currentNode_->deleteChildrenExcept(child, &pool_);
@@ -382,17 +383,17 @@ json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
 
   tree["index"] = node->index();
 
-  tree["totalCount"] = node->totalPlayout();
+  tree["totalCount"] = node->count();
 
   tree["winRate"] = whoTurn ? node->winRate() : 1 - node->winRate();
-  tree["winOrLose"] = whoTurn ? node->winOrLose() : -node->winOrLose();
+  tree["winOrLose"] = whoTurn ? node->gameStatus() : -node->gameStatus();
 
   tree["whoTurn"] = whoTurn;
 
   tree["children"] = json::array();
 
   for (Node* child : *node) {
-    if (child->totalPlayout() >= 8) {
+    if (child->count() >= 8) {
       tree["children"].push_back(getSubTreeJSON(child, !whoTurn));
     }
   }

@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 
+#include "const.h"
 #include "lib/json.h"
 #include "memorypool.h"
 #include "virtualboard.h"
@@ -41,9 +42,9 @@ class GameTree {
   // get the child that has highest playout from current node
   int mctsResult() const;
 
-  // called when a REAL point is played, updates the currentRoot
-  // returns 1 if wins after play, -1 if lose
-  int play(int index);
+  // Called when a REAL point is played,
+  // updates the current node and return game status.
+  GameStatus play(int index);
 
   // pass
   void pass();
@@ -59,8 +60,6 @@ class GameTree {
 
  private:
   class Node;
-
-  enum SearchStatus { LOSE = -1, TIE = 0, WIN = 1, UNKNOWN, LEAF };
 
   // MCTS function.
   // Keep select the child node until reach a leaf or a winning node.

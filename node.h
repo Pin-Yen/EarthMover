@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <map>
 
+#include "const.h"
 #include "gametree.h"
 
 class GameTree::Node {
@@ -11,10 +12,10 @@ class GameTree::Node {
   // consturctor for root
   Node();
   // constructor for node (EXCEPT root node)
-  Node(Node *parentNode, int index, int parentWinOrLose);
+  Node(Node *parent, int index, GameStatus parentStatus);
 
   // Constructor for Copy data from another node.
-  Node(Node *parentNode, const Node *source);
+  Node(Node *parent, const Node *source);
 
   // overload new and delete operator for memory pool
   static void *operator new(size_t) = delete;
@@ -31,61 +32,57 @@ class GameTree::Node {
 
   void merge(const Node* node);
 
-  // Update playout.
-  void update(SearchStatus result) {
-    ++totalPlayout_;
-    if (result == WIN) ++winPlayout_;
-    if (result == LOSE) ++losePlayout_;
-  }
-
   // MCTS function, call by GameTree::selection.
   // Select child according to UCBValue and point's score.
   // Return selected node and status.
-  std::pair<GameTree::SearchStatus, GameTree::Node*> selection(
+  std::pair<SearchStatus, GameTree::Node*> selection(
       VirtualBoard* board, MemoryPool* pool);
 
-  // get winRate
-  // NOTE: the win rate is for the upper layer(parent node)
-  double winRate() const {
-    return ((winPlayout_ + (totalPlayout_ - winPlayout_ - losePlayout_) / 2.) /
-            static_cast<double>(totalPlayout_));
+  // Update playout.
+  void update(SearchStatus result) {
+    ++count_;
+    if (result == WIN) ++winLoseCount_;
+    if (result == LOSE) --winLoseCount_;
   }
 
-  // delete all children (or except for the "exceptNode")
+  // Get win rate.
+  // NOTE: The win rate is for the upper layer(parent node).
+  double winRate() const { return (count_ + winLoseCount_) / (count_ * 2.0); }
+
+  // Delete all children (or except for the 'exceptNode').
   void deleteChildren(MemoryPool* pool);
   void deleteChildrenExcept(Node* exceptNode, MemoryPool* pool);
 
-  // clear playout and winLose
+  // Clear count and winLose.
   void clear() {
-    totalPlayout_ = 0;
-    winPlayout_ = 0;
-    losePlayout_ = 0;
-    winOrLose_ = 0;
+    count_ = 0;
+    winLoseCount_ = 0;
+    gameStatus_ = NOTHING;
+    //winOrLose_ = 0;
   }
 
   bool hasChild() const { return child_ != NULL; }
 
-  // getter
+  // Getter.
   Node* parent() const { return parent_; }
-  int totalPlayout() const { return totalPlayout_; }
+  int count() const { return count_; }
   int index() const { return index_; }
-  int winOrLose() const { return winOrLose_; }
-  bool winning() const { return winOrLose_ > 0; }
-  bool losing() const { return winOrLose_ < 0; }
-  bool notWinOrLose() const { return winOrLose_ == 0; }
+  GameStatus gameStatus() const { return gameStatus_; }
+  bool winning() const { return gameStatus_ == WINNING; }
+  bool losing() const { return gameStatus_ == LOSING; }
+  bool notWinOrLose() const { return gameStatus_ == NOTHING; }
 
-  void setWinning() { winOrLose_ = 1; }
-  void setLosing() { winOrLose_ = -1; }
+  void setWinning() { gameStatus_ = WINNING; }
+  void setLosing() { gameStatus_ = LOSING; }
 
-  // get child node with specify index
+  // Get child node with specify index.
   Node* child(int index) const;
 
-  // append a new child and return it, parameters for node's constructor
-  Node* newChild(int index, int parentWinOrLose, MemoryPool* pool);
-
+  // Append a new child and return it, parameters for node's constructor.
+  Node* newChild(int index, GameStatus parentStatus, MemoryPool* pool);
   Node* newChild(Node* source, MemoryPool* pool);
 
-  // custom iterator, iterates over node's child
+  // Custom iterator, iterates over node's child.
   // Usage: for (Node* child : *node)
   class Iterator {
    public:
@@ -102,23 +99,19 @@ class GameTree::Node {
   };
 
   Iterator begin() const { return Iterator(child_); }
-
   Iterator end() const { return Iterator(NULL); }
 
  private:
-  // get the Upper Confidence Bound value form child node
+  // Get the Upper Confidence Bound value from child node.
   double getUCBValue(const Node* node) const;
 
-  // parent, child, next node
+  // parent, child, next node.
   Node *parent_, *child_, *next_;
 
-  int totalPlayout_, winPlayout_, losePlayout_;
+  int count_, winLoseCount_;
+  int index_;
 
-  int16_t index_;
-
-  // represent is current player winning or losing
-  // 1: winning, -1: losing, 0: nothing
-  int8_t winOrLose_;
+  GameStatus gameStatus_;
 };
 
 #endif  // NODE_H_

@@ -18,7 +18,7 @@ class VirtualBoardRenjuBasic final : public VirtualBoardGomoku<10> {
     return new VirtualBoardRenjuBasic(*this);
   }
 
-  inline int play(int index) final;
+  inline GameStatus play(int index) final;
 
   inline void undo(int index) final;
 };
@@ -32,7 +32,7 @@ VirtualBoardRenjuBasic* VirtualBoardRenjuBasic::create() {
   return temp;
 }
 
-int VirtualBoardRenjuBasic::play(int index) {
+GameStatus VirtualBoardRenjuBasic::play(int index) {
   return VirtualBoardGomoku::
       play<VirtualBoardRenjuBasic::EvaluatorRenjuBasic>(index);
 }
