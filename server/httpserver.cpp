@@ -153,13 +153,10 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
 
 void HttpServer::sendResponse(const int client, HttpResponse* response) {
   // Send header.
-  std::cerr << "# entered sendResponse\n";
   send(client, response->getHeaderString().c_str(),
        response->getHeaderLength(), 0);
-  std::cerr << "# header sent\n";
   // Send body.
   send(client, response->getBody(), response->getBodyLength(), 0);
-  std::cerr << "# body sent\n";
 
   // Wait for client's FIN signal.
   char *useless[10];
@@ -167,7 +164,6 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
     std::cerr << "Not receiving client's FIN signal\n";
     std::cerr << strerror(errno);
   }
-  std::cerr << "# received FIN\n";
 
   if (close(client) != 0) {
     std::cerr << "Failed to close connection\n";
