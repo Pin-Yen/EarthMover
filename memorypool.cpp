@@ -23,9 +23,6 @@ void MemoryPool::init(size_t size, int blocks) {
   }
   char** ptr = reinterpret_cast<char**>(&(pool_[size * (blocks - 1)]));
   *ptr = NULL;
-
-  std::cout << "create a memory pool contains " << size * blocks << " bytes ("
-            << (size * blocks) / (1024 * 1024) << " mb)\n";
 }
 
 void *MemoryPool::allocate() {

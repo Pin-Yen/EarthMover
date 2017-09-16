@@ -58,7 +58,6 @@ class GameTree::Node {
     count_ = 0;
     winLoseCount_ = 0;
     gameStatus_ = NOTHING;
-    //winOrLose_ = 0;
   }
 
   bool hasChild() const { return child_ != NULL; }

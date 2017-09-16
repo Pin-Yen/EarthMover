@@ -63,8 +63,6 @@ bool GameTree::mcts(int cycle) {
 }
 
 void GameTree::mcts(int batch, int minCount) {
-  Node* node;
-
   while (true) {
     if (!mcts(batch)) return;
 
