@@ -153,10 +153,11 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
 
 void HttpServer::sendResponse(const int client, HttpResponse* response) {
   // Send header.
-  send(client, response->getHeaderString().c_str(),
-       response->getHeaderLength(), 0);
-  // Send body.
-  send(client, response->getBody(), response->getBodyLength(), 0);
+  int wholeLen = response->getHeaderLength() + response->getBodyLength();
+  char buffer[wholeLen];
+
+  response->getWhole(buffer);
+  send(client, buffer, wholeLen, 0);
 
   // Wait for client's FIN signal.
   char *useless[10];

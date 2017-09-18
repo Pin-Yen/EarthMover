@@ -1,5 +1,6 @@
 #include "httpresponse.h"
 
+#include <cstring>
 
 HttpResponse::HttpResponse(int httpResponseCode) {
   state_ = STATE_RAW_;
@@ -166,6 +167,20 @@ int HttpResponse::getBodyLength() {
 
   return bodyLength_;
 }
+
+void HttpResponse::getWhole(char* container) {
+  if (state_ != STATE_COMPILED_)
+    throw HttpResponseException("Response not compiled yet",
+                                __LINE__, __FILE__);
+
+  // append header
+  memcpy(container, header_.c_str(), headerLength_);
+
+  // append body
+  container += headerLength_;
+  memcpy(container, getBody(), bodyLength_);
+}
+
 
 const char* HttpResponse::status2String(int statusCode) {
   switch (statusCode) {
