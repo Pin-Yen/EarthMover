@@ -17,15 +17,12 @@ class Player(object):
     self.whiteWinCount = 0
     self.sessionCookie = None
 
-    self.init()
-
-
   def init(self):
     """
     Request AI to set rule and level and initialize
     """
     conn = client.HTTPConnection('localhost', self.port)
-    conn.set_debuglevel(2)
+    conn.set_debuglevel(const.DEBUG_CONN)
     requestBody = {'level' : self.level, 'rule' : self.rule }
 
     if self.sessionCookie != None:
@@ -46,7 +43,7 @@ class Player(object):
     Post the previous move (row, col) to player.
     """
     conn = client.HTTPConnection('localhost', self.port)
-    conn.set_debuglevel(2)
+    conn.set_debuglevel(const.DEBUG_CONN)
 
     if row == None or col == None:
       return
@@ -79,7 +76,7 @@ class Player(object):
     returns row, col, status, where row, col is the player's decision, status is the game status.
     """
     conn = client.HTTPConnection('localhost', self.port)
-    conn.set_debuglevel(2)
+    conn.set_debuglevel(const.DEBUG_CONN)
     conn.request('POST', '/think', headers={'Cookie' : self.sessionCookie})
 
     response = conn.getresponse()

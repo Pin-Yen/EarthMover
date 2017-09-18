@@ -8,3 +8,7 @@ RULE_RENJU_BASIC = 1
 
 BLACK = 0
 WHITE = 1
+
+## debug marcos
+# debugConn: connection debug level, default to 0
+DEBUG_CONN = 0
