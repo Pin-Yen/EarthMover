@@ -8,7 +8,6 @@
 
 class AI {
  public:
-  // cycle: nubmer of MCTS cycles
   AI();
 
   ~AI();
@@ -45,9 +44,6 @@ class AI {
 
  private:
   GameTree *tree;
-
-  // this thread lets EM thinks in the background when it's the users turn
-  std::thread *backgroundThread;
 
   // The max mcts cycle to run in the background.
   static const int MAX_BACKGROUND_CYCLE_ = 100000;

@@ -47,6 +47,9 @@ class HttpResponse {
 
   int getBodyLength();
 
+  // puts the whole response (including body & head) into container.
+  void getWhole(char* container);
+
   int statusCode() {return statusCode_;}
 
   class HttpResponseException : std::exception {
