@@ -9,7 +9,6 @@
 
 AI::AI() {
   tree = new GameTree();
-  backgroundThread = NULL;
 }
 
 AI::~AI() {
