@@ -50,7 +50,9 @@ class Player(object):
 
     # pass
     elif row == -1 and col == -1:
-      conn.request('POST', '/pass', headers={'Cookie' : self.sessionCookie})
+      print("INFO: ", "enter /pass ", flush=True)
+      conn.request('POST', 'exit /pass', headers={'Cookie' : self.sessionCookie})
+      print("INFO:", "exit /pass ", flush=True)
 
     # play the point, make sure the previous move exists
     elif row >= 0 and col >= 0:
@@ -58,15 +60,24 @@ class Player(object):
       requestBody['row'] = row
       requestBody['col'] = col
       ## TODO: set cookie in header
+      print("INFO: ", "enter /play ", flush=True)
       conn.request('POST', '/play', body=json.dumps(requestBody), headers={'Cookie' : self.sessionCookie})
+      print("INFO: ", "exit /play ", flush=True)
     else:
       raise ValueError("(row, col) not valid")
 
 
     # Read the response (since python requires us to read the response before making another request),
     # though we don't need the response info.
-    conn.getresponse()
+    print("INFO: ", "before reading response", flush=True)
+    response = conn.getresponse()
+    print(response.read())
+    print("INFO: ", "after reading response")
+
+    print("INFO:", "before closing connection", flush=True)
     conn.close()
+    print("INFO:", "after closing connection", flush=True)
+
 
     return
 
@@ -77,12 +88,21 @@ class Player(object):
     """
     conn = client.HTTPConnection('localhost', self.port)
     conn.set_debuglevel(const.DEBUG_CONN)
-    conn.request('POST', '/think', headers={'Cookie' : self.sessionCookie})
 
+    print("INFO: ", "enter /think ", flush=True)
+
+    conn.request('POST', '/think', headers={'Cookie' : self.sessionCookie})
+    print("INFO: ", "exit /think ", flush=True)
+
+    print("INFO: ", "before reading response", flush=True)
     response = conn.getresponse()
     body = json.load(response)
+    print(response.read())
+    print("INFO: ", "after reading response")
 
+    print("INFO:", "before closing connection", flush=True)
     conn.close()
+    print("INFO:", "after closing connection", flush=True)
 
     return (body['row'], body['col'], body['winner'])
 
