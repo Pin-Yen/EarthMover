@@ -12,9 +12,9 @@ def main():
 
   # execute AIs
   process1 = subprocess.Popen(['./' + args['program1'], str(args['port1'])], cwd='../',\
-   bufsize=0, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+   bufsize=0)
   process2 = subprocess.Popen(['./' + args['program2'], str(args['port2'])], cwd='../',\
-   bufsize=0, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+   bufsize=0)
 
   time.sleep(3)
   # create player
