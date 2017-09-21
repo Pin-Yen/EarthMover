@@ -11,8 +11,10 @@ def main():
   args = parseArgs()
 
   # execute AIs
-  process1 = subprocess.Popen(['./' + args['program1'], str(args['port1'])], cwd='../', bufsize=0, stdout = subprocess.PIPE)
-  process2 = subprocess.Popen(['./' + args['program2'], str(args['port2'])], cwd='../', bufsize=0, stdout = subprocess.PIPE)
+  process1 = subprocess.Popen(['./' + args['program1'], str(args['port1'])], cwd='../',\
+   bufsize=0)
+  process2 = subprocess.Popen(['./' + args['program2'], str(args['port2'])], cwd='../',\
+   bufsize=0)
 
   time.sleep(3)
   # create player
@@ -47,8 +49,14 @@ def parseArgs():
   parser.add_argument('--rounds', required=True, type=int, help='Specifies the number of matches to play')
   parser.add_argument('--rule', default='renju_basic', choices=['freestyle', 'renju_basic'],\
    help='Specifies the rule, should be \'renju_basic\' or \'freestyle\'. Defaults to renju_basic')
+  parser.add_argument('--dconn', type=int, help="Set connection debug level")
 
-  return vars(parser.parse_args())
+  args = vars(parser.parse_args())
+
+  if (args['dconn']):
+    const.DEBUG_CONN = args['dconn']
+
+  return args
 
 def percent(numerator,denominator):
     """

@@ -17,15 +17,12 @@ class Player(object):
     self.whiteWinCount = 0
     self.sessionCookie = None
 
-    self.init()
-
-
   def init(self):
     """
     Request AI to set rule and level and initialize
     """
     conn = client.HTTPConnection('localhost', self.port)
-    conn.set_debuglevel(2)
+    conn.set_debuglevel(const.DEBUG_CONN)
     requestBody = {'level' : self.level, 'rule' : self.rule }
 
     if self.sessionCookie != None:
@@ -46,14 +43,16 @@ class Player(object):
     Post the previous move (row, col) to player.
     """
     conn = client.HTTPConnection('localhost', self.port)
-    conn.set_debuglevel(2)
+    conn.set_debuglevel(const.DEBUG_CONN)
 
     if row == None or col == None:
       return
 
     # pass
     elif row == -1 and col == -1:
-      conn.request('POST', '/pass', headers={'Cookie' : self.sessionCookie})
+      print("INFO: ", "enter /pass ", flush=True)
+      conn.request('POST', 'exit /pass', headers={'Cookie' : self.sessionCookie})
+      print("INFO:", "exit /pass ", flush=True)
 
     # play the point, make sure the previous move exists
     elif row >= 0 and col >= 0:
@@ -61,15 +60,24 @@ class Player(object):
       requestBody['row'] = row
       requestBody['col'] = col
       ## TODO: set cookie in header
+      print("INFO: ", "enter /play ", flush=True)
       conn.request('POST', '/play', body=json.dumps(requestBody), headers={'Cookie' : self.sessionCookie})
+      print("INFO: ", "exit /play ", flush=True)
     else:
       raise ValueError("(row, col) not valid")
 
 
     # Read the response (since python requires us to read the response before making another request),
     # though we don't need the response info.
-    conn.getresponse()
+    print("INFO: ", "before reading response", flush=True)
+    response = conn.getresponse()
+    print(response.read())
+    print("INFO: ", "after reading response")
+
+    print("INFO:", "before closing connection", flush=True)
     conn.close()
+    print("INFO:", "after closing connection", flush=True)
+
 
     return
 
@@ -79,13 +87,22 @@ class Player(object):
     returns row, col, status, where row, col is the player's decision, status is the game status.
     """
     conn = client.HTTPConnection('localhost', self.port)
-    conn.set_debuglevel(2)
-    conn.request('POST', '/think', headers={'Cookie' : self.sessionCookie})
+    conn.set_debuglevel(const.DEBUG_CONN)
 
+    print("INFO: ", "enter /think ", flush=True)
+
+    conn.request('POST', '/think', headers={'Cookie' : self.sessionCookie})
+    print("INFO: ", "exit /think ", flush=True)
+
+    print("INFO: ", "before reading response", flush=True)
     response = conn.getresponse()
     body = json.load(response)
+    print(response.read())
+    print("INFO: ", "after reading response")
 
+    print("INFO:", "before closing connection", flush=True)
     conn.close()
+    print("INFO:", "after closing connection", flush=True)
 
     return (body['row'], body['col'], body['winner'])
 

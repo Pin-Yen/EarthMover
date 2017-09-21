@@ -11,6 +11,7 @@ class Compare(object):
 
     # play self.rounds matches
     for round in range(self.rounds):
+      print('\nRound {} start'.format(round))
       if round % 2 == 0:
         self.match(self.player1, self.player2)
 
@@ -21,6 +22,8 @@ class Compare(object):
     """
     Plays a match.
     """
+    black.init()
+    white.init()
 
     previousPlayRow, previousPlayCol = (None, None)
     totalMoves = 0
@@ -28,7 +31,7 @@ class Compare(object):
     opponentPassed = False # records if the opponent passed on its previous move.
 
     while True:
-      if totalMoves % 2 == 1:
+      if totalMoves % 2 == 0:
         # black's turn
         black.play(previousPlayRow, previousPlayCol)
         previousPlayRow, previousPlayCol, whoWin = black.think()
@@ -51,12 +54,15 @@ class Compare(object):
       # If Game ends, record the result
       if whoWin != const.RESULT_NONE:
         if whoWin == const.RESULT_BLACK_WIN:
+          print('\n>>>>>>Black Wins in {} moves'.format(totalMoves))
           black.incrementWin(const.BLACK)
           white.incrementLose()
         elif whoWin == const.RESULT_WHITE_WIN:
+          print('\n>>>>>>White Wins in {} moves'.format(totalMoves))
           white.incrementWin(const.WHITE)
           black.incrementLose()
         elif whoWin == const.RESULT_TIE:
+          print('\n>>>>>>Tie in {} moves'.format(totalMoves))
           black.incrementTie()
           white.incrementTie()
 
