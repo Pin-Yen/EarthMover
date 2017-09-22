@@ -19,7 +19,9 @@ class GameTree::Node {
 
   // overload new and delete operator for memory pool
   static void *operator new(size_t) = delete;
-  static void operator delete(void *ptr) = delete;
+  static void operator delete(void*) = delete;
+  static void *operator new[](size_t) = delete;
+  static void operator delete[](void*) = delete;
 
   static void *operator new(size_t /*size*/, MemoryPool* pool) {
     return pool->allocate();

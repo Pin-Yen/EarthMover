@@ -70,7 +70,7 @@ void start() {
     timer.start();
     #endif
 
-    tree->mcts(10000);
+    tree->mcts(cycle);
     tree->mctsResult();
 
     #ifdef TIME
