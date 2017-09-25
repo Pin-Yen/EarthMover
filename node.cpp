@@ -92,7 +92,7 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
   double scoreSum = board->getScoreSum();
 
   // checked index
-  bool checked[225] = {0};
+  bool checked[board->length()] = {0};
 
   Node* node;
 
