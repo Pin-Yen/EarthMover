@@ -19,11 +19,16 @@
 
 using json = nlohmann::json;
 
-GameTree::GameTree() : root_(NULL), currentNode_(NULL), currentBoard_(NULL) {}
+GameTree::GameTree()
+    : root_(NULL),
+      currentNode_(NULL),
+      currentBoard_(NULL),
+      rave_(NULL) { }
 
 GameTree::~GameTree() {
   pool_.free();
   if (currentBoard_ != NULL) delete currentBoard_;
+  if (rave_ != NULL) delete rave_;
 }
 
 void GameTree::init(VirtualBoard* board) {
@@ -38,6 +43,8 @@ void GameTree::init(VirtualBoard* board) {
   if (currentBoard_ != NULL)
     delete currentBoard_;
   currentBoard_ = board->create();
+
+  rave_ = new RAVE[currentBoard_->length() * 2];
 }
 
 bool GameTree::mcts(int cycle) {
@@ -55,7 +62,9 @@ bool GameTree::mcts(int cycle) {
       status = simulation(board);
     }
 
-    backProp(node, status);
+    bool whoTurn = board->whoTurn();
+
+    backProp(node, status, whoTurn);
 
     delete board;
   }
@@ -233,7 +242,8 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::selection(
   Node* node = currentNode_;
 
   while (true) {
-    std::pair<SearchStatus, Node*> result = node->selection(board, &pool_);
+    std::pair<SearchStatus, Node*> result =
+        node->selection(board, rave_ + board->whoTurn() * board->length(), &pool_);
     if (result.first != UNKNOWN) return result;
     node = result.second;
   }
@@ -256,12 +266,14 @@ SearchStatus GameTree::simulation(VirtualBoard* board) const {
   return TIE;
 }
 
-void GameTree::backProp(Node* node, SearchStatus result) {
+void GameTree::backProp(Node* node, SearchStatus result, bool whoTurn) {
   while (node != currentNode_) {
     node->update(result);
+    rave_[whoTurn * node->index()]->update(result)
     node = node->parent();
     // reverse result (WIN <-> LOSE)
     result = static_cast<SearchStatus>(-static_cast<int>(result));
+    whoTurn = !whoTurn;
   }
   node->update(result);
 }
@@ -273,6 +285,12 @@ void GameTree::copy(const GameTree* source) {
   root_ = new(&pool_) Node(source->currentNode_->parent(), source->currentNode_);
   currentNode_ = root_;
   currentBoard_ = source->currentBoard_->clone();
+
+  rave_ = new RAVE[currentBoard_->length()];
+  for (int i = 0; i < currentBoard_->length() * 2; ++i) {
+    rave_[i] = source->rave_[i];
+  }
+
   copyAllChildren(source->currentNode_, currentNode_);
 }
 
@@ -287,6 +305,9 @@ void GameTree::copyAllChildren(const Node* srcNode, Node* destNode) {
 
 void GameTree::minusTree(GameTree* beMinusTree, const GameTree* minusTree) {
   beMinusTree->root_->minus(minusTree->root_);
+  for (int i = 0; i < currentBoard_->length() * 2; ++i) {
+    beMinusTree->rave_[i].minus(&(minusTree->rave_[i]));
+  }
   minusAllChildren(beMinusTree->root_, minusTree->root_);
 }
 
@@ -303,6 +324,9 @@ void GameTree::minusAllChildren(Node* beMinusNode, const Node* minusNode) {
 
 void GameTree::mergeTree(GameTree* tree) {
   currentNode_->merge(tree->root_);
+  for (int i = 0; i < currentBoard_->length() * 2; ++i) {
+    rave_[i].merge(&(tree->rave_[i]));
+  }
   mergeAllChildren(currentNode_, tree->root_);
 }
 

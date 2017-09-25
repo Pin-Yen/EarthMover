@@ -61,6 +61,36 @@ class GameTree {
  private:
   class Node;
 
+  class RAVE {
+   public:
+    RAVE() : count_(0), winLoseCount_(0) {}
+
+    void update(SearchStatus result) {
+      ++count_;
+      if (result == WIN) ++winLoseCount_;
+      if (result == LOSE) --winLoseCount_;
+    }
+
+    double winRate() const {
+      return (count_ + winLoseCount_) / (count_ * 2.0);
+    }
+
+    void minus(const RAVE* rave) {
+      count_ -= rave->count_;
+      winLoseCount_ -= rave->winLoseCount_;
+    }
+
+    void merge(const RAVE* rave) {
+      count_ += rave->count_;
+      winLoseCount_ += rave->winLoseCount_;
+    }
+
+   private:
+    int count_, winLoseCount_;
+  };
+
+  RAVE* rave_;
+
   // MCTS function.
   // Keep select the child node until reach a leaf or a winning node.
   // Return status and selectde node.
@@ -72,7 +102,7 @@ class GameTree {
 
   // MCTS function
   // Back propagation form leaf to current node.
-  void backProp(Node* node, SearchStatus result);
+  void backProp(Node* node, SearchStatus result, bool whoTurn);
 
   // Copy all children in 'srcNode' to 'destNode'.
   void copyAllChildren(const Node* srcNode, Node* destNode);

@@ -80,7 +80,7 @@ void GameTree::Node::deleteChildrenExcept(Node* exceptNode, MemoryPool* pool) {
 }
 
 std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
-  VirtualBoard* board, MemoryPool* pool) {
+  VirtualBoard* board, RAVE* rave, MemoryPool* pool) {
   if (winning()) return std::make_pair(LOSE, this);  // Parent lose.
   if (losing()) return std::make_pair(WIN, this);    // Parent Win.
 
@@ -90,6 +90,8 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
   bool childWinning = false;
 
   double scoreSum = board->getScoreSum();
+
+  double raveW = 2000.0 / (count_ + 2000), ucbW = 1 - raveW;
 
   // checked index
   bool checked[225] = {0};
@@ -113,7 +115,8 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
       return std::make_pair(UNKNOWN, child);
     }
 
-    double val = board->getScore(i) / scoreSum + getUCBValue(child);
+    double val = board->getScore(i) / scoreSum;
+    val += rave[i].winRate() * raveW + getUCBValue(child) * ucbW;
 
     if (val > max) {
       max = val;
@@ -124,7 +127,9 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
   int uncheckIndex = board->getHSI(checked);
 
   if (uncheckIndex != -1) {
-    double val = board->getScore(uncheckIndex) / scoreSum + getUCBValue(NULL);
+    //double val = board->getScore(uncheckIndex) / scoreSum + getUCBValue(NULL);
+    double val = board->getScore(uncheckIndex) / scoreSum;
+    val += rave[uncheckIndex].winRate() * raveW + getUCBValue(NULL) * ucbW;
 
     if (val > max) {
       GameStatus status = board->play(uncheckIndex);

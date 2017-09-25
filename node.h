@@ -38,7 +38,7 @@ class GameTree::Node {
   // Select child according to UCBValue and point's score.
   // Return selected node and status.
   std::pair<SearchStatus, GameTree::Node*> selection(
-      VirtualBoard* board, MemoryPool* pool);
+      VirtualBoard* board, RAVE* rave, MemoryPool* pool);
 
   // Update playout.
   void update(SearchStatus result) {
