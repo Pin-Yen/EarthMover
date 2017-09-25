@@ -72,7 +72,7 @@ class GameTree {
     }
 
     double winRate() const {
-      return (count_ + winLoseCount_) / (count_ * 2.0);
+      return count_ == 0 ? 0 : (count_ + winLoseCount_) / (count_ * 2.0);
     }
 
     void minus(const RAVE* rave) {

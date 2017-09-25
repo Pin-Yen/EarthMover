@@ -269,7 +269,7 @@ SearchStatus GameTree::simulation(VirtualBoard* board) const {
 void GameTree::backProp(Node* node, SearchStatus result, bool whoTurn) {
   while (node != currentNode_) {
     node->update(result);
-    rave_[whoTurn * node->index()]->update(result)
+    rave_[whoTurn * node->index()].update(result);
     node = node->parent();
     // reverse result (WIN <-> LOSE)
     result = static_cast<SearchStatus>(-static_cast<int>(result));
@@ -286,7 +286,7 @@ void GameTree::copy(const GameTree* source) {
   currentNode_ = root_;
   currentBoard_ = source->currentBoard_->clone();
 
-  rave_ = new RAVE[currentBoard_->length()];
+  rave_ = new RAVE[currentBoard_->length() * 2];
   for (int i = 0; i < currentBoard_->length() * 2; ++i) {
     rave_[i] = source->rave_[i];
   }
