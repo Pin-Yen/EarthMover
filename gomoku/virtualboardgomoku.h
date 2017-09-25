@@ -15,6 +15,8 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   ~VirtualBoardGomoku() override;
 
+  int length() final { return LENGTH; }
+
  protected:
   class Evaluator;
 
