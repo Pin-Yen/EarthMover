@@ -91,7 +91,7 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
 
   double scoreSum = board->getScoreSum();
 
-  double raveW = 2000.0 / (count_ + 2000), ucbW = 1 - raveW;
+  double raveW = 600.0 / (count_ + 600), ucbW = 1 - raveW;
 
   // checked index
   bool checked[board->length()] = {0};
