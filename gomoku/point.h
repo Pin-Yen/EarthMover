@@ -5,37 +5,21 @@
 #include "status.h"
 #include "virtualboardgomoku.h"
 
-#ifdef DEBUG
-#include "../objectcounter.h"
-#endif
-
 #include <cstddef>
 
 template <int StatusLength>
 class VirtualBoardGomoku<StatusLength>::Point {
  public:
-  Point() : status_(EMPTY) {
-    #ifdef DEBUG
-    ObjectCounter::registerPoint();
-    #endif
-  }
+  Point() : status_(EMPTY) {}
 
   Point(const Point& source)
       : status_(source.status_),
         score_(source.score_),
         absScore_{ source.absScore_[0], source.absScore_[1] },
         type_{ source.type_[0], source.type_[1],
-               source.type_[2], source.type_[3] } {
-    #ifdef DEBUG
-    ObjectCounter::registerPoint();
-    #endif
-  }
+               source.type_[2], source.type_[3] } {}
 
-  ~Point() {
-    #ifdef DEBUG
-    ObjectCounter::unregisterPoint();
-    #endif
-  }
+  ~Point() {}
 
   // Set the status pointer.
   // Note: to finish initialize this point,

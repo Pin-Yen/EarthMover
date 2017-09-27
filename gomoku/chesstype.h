@@ -3,41 +3,21 @@
 
 #include <stdint.h>
 
-#ifdef DEBUG
-#include "../objectcounter.h"
-#endif
-
 class SingleType {
  public:
   // default constructor
-  SingleType(): length_(0), life_(0), level_(0) {
-    #ifdef DEBUG
-    ObjectCounter::registerCT();
-    #endif
-  }
+  SingleType(): length_(0), life_(0), level_(0) {}
 
   SingleType(int8_t length, int8_t life, int8_t level)
       : length_(length),
         life_(life),
-        level_(level) {
-    #ifdef DEBUG
-    ObjectCounter::registerCT();
-    #endif
-  }
+        level_(level) {}
 
   // copy constructor
   SingleType(const SingleType& source)
       : length_(source.length_),
         life_(source.life_),
-        level_(source.level_) {
-    #ifdef DEBUG
-    ObjectCounter::registerCT();
-    #endif
-  }
-
-  #ifdef DEBUG
-  ~SingleType() { ObjectCounter::unregisterCT(); }
-  #endif
+        level_(source.level_) {}
 
   // getter
   int8_t length() const { return length_; }

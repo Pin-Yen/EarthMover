@@ -8,10 +8,6 @@
 #include "../evaluator.h"
 #include "typetreefreestyle.h"
 
-#ifdef DEBUG
-#include "../../objectcounter.h"
-#endif
-
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::
     TypeTreeFreeStyle::isInit = false;
 

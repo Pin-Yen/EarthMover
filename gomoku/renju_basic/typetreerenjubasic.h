@@ -3,10 +3,6 @@
 
 #include "../typetree.h"
 
-#ifdef DEBUG
-#include "../../objectcounter.h"
-#endif
-
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic :
     public VirtualBoardGomoku<10>::Evaluator::TypeTree<
     VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic> {

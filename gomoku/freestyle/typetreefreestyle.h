@@ -3,10 +3,6 @@
 
 #include "../typetree.h"
 
-#ifdef DEBUG
-#include "../../objectcounter.h"
-#endif
-
 class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle :
     public VirtualBoardGomoku<8>::Evaluator::TypeTree<
     VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle> {

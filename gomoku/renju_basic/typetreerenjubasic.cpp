@@ -6,10 +6,6 @@
 #include "evaluatorrenjubasic.h"
 #include "typetreerenjubasic.h"
 
-#ifdef DEBUG
-#include "../../objectcounter.h"
-#endif
-
 bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
     TypeTreeRenjuBasic::isInit = false;
 

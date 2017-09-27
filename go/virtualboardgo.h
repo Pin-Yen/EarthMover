@@ -17,14 +17,14 @@ class VirtualBoardGo : public VirtualBoard {
 
   int length() final { return LENGTH; }
 
+  GameStatus play(int index) final;
+
  private:
   static const int DIMEN = 19, LENGTH = 361;
 
   class Point;
 
   void init();
-
-  GameStatus play(int index) final;
 
   void undo(int index) final;
 

@@ -8,10 +8,6 @@
 #include "status.h"
 #include "virtualboardgomoku.h"
 
-#ifdef DEBUG
-#include "../objectcounter.h"
-#endif
-
 template <int StatusLength>
 template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
@@ -34,21 +30,15 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
     Node(): jump(false), leaf(false) {
       for (int i = 0; i < 4; ++i)
         childNode[i] = NULL;
-
-      #ifdef DEBUG
-      ObjectCounter::registerTypeTreeNode();
-      #endif
     }
 
     ~Node() {
-      for (int i = 0; i < 4; ++i)
+      for (int i = 0; i < 4; ++i) {
         if (childNode[i] != NULL) {
           delete childNode[i];
           childNode[i] = NULL;
         }
-      #ifdef DEBUG
-      ObjectCounter::unregisterTypeTreeNode();
-      #endif
+      }
     }
   };
 

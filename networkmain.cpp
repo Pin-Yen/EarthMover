@@ -1,7 +1,7 @@
+#include <cstdlib>
 #include <iostream>
 
 #include "server/httpserver.h"
-#include <cstdlib>
 
 int main(int argc, char** argv) {
   srand((unsigned)time(NULL));

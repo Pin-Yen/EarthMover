@@ -5,34 +5,15 @@
 #include <thread>
 
 #include "gametree.h"
-#include "virtualboard.h"
 
-#include "gomoku/chesstype.h"
 #include "gomoku/displayboard.h"
-#include "gomoku/point.h"
-#include "gomoku/status.h"
-#include "gomoku/virtualboardgomoku.h"
 #include "gomoku/freestyle/virtualboardfreestyle.h"
 #include "gomoku/renju_basic/virtualboardrenjubasic.h"
 #include "timer.h"
 
-#ifdef DEBUG
-#include "objectcounter.h"
-#endif
-
 void start();
 
 int main() {
-  #ifndef TIME
-  #ifndef DEBUG
-  srand((unsigned)time(NULL));
-  #endif
-  #endif
-
-  #ifdef DEBUG
-  ObjectCounter::printInfo();
-  #endif
-
   start();
 
   return 0;
@@ -65,31 +46,21 @@ void start() {
 
     std::cout << "AI searching..." << std::endl;
 
-    #ifdef TIME
     Timer timer;
     timer.start();
-    #endif
 
     tree->mcts(cycle);
     tree->mctsResult();
 
-    #ifdef TIME
     timer.stop();
     timer.print();
-    #endif
 
-    #ifdef DEBUG
-    ObjectCounter::printInfo();
-    #endif
-
-    #ifndef ANALYZE
     bool continueThinking = true;
     bool* controler = &continueThinking;
 
     std::thread backgroundThread([tree](int maxCycle, bool* controler)
                                  { tree->mcts(maxCycle, controler); },
                                  100000, controler);
-    #endif
 
     bool validInput = false;
 
@@ -105,10 +76,8 @@ void start() {
         std::cout << "Invalid move\n";
     }
 
-    #ifndef ANALYZE
     continueThinking = false;
     backgroundThread.join();
-    #endif
 
     // update tree and handle result
     int winning = tree->play(row * 15 + col);

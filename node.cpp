@@ -9,10 +9,6 @@
 #include "gomoku/status.h"
 #include "virtualboard.h"
 
-#ifdef DEBUG
-#include "objectcounter.h"
-#endif
-
 GameTree::Node::Node()
     : index_(-1),
       parent_(NULL),

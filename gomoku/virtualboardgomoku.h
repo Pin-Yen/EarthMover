@@ -13,7 +13,7 @@ class VirtualBoardGomoku : public VirtualBoard {
   // copy constructor
   VirtualBoardGomoku(const VirtualBoardGomoku& source);
 
-  ~VirtualBoardGomoku() override;
+  ~VirtualBoardGomoku() override {};
 
   int length() final { return LENGTH; }
 
@@ -69,10 +69,6 @@ class VirtualBoardGomoku : public VirtualBoard {
 #include "evaluator.h"
 #include "point.h"
 
-#ifdef DEBUG
-#include "../objectcounter.h"
-#endif
-
 template <int StatusLength>
 VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(
     const VirtualBoardGomoku<StatusLength>& source) {
@@ -109,10 +105,6 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(
         }
 
   playNo_ = source.playNo_;
-
-  #ifdef DEBUG
-  ObjectCounter::registerVB();
-  #endif
 }
 
 template <int StatusLength>
@@ -161,16 +153,6 @@ void VirtualBoardGomoku<StatusLength>::init() {
   }
   Eva::evaluateRelativeScore(point_, playNo_);
 
-  #ifdef DEBUG
-  ObjectCounter::registerVB();
-  #endif
-}
-
-template <int StatusLength>
-VirtualBoardGomoku<StatusLength>::~VirtualBoardGomoku() {
-  #ifdef DEBUG
-  ObjectCounter::unregisterVB();
-  #endif
 }
 
 template <int StatusLength>
