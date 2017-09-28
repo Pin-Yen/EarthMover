@@ -12,33 +12,15 @@ class VirtualBoardFreeStyle final : public VirtualBoardGomoku<8> {
  private:
   class EvaluatorFreeStyle;
 
-  inline VirtualBoardFreeStyle* create() final;
+  VirtualBoardFreeStyle* create() final;
 
   VirtualBoardFreeStyle* clone() final {
     return new VirtualBoardFreeStyle(*this);
   }
 
-  inline GameStatus play(int index) final;
+  GameStatus play(int index) final;
 
-  inline void undo(int index) final;
+  void undo(int index) final;
 };
-
-#include "evaluatorfreestyle.h"
-
-VirtualBoardFreeStyle* VirtualBoardFreeStyle::create() {
-  EvaluatorFreeStyle::init();
-  VirtualBoardFreeStyle* temp = new VirtualBoardFreeStyle();
-  temp->init<VirtualBoardFreeStyle::EvaluatorFreeStyle>();
-  return temp;
-}
-
-GameStatus VirtualBoardFreeStyle::play(int index) {
-  return VirtualBoardGomoku::
-      play<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
-}
-
-void VirtualBoardFreeStyle::undo(int index) {
-  VirtualBoardGomoku::undo<VirtualBoardFreeStyle::EvaluatorFreeStyle>(index);
-}
 
 #endif  // GOMOKU_FREESTYLE_VIRTUALBOARDFREESTYLE_H_

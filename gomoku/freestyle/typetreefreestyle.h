@@ -1,6 +1,8 @@
 #ifndef GOMOKU_FREESTYLE_TYPETREEFREESTYLE_H_
 #define GOMOKU_FREESTYLE_TYPETREEFREESTYLE_H_
 
+#include "evaluatorfreestyle.h"
+#include "virtualboardfreestyle.h"
 #include "../typetree.h"
 
 class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle :

@@ -1,6 +1,8 @@
 #ifndef GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_
 #define GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_
 
+#include "evaluatorrenjubasic.h"
+#include "virtualboardrenjubasic.h"
 #include "../typetree.h"
 
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic :

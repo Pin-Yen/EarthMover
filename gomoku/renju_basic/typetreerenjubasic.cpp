@@ -1,9 +1,3 @@
-#include <iostream>
-
-#include "../chesstype.h"
-#include "../status.h"
-#include "virtualboardrenjubasic.h"
-#include "evaluatorrenjubasic.h"
 #include "typetreerenjubasic.h"
 
 bool VirtualBoardRenjuBasic::EvaluatorRenjuBasic::

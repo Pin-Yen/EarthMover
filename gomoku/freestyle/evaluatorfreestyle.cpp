@@ -1,13 +1,17 @@
-#include "../chesstype.h"
-#include "../status.h"
-#include "../../virtualboard.h"
-#include "../virtualboardgomoku.h"
-#include "virtualboardfreestyle.h"
-#include "../point.h"
-#include "../evaluator.h"
 #include "evaluatorfreestyle.h"
+
 #include "typetreefreestyle.h"
-#include "../openingtree.h"
+#include "virtualboardfreestyle.h"
+
+void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
+  OpeningTree::init();
+  TypeTreeFreeStyle::init();
+}
+
+ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(
+    const STATUS *status) {
+  return TypeTreeFreeStyle::classify(status);
+}
 
 // score[0]:black's total score,[1]:white's
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateScore(

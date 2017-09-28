@@ -1,11 +1,3 @@
-#include <iostream>
-
-#include "../chesstype.h"
-#include "../status.h"
-#include "../../virtualboard.h"
-#include "../virtualboardgomoku.h"
-#include "virtualboardfreestyle.h"
-#include "../evaluator.h"
 #include "typetreefreestyle.h"
 
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::
