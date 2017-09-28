@@ -1,9 +1,18 @@
-#include "../chesstype.h"
-#include "../status.h"
-#include "virtualboardrenjubasic.h"
-#include "../point.h"
 #include "evaluatorrenjubasic.h"
+
 #include "typetreerenjubasic.h"
+#include "virtualboardrenjubasic.h"
+#include "../openingtree.h"
+
+void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
+  OpeningTree::init();
+  TypeTreeRenjuBasic::init();
+}
+
+ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(
+    const StoneStatus *status) {
+  return TypeTreeRenjuBasic::classify(status);
+}
 
 // score[0]:black's total score,[1]:white's
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateScore(

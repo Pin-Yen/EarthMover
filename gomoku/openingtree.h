@@ -47,7 +47,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree {
   static bool isInit_;
 };
 
-#include "status.h"
 #include "../virtualboard.h"
 #include "virtualboardgomoku.h"
 #include "point.h"
@@ -208,7 +207,7 @@ int VirtualBoardGomoku<StatusLength>::Evaluator::OpeningTree::classify(
     int curIndex = curR * DIMEN + curC;
     if (point[curIndex].status() == BLACK ||
         point[curIndex].status() == WHITE) {
-      STATUS color = point[curIndex].status();
+      StoneStatus color = point[curIndex].status();
       if (currentNode->childNode[oriR - curR][oriC - curC][color] == NULL)
         return -1;
 

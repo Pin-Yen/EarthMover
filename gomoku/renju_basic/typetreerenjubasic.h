@@ -1,11 +1,9 @@
 #ifndef GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_
 #define GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_
 
+#include "evaluatorrenjubasic.h"
+#include "virtualboardrenjubasic.h"
 #include "../typetree.h"
-
-#ifdef DEBUG
-#include "../../objectcounter.h"
-#endif
 
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic :
     public VirtualBoardGomoku<10>::Evaluator::TypeTree<
@@ -26,12 +24,12 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic :
   // Depth First Search, given a root and status seed. Grows the tree.
   // parameters of the initial call should be:
   // currentLocation: length/2, move = -1
-  static void dfs(Node *node, STATUS *status, int location, int move,
+  static void dfs(Node *node, StoneStatus *status, int location, int move,
                   int blackConnect, int whiteConnect,
                   bool blackBlock, bool whiteBlock);
 
   // analyze chesstype, only call by dfs
-  static SingleType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
+  static SingleType typeAnalyze(StoneStatus *status, StoneStatus color, bool checkLevel);
 };
 
 #endif  // GOMOKU_RENJU_BASIC_TYPETREERENJUBASIC_H_

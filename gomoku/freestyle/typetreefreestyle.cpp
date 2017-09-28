@@ -1,16 +1,4 @@
-#include <iostream>
-
-#include "../chesstype.h"
-#include "../status.h"
-#include "../../virtualboard.h"
-#include "../virtualboardgomoku.h"
-#include "virtualboardfreestyle.h"
-#include "../evaluator.h"
 #include "typetreefreestyle.h"
-
-#ifdef DEBUG
-#include "../../objectcounter.h"
-#endif
 
 bool VirtualBoardFreeStyle::EvaluatorFreeStyle::
     TypeTreeFreeStyle::isInit = false;
@@ -22,7 +10,7 @@ VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::Node*
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::
     TypeTreeFreeStyle::plantTree() {
   // create tree seed
-  STATUS status[ANALYZE_LENGTH];
+  StoneStatus status[ANALYZE_LENGTH];
   for (int i = 0; i < ANALYZE_LENGTH; ++i)
     status[i] = EMPTY;
 
@@ -35,7 +23,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::
 // parameters of the initial call should be:
 // location: length / 2, move = -1, connect = 0
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(
-    Node *node, STATUS *status, int location,
+    Node *node, StoneStatus *status, int location,
     int move, bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true
   switch (status[location]) {
@@ -74,7 +62,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(
   // move location
   location += move;
 
-  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
+  const StoneStatus s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
     node->childNode[i] = new Node();
@@ -90,7 +78,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle::dfs(
 }
 
 SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::
-    TypeTreeFreeStyle::typeAnalyze(STATUS *status, STATUS color,
+    TypeTreeFreeStyle::typeAnalyze(StoneStatus *status, StoneStatus color,
                                    bool checkLevel) {
   int connect = 1;
   // check the length of the connection around the analize point
@@ -133,7 +121,7 @@ SingleType VirtualBoardFreeStyle::EvaluatorFreeStyle::
           // if the bound is an empty point
           if (status[checkPoint] == EMPTY) {
             // make a new status array
-            STATUS newStatus[ANALYZE_LENGTH];
+            StoneStatus newStatus[ANALYZE_LENGTH];
 
             // transform from origin status
             for (int i = 0; i < ANALYZE_LENGTH; ++i) {

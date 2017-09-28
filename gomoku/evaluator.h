@@ -18,10 +18,6 @@ class VirtualBoardGomoku<StatusLength>::Evaluator {
   class OpeningTree;
 };
 
-#include "chesstype.h"
-#include "status.h"
-#include "openingtree.h"
-
 template <int StatusLength>
 void VirtualBoardGomoku<StatusLength>::Evaluator::evaluateRelativeScore(
     VirtualBoardGomoku<StatusLength>::Point point[LENGTH], int playNo) {

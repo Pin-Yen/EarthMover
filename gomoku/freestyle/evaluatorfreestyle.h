@@ -2,12 +2,13 @@
 #define GOMOKU_FREESTYLE_EVALUATORFREESTYLE_H_
 
 #include "../evaluator.h"
-#include "../typetree.h"
+#include "../openingtree.h"
+#include "virtualboardfreestyle.h"
 
 class VirtualBoardFreeStyle::EvaluatorFreeStyle :
     public VirtualBoardGomoku::Evaluator {
  public:
-  static inline void init();
+  static void init();
 
   // check win lor lose (call by virtualboard::play)
   // -1 for lose, 0 for nothng, 1 for win
@@ -17,7 +18,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle :
 
   // inputs status array in *status.
   // analyzes both player's chesstype, and return it
-  static inline ChessType evaluateType(const STATUS *status);
+  static ChessType evaluateType(const StoneStatus *status);
 
   // inputs an array of ChessTypes,
   // returns black's score in score[0], white's in score[1]
@@ -26,17 +27,5 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle :
  private:
   class TypeTreeFreeStyle;
 };
-
-#include "typetreefreestyle.h"
-
-void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
-  OpeningTree::init();
-  TypeTreeFreeStyle::init();
-}
-
-ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(
-    const STATUS *status) {
-  return TypeTreeFreeStyle::classify(status);
-}
 
 #endif  // GOMOKU_FREESTYLE_EVALUATORFREESTYLE_H_

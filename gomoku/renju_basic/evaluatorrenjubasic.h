@@ -1,10 +1,14 @@
 #ifndef GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_
 #define GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_
 
+#include "../evaluator.h"
+#include "../openingtree.h"
+#include "virtualboardrenjubasic.h"
+
 class VirtualBoardRenjuBasic::EvaluatorRenjuBasic :
     public VirtualBoardGomoku::Evaluator {
  public:
-  static inline void init();
+  static void init();
 
   // check win lor lose (call by virtualboard::play)
   // -1 for lose, 0 for nothng, 1 for win
@@ -16,7 +20,7 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic :
 
   // inputs status array in *status.
   // analyzes both player's chesstype, and return it
-  static inline ChessType evaluateType(const STATUS *status);
+  static ChessType evaluateType(const StoneStatus *status);
 
   // inputs an array of ChessTypes in type[4],
   // returns black's score in score[0], white's in score[1]
@@ -25,17 +29,5 @@ class VirtualBoardRenjuBasic::EvaluatorRenjuBasic :
  private:
   class TypeTreeRenjuBasic;
 };
-
-#include "typetreerenjubasic.h"
-
-void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
-  OpeningTree::init();
-  TypeTreeRenjuBasic::init();
-}
-
-ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(
-    const STATUS *status) {
-  return TypeTreeRenjuBasic::classify(status);
-}
 
 #endif  // GOMOKU_RENJU_BASIC_EVALUATORRENJUBASIC_H_

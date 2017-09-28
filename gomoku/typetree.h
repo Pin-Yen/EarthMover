@@ -5,19 +5,14 @@
 #include <iostream>
 
 #include "chesstype.h"
-#include "status.h"
 #include "virtualboardgomoku.h"
-
-#ifdef DEBUG
-#include "../objectcounter.h"
-#endif
 
 template <int StatusLength>
 template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
  public:
   // Given a status array, classify its chesstype and return it
-  static ChessType classify(const STATUS *status);
+  static ChessType classify(const StoneStatus *status);
 
   static void init();
 
@@ -34,21 +29,15 @@ class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
     Node(): jump(false), leaf(false) {
       for (int i = 0; i < 4; ++i)
         childNode[i] = NULL;
-
-      #ifdef DEBUG
-      ObjectCounter::registerTypeTreeNode();
-      #endif
     }
 
     ~Node() {
-      for (int i = 0; i < 4; ++i)
+      for (int i = 0; i < 4; ++i) {
         if (childNode[i] != NULL) {
           delete childNode[i];
           childNode[i] = NULL;
         }
-      #ifdef DEBUG
-      ObjectCounter::unregisterTypeTreeNode();
-      #endif
+      }
     }
   };
 
@@ -77,7 +66,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::
 template <int StatusLength>
 template <class DerivedTypeTree>
 ChessType VirtualBoardGomoku<StatusLength>::Evaluator::
-    TypeTree<DerivedTypeTree>::classify(const STATUS *status) {
+    TypeTree<DerivedTypeTree>::classify(const StoneStatus *status) {
   Node* node = DerivedTypeTree::root;
 
   for (int move = -1, start = StatusLength / 2 - 1; ; move = 1, ++start)
