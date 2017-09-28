@@ -2,6 +2,7 @@
 
 #include "typetreefreestyle.h"
 #include "virtualboardfreestyle.h"
+#include "../openingtree.h"
 
 void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
   OpeningTree::init();
@@ -9,7 +10,7 @@ void VirtualBoardFreeStyle::EvaluatorFreeStyle::init() {
 }
 
 ChessType VirtualBoardFreeStyle::EvaluatorFreeStyle::evaluateType(
-    const STATUS *status) {
+    const StoneStatus *status) {
   return TypeTreeFreeStyle::classify(status);
 }
 

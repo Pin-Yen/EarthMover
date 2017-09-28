@@ -24,11 +24,11 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle::TypeTreeFreeStyle :
   // Depth First Search, given a root and status seed. Grows the tree.
   // parameters of the initial call should be:
   // currentLocation: length/2, move = -1
-  static void dfs(Node *node, STATUS *status, int location, int move,
+  static void dfs(Node *node, StoneStatus *status, int location, int move,
                   bool blackBlock, bool whiteBlock);
 
   // analyze chesstype, only call by dfs
-  static SingleType typeAnalyze(STATUS *status, STATUS color, bool checkLevel);
+  static SingleType typeAnalyze(StoneStatus *status, StoneStatus color, bool checkLevel);
 };
 
 #endif  // GOMOKU_FREESTYLE_TYPETREEFREESTYLE_H_

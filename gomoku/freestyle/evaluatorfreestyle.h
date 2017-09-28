@@ -18,7 +18,7 @@ class VirtualBoardFreeStyle::EvaluatorFreeStyle :
 
   // inputs status array in *status.
   // analyzes both player's chesstype, and return it
-  static ChessType evaluateType(const STATUS *status);
+  static ChessType evaluateType(const StoneStatus *status);
 
   // inputs an array of ChessTypes,
   // returns black's score in score[0], white's in score[1]

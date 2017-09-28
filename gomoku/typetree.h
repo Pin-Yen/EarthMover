@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "chesstype.h"
-#include "status.h"
 #include "virtualboardgomoku.h"
 
 template <int StatusLength>
@@ -13,7 +12,7 @@ template <class DerivedTypeTree>
 class VirtualBoardGomoku<StatusLength>::Evaluator::TypeTree {
  public:
   // Given a status array, classify its chesstype and return it
-  static ChessType classify(const STATUS *status);
+  static ChessType classify(const StoneStatus *status);
 
   static void init();
 
@@ -67,7 +66,7 @@ void VirtualBoardGomoku<StatusLength>::Evaluator::
 template <int StatusLength>
 template <class DerivedTypeTree>
 ChessType VirtualBoardGomoku<StatusLength>::Evaluator::
-    TypeTree<DerivedTypeTree>::classify(const STATUS *status) {
+    TypeTree<DerivedTypeTree>::classify(const StoneStatus *status) {
   Node* node = DerivedTypeTree::root;
 
   for (int move = -1, start = StatusLength / 2 - 1; ; move = 1, ++start)

@@ -10,7 +10,7 @@ VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::Node*
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
     TypeTreeRenjuBasic::plantTree() {
   // create tree seed
-  STATUS status[ANALYZE_LENGTH];
+  StoneStatus status[ANALYZE_LENGTH];
   for (int i = 0; i < ANALYZE_LENGTH; ++i)
     status[i] = EMPTY;
 
@@ -26,7 +26,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
 // for example : OOOOO*OOX-- ; --X  *OOOOO
 //               ^^^^^               ^^^^^
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(
-    Node *node, STATUS *status, int location, int move,
+    Node *node, StoneStatus *status, int location, int move,
     int blackConnect, int whiteConnect, bool blackBlock, bool whiteBlock) {
   // if status == black or white, set block == true*/
   switch (status[location]) {
@@ -76,7 +76,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(
   // move location
   location += move;
 
-  const STATUS s[4] = {BLACK, WHITE, EMPTY, BOUND};
+  const StoneStatus s[4] = {BLACK, WHITE, EMPTY, BOUND};
 
   for (int i = 0; i < 4; ++i) {
     // if connect == 4,
@@ -98,7 +98,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::TypeTreeRenjuBasic::dfs(
 }
 
 SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
-    TypeTreeRenjuBasic::typeAnalyze(STATUS *status, STATUS color,
+    TypeTreeRenjuBasic::typeAnalyze(StoneStatus *status, StoneStatus color,
                                     bool checkLevel) {
   int connect = 1;
   // check the length of the connection around the analize point
@@ -148,7 +148,7 @@ SingleType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::
           // if the bound is an empty point
           if (status[checkPoint] == EMPTY) {
             // make a new status array
-            STATUS newStatus[ANALYZE_LENGTH];
+            StoneStatus newStatus[ANALYZE_LENGTH];
 
             // transform from origin status
             for (int i = 0; i < ANALYZE_LENGTH; ++i) {

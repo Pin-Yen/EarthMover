@@ -65,8 +65,6 @@ class VirtualBoardGomoku : public VirtualBoard {
 };
 
 #include "chesstype.h"
-#include "status.h"
-#include "evaluator.h"
 #include "point.h"
 
 template <int StatusLength>
@@ -144,7 +142,7 @@ void VirtualBoardGomoku<StatusLength>::init() {
   for (int i = 0; i < LENGTH; ++i) {
     for (int d = 0; d < 4; ++d) {
         // get status array
-      STATUS status[StatusLength];
+      StoneStatus status[StatusLength];
       point_[i].getDirStatus(d, status);
 
       point_[i].type(d) = Eva::evaluateType(status);
@@ -229,7 +227,7 @@ GameStatus VirtualBoardGomoku<StatusLength>::play(int index) {
 
   ++playNo_;
 
-  STATUS color = ((playNo_ & 1) ? BLACK : WHITE);
+  StoneStatus color = ((playNo_ & 1) ? BLACK : WHITE);
 
   point_[index].setStatus(color);
 
@@ -264,7 +262,7 @@ GameStatus VirtualBoardGomoku<StatusLength>::play(int index) {
         }
 
         // get status array
-        STATUS status[StatusLength];
+        StoneStatus status[StatusLength];
         point_[checkIndex].getDirStatus(d, status);
 
         point_[checkIndex].type(d) = Eva::evaluateType(status);
@@ -291,7 +289,7 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
 
   for (int d = 0; d < 4; ++d) {
     // get status array
-    STATUS status[StatusLength];
+    StoneStatus status[StatusLength];
     point_[index].getDirStatus(d, status);
 
     point_[index].type(d) = Eva::evaluateType(status);
@@ -327,7 +325,7 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
         }
 
         // get status array
-        STATUS status[StatusLength];
+        StoneStatus status[StatusLength];
         point_[checkIndex].getDirStatus(d, status);
 
         point_[checkIndex].type(d) = Eva::evaluateType(status);

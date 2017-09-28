@@ -11,7 +11,6 @@
 
 #include "const.h"
 #include "gomoku/chesstype.h"
-#include "gomoku/status.h"
 #include "lib/json.h"
 #include "memorypool.h"
 #include "node.h"

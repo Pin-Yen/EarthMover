@@ -2,6 +2,7 @@
 
 #include "typetreerenjubasic.h"
 #include "virtualboardrenjubasic.h"
+#include "../openingtree.h"
 
 void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
   OpeningTree::init();
@@ -9,7 +10,7 @@ void VirtualBoardRenjuBasic::EvaluatorRenjuBasic::init() {
 }
 
 ChessType VirtualBoardRenjuBasic::EvaluatorRenjuBasic::evaluateType(
-    const STATUS *status) {
+    const StoneStatus *status) {
   return TypeTreeRenjuBasic::classify(status);
 }
 

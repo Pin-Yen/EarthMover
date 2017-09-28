@@ -6,7 +6,6 @@
 #include "const.h"
 #include "gametree.h"
 #include "gomoku/chesstype.h"
-#include "gomoku/status.h"
 #include "virtualboard.h"
 
 GameTree::Node::Node()

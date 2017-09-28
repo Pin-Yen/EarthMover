@@ -46,12 +46,9 @@ obj/ai.o: ai.cpp \
  const.h \
  gametree.h \
  gomoku/chesstype.h \
- gomoku/evaluator.h \
  gomoku/freestyle/virtualboardfreestyle.h \
- gomoku/openingtree.h \
  gomoku/point.h \
  gomoku/renju_basic/virtualboardrenjubasic.h \
- gomoku/status.h \
  gomoku/virtualboardgomoku.h \
  lib/json.h \
  memorypool.h \
@@ -62,7 +59,6 @@ obj/gametree.o: gametree.cpp \
  const.h \
  gametree.h \
  gomoku/chesstype.h \
- gomoku/status.h \
  lib/json.h \
  memorypool.h \
  node.h \
@@ -82,7 +78,6 @@ obj/gomokufreestyleevaluatorfreestyle.o: gomoku/freestyle/evaluatorfreestyle.cpp
  gomoku/freestyle/virtualboardfreestyle.h \
  gomoku/openingtree.h \
  gomoku/point.h \
- gomoku/status.h \
  gomoku/typetree.h \
  gomoku/virtualboardgomoku.h \
  virtualboard.h
@@ -97,7 +92,6 @@ obj/gomokufreestyletypetreefreestyle.o: gomoku/freestyle/typetreefreestyle.cpp \
  gomoku/freestyle/virtualboardfreestyle.h \
  gomoku/openingtree.h \
  gomoku/point.h \
- gomoku/status.h \
  gomoku/typetree.h \
  gomoku/virtualboardgomoku.h \
  virtualboard.h
@@ -111,7 +105,6 @@ obj/gomokufreestylevirtualboardfreestyle.o: gomoku/freestyle/virtualboardfreesty
  gomoku/freestyle/virtualboardfreestyle.h \
  gomoku/openingtree.h \
  gomoku/point.h \
- gomoku/status.h \
  gomoku/virtualboardgomoku.h \
  virtualboard.h
 	g++ -c $(GENERAL_FLAG) $(OPT_FLAG) $< -o $@
@@ -125,7 +118,6 @@ obj/gomokurenju_basicevaluatorrenjubasic.o: gomoku/renju_basic/evaluatorrenjubas
  gomoku/renju_basic/evaluatorrenjubasic.h \
  gomoku/renju_basic/typetreerenjubasic.h \
  gomoku/renju_basic/virtualboardrenjubasic.h \
- gomoku/status.h \
  gomoku/typetree.h \
  gomoku/virtualboardgomoku.h \
  virtualboard.h
@@ -140,7 +132,6 @@ obj/gomokurenju_basictypetreerenjubasic.o: gomoku/renju_basic/typetreerenjubasic
  gomoku/renju_basic/evaluatorrenjubasic.h \
  gomoku/renju_basic/typetreerenjubasic.h \
  gomoku/renju_basic/virtualboardrenjubasic.h \
- gomoku/status.h \
  gomoku/typetree.h \
  gomoku/virtualboardgomoku.h \
  virtualboard.h
@@ -154,7 +145,6 @@ obj/gomokurenju_basicvirtualboardrenjubasic.o: gomoku/renju_basic/virtualboardre
  gomoku/point.h \
  gomoku/renju_basic/evaluatorrenjubasic.h \
  gomoku/renju_basic/virtualboardrenjubasic.h \
- gomoku/status.h \
  gomoku/virtualboardgomoku.h \
  virtualboard.h
 	g++ -c $(GENERAL_FLAG) $(OPT_FLAG) $< -o $@
@@ -164,12 +154,9 @@ obj/main.o: main.cpp \
  gametree.h \
  gomoku/chesstype.h \
  gomoku/displayboard.h \
- gomoku/evaluator.h \
  gomoku/freestyle/virtualboardfreestyle.h \
- gomoku/openingtree.h \
  gomoku/point.h \
  gomoku/renju_basic/virtualboardrenjubasic.h \
- gomoku/status.h \
  gomoku/virtualboardgomoku.h \
  lib/json.h \
  memorypool.h \
@@ -197,7 +184,6 @@ obj/node.o: node.cpp \
  const.h \
  gametree.h \
  gomoku/chesstype.h \
- gomoku/status.h \
  lib/json.h \
  memorypool.h \
  node.h \

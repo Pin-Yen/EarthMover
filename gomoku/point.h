@@ -2,7 +2,6 @@
 #define GOMOKU_POINT_H_
 
 #include "chesstype.h"
-#include "status.h"
 #include "virtualboardgomoku.h"
 
 #include <cstddef>
@@ -24,19 +23,19 @@ class VirtualBoardGomoku<StatusLength>::Point {
   // Set the status pointer.
   // Note: to finish initialize this point,
   // shound call this to write all status pointer
-  void setDirStatus(int dir, int index, const STATUS* status) {
+  void setDirStatus(int dir, int index, const StoneStatus* status) {
     dirStatus_[dir][index] = status;
   }
 
   // get the status by diraction, copy the pointer's value to dest
-  void getDirStatus(int dir, STATUS* dest) const {
+  void getDirStatus(int dir, StoneStatus* dest) const {
     for (int i = 0; i < StatusLength; ++i)
       dest[i] = (dirStatus_[dir][i] == NULL ? BOUND : *(dirStatus_[dir][i]));
   }
 
-  void setStatus(STATUS status) { status_ = status; }
-  STATUS status() const { return status_; }
-  const STATUS* statusRef() { return &status_; }
+  void setStatus(StoneStatus status) { status_ = status; }
+  StoneStatus status() const { return status_; }
+  const StoneStatus* statusRef() { return &status_; }
 
   int* absScore() { return absScore_; }
   int absScore(bool color) const { return absScore_[color]; }
@@ -57,12 +56,12 @@ class VirtualBoardGomoku<StatusLength>::Point {
   // index: 0→ 1↓ 2↗ 3↘
   ChessType type_[4];
 
-  // STATUS array pointer, this will point at other point's Status color
+  // StoneStatus array pointer, this will point at other point's Status color
   // index: 0→ 1↓ 2↗ 3↘
-  const STATUS* dirStatus_[4][StatusLength];
+  const StoneStatus* dirStatus_[4][StatusLength];
 
-  // point's status, the target of the other point's STATUS array pointer
-  STATUS status_;
+  // point's status, the target of the other point's StoneStatus array pointer
+  StoneStatus status_;
 
   int absScore_[2];
   int score_;
