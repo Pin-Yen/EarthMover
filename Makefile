@@ -58,7 +58,6 @@ obj/ai.o: ai.cpp \
 obj/gametree.o: gametree.cpp \
  const.h \
  gametree.h \
- gomoku/chesstype.h \
  lib/json.h \
  memorypool.h \
  node.h \

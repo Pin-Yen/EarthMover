@@ -1,11 +1,10 @@
 #include <assert.h>
+
 #include <iostream>
 #include <string>
-#include <cstdlib>
 #include <thread>
 
 #include "gametree.h"
-
 #include "gomoku/displayboard.h"
 #include "gomoku/freestyle/virtualboardfreestyle.h"
 #include "gomoku/renju_basic/virtualboardrenjubasic.h"

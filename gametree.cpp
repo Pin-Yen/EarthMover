@@ -6,11 +6,8 @@
 #include <iomanip>
 #include <iostream>
 #include <thread>
-#include <tuple>
-#include <vector>
 
 #include "const.h"
-#include "gomoku/chesstype.h"
 #include "lib/json.h"
 #include "memorypool.h"
 #include "node.h"
