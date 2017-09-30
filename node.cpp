@@ -197,8 +197,8 @@ double GameTree::Node::getUCBValue(const Node* node) const {
 
   if (node != NULL) {
     return (node->winRate() +
-            sqrt(log(count_) / (1 + node->count_)));
+            sqrt(0.5 * log(count_) / (1 + node->count_)));
   } else {
-    return sqrt(log(count_));
+    return sqrt(0.5 * log(count_));
   }
 }

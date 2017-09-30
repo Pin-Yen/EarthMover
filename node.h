@@ -56,7 +56,9 @@ class GameTree::Node {
   // Get win rate.
   // NOTE: The win rate is for the upper layer(parent node).
   double winRate() const {
-  return ((score_ / count_) / 225.0 + 1) / 2.0;/*(count_ + winLoseCount_) / (count_ * 2.0);*/ }
+    return count_ == 0 ? 0.5 : ((score_ / count_) / 225.0 + 1) / 2.0;
+    /*(count_ + winLoseCount_) / (count_ * 2.0);*/
+  }
 
   // Delete all children (or except for the 'exceptNode').
   void deleteChildren(MemoryPool* pool);
