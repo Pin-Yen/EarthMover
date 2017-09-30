@@ -38,7 +38,7 @@ class VirtualBoard {
   // remove chess at "index"
   virtual void undo(int index) = 0;
 
-  virtual int length() = 0;
+  virtual int length() const = 0;
 
  protected:
   bool isInit_ = false;

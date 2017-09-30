@@ -1,6 +1,8 @@
 #ifndef MEMORYPOOL_H_
 #define MEMORYPOOL_H_
 
+#include <stddef.h>
+
 class MemoryPool {
  public:
   MemoryPool() { pool_ = NULL; }

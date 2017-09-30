@@ -2,7 +2,6 @@
 #define GOMOKU_VIRTUALBOARDGOMOKU_H_
 
 #include <random>
-#include <iostream>
 
 #include "../virtualboard.h"
 
@@ -14,8 +13,6 @@ class VirtualBoardGomoku : public VirtualBoard {
   VirtualBoardGomoku(const VirtualBoardGomoku& source);
 
   ~VirtualBoardGomoku() override {};
-
-  int length() final { return LENGTH; }
 
  protected:
   class Evaluator;
@@ -37,6 +34,8 @@ class VirtualBoardGomoku : public VirtualBoard {
 
   static const int DIMEN = 15, LENGTH = 225;
 
+  int length() const final { return LENGTH; }
+
   // get score at "index"
   inline int getScore(int index) const final;
 
@@ -56,6 +55,10 @@ class VirtualBoardGomoku : public VirtualBoard {
   // pass
   // return the index of pass
   int pass() { ++playNo_; return LENGTH; }
+
+  bool outOfBound(int r, int c) {
+    return r < 0 || r >= DIMEN || c < 0 || c >= DIMEN;
+  }
 
   // point array
   Point point_[LENGTH];
@@ -90,8 +93,7 @@ VirtualBoardGomoku<StatusLength>::VirtualBoardGomoku(
           const int checkRow = r + dir[d][0] * offset,
                     checkCol = c + dir[d][1] * offset;
 
-          if (checkRow < 0 || checkRow >= DIMEN ||
-              checkCol < 0 || checkCol >= DIMEN) {
+          if (outOfBound(checkRow, checkCol)) {
             // if out of bound, set pointer to NULL
             point_[i].setDirStatus(d, index, NULL);
           } else {
@@ -125,13 +127,13 @@ void VirtualBoardGomoku<StatusLength>::init() {
           const int checkRow = r + dir[d][0] * offset,
                     checkCol = c + dir[d][1] * offset;
 
-          if (checkRow < 0 || checkRow >= DIMEN ||
-              checkCol < 0 || checkCol >= DIMEN)
+          if (outOfBound(checkRow, checkCol)) {
             // if out of bound, set pointer to NULL
             point_[i].setDirStatus(d, index, NULL);
-          else
+          } else {
             point_[i].setDirStatus(
                 d, index, point_[checkRow * DIMEN + checkCol].statusRef());
+          }
 
           ++index;
         }
@@ -247,8 +249,7 @@ GameStatus VirtualBoardGomoku<StatusLength>::play(int index) {
                   checkCol = col + dir[d][1] * move * offset;
 
         // check if out the bound
-        if (checkRow < 0 || checkRow >= DIMEN ||
-            checkCol < 0 || checkCol >= DIMEN) break;
+        if (outOfBound(checkRow, checkCol)) break;
 
         const int checkIndex = checkRow * DIMEN + checkCol;
 
@@ -310,8 +311,7 @@ void VirtualBoardGomoku<StatusLength>::undo(int index) {
                   checkCol = col + dir[d][1] * move * offset;
 
         // check if out the bound
-        if (checkRow < 0 || checkRow >= DIMEN ||
-            checkCol < 0 || checkCol >= DIMEN) break;
+        if (outOfBound(checkRow, checkCol)) break;
 
         const int checkIndex = checkRow * DIMEN + checkCol;
 

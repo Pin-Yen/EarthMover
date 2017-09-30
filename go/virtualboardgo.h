@@ -2,7 +2,7 @@
 #define GO_VIRTUALBOARDGO_H_
 
 #include <random>
-#include <iostream>
+#include <vector>
 
 #include "../virtualboard.h"
 
@@ -15,16 +15,16 @@ class VirtualBoardGo : public VirtualBoard {
 
   ~VirtualBoardGo() override;
 
-  int length() final { return LENGTH; }
-
-  GameStatus play(int index) final;
-
  private:
   static const int DIMEN = 19, LENGTH = 361;
 
   class Point;
 
+  int length() const final { return LENGTH; }
+
   void init();
+
+  GameStatus play(int index) final;
 
   void undo(int index) final;
 
@@ -47,6 +47,13 @@ class VirtualBoardGo : public VirtualBoard {
   // pass
   // return the index of pass
   int pass() { ++playNo_; return LENGTH; }
+
+  bool outOfBound(int r, int c) const {
+    return r < 0 || r >= DIMEN || c < 0 || c >= DIMEN;
+  }
+
+  bool noLiberty(int row, int col, StoneStatus color,
+                 std::vector<int> *group) const;
 
   // point array
   Point point_[LENGTH];
