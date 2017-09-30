@@ -41,15 +41,22 @@ class GameTree::Node {
       VirtualBoard* board, MemoryPool* pool);
 
   // Update playout.
-  void update(SearchStatus result) {
+  void update(SearchStatus result, int score) {
     ++count_;
-    if (result == WIN) ++winLoseCount_;
-    if (result == LOSE) --winLoseCount_;
+    if (result == WIN) {
+      //++winLoseCount_;
+      score_ += score;
+    }
+    if (result == LOSE) {
+      //--winLoseCount_;
+      score_ -= score;
+    }
   }
 
   // Get win rate.
   // NOTE: The win rate is for the upper layer(parent node).
-  double winRate() const { return (count_ + winLoseCount_) / (count_ * 2.0); }
+  double winRate() const {
+  return ((score_ / count_) / 225.0 + 1) / 2.0;/*(count_ + winLoseCount_) / (count_ * 2.0);*/ }
 
   // Delete all children (or except for the 'exceptNode').
   void deleteChildren(MemoryPool* pool);
@@ -58,7 +65,8 @@ class GameTree::Node {
   // Clear count and winLose.
   void clear() {
     count_ = 0;
-    winLoseCount_ = 0;
+    //winLoseCount_ = 0;
+    score_ = 0;
     gameStatus_ = NOTHING;
   }
 
@@ -109,7 +117,8 @@ class GameTree::Node {
   // parent, child, next node.
   Node *parent_, *child_, *next_;
 
-  int count_, winLoseCount_;
+  int count_;//, winLoseCount_;
+  int score_;
   int index_;
 
   GameStatus gameStatus_;

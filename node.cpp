@@ -15,7 +15,8 @@ GameTree::Node::Node()
       next_(NULL),
       gameStatus_(NOTHING),
       count_(0),
-      winLoseCount_(0) {}
+      //winLoseCount_(0),
+      score_(0) {}
 
 GameTree::Node::Node(Node *parent, int index, GameStatus parentStatus)
     : index_(index),
@@ -24,7 +25,8 @@ GameTree::Node::Node(Node *parent, int index, GameStatus parentStatus)
       next_(NULL),
       gameStatus_(static_cast<GameStatus>(-static_cast<int>(parentStatus))),
       count_(0),
-      winLoseCount_(0) {
+      //winLoseCount_(0),
+      score_(0) {
 
   // if losing, set parent to winning
   if (losing()) parent_->setWinning();
@@ -37,7 +39,8 @@ GameTree::Node::Node(Node *parent, const Node *source)
       next_(NULL),
       gameStatus_(source->gameStatus_),
       count_(source->count_),
-      winLoseCount_(source->winLoseCount_) {}
+      //winLoseCount_(source->winLoseCount_),
+      score_(source->score_) {}
 
 void GameTree::Node::deleteChildren(MemoryPool* pool) {
   Node *child = child_, *next;
@@ -103,10 +106,10 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::Node::selection(
 
     // If there exists a point that wins in all previous simulations,
     // then select this point.
-    if (child->winRate() == 1) {
-      board->play(i);
-      return std::make_pair(UNKNOWN, child);
-    }
+    //if (child->winRate() == 1) {
+    //  board->play(i);
+    //  return std::make_pair(UNKNOWN, child);
+    //}
 
     double val = board->getScore(i) / scoreSum + getUCBValue(child);
 
@@ -175,12 +178,14 @@ GameTree::Node* GameTree::Node::newChild(Node* source, MemoryPool* pool) {
 
 void GameTree::Node::minus(const Node* node) {
   count_ -= node->count_;
-  winLoseCount_ -= node->winLoseCount_;
+  //winLoseCount_ -= node->winLoseCount_;
+  score_ -= node->score_;
 }
 
 void GameTree::Node::merge(const Node* node) {
   count_ += node->count_;
-  winLoseCount_ += node->winLoseCount_;
+  //winLoseCount_ += node->winLoseCount_;
+  score_ += node->score_;
 
   if (notWinOrLose() && !node->notWinOrLose()) {
     gameStatus_ = node->gameStatus_;
@@ -192,8 +197,8 @@ double GameTree::Node::getUCBValue(const Node* node) const {
 
   if (node != NULL) {
     return (node->winRate() +
-            sqrt(.5 * log(count_) / (1 + node->count_)));
+            sqrt(log(count_) / (1 + node->count_)));
   } else {
-    return (sqrt(.5 * log(count_) / 1));
+    return sqrt(log(count_));
   }
 }

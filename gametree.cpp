@@ -51,7 +51,12 @@ bool GameTree::mcts(int cycle) {
       status = simulation(board);
     }
 
-    backProp(node, status);
+    int reward = 0;
+    if (status != TIE) {
+      reward = board->getReward();
+    }
+
+    backProp(node, status, reward);
 
     delete board;
   }
@@ -236,9 +241,8 @@ std::pair<SearchStatus, GameTree::Node*> GameTree::selection(
 }
 
 SearchStatus GameTree::simulation(VirtualBoard* board) const {
-  const int MAX_DEPTH = 50;
   // simulate until reach max depth
-  for (int d = 0; d < MAX_DEPTH; ++d) {
+  for (int d = 0; ; ++d) {
     int index = board->getHSI();
     // return tie if no useful point
     if (index == -1) return TIE;
@@ -252,14 +256,14 @@ SearchStatus GameTree::simulation(VirtualBoard* board) const {
   return TIE;
 }
 
-void GameTree::backProp(Node* node, SearchStatus result) {
+void GameTree::backProp(Node* node, SearchStatus result, int reward) {
   while (node != currentNode_) {
-    node->update(result);
+    node->update(result, reward);
     node = node->parent();
     // reverse result (WIN <-> LOSE)
     result = static_cast<SearchStatus>(-static_cast<int>(result));
   }
-  node->update(result);
+  node->update(result, reward);
 }
 
 void GameTree::copy(const GameTree* source) {

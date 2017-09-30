@@ -40,6 +40,8 @@ class VirtualBoard {
 
   virtual int length() const = 0;
 
+  virtual int getReward() const = 0;
+
  protected:
   bool isInit_ = false;
 };

@@ -72,7 +72,7 @@ class GameTree {
 
   // MCTS function
   // Back propagation form leaf to current node.
-  void backProp(Node* node, SearchStatus result);
+  void backProp(Node* node, SearchStatus result, int reward);
 
   // Copy all children in 'srcNode' to 'destNode'.
   void copyAllChildren(const Node* srcNode, Node* destNode);

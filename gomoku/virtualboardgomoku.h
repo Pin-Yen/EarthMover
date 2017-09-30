@@ -60,6 +60,8 @@ class VirtualBoardGomoku : public VirtualBoard {
     return r < 0 || r >= DIMEN || c < 0 || c >= DIMEN;
   }
 
+  int getReward() const final { return LENGTH - playNo_; }
+
   // point array
   Point point_[LENGTH];
 
