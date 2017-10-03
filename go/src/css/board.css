@@ -1,0 +1,84 @@
+.board {
+  border-style: outset;
+  bottom: 0;
+  display: inline-block;
+  margin: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.board.aside {
+  bottom: 0;
+  margin: auto 0;
+  left: 4vh;
+  top: 0;
+}
+
+.board.img {
+  border-color: #999;
+}
+
+.board.cvs {
+  border-color: transparent;
+}
+
+#background {
+  background: linear-gradient(to bottom right, white, gray, white, gray, white);
+  background: -moz-linear-gradient(bottom right, white, gray, white, gray, white);
+  background: -o-linear-gradient(bottom right, white, gray, white, gray, white);
+  background: -webkit-linear-gradient(left top, white, gray, white, gray, white);
+  display: inline-block;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  z-index: -10;
+}
+
+@media screen and (orientation: landscape) {
+  #background {
+    height: 100vw;
+    margin-left: -50vw;
+    margin-top: -50vw;
+    width: 100vw;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  #background {
+    height: 100vh;
+    margin-left: -50vh;
+    margin-top: -50vh;
+    width: 100vh;
+  }
+}
+
+@media screen and (min-aspect-ratio: 20/17) {
+  .board {
+    border-width: .8vh;
+    height: 80vh;
+  }
+}
+
+@media screen and (max-aspect-ratio: 20/17) and (orientation: landscape) {
+  .board {
+    border-width: .68vw;
+    width: 68vw;
+  }
+}
+
+@media screen and (orientation: portrait) and (min-aspect-ratio: 17/23) {
+  .board {
+    border-width: .68vh;
+    height: 68vh;
+  }
+}
+
+@media screen and (max-aspect-ratio: 17/23) {
+  .board {
+    border-width: .92vw;
+    width: 92vw;
+  }
+}
