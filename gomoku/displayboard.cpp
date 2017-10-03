@@ -10,11 +10,11 @@ DisplayBoard::DisplayBoard() {
 
 // prints the current chesssboard
 void DisplayBoard::invalidate() const {
-  for (int r = 0; r < CHESSBOARD_DIMEN + 2; ++r) {
-    for (int c = 0; c < CHESSBOARD_DIMEN + 2; ++c) {
-      if (r > 0 && r < CHESSBOARD_DIMEN + 1 &&
-          c > 0 && c < CHESSBOARD_DIMEN + 1) {
-        printBoard(r, c, point[r - 1][c - 1]);
+  for (int r = 0; r < DIMEN + 2; ++r) {
+    for (int c = 0; c < DIMEN + 2; ++c) {
+      if (r > 0 && r < DIMEN + 1 &&
+          c > 0 && c < DIMEN + 1) {
+        printBoard(r, c, point_[r - 1][c - 1]);
       } else {
         printBoard(r, c, 0);
       }
@@ -25,8 +25,8 @@ void DisplayBoard::invalidate() const {
 void DisplayBoard::getInput(int *row, int *col) const {
   while (true) {
     std::cout << "enter the coordinate of next move (A1 ~ "
-              << static_cast<char>('A' + CHESSBOARD_DIMEN - 1)
-              << CHESSBOARD_DIMEN << ") : ";
+              << static_cast<char>('A' + DIMEN - 1)
+              << DIMEN << ") : ";
     std::string input;
     std::cin >> input;
 
@@ -37,10 +37,10 @@ void DisplayBoard::getInput(int *row, int *col) const {
 
       // get column
       *col = input[0];
-      if (*col >= 'A' && *col < 'A' + CHESSBOARD_DIMEN) {
+      if (*col >= 'A' && *col < 'A' + DIMEN) {
         *col -= 'A';
         validColumn = true;
-      } else if (*col >= 'a' && *col < 'a' + CHESSBOARD_DIMEN) {
+      } else if (*col >= 'a' && *col < 'a' + DIMEN) {
         *col -= 'a';
         validColumn = true;
       }
@@ -55,7 +55,7 @@ void DisplayBoard::getInput(int *row, int *col) const {
       if (isNumber) {
         *row = std::stoi(input.substr(1, n - 1));
 
-        if (*row >= 1 && *row <= CHESSBOARD_DIMEN) {
+        if (*row >= 1 && *row <= DIMEN) {
           (*row)--;
           validRow = true;
         }
@@ -70,12 +70,12 @@ void DisplayBoard::getInput(int *row, int *col) const {
 
 // print a part of the board
 void DisplayBoard::printBoard(int row, int col, int color) const {
-  if (row == 0 || row == CHESSBOARD_DIMEN + 1) {
+  if (row == 0 || row == DIMEN + 1) {
     // if at the first or the last row, print the coordinate with letter
     std::cout << std::setw(4)
-              << ((col == 0 || col == CHESSBOARD_DIMEN + 1) ?
+              << ((col == 0 || col == DIMEN + 1) ?
                      ' ' : static_cast<char>(64 + col));
-  } else if (col == 0 || col == CHESSBOARD_DIMEN + 1) {
+  } else if (col == 0 || col == DIMEN + 1) {
     // if at the first or the last column, print the coordinate with number
     if (col == 0) {
       std::cout << std::setw(4) << row;
@@ -86,21 +86,21 @@ void DisplayBoard::printBoard(int row, int col, int color) const {
     std::string s;
     if (col == 1) {
       s = "   ";
-    } else if (row == 1 || row == CHESSBOARD_DIMEN) {
+    } else if (row == 1 || row == DIMEN) {
       s = "═══";
     } else if ((row == 4 && col == 4) ||
-            (row == 4 && col == CHESSBOARD_DIMEN - 3) ||
-            (row == CHESSBOARD_DIMEN - 3 && col == 4) ||
-            (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 3) ||
-            (row == CHESSBOARD_DIMEN / 2 + 1 &&
-             col == CHESSBOARD_DIMEN / 2 + 1)) {
+            (row == 4 && col == DIMEN - 3) ||
+            (row == DIMEN - 3 && col == 4) ||
+            (row == DIMEN - 3 && col == DIMEN - 3) ||
+            (row == DIMEN / 2 + 1 &&
+             col == DIMEN / 2 + 1)) {
       s = "──╼";
     } else if ((row == 4 && col == 5) ||
-            (row == 4 && col == CHESSBOARD_DIMEN - 2) ||
-            (row == CHESSBOARD_DIMEN - 3 && col == 5) ||
-            (row == CHESSBOARD_DIMEN - 3 && col == CHESSBOARD_DIMEN - 2) ||
-            (row == CHESSBOARD_DIMEN / 2 + 1 &&
-             col == CHESSBOARD_DIMEN / 2 + 2)) {
+            (row == 4 && col == DIMEN - 2) ||
+            (row == DIMEN - 3 && col == 5) ||
+            (row == DIMEN - 3 && col == DIMEN - 2) ||
+            (row == DIMEN / 2 + 1 &&
+             col == DIMEN / 2 + 2)) {
       s = "╾──";
     } else {
       s = "───";
@@ -112,17 +112,17 @@ void DisplayBoard::printBoard(int row, int col, int color) const {
           switch (col) {
             case 1:
               s += "╔"; break;
-            case CHESSBOARD_DIMEN:
+            case DIMEN:
               s += "╗"; break;
             default:
               s += "╤";
           }
           break;
-        case CHESSBOARD_DIMEN:
+        case DIMEN:
           switch (col) {
             case 1:
               s += "╚"; break;
-            case CHESSBOARD_DIMEN:
+            case DIMEN:
               s += "╝"; break;
             default:
               s += "╧";
@@ -132,16 +132,16 @@ void DisplayBoard::printBoard(int row, int col, int color) const {
           switch (col) {
             case 1:
               s += "╟"; break;
-            case CHESSBOARD_DIMEN:
+            case DIMEN:
               s += "╢"; break;
             default:
               s += (((row == 4 && col == 4) ||
-                   (row == 4 && col == CHESSBOARD_DIMEN - 3) ||
-                   (row == CHESSBOARD_DIMEN - 3 && col == 4) ||
-                   (row == CHESSBOARD_DIMEN - 3 &&
-                    col == CHESSBOARD_DIMEN - 3) ||
-                   (row == CHESSBOARD_DIMEN / 2 + 1 &&
-                    col == CHESSBOARD_DIMEN / 2 + 1))
+                   (row == 4 && col == DIMEN - 3) ||
+                   (row == DIMEN - 3 && col == 4) ||
+                   (row == DIMEN - 3 &&
+                    col == DIMEN - 3) ||
+                   (row == DIMEN / 2 + 1 &&
+                    col == DIMEN / 2 + 1))
                    ? "╋" : "┼");
           }
       }
@@ -153,13 +153,13 @@ void DisplayBoard::printBoard(int row, int col, int color) const {
   }
 
   // if at the last column, print \n
-  if (col == CHESSBOARD_DIMEN + 1) {
+  if (col == DIMEN + 1) {
     std::string s = "\n    ";
 
     // if not at the first or last row, print │ between two row
-    if (row > 0 && row < CHESSBOARD_DIMEN) {
-      for (int i = 0; i < CHESSBOARD_DIMEN; ++i)
-        s += ((i == 0 || i == CHESSBOARD_DIMEN - 1) ? "   ║" : "   │");
+    if (row > 0 && row < DIMEN) {
+      for (int i = 0; i < DIMEN; ++i)
+        s += ((i == 0 || i == DIMEN - 1) ? "   ║" : "   │");
     }
 
     s += "\n";
@@ -170,11 +170,11 @@ void DisplayBoard::printBoard(int row, int col, int color) const {
 // puts a new chess, if the point is not empty then return false
 bool DisplayBoard::play(int row, int col) {
   if (row >= 15 || row < 0 || col >= 15 || col < 0) return false;
-  if (point[row][col] != 0) return false;
+  if (point_[row][col] != 0) return false;
 
   ++playNo_;
 
-  point[row][col] = playNo_;
+  point_[row][col] = playNo_;
 
   invalidate();
 
@@ -183,9 +183,9 @@ bool DisplayBoard::play(int row, int col) {
 
 // clears the whole game
 void DisplayBoard::wipe() {
-  for (int r = 0; r < CHESSBOARD_DIMEN; ++r)
-    for (int c = 0; c < CHESSBOARD_DIMEN; ++c)
-      point[r][c] = 0;
+  for (int r = 0; r < DIMEN; ++r)
+    for (int c = 0; c < DIMEN; ++c)
+      point_[r][c] = 0;
 
   playNo_ = 0;
 

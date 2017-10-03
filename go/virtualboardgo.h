@@ -1,24 +1,33 @@
 #ifndef GO_VIRTUALBOARDGO_H_
 #define GO_VIRTUALBOARDGO_H_
 
-#include <random>
-#include <vector>
+#include <set>
 
 #include "../virtualboard.h"
 
-template <int StatusLength>
 class VirtualBoardGo : public VirtualBoard {
  public:
-  VirtualBoardGo() {}
+  VirtualBoardGo();
   // copy constructor
-  VirtualBoardGo(const VirtualBoardGomoku& source);
+  VirtualBoardGo(const VirtualBoardGo& source);
 
   ~VirtualBoardGo() override;
 
  private:
   static const int DIMEN = 19, LENGTH = 361;
 
-  class Point;
+  class Point {
+   public:
+    Point() : status_(EMPTY) {}
+
+    Point(const Point &src) : status_(src.status_) {}
+
+    StoneStatus status() const { return status_; }
+    void setStatus(StoneStatus status) { status_ = status; }
+
+   private:
+    StoneStatus status_;
+  };
 
   int length() const final { return LENGTH; }
 
@@ -52,11 +61,16 @@ class VirtualBoardGo : public VirtualBoard {
     return r < 0 || r >= DIMEN || c < 0 || c >= DIMEN;
   }
 
+  void removeIfDead(int row, int col, StoneStatus color);
+
   bool noLiberty(int row, int col, StoneStatus color,
-                 std::vector<int> *group) const;
+                 std::set<int> *group) const;
 
   // point array
   Point point_[LENGTH];
+
+  // Ko position, -1 means that no ko currently.
+  int koPosition_;
 
   // the total number of plays
   int playNo_;

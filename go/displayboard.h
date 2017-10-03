@@ -2,7 +2,7 @@
 #define GO_DISPLAYBOARD_H_
 
 #include <array>
-#include <vector>
+#include <set>
 
 class DisplayBoard {
  public:
@@ -26,18 +26,18 @@ class DisplayBoard {
   void getBoard(int dest[19][19]) const {
     for (int r = 0; r < 19; ++r) {
       for (int c = 0; c < 19; ++c) {
-        dest[r][c] = board[r][c];
+        dest[r][c] = point_[r][c];
       }
     }
   }
 
  private:
-  static const int CHESSBOARD_DIMEN = 19;
+  static const int DIMEN = 19;
   static const char CHESS_BLACK = 'X', CHESS_WHITE = 'O';
 
-  bool outOfBound(int row, int col) {
-    return (row >= CHESSBOARD_DIMEN || row < 0 ||
-            col >= CHESSBOARD_DIMEN || col < 0);
+  bool outOfBound(int row, int col) const {
+    return (row >= DIMEN || row < 0 ||
+            col >= DIMEN || col < 0);
   }
 
   // print the current chesssboard
@@ -54,10 +54,10 @@ class DisplayBoard {
   void removeIfDead(int row, int col, int color);
 
   bool noLiberty(int row, int col, int color,
-                 std::vector<std::array<int, 2>> *group);
+                 std::set<int> *group) const;
 
   // point array
-  int board[CHESSBOARD_DIMEN][CHESSBOARD_DIMEN];
+  int point_[DIMEN][DIMEN];
 
   // the total number of plays
   int playNo_;
