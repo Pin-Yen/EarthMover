@@ -1,4 +1,9 @@
 var Board = function() {
+  this.DIMEN = 19;
+  this.EMPTY = 0;
+  this.BLACK = -1;
+  this.WHITE = 1;
+
   this.enable = true;
   this.gameStarted = true;
 
@@ -22,10 +27,13 @@ var Board = function() {
   this.playNo = 0;
   this.displayNo = 0;
 
-  // board status array
-  this.status = new Array(19);
-  for (var i = this.status.length - 1; i >= 0; i--)
-    this.status[i] = new Array(19);
+  // board board array
+  this.board = new Array(this.DIMEN);
+  this.boardMoveNo = new Array(this.DIMEN);
+  for (var i = this.board.length - 1; i >= 0; i--) {
+    this.board[i] = new Array(this.DIMEN);
+    this.boardMoveNo[i] = new Array(this.DIMEN);
+  }
 
   function createImage(src) {
     var image = new Image();
@@ -53,9 +61,12 @@ Board.prototype.init = function() {
   this.playNo = 0;
   this.displayNo = 0;
 
-  for (var row = this.status.length - 1; row >= 0; row--)
-    for (var col = this.status[row].length - 1; col >= 0; col--)
-      this.status[row][col] = 0;
+  for (var row = this.DIMEN - 1; row >= 0; row--) {
+    for (var col = this.DIMEN - 1; col >= 0; col--) {
+      this.board[row][col] = this.EMPTY;
+      this.boardMoveNo[row][col] = 0;
+    }
+  }
 
   this.mousePos = [-1, -1];
   this.lastPlay = [-1, -1];
@@ -74,7 +85,7 @@ Board.prototype.mouseMoveOrOver = function(event) {
   var x = Math.floor((event.clientX - rect.left - 34 * scaling)  / (35 * scaling)),
       y = Math.floor((event.clientY - rect.top - 34 * scaling) / (35 * scaling));
 
-  if (x < 0 || x > 18 || y < 0 || y > 18) {
+  if (this.outOfBound(x, y)) {
     x = -1; y = -1;
   }
 
@@ -84,7 +95,7 @@ Board.prototype.mouseMoveOrOver = function(event) {
   if (this.mousePos === pos) return;
 
   // check if not out of bound and position is empty
-  if (pos[0] != -1 && !this.status[pos[0]][pos[1]]) {
+  if (pos[0] != -1 && this.board[pos[0]][pos[1]] == this.EMPTY) {
     if (this.enable) {
       this.clear(this.mousePos);
       this.draw(pos);
@@ -122,7 +133,7 @@ Board.prototype.click = function() {
   if (this.mousePos[0] == -1) return;
 
   // if the position is empty, play and post
-  if (!this.status[this.mousePos[0]][this.mousePos[1]]) {
+  if (this.board[this.mousePos[0]][this.mousePos[1]] == this.EMPTY) {
     this.play(this.mousePos);
     post({ row: this.mousePos[1], col: this.mousePos[0] }, 'play');
     this.mousePos = [-1, -1];
@@ -133,23 +144,23 @@ Board.prototype.click = function() {
 Board.prototype.draw = function(pos) {
   if (pos[0] == -1) return;
 
-  var status = this.status[pos[0]][pos[1]];
+  var number = this.boardMoveNo[pos[0]][pos[1]];
   var image;
-  if (status == 0) {
+  if (this.board[pos[0]][pos[1]] == this.EMPTY) {
     image = this.image[this.whoTurn()].transparent;
-  } else if (status == this.displayNo) {
-    image = this.display.playNumber ? this.image[this.whoTurn(status - 1)].normal :
-                              this.image[this.whoTurn(status - 1)].marked;
+  } else if (number == this.displayNo) {
+    image = this.display.playNumber ? this.image[this.whoTurn(number - 1)].normal :
+                              this.image[this.whoTurn(number - 1)].marked;
   } else {
-    image = this.image[this.whoTurn(status - 1)].normal;
+    image = this.image[this.whoTurn(number - 1)].normal;
   }
 
   this.drawChess(image, pos[0], pos[1]);
 
-  if (this.display.playNumber && status > 0) {
-    var color = status == this.displayNo ? 'red' : ((status - 1) & 1) ? 'black' : 'white';
+  if (this.display.playNumber && number > 0) {
+    var color = number == this.displayNo ? 'red' : ((number - 1) & 1) ? 'black' : 'white';
 
-    this.drawNumber(status, color, pos[0], pos[1]);
+    this.drawNumber(number, color, pos[0], pos[1]);
   }
 }
 
@@ -171,6 +182,10 @@ Board.prototype.clear = function(pos) {
   this.context.clearRect(pos[0] * 35 + 34, pos[1] * 35 + 34, 33, 33);
 }
 
+Board.prototype.outOfBound = function(r, c) {
+  return !(0 <= r && r <= this.DIMEN - 1 && 0 <= c && c <= this.DIMEN - 1);
+}
+
 // play at position, we should make sure that position is empty
 Board.prototype.play = function(pos) {
   // lock board
@@ -185,20 +200,59 @@ Board.prototype.play = function(pos) {
 
   ++this.playNo;
   ++this.displayNo;
-  this.status[pos[0]][pos[1]] = this.playNo;
+  this.boardMoveNo[pos[0]][pos[1]] = this.playNo;
+  var selfColor = this.playNo & 1 ? this.BLACK : this.WHITE;
+  var oppColor = selfColor == this.BLACK ? this.WHITE : this.BLACK;
+  this.board[pos[0]][pos[1]] = selfColor;
+
+  var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+  for (var i = 0; i < 4; ++i) {
+    var checkRow = pos[0] + d[i][0],
+        checkCol = pos[1] + d[i][1];
+    if (this.outOfBound(checkRow, checkCol)) continue;
+
+    if (this.board[checkRow][checkCol] == oppColor) {
+      this.removeIfDead(checkRow, checkCol, oppColor);
+    }
+  }
 
   // draw a marked chess
-  this.draw(pos);
-
-  // redraw last play's image (remove the mark)
-  this.clear(this.lastPlay);
-  this.draw(this.lastPlay);
+  this.drawAll();
 
   // update last play
   this.lastPlay = pos.slice(0);
 
   // write to firebase
   //firebase.database().ref(gameID).child('record').child(this.playNo).set({r : pos[0], c : pos[1]});
+}
+
+Board.prototype.noLiberty = function(row, col, color, group) {
+  group.push(row * this.DIMEN + col);
+
+  var d = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+  for (var i = 0; i < 4; ++i) {
+    var checkRow = row + d[i][0],
+        checkCol = col + d[i][1];
+    if (this.outOfBound(checkRow, checkCol)) continue;
+
+    if (this.board[checkRow][checkCol] == this.EMPTY) {
+      return false;
+    } else if (this.board[checkRow][checkCol] == color) {
+      if (group.indexOf(checkRow * this.DIMEN + checkCol) != -1) continue;
+      if (!this.noLiberty(checkRow, checkCol, color, group)) return false;
+    }
+  }
+  return true;
+}
+
+Board.prototype.removeIfDead = function(row, col, color) {
+  var group = [];
+  if (this.noLiberty(row, col, color, group)) {
+    for (var i = group.length - 1; i >= 0; i--) {
+      var r = Math.floor(group[i] / this.DIMEN), c = group[i] % this.DIMEN;
+      this.board[r][c] = this.EMPTY;
+    }
+  }
 }
 
 // pass
@@ -228,12 +282,12 @@ Board.prototype.undo = function(times) {
   this.displayNo = this.playNo;
 
   // remove chess
-  for (var row = this.status.length - 1; row >= 0; row--)
-    for (var col = this.status[row].length - 1; col >= 0; col--) {
-      if (this.status[row][col] > this.playNo) {
-        this.status[row][col] = 0;
+  for (var row = this.board.length - 1; row >= 0; row--)
+    for (var col = this.board[row].length - 1; col >= 0; col--) {
+      if (this.board[row][col] > this.playNo) {
+        this.board[row][col] = 0;
         this.clear([row, col]);
-      } else if (this.playNo > 0 && this.status[row][col] == this.playNo) {
+      } else if (this.playNo > 0 && this.board[row][col] == this.playNo) {
         this.lastPlay = [row, col];
         this.clear(this.lastPlay);
         this.draw(this.lastPlay);
@@ -249,7 +303,7 @@ Board.prototype.put = function(pos, playNo) {
   ++this.displayNo;
 
   if (pos != [-1, -1])
-    this.status[pos[0]][pos[1]] = playNo;
+    this.board[pos[0]][pos[1]] = playNo;
 
   this.drawAll();
 }
@@ -272,7 +326,7 @@ Board.prototype.changeCoordinate = function() {
     this.context.fillStyle = '#444';
     this.context.font = '16px Ubuntu';
     this.context.textAlign = 'center';
-    for (var i = 1; i <= 19; ++i) {
+    for (var i = 1; i <= DIMEN; ++i) {
       this.context.fillText(i, 13, i * 35 + 20);
       this.context.fillText(i, 714, i * 35 + 20);
       var textNum = i < 9 ? i : i + 1;
@@ -297,10 +351,10 @@ Board.prototype.changeDisplayNo = function(changeAmount) {
 };
 
 Board.prototype.drawAll = function() {
-  for (var row = this.status.length - 1; row >= 0; row--)
-    for (var col = this.status[row].length - 1; col >= 0; col--) {
+  for (var row = this.board.length - 1; row >= 0; row--)
+    for (var col = this.board[row].length - 1; col >= 0; col--) {
       this.clear([row, col]);
-      if (this.status[row][col] > 0 && this.status[row][col] <= this.displayNo)
+      if (this.board[row][col] != this.EMPTY && this.boardMoveNo[row][col] <= this.displayNo)
         this.draw([row, col]);
     }
 };
