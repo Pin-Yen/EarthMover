@@ -27,6 +27,8 @@ var Board = function() {
   this.playNo = 0;
   this.displayNo = 0;
 
+  this.koPoint = [-1, -1];
+
   // board board array
   this.board = new Array(this.DIMEN);
   this.boardMoveNo = new Array(this.DIMEN);
@@ -61,6 +63,8 @@ Board.prototype.init = function() {
   this.playNo = 0;
   this.displayNo = 0;
 
+  this.koPoint = [-1, -1];
+
   for (var row = this.DIMEN - 1; row >= 0; row--) {
     for (var col = this.DIMEN - 1; col >= 0; col--) {
       this.board[row][col] = this.EMPTY;
@@ -85,8 +89,20 @@ Board.prototype.mouseMoveOrOver = function(event) {
   var x = Math.floor((event.clientX - rect.left - 34 * scaling)  / (35 * scaling)),
       y = Math.floor((event.clientY - rect.top - 34 * scaling) / (35 * scaling));
 
+  var valid = true;
+
   if (this.outOfBound(x, y)) {
-    x = -1; y = -1;
+    valid = false;
+  } else if (this.board[x][y] != this.EMPTY) {
+    valid = false;
+  } else {
+    var selfColor = this.playNo & 1 ? this.WHITE : this.BLACK;
+    var oppColor = selfColor == this.BLACK ? this.WHITE : this.BLACK;
+    if (this.isSuicideMove(x, y, selfColor, oppColor)) {
+      valid = false;
+    } else if (this.koPoint[0] == x && this.koPoint[1] == y) {
+      valid = false;
+    }
   }
 
   var pos = [x, y];
@@ -95,7 +111,7 @@ Board.prototype.mouseMoveOrOver = function(event) {
   if (this.mousePos === pos) return;
 
   // check if not out of bound and position is empty
-  if (pos[0] != -1 && this.board[pos[0]][pos[1]] == this.EMPTY) {
+  if (valid) {
     if (this.enable) {
       this.clear(this.mousePos);
       this.draw(pos);
@@ -203,6 +219,9 @@ Board.prototype.play = function(pos) {
   this.boardMoveNo[pos[0]][pos[1]] = this.playNo;
   var selfColor = this.playNo & 1 ? this.BLACK : this.WHITE;
   var oppColor = selfColor == this.BLACK ? this.WHITE : this.BLACK;
+
+  this.koPoint = this.findKo(pos[0], pos[1], selfColor, oppColor);
+
   this.board[pos[0]][pos[1]] = selfColor;
 
   var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
@@ -226,10 +245,70 @@ Board.prototype.play = function(pos) {
   //firebase.database().ref(gameID).child('record').child(this.playNo).set({r : pos[0], c : pos[1]});
 }
 
+Board.prototype.findKo = function(row, col, selfColor, oppColor) {
+  this.board[row][col] = selfColor;
+
+  //var enemyGroupLiberty1Size1 = false;
+  var koPoint = null;
+
+  var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+  for (var i = 0; i < 4; ++i) {
+    var checkRow = row + d[i][0],
+        checkCol = col + d[i][1];
+    if (this.outOfBound(checkRow, checkCol)) continue;
+
+    if (this.board[checkRow][checkCol] != oppColor) {
+      this.board[row][col] = this.EMPTY;
+      return [-1, -1];
+    } else {
+      var group = [];
+      if (this.noLiberty(checkRow, checkCol, oppColor, group)) {
+        if (group.length == 1) {
+          if (koPoint != null) {
+            this.board[row][col] = this.EMPTY;
+            return [-1, -1];
+            break;
+          } else {
+            koPoint = [checkRow, checkCol];
+          }
+        }
+      }
+    }
+  }
+  this.board[row][col] = this.EMPTY;
+  return koPoint == null ? [-1, -1] : koPoint;
+}
+
+Board.prototype.isSuicideMove = function(row, col, selfColor, oppColor) {
+  var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+  for (var i = 0; i < 4; ++i) {
+    var checkRow = row + d[i][0],
+        checkCol = col + d[i][1];
+    if (this.outOfBound(checkRow, checkCol)) continue;
+
+    if (this.board[checkRow][checkCol] == this.EMPTY) {
+      return false;
+    } else if (this.board[checkRow][checkCol] == oppColor) {
+      this.board[row][col] = selfColor;
+      var group = [];
+      var oppNoLiberty = this.noLiberty(checkRow, checkCol, oppColor, group);
+      this.board[row][col] = this.EMPTY;
+      if (oppNoLiberty) return false;
+    } else {
+      this.board[row][col] = oppColor;
+      var group = [];
+      var selfNoLiberty = this.noLiberty(checkRow, checkCol, selfColor, group);
+      this.board[row][col] = this.EMPTY;
+      if (!selfNoLiberty) return false;
+    }
+  }
+  return true;
+}
+
 Board.prototype.noLiberty = function(row, col, color, group) {
   group.push(row * this.DIMEN + col);
 
-  var d = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+  var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
   for (var i = 0; i < 4; ++i) {
     var checkRow = row + d[i][0],
         checkCol = col + d[i][1];
@@ -258,13 +337,14 @@ Board.prototype.removeIfDead = function(row, col, color) {
 // pass
 Board.prototype.pass = function() {
   // lock board
-  this.enable = false;
+  //this.enable = false;
 
   // stop timer
   //timer[this.whoTurn()].stop();
 
   ++this.playNo;
   ++this.displayNo;
+  this.koPoint = [-1, -1]
 
   // write '{r: -1, c: -1} to database
   //firebase.database().ref(gameID).child('record').child(this.playNo).set({r : -1, c : -1});
