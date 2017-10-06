@@ -69,8 +69,8 @@ class VirtualBoardGo : public VirtualBoard {
   // point array
   Point point_[LENGTH];
 
-  // Ko position, -1 means that no ko currently.
-  int koPosition_;
+  // Ko point, -1 means that no ko currently.
+  int koPoint_;
 
   // the total number of plays
   int playNo_;

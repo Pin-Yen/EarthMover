@@ -220,9 +220,8 @@ Board.prototype.play = function(pos) {
   var selfColor = this.playNo & 1 ? this.BLACK : this.WHITE;
   var oppColor = selfColor == this.BLACK ? this.WHITE : this.BLACK;
 
-  this.koPoint = this.findKo(pos[0], pos[1], selfColor, oppColor);
-
   this.board[pos[0]][pos[1]] = selfColor;
+  this.koPoint = this.findKo(pos[0], pos[1], selfColor, oppColor);
 
   var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
   for (var i = 0; i < 4; ++i) {
@@ -246,10 +245,7 @@ Board.prototype.play = function(pos) {
 }
 
 Board.prototype.findKo = function(row, col, selfColor, oppColor) {
-  this.board[row][col] = selfColor;
-
-  //var enemyGroupLiberty1Size1 = false;
-  var koPoint = null;
+  var koPoint = [-1, -1];
 
   var d = [[0, 1], [1, 0], [0, -1], [-1, 0]];
   for (var i = 0; i < 4; ++i) {
@@ -258,16 +254,13 @@ Board.prototype.findKo = function(row, col, selfColor, oppColor) {
     if (this.outOfBound(checkRow, checkCol)) continue;
 
     if (this.board[checkRow][checkCol] != oppColor) {
-      this.board[row][col] = this.EMPTY;
       return [-1, -1];
     } else {
       var group = [];
       if (this.noLiberty(checkRow, checkCol, oppColor, group)) {
         if (group.length == 1) {
-          if (koPoint != null) {
-            this.board[row][col] = this.EMPTY;
+          if (koPoint[0] != -1) {
             return [-1, -1];
-            break;
           } else {
             koPoint = [checkRow, checkCol];
           }
@@ -275,8 +268,7 @@ Board.prototype.findKo = function(row, col, selfColor, oppColor) {
       }
     }
   }
-  this.board[row][col] = this.EMPTY;
-  return koPoint == null ? [-1, -1] : koPoint;
+  return koPoint;
 }
 
 Board.prototype.isSuicideMove = function(row, col, selfColor, oppColor) {

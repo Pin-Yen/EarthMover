@@ -2,7 +2,7 @@
 
 #include <set>
 
-VirtualBoardGo::VirtualBoardGo() : playNo_(0), koPosition_(0) {}
+VirtualBoardGo::VirtualBoardGo() : playNo_(0), koPoint_(0) {}
 
 GameStatus VirtualBoardGo::play(int index) {
   ++playNo_;
@@ -10,10 +10,12 @@ GameStatus VirtualBoardGo::play(int index) {
   StoneStatus selColor = ((playNo_ & 1) ? BLACK : WHITE),
               oppColor = ((playNo_ & 1) ? WHITE : BLACK);
 
+  const int row = index / DIMEN, col = index % DIMEN;
+
   point_[index].setStatus(selColor);
+  koPoint_ = findKo();
 
   const int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-  int row = index / DIMEN, col = index % DIMEN;
   for (int d = 0; d < 4; ++d) {
     const int checkRow = row + dir[d][0],
               checkCol = col + dir[d][1];
@@ -26,6 +28,34 @@ GameStatus VirtualBoardGo::play(int index) {
       removeIfDead(checkRow, checkCol, oppColor);
     }
   }
+}
+
+int VirtualBoardGo::findKo(int row, int col,
+                           StoneStatus selfColor, StoneStatus oppColor) {
+  int koPoint = -1;
+
+  const int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+  for (int d = 0; d < 4; ++d) {
+    const int checkRow = row + dir[i][0],
+              checkCol = col + dir[i][1];
+    if (outOfBound(checkRow, checkCol)) continue;
+
+    if (point_[checkRow][checkCol] != oppColor) {
+      return -1;
+    } else {
+      std::set<int> group;
+      if (noLiberty(checkRow, checkCol, oppColor, group)) {
+        if (group.size() == 1) {
+          if (koPoint != -1) {
+            return -1;
+          } else {
+            koPoint = checkRow * DIMEN + checkCol;
+          }
+        }
+      }
+    }
+  }
+  return koPoint;
 }
 
 void VirtualBoardGo::removeIfDead(int row, int col, StoneStatus color) {
