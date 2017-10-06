@@ -18,7 +18,7 @@ obj/serverhttpserver.o
 
 OBJ_LOCAL = \
 obj/gomokudisplayboard.o \
-obj/main.o
+obj/gomokumain.o
 
 GENERAL_FLAG = -std=c++11
 
@@ -148,7 +148,7 @@ obj/gomokurenju_basicvirtualboardrenjubasic.o: gomoku/renju_basic/virtualboardre
  virtualboard.h
 	g++ -c $(GENERAL_FLAG) $(OPT_FLAG) $< -o $@
 
-obj/main.o: main.cpp \
+obj/gomokumain.o: gomokumain.cpp \
  const.h \
  gametree.h \
  gomoku/chesstype.h \

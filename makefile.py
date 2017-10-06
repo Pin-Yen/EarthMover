@@ -108,7 +108,7 @@ def main():
     file_network.sort(key=itemgetter(0))
 
     file_local = []
-    search_cpp_file('main.cpp', '', file_local)
+    search_cpp_file('gomokumain.cpp', '', file_local)
     file_local.sort(key=itemgetter(0))
 
     network, local, obj = divid_intersection(file_network, file_local)

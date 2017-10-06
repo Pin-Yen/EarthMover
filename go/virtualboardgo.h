@@ -61,6 +61,9 @@ class VirtualBoardGo : public VirtualBoard {
     return r < 0 || r >= DIMEN || c < 0 || c >= DIMEN;
   }
 
+  int findKo(int row, int col,
+             StoneStatus selfColor, StoneStatus oppColor) const;
+
   void removeIfDead(int row, int col, StoneStatus color);
 
   bool noLiberty(int row, int col, StoneStatus color,
