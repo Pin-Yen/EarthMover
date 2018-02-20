@@ -10,6 +10,8 @@ var board = new Board();
 
 var dialog = new Dialog();
 
+var sessionManager = new SessionManager(); 
+
 function notifyWinner(winnerColor) {
   // TODO: display game status
   setTimeout(function() { alert(winnerColor + " wins !"); }, 0);
@@ -25,8 +27,8 @@ function notifyWinner(winnerColor) {
 
 // post request, params should be json type
 function post(params, path) {
-  var http = new XMLHttpRequest();
-  http.open('POST', path);
+  var req = new XMLHttpRequest();
+  req.open('POST', path);
 
   var playAiPoint = function(response) {
     if (response.row == -1) {
@@ -64,8 +66,8 @@ function post(params, path) {
     timer[board.whoTurn()].start();
   }
 
-  http.onreadystatechange = function() {
-    if (!(http.readyState == 4 && (http.status == 200 || http.status == 204))) return;
+  req.onreadystatechange = function() {
+    if (!(req.readyState == 4 && (req.status == 200 || req.status == 204))) return;
 
     switch (path) {
       case 'start':
@@ -73,14 +75,14 @@ function post(params, path) {
         checkNextPlayer();
         break;
       case 'think':
-        var response = JSON.parse(http.responseText);
+        var response = JSON.parse(req.responseText);
         playAiPoint(response);
         if (checkWinner(response))
           return;
         checkNextPlayer();
         break;
       case 'play':
-        var response = JSON.parse(http.responseText);
+        var response = JSON.parse(req.responseText);
         if (checkWinner(response))
           return;
         checkNextPlayer();
@@ -94,8 +96,11 @@ function post(params, path) {
     }
   };
 
-
-  http.send(JSON.stringify(params));
+  // add session id to payload.
+  params = params || {};
+  params.sessionId = sessionManager.getSessionID();
+  
+  req.send(JSON.stringify(params));
 }
 
 function humanTurn() {
@@ -210,6 +215,28 @@ function analyzeClick() {
     $('.board').removeClass('aside');
     D3.removeTree();
   }
+}
+
+function SessionManager() {
+  
+  var sessionID;
+
+  function getSessionID() {
+    return sessionID || generateSessionID();
+  }
+
+  function generateSessionID() {
+    
+    const charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+    
+    sessionID = "";
+    for (let i = 0; i < 10; ++i) 
+      sessionID += charset.charAt(Math.floor(Math.random() * charset.length));
+
+    return sessionID;
+  }
+
+  return {getSessionID: getSessionID};
 }
 
 function refresh() {

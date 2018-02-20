@@ -175,7 +175,16 @@ void HttpServer::sendResponse(const int client, HttpResponse* response) {
 }
 
 void HttpServer::handlePlay(const int client, HttpRequest* request) {
-  int id = session2instance_.at(request->cookie("session"));
+  
+  // Parse request body.
+  json reqBody = json::parse(request->body());
+  
+  // get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
@@ -184,12 +193,11 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
   if (threadList_[id].joinable())
     threadList_[id].join();
 
-  // Parse request body.
-  json body = json::parse(request->body());
+
 
   // Play and get winning status.
-  int winning = emList_[id]->play(static_cast<int>(body["row"]) * 15 +
-                                  static_cast<int>(body["col"]));
+  int winning = emList_[id]->play(static_cast<int>(reqBody["row"]) * 15 +
+                                  static_cast<int>(reqBody["col"]));
 
   json responseData;
   responseData["winner"] = winning;
@@ -207,18 +215,13 @@ void HttpServer::handlePlay(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleVisualize(const int client, HttpRequest* request) {
-  int id = -1;
+  
+  json reqBody = json::parse(request->body());
 
-  try {
-    id = session2instance_.at(request->cookie("session"));
-  } catch (std::out_of_range& e) {
-    HttpResponse response(200);
-    response.setContentType("application/json")
-        .setBody("")
-        .compile();
-
-    sendResponse(client, &response);
-
+  // get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
     return;
   }
 
@@ -235,7 +238,18 @@ void HttpServer::handleVisualize(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleResign(const int client, HttpRequest* request) {
-  int id = session2instance_.at(request->cookie("session"));
+  
+  // parse request body to json.
+  json reqBody = json::parse(request->body());
+
+
+  // get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
+
 
   // Stop background thinking thread, if exists.
   emThreadController_[id] = false;
@@ -254,7 +268,17 @@ void HttpServer::handleResign(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handlePass(const int client, HttpRequest* request) {
-  int id = session2instance_.at(request->cookie("session"));
+  
+  // Parse request body.
+  json reqBody = json::parse(request->body());
+
+
+  // Get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
@@ -273,7 +297,18 @@ void HttpServer::handlePass(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleUndo(const int client, HttpRequest* request) {
-  int id = session2instance_.at(request->cookie("session"));
+  
+  // Parse request body.
+  json reqBody = json::parse(request->body());
+
+
+  // Get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
+
 
   // Stop EM's background thinking.
   emThreadController_[id] = false;
@@ -281,11 +316,9 @@ void HttpServer::handleUndo(const int client, HttpRequest* request) {
   if (threadList_[id].joinable())
     threadList_[id].join();
 
-  // Parse request body.
-  json body = json::parse(request->body());
 
   // Extract how many times to undo.
-  int times = body["times"];
+  int times = reqBody["times"];
 
   emList_[id]->undo(times);
 
@@ -298,7 +331,18 @@ void HttpServer::handleUndo(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleThink(const int client, HttpRequest* request) {
-  int id = session2instance_.at(request->cookie("session"));
+  
+  // Parse request body.
+  json reqBody = json::parse(request->body());
+
+
+  // Get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
+
 
   AI* em = emList_[id];
   bool* controller = &(emThreadController_[id]);
@@ -352,52 +396,49 @@ void HttpServer::handleThink(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleStart(const int client, HttpRequest* request) {
-  // Check if the user already have an existing EM instance.
-  // If not, create an new instance and set a cookie.
-  std::string sessionId = request->cookie("session");
 
-  int instanceId = -1;
+  // Parse request body.
+  json reqBody = json::parse(request->body());
 
-  try {
-    instanceId = session2instance_.at(sessionId);
-  } catch (std::out_of_range& e) {
-    // Generate new cookie.
-    sessionId = sessionIdGenerator();
+  // Map sessionId to existing AI instance, or create an AI instance.
+  int instanceIndex = getInstanceId(reqBody);
+  if (instanceIndex < 0) {
 
     // Create new em instance.
     for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
       if (emList_[i] == NULL) {
         emList_[i] = new AI();
-        instanceId = i;
+        instanceIndex = i;
         break;
       }
     }
 
     // Map sessionId to instance id if successfully created instance.
     // Else return 503
-    if (instanceId != -1) {
-      session2instance_.insert({sessionId, instanceId});
+    if (instanceIndex != -1) {
+      session2instance_.insert({reqBody["sessionId"].get<std::string>(), instanceIndex});
+      std::cout << "sessionID=" <<  reqBody["sessionId"].get<std::string>()\
+                << " instance created\n";
     } else {
-      HttpResponse response(503);
-      response.compile();
-      sendResponse(client, &response);
+      // TODO : send error page informing the user about the error.
+      sendErrorResponse(client, 503);
       return;
     }
   }
 
+
   // Stop backgronud thinking thread, if exists.
-  emThreadController_[instanceId] = false;
-  if (threadList_[instanceId].joinable())
-    threadList_[instanceId].join();
+  emThreadController_[instanceIndex] = false;
+  if (threadList_[instanceIndex].joinable())
+    threadList_[instanceIndex].join();
 
   // Reset EM.
-  json body = json::parse(request->body());
-  emList_[instanceId]->reset(static_cast<int>(body["level"]),
-                             static_cast<int>(body["rule"]));
+  emList_[instanceIndex]->reset(static_cast<int>(reqBody["level"]),
+                             static_cast<int>(reqBody["rule"]));
 
   // Response
   HttpResponse response(204);
-  response.addCookie("session", sessionId.c_str()).compile();
+  response.compile();
   sendResponse(client, &response);
 
 
@@ -408,13 +449,52 @@ void HttpServer::handleQuit(const int client, HttpRequest* request) {
 
 }
 
+int HttpServer::getInstanceId(const json reqBody) {
+  
+  int id = -1;
+  
+  try {
+    id = session2instance_.at(reqBody["sessionId"]);
+  } catch (std::out_of_range& e) {
+    std::cerr << "received invalid sessionId" << "\n";
+  }
+
+  // id == -1 on failure.
+  return id;
+}
+
+void HttpServer::sendErrorResponse(const int client, const int errorCode) {
+  
+  HttpResponse response(errorCode);
+  response.compile();
+
+  // Send.
+  int wholeLen = response.getHeaderLength() + response.getBodyLength();
+  char buffer[wholeLen];
+
+  response.getWhole(buffer);
+  send(client, buffer, wholeLen, 0);
+
+  // Wait for client's FIN signal.
+  char *useless[10];
+  if (recv(client, useless, 10, 0) != 0) {
+    std::cerr << "Not receiving client's FIN signal\n";
+    std::cerr << strerror(errno);
+  }
+
+  if (close(client) != 0) {
+    std::cerr << "Failed to close connection\n";
+    std::cerr << strerror(errno);
+  }
+  std::cerr << " => "<< response.statusCode() << "\n" << std::flush;
+  return;
+}
+
 void HttpServer::handleResourceRequest(const int client,
                                        HttpRequest* request) {
   // Return 403 forbiddin if illegel.
   if (!sanitize(request->path())) {
-    HttpResponse response(403);
-    response.compile();
-    sendResponse(client, &response);
+    sendErrorResponse(client, 403);
     return;
   }
 
@@ -425,9 +505,7 @@ void HttpServer::handleResourceRequest(const int client,
 
   // If can't open file, return 404.
   if (!resourceFile.is_open()) {
-    HttpResponse response(404);
-    response.compile();
-    sendResponse(client, &response);
+    sendErrorResponse(client, 404);
     return;
   }
 
@@ -459,6 +537,7 @@ bool HttpServer::sanitize(std::string directory) {
   return true;
 }
 
+// deprecated
 std::string HttpServer::sessionIdGenerator() {
   char charset[] =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

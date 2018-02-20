@@ -8,6 +8,8 @@
 #include "../ai.h"
 #include "httprequest.h"
 #include "httpresponse.h"
+#include "../lib/json.h"
+
 
 class HttpServer {
  public:
@@ -33,6 +35,9 @@ class HttpServer {
   // Sends an HTTP response back to the client.
   void sendResponse(const int client, HttpResponse *response);
 
+  // Sends error response to client.
+  void sendErrorResponse(const int client, const int errorCode);
+
   // Generates a random string.
   std::string sessionIdGenerator();
 
@@ -46,7 +51,8 @@ class HttpServer {
   void handleStart(const int client, HttpRequest* request);
   void handleQuit(const int client, HttpRequest* request);
   void handleResourceRequest(const int client, HttpRequest* request);
-
+  // Returns AI instance index according to 'sessionId' of reqBody. -1 on failure.
+  int getInstanceId(const nlohmann::json reqBody);
   // The limit of pending connections in the queue.
   static const int MAX_CONNECTION_QUEUE_ = 70;
   // The limit of EM instances.
