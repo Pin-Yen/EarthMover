@@ -25,82 +25,87 @@ function notifyWinner(winnerColor) {
   firebase.database().ref(gameID).child('result').set(winnerColor);
 }
 
-// post request, params should be json type
 function post(params, path) {
-  var req = new XMLHttpRequest();
-  req.open('POST', path);
-
-  var playAiPoint = function(response) {
-    if (response.row == -1) {
-      board.pass();
-      alert('computer pass'); //computer pass
-    } else {
-      board.play([response.col, response.row]); // play at ai's respond point
-    }
-
-    if (response.col == board.mousePos[0] && response.row == board.mousePos[1])
-      board.mousePos = [-1, -1];
-  }
-
-  // returns true if someone wins
-  var checkWinner = function(response) {
-    if (response.winner != -1) {
-      notifyWinner(response.winner == 0 ? 'Black' : 'White');
-      return true;
-    }
-    return false;
-  }
-
-  var checkNextPlayer = function() {
-    if (humanTurn()) {
-      board.draw(board.mousePos);
-      board.enable = true;
-      $('.ctrl-game input').prop('disabled', false);
-      $('.ctrl-analyze input').prop('disabled', false);
-      if (board.playNo == 0 || (board.playNo == 1 && player['black'] == 'computer'))
-        $('#ctrl-undo').prop('disabled', true);
-    } else {
-      post(null, 'think');
-    }
-
-    timer[board.whoTurn()].start();
-  }
-
-  req.onreadystatechange = function() {
-    if (!(req.readyState == 4 && (req.status == 200 || req.status == 204))) return;
-
-    switch (path) {
-      case 'start':
-      case 'pass':
-        checkNextPlayer();
-        break;
-      case 'think':
-        var response = JSON.parse(req.responseText);
-        playAiPoint(response);
-        if (checkWinner(response))
-          return;
-        checkNextPlayer();
-        break;
-      case 'play':
-        var response = JSON.parse(req.responseText);
-        if (checkWinner(response))
-          return;
-        checkNextPlayer();
-        break;
-      case 'resign':
-        notifyWinner(board.whoTurn(board.playNo + 1));
-        break;
-      case 'undo':
-        checkNextPlayer();
-        break;
-    }
-  };
-
-  // add session id to payload.
-  params = params || {};
-  params.sessionId = sessionManager.getSessionID();
   
-  req.send(JSON.stringify(params));
+  return new Promise(function(resolve, reject) {
+    
+    var req = new XMLHttpRequest();
+    req.open('POST', path);
+
+    req.onreadystatechange = function() {
+
+      if (req.readyState != 4) {
+        // Response not ready yet.
+        return;
+
+      } else if(req.status == 200) {
+        // OK, resolve promise with JSON response
+        resolve(JSON.parse(req.responseText));
+
+      } else if (req.status == 204){
+        resolve();
+
+      } else {
+        // Failed, reject.
+        reject(req.responseText);
+      }
+    }
+
+    // add session id to payload.
+    params = params || {};
+    params.sessionId = sessionManager.getSessionID();
+    
+    req.send(JSON.stringify(params));
+
+  });
+
+}
+
+// Handles the next round of game.
+function checkNextPlayer() {
+  if (humanTurn()) {
+    board.draw(board.mousePos);
+    board.enable = true;
+    $('.ctrl-game input').prop('disabled', false);
+    $('.ctrl-analyze input').prop('disabled', false);
+    if (board.playNo == 0 || (board.playNo == 1 && player['black'] == 'computer'))
+      $('#ctrl-undo').prop('disabled', true);
+  
+  } else {
+    post(null, 'think').then(function (response) {
+       putAiPoint(response.row, response.col);
+        if (checkWinner(response))
+          return;
+        checkNextPlayer();
+    }).catch(function onError(error) {
+      alert('think failed');
+    });
+  }
+
+  timer[board.whoTurn()].start();
+}
+
+// Returns true if someone wins.
+function checkWinner(response) {
+  if (response.winner != -1) {
+    notifyWinner(response.winner == 0 ? 'Black' : 'White');
+    return true;
+  }
+  return false;
+}
+
+// Puts AI's move onto the chessboard.
+function putAiPoint(row, col) {
+  if (row == -1) {
+    board.pass();
+    alert('computer pass'); //computer pass
+  } else {
+    board.play([col, row]); // play at ai's respond point
+  }
+
+  if (col == board.mousePos[0] && row == board.mousePos[1])
+    board.mousePos = [-1, -1];
+
 }
 
 function humanTurn() {
@@ -173,28 +178,51 @@ function undo() {
   $('.ctrl-analyze input').prop('disabled', true);
   var times = (player[board.whoTurn(board.playNo + 1)] === 'human' ? 1 : 2);
   board.undo(times);
-  post({ times: times }, 'undo');
+
+  post({ times: times }, 'undo').then(function (response) {
+    checkNextPlayer();
+  }).catch(function onError(error) {
+    alert('undo failed');
+  });
 }
 
 function pass() {
   $('.ctrl-game input').prop('disabled', true);
   $('.ctrl-analyze input').prop('disabled', true);
   board.pass();
-  post(null, 'pass');
+  post(null, 'pass').then(function (response) {
+    checkNextPlayer();
+  }).catch(function onError(error) {
+    alert('pass failed');
+  });
 }
 
 function resign() {
   $('.ctrl-game input').prop('disabled', true);
   $('.ctrl-analyze input').prop('disabled', true);
   timer[board.whoTurn()].stop();
-  post(null, 'resign');
+  post(null, 'resign').then(function (response) {
+    notifyWinner(board.whoTurn(board.playNo + 1));
+
+  }).catch(function onError(error){
+    alert("resign failed");
+  });
 }
 
 function hint() {
   $('.ctrl-game input').prop('disabled', true);
   $('.ctrl-analyze input').prop('disabled', true);
   board.enable = false;
-  post(null, 'think');
+
+  post(null, 'think').then(function (response) {
+    putAiPoint(response.row, response.col);
+    if (checkWinner(response))
+      return;
+    checkNextPlayer();
+  
+  }).catch(function onError(error) {
+    alert("think failed");
+  });
 }
 
 var analyzing = false

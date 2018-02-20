@@ -122,7 +122,15 @@ Board.prototype.click = function() {
   // if the position is empty, play and post
   if (!this.status[this.mousePos[0]][this.mousePos[1]]) {
     this.play(this.mousePos);
-    post({ row: this.mousePos[1], col: this.mousePos[0] }, 'play');
+    post({ row: this.mousePos[1], col: this.mousePos[0] }, 'play').then(
+      function(response) {
+        if (checkWinner(response))
+          return;
+        checkNextPlayer();
+      }).catch(function onError() {
+        alert('play failed');
+      });
+
     this.mousePos = [-1, -1];
   }
 }

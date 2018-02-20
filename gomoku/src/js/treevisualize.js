@@ -11,7 +11,11 @@ D3.requestTree = function() {
     if (request.responseText) D3.drawTree(JSON.parse(request.responseText));
   }
 
-  request.send("requesting mct");
+  // add session id to payload.
+  var params = {};
+  params.sessionId = sessionManager.getSessionID();
+    
+  request.send(JSON.stringify(params));
 }
 
 D3.removeTree = function() {

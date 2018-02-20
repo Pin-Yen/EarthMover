@@ -20,7 +20,11 @@ Dialog.prototype.ok = function() {
 
   var rule = parseInt($('input[name="rule"]:checked').val(), 10), level = parseInt($('#dl-select').val(), 10);
 
-  post({rule: rule, level: level}, 'start');
+  post({rule: rule, level: level}, 'start').then(function () {
+    checkNextPlayer();
+  }).catch(function onError() {
+    alert('start failed');
+  });
 
   // deside player's place
   if (black == 'human') {
