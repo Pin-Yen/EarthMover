@@ -270,3 +270,20 @@ function SessionManager() {
 function refresh() {
   D3.requestTree();
 }
+
+// keep alive when game is in progress
+function keepAlive() {
+  
+  if(board.gameStarted) {
+    post(null, 'keepAlive').then(function onSuccess() {
+      // nothing
+    }).catch(function onError() {
+      alert('Sorry, this game has been terminated by the server due to ' +
+       'long peroid of inactivity. Please start a new game.')
+    });
+
+  }
+  setTimeout(keepAlive, 15000);
+}
+
+setTimeout(keepAlive, 15000);

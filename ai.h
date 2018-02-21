@@ -3,6 +3,8 @@
 
 #include <string>
 #include <thread>
+#include <time.h>
+
 #include "gametree.h"
 #include "virtualboard.h"
 
@@ -42,14 +44,24 @@ class AI {
   // Stops if `controller` changed to false by other threads.
   void thinkInBackground(bool* controller);
 
+  // renews lastLiveTime timestamp
+  void renewLiveTime();
+
+  // indicates if the inactivity time exceeds MAX_KEEP_ALIVE_SEC_
+  bool isAlive();
+
  private:
   GameTree *tree;
 
   // The max mcts cycle to run in the background.
   static const int MAX_BACKGROUND_CYCLE_ = 100000;
 
+  static const int MAX_KEEP_ALIVE_SEC_ = 70;
+
   // the ai's level
   int level_;
+
+  time_t lastLiveTime_;
 };
 
 #endif  // AI_H_

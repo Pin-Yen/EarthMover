@@ -12,6 +12,7 @@
 #include <iostream>
 #include <cerrno>
 
+
 #include "../lib/json.h"
 
 using json = nlohmann::json;
@@ -145,6 +146,8 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
     handleThink(client, request);
   else if (request->path() == "/start")
     handleStart(client, request);
+  else if (request->path() == "/keepAlive")
+    handleKeepAlive(client, request);
   else
     handleResourceRequest(client, request);
 
@@ -406,19 +409,30 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
 
     // Create new em instance.
     for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
+      
       if (emList_[i] == NULL) {
+        // create new em instance
         emList_[i] = new AI();
         instanceIndex = i;
         break;
+      
+      } else if (! emList_[i]->isAlive()) {
+        // reuse inactive em instance
+        instanceIndex = i;
+        break;
+
       }
     }
 
     // Map sessionId to instance id if successfully created instance.
     // Else return 503
     if (instanceIndex != -1) {
-      session2instance_.insert({reqBody["sessionId"].get<std::string>(), instanceIndex});
+      std::string sessionId = reqBody["sessionId"].get<std::string>();
+      session2instance_.insert({sessionId, instanceIndex});
+      instanceId2sessionId_[instanceIndex] = sessionId;
+
       std::cout << "sessionID=" <<  reqBody["sessionId"].get<std::string>()\
-                << " instance created\n";
+                << " instance created " << instanceIndex << "\n";
     } else {
       // TODO : send error page informing the user about the error.
       sendErrorResponse(client, 503);
@@ -445,6 +459,33 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   return;
 }
 
+void HttpServer::handleKeepAlive(const int client, HttpRequest* request) {
+  
+  // Parse request body.
+  json reqBody = json::parse(request->body());
+
+
+  // Get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
+
+  // renew timestamp
+  emList_[id]->renewLiveTime();
+
+  // DEBUG
+  std::cerr << "D: Instance " << id << " timestamp renewed\n"; 
+
+  // Response 204
+  HttpResponse response(204);
+  response.compile();
+  sendResponse(client, &response);
+
+  return;
+}
+
 void HttpServer::handleQuit(const int client, HttpRequest* request) {
 
 }
@@ -456,6 +497,7 @@ int HttpServer::getInstanceId(const json reqBody) {
   try {
     id = session2instance_.at(reqBody["sessionId"]);
   } catch (std::out_of_range& e) {
+    id = -1;
     std::cerr << "received invalid sessionId" << "\n";
   }
 

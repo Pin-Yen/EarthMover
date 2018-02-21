@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <time.h>
 
 #include "gomoku/freestyle/virtualboardfreestyle.h"
 #include "gomoku/renju_basic/virtualboardrenjubasic.h"
@@ -61,4 +62,18 @@ void AI::reset(int level, int rule) {
 
 void AI::thinkInBackground(bool* continueThinking) {
   tree->mcts(4, MAX_BACKGROUND_CYCLE_, continueThinking);
+}
+
+void AI::renewLiveTime() {
+  lastLiveTime_ = time(NULL);
+}
+
+bool AI::isAlive() {
+  time_t currentTime = time(NULL);
+  double elapsedTime = difftime(currentTime, lastLiveTime_);
+
+  if (elapsedTime <= MAX_KEEP_ALIVE_SEC_)
+    return true;
+  else 
+    return false;
 }

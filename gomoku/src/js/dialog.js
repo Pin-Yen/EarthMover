@@ -20,52 +20,57 @@ Dialog.prototype.ok = function() {
 
   var rule = parseInt($('input[name="rule"]:checked').val(), 10), level = parseInt($('#dl-select').val(), 10);
 
-  post({rule: rule, level: level}, 'start').then(function () {
-    checkNextPlayer();
-  }).catch(function onError() {
+  post({rule: rule, level: level}, 'start').catch(function onError(err) {
     alert('start failed');
-  });
+    throw err;
 
-  // deside player's place
-  if (black == 'human') {
-    // black == human, white == human -> sel: black, human, opp: white, human
-    // black == human, white == ai -> sel: black, human, opp: white, ai
-    this.initPlayer('sel', 'black', true);
-    this.initPlayer('opp', 'white', (white == 'human'));
-  } else {
-    if (white == 'human') {
-      // black == ai, white == human -> sel: white, human, opp: black, ai
-      this.initPlayer('sel', 'white', true);
-      this.initPlayer('opp', 'black', false);
+  }).then(function onSuccess() {
+
+    // deside player's place
+    if (black == 'human') {
+      // black == human, white == human -> sel: black, human, opp: white, human
+      // black == human, white == ai -> sel: black, human, opp: white, ai
+      this.initPlayer('sel', 'black', true);
+      this.initPlayer('opp', 'white', (white == 'human'));
     } else {
-      // black == ai, white == ai -> sel: black, ai, opp: white, ai
-      this.initPlayer('sel', 'black', false);
-      this.initPlayer('opp', 'white', false);
+      if (white == 'human') {
+        // black == ai, white == human -> sel: white, human, opp: black, ai
+        this.initPlayer('sel', 'white', true);
+        this.initPlayer('opp', 'black', false);
+      } else {
+        // black == ai, white == ai -> sel: black, ai, opp: white, ai
+        this.initPlayer('sel', 'black', false);
+        this.initPlayer('opp', 'white', false);
+      }
     }
-  }
 
-  // initialize board
-  board.init();
+    // initialize board
+    board.init();
 
-  // initialize timer
-  if (timer.black != null) timer.black.stop();
-  if (timer.white != null) timer.white.stop();
-  timer = {black: new Timer($('.black .pi-timer')), white: new Timer($('.white .pi-timer'))};
+    // initialize timer
+    if (timer.black != null) timer.black.stop();
+    if (timer.white != null) timer.white.stop();
+    timer = {black: new Timer($('.black .pi-timer')), white: new Timer($('.white .pi-timer'))};
 
-  $('.control input').prop('disabled', true);
+    $('.control input').prop('disabled', true);
 
-  this.toggle();
+    this.toggle();
 
-  // populate 'game' variable
-  game.rule = rule;
-  game.earthmover.level = level;
-  game.black = black;
-  game.white = white;
-  game.startTime = firebase.database.ServerValue.TIMESTAMP;
+    // populate 'game' variable
+    game.rule = rule;
+    game.earthmover.level = level;
+    game.black = black;
+    game.white = white;
+    game.startTime = firebase.database.ServerValue.TIMESTAMP;
 
-  var databaseRef = firebase.database().ref().push();
-  gameID = databaseRef.key;
-  databaseRef.set(game);
+    var databaseRef = firebase.database().ref().push();
+    gameID = databaseRef.key;
+    databaseRef.set(game);    
+
+    checkNextPlayer();
+
+  }.bind(this));
+
 };
 
 // initialize player

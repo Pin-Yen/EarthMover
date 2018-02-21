@@ -4,6 +4,7 @@
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <array>
 
 #include "../ai.h"
 #include "httprequest.h"
@@ -51,6 +52,8 @@ class HttpServer {
   void handleStart(const int client, HttpRequest* request);
   void handleQuit(const int client, HttpRequest* request);
   void handleResourceRequest(const int client, HttpRequest* request);
+  // Renew AI instances' liveTime.
+  void handleKeepAlive(const int client, HttpRequest* request);
   // Returns AI instance index according to 'sessionId' of reqBody. -1 on failure.
   int getInstanceId(const nlohmann::json reqBody);
   // The limit of pending connections in the queue.
@@ -66,6 +69,9 @@ class HttpServer {
   // session to id
   // (session is the string of the http cookie, id is for indexing purposes)
   std::unordered_map<std::string, int> session2instance_;
+
+  // instanceId to sessionId
+  std::array<std::string, MAX_EM_INSTANCE_> instanceId2sessionId_;
 
   // A list storing EarthMover instances.
   AI* emList_[MAX_EM_INSTANCE_];
