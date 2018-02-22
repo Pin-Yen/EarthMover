@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <thread>
+#include <math.h>
 
 #include "const.h"
 #include "lib/json.h"
@@ -372,23 +373,46 @@ std::string GameTree::getTreeJSON() {
   return getSubTreeJSON(currentNode_, currentBoard_->whoTurn()).dump();
 }
 
+// json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
+//   json tree;
+
+//   tree["index"] = node->index();
+
+//   tree["totalCount"] = node->count();
+
+//   tree["winRate"] = whoTurn ? node->winRate() : 1 - node->winRate();
+//   tree["winOrLose"] = whoTurn ? node->gameStatus() : -node->gameStatus();
+
+//   tree["whoTurn"] = whoTurn;
+
+//   tree["children"] = json::array();
+
+//   for (Node* child : *node) {
+//     if (child->count() >= 8) {
+//       tree["children"].push_back(getSubTreeJSON(child, !whoTurn));
+//     }
+//   }
+//   return tree;
+// }
+
+// Minified
 json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
-  json tree;
+    json tree;
 
-  tree["index"] = node->index();
+  tree["i"] = node->index();
 
-  tree["totalCount"] = node->count();
+  tree["tc"] = node->count();
 
-  tree["winRate"] = whoTurn ? node->winRate() : 1 - node->winRate();
-  tree["winOrLose"] = whoTurn ? node->gameStatus() : -node->gameStatus();
+  tree["wr"] = round( (whoTurn ? node->winRate() : 1 - node->winRate()) );
+  tree["wol"] = whoTurn ? node->gameStatus() : -node->gameStatus();
 
-  tree["whoTurn"] = whoTurn;
+  tree["wt"] = whoTurn;
 
-  tree["children"] = json::array();
+  tree["ch"] = json::array();
 
   for (Node* child : *node) {
     if (child->count() >= 8) {
-      tree["children"].push_back(getSubTreeJSON(child, !whoTurn));
+      tree["ch"].push_back(getSubTreeJSON(child, !whoTurn));
     }
   }
   return tree;
