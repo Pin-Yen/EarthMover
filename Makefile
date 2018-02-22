@@ -14,7 +14,8 @@ obj/ai.o \
 obj/networkmain.o \
 obj/serverhttprequest.o \
 obj/serverhttpresponse.o \
-obj/serverhttpserver.o
+obj/serverhttpserver.o \
+obj/proc_stat.o
 
 OBJ_LOCAL = \
 obj/gomokudisplayboard.o \
@@ -206,6 +207,9 @@ obj/serverhttpserver.o: server/httpserver.cpp \
  server/httprequest.h \
  server/httpresponse.h \
  server/httpserver.h \
- virtualboard.h
+ virtualboard.h \
+ proc_stat.h
 	g++ -c $(GENERAL_FLAG) $(OPT_FLAG) $< -o $@
 
+obj/proc_stat.o: proc_stat.c proc_stat.h
+	g++ -c $(GENERAL_FLAG) $(OPT_FLAG) $< -o $@

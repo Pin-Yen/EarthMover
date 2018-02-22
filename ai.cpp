@@ -65,12 +65,12 @@ void AI::thinkInBackground(bool* continueThinking) {
 }
 
 void AI::renewLiveTime() {
-  lastLiveTime_ = time(NULL);
+  lastAliveTime_ = time(NULL);
 }
 
 bool AI::isAlive() {
   time_t currentTime = time(NULL);
-  double elapsedTime = difftime(currentTime, lastLiveTime_);
+  double elapsedTime = difftime(currentTime, lastAliveTime_);
 
   if (elapsedTime <= MAX_KEEP_ALIVE_SEC_)
     return true;

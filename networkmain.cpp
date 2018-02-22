@@ -1,5 +1,7 @@
 #include <cstdlib>
 #include <iostream>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "server/httpserver.h"
 
@@ -10,6 +12,9 @@ int main(int argc, char** argv) {
     return 1;
   }
   HttpServer server(atoi(argv[1]));
+
+  // print pid for debugging
+  std::cout << "pid: " << getpid() << "\n";
 
   server.run();
   return 0;

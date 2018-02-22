@@ -51,6 +51,7 @@ class HttpServer {
   void handleThink(const int client, HttpRequest* request);
   void handleStart(const int client, HttpRequest* request);
   void handleQuit(const int client, HttpRequest* request);
+  void handleUsage(const int client, HttpRequest* request);
   void handleResourceRequest(const int client, HttpRequest* request);
   // Renew AI instances' liveTime.
   void handleKeepAlive(const int client, HttpRequest* request);

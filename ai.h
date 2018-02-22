@@ -50,6 +50,9 @@ class AI {
   // indicates if the inactivity time exceeds MAX_KEEP_ALIVE_SEC_
   bool isAlive();
 
+  // return last alive time
+  time_t lastAliveTime() {  return lastAliveTime_; }
+
  private:
   GameTree *tree;
 
@@ -61,7 +64,7 @@ class AI {
   // the ai's level
   int level_;
 
-  time_t lastLiveTime_;
+  time_t lastAliveTime_;
 };
 
 #endif  // AI_H_

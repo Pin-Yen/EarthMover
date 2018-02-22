@@ -11,9 +11,12 @@
 #include <fstream>
 #include <iostream>
 #include <cerrno>
-
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <time.h>
 
 #include "../lib/json.h"
+#include "../proc_stat.h"
 
 using json = nlohmann::json;
 
@@ -148,6 +151,8 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
     handleStart(client, request);
   else if (request->path() == "/keepAlive")
     handleKeepAlive(client, request);
+  else if (request->path() == "/usage")
+    handleUsage(client, request);
   else
     handleResourceRequest(client, request);
 
@@ -334,7 +339,6 @@ void HttpServer::handleUndo(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleThink(const int client, HttpRequest* request) {
-  
   // Parse request body.
   json reqBody = json::parse(request->body());
 
@@ -490,6 +494,47 @@ void HttpServer::handleQuit(const int client, HttpRequest* request) {
 
 }
 
+void HttpServer::handleUsage(const int client, HttpRequest* request) {
+  json resBody;
+
+  // Memory usage.
+  struct  proc_stat_t proc_stat;
+  get_proc_stat(&proc_stat);
+  resBody["rss"] = proc_stat.rss * getpagesize();
+  resBody["vsz"] = proc_stat.vsize;
+
+  // Threads.
+  resBody["num_threads"] = proc_stat.num_threads;
+
+  // Update time.
+  resBody["timestamp"] = time(NULL);
+
+
+  // AI info.
+  resBody["ai"] = json::array();
+  for (int i = 0; i < MAX_EM_INSTANCE_; ++i) {
+    if (emList_[i] != NULL) {
+      json ai = {
+        {"id", i},
+        {"lastAlive", emList_[i]->lastAliveTime()}
+      };
+      resBody["ai"].push_back(ai);      
+    }
+  }
+
+
+  // Prepare response
+  HttpResponse response(200);
+  response.setContentType("application/json")
+      .setBody(resBody.dump())
+      .compile();
+
+  // Send response;
+  sendResponse(client, &response);
+
+  return;
+}
+
 int HttpServer::getInstanceId(const json reqBody) {
   
   int id = -1;
@@ -566,7 +611,8 @@ void HttpServer::handleResourceRequest(const int client,
 
 bool HttpServer::sanitize(std::string directory) {
   if (directory == "/index.html") return true;
-
+  if (directory == "/dashboard.html") return true;
+  
   // check if the directory is under /gomoku/src/
   std::string allowedRoot("/gomoku/src/");
   if (directory.find(allowedRoot) != 0)
