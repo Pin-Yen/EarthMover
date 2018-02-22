@@ -153,6 +153,8 @@ void HttpServer::dispatch(const int client, HttpRequest* request) {
     handleKeepAlive(client, request);
   else if (request->path() == "/usage")
     handleUsage(client, request);
+  else if (request->path() == "/quit")
+    handleQuit(client, request);
   else
     handleResourceRequest(client, request);
 
@@ -423,6 +425,9 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
       } else if (! emList_[i]->isAlive()) {
         // reuse inactive em instance
         instanceIndex = i;
+        // Remove old sessionId
+        std::string oldSessionId = instanceId2sessionId_[i];
+        session2instance_.erase(session2instance_.find(oldSessionId));
         break;
 
       }
@@ -445,7 +450,7 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   }
 
 
-  // Stop backgronud thinking thread, if exists.
+  // Stop background thinking thread, if exists.
   emThreadController_[instanceIndex] = false;
   if (threadList_[instanceIndex].joinable())
     threadList_[instanceIndex].join();
@@ -480,7 +485,7 @@ void HttpServer::handleKeepAlive(const int client, HttpRequest* request) {
   emList_[id]->renewLiveTime();
 
   // DEBUG
-  std::cerr << "D: Instance " << id << " timestamp renewed\n"; 
+  std::cerr << " (Instance " << id << " timestamp renewed)\n"; 
 
   // Response 204
   HttpResponse response(204);
@@ -491,7 +496,44 @@ void HttpServer::handleKeepAlive(const int client, HttpRequest* request) {
 }
 
 void HttpServer::handleQuit(const int client, HttpRequest* request) {
+  // Parse request body.
+  json reqBody = json::parse(request->body());
 
+
+  // Get AI instance id from sessionId, return 400 on error.  
+  int id = getInstanceId(reqBody);
+  if (id < 0) {
+    sendErrorResponse(client, 400);
+    return;
+  }
+
+
+  // Stop EM's background thinking.
+  emThreadController_[id] = false;
+  // Wait till the background thinking thread has stopped.
+  if (threadList_[id].joinable())
+    threadList_[id].join();
+
+
+  // Delete EM instance.
+  delete emList_[id];
+  emList_[id] = NULL;
+
+
+  // Delete sessionId
+  try {
+    std::string oldSessionId = instanceId2sessionId_[id];
+    session2instance_.erase(session2instance_.find(oldSessionId));
+    std::cout << " ( session " << oldSessionId <<" quit )\n";
+  } catch(...){}
+
+
+  HttpResponse response(204);
+  response.compile();
+
+  sendResponse(client, &response);
+
+  return;
 }
 
 void HttpServer::handleUsage(const int client, HttpRequest* request) {

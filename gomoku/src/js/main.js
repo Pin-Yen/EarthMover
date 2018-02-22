@@ -287,3 +287,18 @@ function keepAlive() {
 }
 
 setTimeout(keepAlive, 15000);
+
+// Quit game when user leaves.
+window.addEventListener('unload', function onUnload() {
+  post(null, '/quit');
+});
+
+// Confirm leave.
+// window.onbeforeunload = function (e) {
+//   e.returnValue = 'test';
+//   return 'Are you sure you want to quit this game ?'
+// }
+window.addEventListener('beforeunload', function onBeforeUnload(e) {
+  e.returnValue = 'Are you sure you want to quit this game ?';
+  return 'Are you sure you want to quit this game ?'
+});
