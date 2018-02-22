@@ -2,14 +2,18 @@
 <html>
 <head>
 	<title>EM Dashboard</title>
-	<script type="text/javascript" src="gomoku/src/js/dashboard.js"></script>
+	<link rel="stylesheet" type="text/css" href="gomoku/src/css/dashboard.css">
 </head>
 <body>
 	<h2>UPDATE TIME</h2>
 	<p id="update-time"></p>
 	<h2>SYSTEM STATUS</h2>
-	<p id="rss"></p>
-	<h2>AI STATUS</h2>
+	<div id="system-status-gauge-wrapper">
+		<div class="gauge" id="rss-gauge"></div>
+		<div class="gauge" id="vsz-gauge"></div>
+		<div class="gauge" id="thread-gauge"></div>
+	</div>
+	<h2 id="ai-status-title">AI STATUS</h2>
 	<table border="2">
 		<thead>
 			<tr class="header-row">
@@ -35,5 +39,8 @@
 
 	</table>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript" src="gomoku/src/js/dashboard.js"></script>
+
 </body>
 </html>
