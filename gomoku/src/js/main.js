@@ -272,21 +272,27 @@ function refresh() {
 }
 
 // keep alive when game is in progress
-function keepAlive() {
+// lastResponse : whether the previous keepAlive request success or not
+function keepAlive(prevResponse) {
   
   if(board.gameStarted) {
     post(null, 'keepAlive').then(function onSuccess() {
-      // nothing
+      setTimeout(keepAlive, 15000, true);
     }).catch(function onError() {
-      alert('Sorry, this game has been terminated by the server due to ' +
-       'long peroid of inactivity. Please start a new game.')
+      if (prevResponse) {
+        alert('Sorry, there are some issues with your game.\n'+
+          '1. Check your internet connection.\n' + 
+          '2. Your game may be terminated by the server due to long ' +
+          'period of inactivity.')
+      }
+      setTimeout(keepAlive, 15000, false);
+
     });
 
   }
-  setTimeout(keepAlive, 15000);
 }
 
-setTimeout(keepAlive, 15000);
+setTimeout(keepAlive, 15000, true);
 
 // Quit game when user leaves.
 window.addEventListener('unload', function onUnload() {
