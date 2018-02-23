@@ -25,10 +25,10 @@ D3.removeTree = function() {
 D3.drawTree = function(treeData) {
   // Assigns parent, children, height, depth.
   // Sort childrens by total simulations in descendant order.
-  var root = d3.hierarchy(treeData)
+  var root = d3.hierarchy(treeData, function childrenAccessor(d) { return d.ch; })
                .sort(function(child1, child2) {
                  return child2.data.tc - child1.data.tc;
-               });
+               })
 
   var margin = { left: 60, top: 40, right: 60, bottom: 40};
 
