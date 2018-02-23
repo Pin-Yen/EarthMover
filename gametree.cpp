@@ -403,7 +403,7 @@ json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
 
   tree["tc"] = node->count();
 
-  tree["wr"] = round( (whoTurn ? node->winRate() : 1 - node->winRate()) );
+  tree["wr"] = round( (whoTurn ? node->winRate() : 1 - node->winRate()) * 100 ) / 100;
   tree["wol"] = whoTurn ? node->gameStatus() : -node->gameStatus();
 
   tree["wt"] = whoTurn;
