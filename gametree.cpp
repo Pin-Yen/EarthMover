@@ -370,7 +370,10 @@ void GameTree::undo() {
 std::string GameTree::getTreeJSON() {
   if (currentNode_ == NULL || currentNode_->parent() == NULL) return "";
 
-  return getSubTreeJSON(currentNode_, currentBoard_->whoTurn()).dump();
+  int childCountThreshold = currentNode_->count() / 1000;
+  /* debug */ std::cout << "\nthreshold : " << childCountThreshold << "\n";
+  return getSubTreeJSON(currentNode_, currentBoard_->whoTurn(), \
+    childCountThreshold).dump();
 }
 
 // json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
@@ -396,7 +399,7 @@ std::string GameTree::getTreeJSON() {
 // }
 
 // Minified
-json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
+json GameTree::getSubTreeJSON(Node* node, bool whoTurn, int threshold) {
     json tree;
 
   tree["i"] = node->index();
@@ -411,8 +414,8 @@ json GameTree::getSubTreeJSON(Node* node, bool whoTurn) {
   tree["ch"] = json::array();
 
   for (Node* child : *node) {
-    if (child->count() >= 8) {
-      tree["ch"].push_back(getSubTreeJSON(child, !whoTurn));
+    if (child->count() >= 8 && child->count() >= threshold) {
+      tree["ch"].push_back(getSubTreeJSON(child, !whoTurn, threshold));
     }
   }
   return tree;

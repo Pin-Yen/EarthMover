@@ -91,7 +91,7 @@ class GameTree {
   void minusAllChildren(Node* beMinusNode, const Node* minusNode);
 
   // returns the part of the tree below 'node' in JSON format
-  nlohmann::json getSubTreeJSON(Node *node, bool whoTurn);
+  nlohmann::json getSubTreeJSON(Node *node, bool whoTurn, int threshold);
 
   Node *root_, *currentNode_;
 
