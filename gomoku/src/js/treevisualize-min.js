@@ -54,8 +54,8 @@ D3.drawTree = function(treeData) {
   function update() {
     var t = d3.transition().duration(duration);
 
-    var maxBranch = parseInt($('#tv-branch').val(), 10),
-        minCount = parseInt($('#tv-count').val(), 10);
+    var maxBranch = parseInt($('#tv-branch-factor').val(), 10),
+        minCount = parseInt($('#tv-count-threshold').val(), 10);
 
     hideChildren(root, maxBranch, minCount);
 
