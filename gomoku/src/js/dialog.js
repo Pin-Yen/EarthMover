@@ -54,6 +54,9 @@ Dialog.prototype.ok = function() {
 
     $('.control input').prop('disabled', true);
 
+    // Disable replay bar
+    $('.ctrl-replay input').prop('disabled', true);
+
     this.toggle();
 
     // populate 'game' variable

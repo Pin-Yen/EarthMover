@@ -161,6 +161,8 @@ function btnWatchGameClick() {
       }
     });
 
+    // Enable replay control bar.
+    $('.ctrl-replay input').prop('disabled', false);
 
     gameRef.child('record').on('child_added', function(data) {
       console.log('key=' + data.key +",row=" + data.val().r + ",col=" + data.val().c);
@@ -272,7 +274,7 @@ function refresh() {
 }
 
 // keep alive when game is in progress
-// lastResponse : whether the previous keepAlive request success or not
+// prevResponse : whether the previous keepAlive request success or not
 function keepAlive(prevResponse) {
   
   if(board.gameStarted) {

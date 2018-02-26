@@ -135,7 +135,7 @@ Board.prototype.click = function() {
   }
 }
 
-// draw iamge at position
+// draw image at position
 Board.prototype.draw = function(pos) {
   if (pos[0] == -1) return;
 
