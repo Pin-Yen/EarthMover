@@ -459,6 +459,8 @@ void HttpServer::handleStart(const int client, HttpRequest* request) {
   emList_[instanceIndex]->reset(static_cast<int>(reqBody["level"]),
                              static_cast<int>(reqBody["rule"]));
 
+  // Initialize timestamp
+  emList_[instanceIndex]->renewLiveTime();
   // Response
   HttpResponse response(204);
   response.compile();
